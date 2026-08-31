@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar os [registros reproduzíveis de `PILOT-02`](../supabase/seed.sql) usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). O caso só poderá avançar quando a revisão independente resultar em `ACCEPTED`.
+Entregar o [pacote de revisão de `PILOT-02`](revisao-pilot-02.md) a uma pessoa que não tenha preparado os registros. A pessoa revisora deve produzir o registro completo usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). O caso só poderá avançar quando essa revisão independente resultar em `ACCEPTED`.
