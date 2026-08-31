@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar e aprovar o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). Depois disso, criar os registros de teste reproduzíveis de `PILOT-02`, o primeiro caso da ordem de execução.
+Revisar e aprovar a [decisão sobre o vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md), lacuna bloqueante encontrada na preparação de `PILOT-02`. Depois disso, implementar a relação aprovada antes de criar os registros de teste reproduzíveis do caso.
