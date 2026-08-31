@@ -13,3 +13,4 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Piloto da fundação](piloto-da-fundacao.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
+- [Decisão: vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md)
