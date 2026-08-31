@@ -11,3 +11,4 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 ## Validação
 
 - [Piloto da fundação](piloto-da-fundacao.md)
+- [Casos do piloto](casos-do-piloto.md)
