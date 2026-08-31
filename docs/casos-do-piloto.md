@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar e aprovar a [decisão sobre o vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md), lacuna bloqueante encontrada na preparação de `PILOT-02`. Depois disso, implementar a relação aprovada antes de criar os registros de teste reproduzíveis do caso.
+Revisar e aprovar a [decisão sobre a precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md), lacuna bloqueante encontrada ao estruturar a publicação de `PILOT-02`. Depois disso, implementar a data em nível de dia antes de criar os registros de teste reproduzíveis do caso.
