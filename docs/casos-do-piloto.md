@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Criar o checklist de revisão que será preenchido de forma independente para cada caso. A criação de fixtures ocorrerá somente depois da aprovação desse checklist.
+Revisar e aprovar o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). Depois disso, criar os registros de teste reproduzíveis de `PILOT-02`, o primeiro caso da ordem de execução.
