@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar e aprovar a [decisão sobre a precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md), lacuna bloqueante encontrada ao estruturar a publicação de `PILOT-02`. Depois disso, implementar a data em nível de dia antes de criar os registros de teste reproduzíveis do caso.
+Revisar os [registros reproduzíveis de `PILOT-02`](../supabase/seed.sql) usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). O caso só poderá avançar quando a revisão independente resultar em `ACCEPTED`.
