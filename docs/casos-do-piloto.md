@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar os [registros reproduzíveis de `PILOT-03`](../supabase/seed.sql) usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). A revisão deve decidir se a impossibilidade de criar `metric_values` sem escolher uma unidade canônica não sustentada constitui uma lacuna da fundação.
+Entregar o [pacote de revisão independente de `PILOT-03`](revisao-pilot-03.md) à pessoa revisora. A revisão deve decidir se a impossibilidade de criar `metric_values` sem escolher uma unidade canônica não sustentada constitui uma lacuna da fundação.
