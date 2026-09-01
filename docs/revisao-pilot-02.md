@@ -2,11 +2,11 @@
 
 ## Estado
 
-`AGUARDANDO_REVISAO_INDEPENDENTE`
+`CONCLUIDA — ACCEPTED`
 
-Este documento congela a versão avaliada, descreve como reproduzir os registros e indica onde encontrar as evidências necessárias. Ele não antecipa o resultado da revisão.
+Este documento congela a versão avaliada, descreve como reproduzir os registros e indica onde encontrar as evidências necessárias. A revisão foi concluída por Denis Toledo em 1º de setembro de 2026; o [resultado completo](resultado-revisao-pilot-02.md) foi `ACCEPTED`.
 
-A pessoa que preparou os registros não pode preencher a identidade da pessoa revisora, os resultados dos itens nem a conclusão. Esses campos devem ser completados por outra pessoa, usando somente os registros congelados, a fonte referenciada e o [checklist canônico](checklist-de-revisao-do-piloto.md).
+A identidade, os resultados dos itens e a conclusão abaixo refletem as decisões expressamente fornecidas pela pessoa revisora. A pessoa que preparou os registros somente transcreveu essas decisões e executou a verificação técnica documentada, sem decidir o resultado.
 
 ## Identificação do objeto revisado
 
@@ -17,8 +17,8 @@ A pessoa que preparou os registros não pode preencher a identidade da pessoa re
 | Arquivo | `supabase/seed.sql` |
 | SHA-256 do arquivo | `f1ac40c58abdf3067063c77505a0f5bda4d36e45a91614a0acd0a2d387bb3af9` |
 | Fonte primária | [Publicação da BYD Brasil de 24 de março de 2026](https://www.byd.com/br/maior-rede-de-recarga-publica-do-pais-byd-alcanca-125-carregadores-rapidos-instalados-em-todo-territorio-nacional) |
-| Pessoa revisora | A preencher pela pessoa revisora |
-| Data da revisão | A preencher pela pessoa revisora |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 1º de setembro de 2026 |
 | Revisão anterior | `N/A` |
 
 O commit acima é a versão imutável dos registros. O merge na `main` ocorreu depois, sem modificar o conteúdo do arquivo.
@@ -82,22 +82,22 @@ Este mapa indica onde inspecionar; ele não atribui `PASS`, `FAIL` ou `N/A`.
 | Incerteza e reconstrução | `verification_level = 'reported'`, `workflow_status = 'under_review'` e notas que limitam a confirmação à declaração empresarial |
 | Verificações de `PILOT-02` | Separação entre os fingerprints de 125 e 225; fases `update` e `announcement`; limites registrados nas notas e no recorte |
 
-## Afirmações deliberadamente não registradas
+## Limites deliberadamente preservados
 
-O conjunto congelado não contém:
+O metadado da publicação preserva seu título original, inclusive a expressão “Maior rede de recarga pública do país”. Fora desse registro documental, o conjunto congelado:
 
-- confirmação independente dos 125 carregadores;
-- realização da expectativa de 225 pontos;
-- metas para 2027 ou para mil carregadores;
-- comparações de liderança de mercado;
-- métricas derivadas ou normalização por `metric_values`;
-- instrumentos regulatórios relacionados ao caso.
+- não contém confirmação independente dos 125 carregadores;
+- não registra como realizada a expectativa de 225 pontos;
+- não transforma metas para 2027 ou para mil carregadores em observações, evidências ou eventos;
+- não transforma comparações de liderança em observações, evidências ou eventos;
+- não cria métricas derivadas ou normalização por `metric_values`;
+- não relaciona instrumentos regulatórios ao caso.
 
-A ausência desses elementos faz parte do limite aprovado e não deve ser preenchida com contexto externo durante a revisão.
+A ausência desses elementos analíticos faz parte do limite aprovado e não deve ser preenchida com contexto externo durante a revisão.
 
-## Registro a ser produzido pela pessoa revisora
+## Registro produzido pela pessoa revisora
 
-A revisão deve ser registrada em um arquivo separado, baseado no checklist canônico, e conter:
+A revisão está documentada no [resultado independente de `PILOT-02`](resultado-revisao-pilot-02.md), baseado no checklist canônico. O registro contém:
 
 1. a identificação completa da revisão e a versão congelada acima;
 2. um resultado individual para todos os itens de independência e todos os itens aplicáveis;
@@ -106,8 +106,8 @@ A revisão deve ser registrada em um arquivo separado, baseado no checklist can�
 5. a síntese do caso reconstruída sem ajuda da pessoa que preparou os registros;
 6. exatamente um resultado final permitido pelo checklist.
 
-O registro não deve alterar este pacote nem o seed avaliado. Correções eventualmente necessárias pertencem a uma versão posterior, que exigirá nova revisão.
+O registro não alterou o seed avaliado. A precisão documental encontrada durante a revisão foi corrigida neste pacote sem modificar os registros congelados.
 
 ## Regra para avançar
 
-`PILOT-03` só pode começar depois que a revisão independente de `PILOT-02` estiver registrada com resultado `ACCEPTED`. Merge deste pacote, aprovação do PR ou ausência de comentários não substituem esse resultado.
+A revisão independente de `PILOT-02` foi registrada com resultado `ACCEPTED`. `PILOT-03` pode começar depois que o resultado e a correção documental forem aprovados e integrados à `main`.

@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Entregar o [pacote de revisão de `PILOT-02`](revisao-pilot-02.md) a uma pessoa que não tenha preparado os registros. A pessoa revisora deve produzir o registro completo usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). O caso só poderá avançar quando essa revisão independente resultar em `ACCEPTED`.
+Integrar o [resultado `ACCEPTED` da revisão independente de `PILOT-02`](resultado-revisao-pilot-02.md) e iniciar a preparação dos registros reproduzíveis de `PILOT-03`. A próxima execução deve preservar separadamente os valores 21.061 e 21.060 e os termos usados por cada publicação, sem escolher antecipadamente uma unidade canônica.
