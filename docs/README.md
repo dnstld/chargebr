@@ -14,5 +14,6 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-02](revisao-pilot-02.md)
+- [Resultado da revisão independente de PILOT-02](resultado-revisao-pilot-02.md)
 - [Decisão: vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)
