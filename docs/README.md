@@ -24,4 +24,5 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md)
 - [Decisão: vínculo entre acontecimentos e instrumentos regulatórios](decisao-vinculo-eventos-instrumentos-regulatorios.md)
 - [Decisão: relações entre instrumentos regulatórios](decisao-relacoes-entre-instrumentos-regulatorios.md)
+- [Decisão: fase de encerramento de vigência](decisao-fase-encerramento-vigencia.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)
