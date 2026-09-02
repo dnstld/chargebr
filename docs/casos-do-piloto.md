@@ -132,6 +132,8 @@ Referências históricas não canônicas:
 
 A [revisão independente de `PILOT-01`](resultado-revisao-pilot-01.md) terminou com `FOUNDATION_REVIEW_REQUIRED` e três lacunas bloqueantes.
 
-A próxima etapa trata somente de `P01-MOD-01`: revisar a [decisão sobre o vínculo estrutural entre acontecimentos e instrumentos regulatórios](decisao-vinculo-eventos-instrumentos-regulatorios.md). Depois da aprovação, a etapa seguinte será uma migration exclusiva para implementar essa decisão. `P01-MOD-02`, sobre relações entre instrumentos, e `P01-RES-01`, sobre uma fase específica para encerramento de vigência, permanecem na fila para etapas próprias.
+A decisão e a migration de `P01-MOD-01`, sobre o vínculo entre acontecimentos e instrumentos, foram aprovadas. A migration também foi aplicada ao Supabase sem carregar dados do piloto.
+
+A próxima etapa trata somente de `P01-MOD-02`: revisar a [decisão sobre relações entre instrumentos regulatórios](decisao-relacoes-entre-instrumentos-regulatorios.md). Depois da aprovação, a etapa seguinte será uma migration exclusiva para implementar essa decisão. `P01-RES-01`, sobre uma fase específica para encerramento de vigência, permanece na fila para uma etapa própria.
 
 O seed, o schema, as migrações e o banco não devem ser modificados antes da aprovação da decisão correspondente. Depois das decisões e mudanças de fundação necessárias, `PILOT-01` precisará de registros corrigidos e nova revisão independente.

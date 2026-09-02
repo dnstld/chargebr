@@ -23,4 +23,5 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Resultado da segunda revisão independente de PILOT-03 — correção 01](resultado-revisao-pilot-03-correcao-01.md)
 - [Decisão: vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md)
 - [Decisão: vínculo entre acontecimentos e instrumentos regulatórios](decisao-vinculo-eventos-instrumentos-regulatorios.md)
+- [Decisão: relações entre instrumentos regulatórios](decisao-relacoes-entre-instrumentos-regulatorios.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)
