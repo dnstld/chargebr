@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Entregar o [pacote de revisão independente de `PILOT-03`](revisao-pilot-03.md) à pessoa revisora. A revisão deve decidir se a impossibilidade de criar `metric_values` sem escolher uma unidade canônica não sustentada constitui uma lacuna da fundação.
+Corrigir os registros de `PILOT-03` conforme o [resultado da revisão independente](resultado-revisao-pilot-03.md). A revisão concluiu que existe base defensável para uma unidade canônica e que a estrutura atual comporta dois valores de métrica distintos. A versão corrigida deve preservar a divergência e passar por nova revisão antes do início de `PILOT-01`.
