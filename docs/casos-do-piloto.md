@@ -130,4 +130,6 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Entregar o pacote da [segunda revisão independente de `PILOT-03`](revisao-pilot-03-correcao-01.md) à pessoa revisora. A nova avaliação deve verificar a correção de `P03-REG-01` e possíveis regressões antes do início de `PILOT-01`.
+Preparar os registros reproduzíveis de `PILOT-01`, a cadeia normativa do Programa Mover, em uma nova etapa. A [segunda revisão independente de `PILOT-03`](resultado-revisao-pilot-03-correcao-01.md) recebeu `ACCEPTED`, resolveu `P03-REG-01` e não encontrou regressões.
+
+A proposta de avaliar futuramente uma tolerância quantitativa para valores da mesma métrica e do mesmo período foi registrada como `P03-MET-01`. Ela não altera os valores publicados, não reabre `PILOT-03` e não bloqueia o início de `PILOT-01`.

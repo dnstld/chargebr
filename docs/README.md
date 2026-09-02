@@ -18,5 +18,6 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Pacote de revisão independente de PILOT-03](revisao-pilot-03.md)
 - [Resultado da revisão independente de PILOT-03](resultado-revisao-pilot-03.md)
 - [Segunda revisão independente de PILOT-03 — correção 01](revisao-pilot-03-correcao-01.md)
+- [Resultado da segunda revisão independente de PILOT-03 — correção 01](resultado-revisao-pilot-03-correcao-01.md)
 - [Decisão: vínculo entre eventos e organizações](decisao-vinculo-eventos-organizacoes.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)

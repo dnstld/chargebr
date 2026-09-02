@@ -2,9 +2,9 @@
 
 ## Estado
 
-`AGUARDANDO_REVISAO_INDEPENDENTE`
+`CONCLUIDA — ACCEPTED`
 
-Este documento congela a primeira versão corrigida dos registros de `PILOT-03` e prepara sua segunda revisão independente. O pacote não atribui resultados nem presume que a correção resolveu a lacuna anterior.
+Este documento congelou a primeira versão corrigida dos registros de `PILOT-03` para sua segunda revisão independente. A revisão foi concluída com resultado [`ACCEPTED`](resultado-revisao-pilot-03-correcao-01.md).
 
 ## Identificação do objeto a revisar
 
@@ -18,8 +18,9 @@ Este documento congela a primeira versão corrigida dos registros de `PILOT-03` 
 | Versão anterior | Commit [`ad4579bbedf9d73f4e1f0da847ae6eaf0f7e93d0`](https://github.com/dnstld/chargebr/commit/ad4579bbedf9d73f4e1f0da847ae6eaf0f7e93d0) |
 | Resultado anterior | [`CORRECTION_REQUIRED`](resultado-revisao-pilot-03.md) |
 | Lacuna a verificar | `P03-REG-01` |
-| Pessoa revisora | A preencher |
-| Data da revisão | A preencher |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 2 de setembro de 2026 |
+| Resultado | [`ACCEPTED`](resultado-revisao-pilot-03-correcao-01.md) |
 
 O commit da versão corrigida é a referência imutável desta revisão. O merge na `main` ocorreu depois, sem modificar o conteúdo do seed.
 
@@ -119,9 +120,9 @@ A transação foi revertida. Uma consulta posterior confirmou que nenhum registr
 5. Registrar qualquer regressão ou nova lacuna.
 6. Produzir uma nova síntese independente e selecionar exatamente um resultado final permitido.
 
-## Registro a ser produzido pela pessoa revisora
+## Registro produzido pela pessoa revisora
 
-O resultado da segunda revisão deve ficar em documento separado e conter:
+O [resultado da segunda revisão](resultado-revisao-pilot-03-correcao-01.md) ficou em documento separado e contém:
 
 - identificação da versão corrigida e referência ao resultado anterior;
 - `PASS`, `FAIL` ou `N/A` para todos os itens do checklist;
@@ -134,4 +135,4 @@ Os resultados permitidos continuam sendo `ACCEPTED`, `CORRECTION_REQUIRED`, `FOU
 
 ## Regra para avançar
 
-`PILOT-01` só pode começar se esta versão corrigida de `PILOT-03` receber `ACCEPTED`. Qualquer outro resultado mantém a sequência interrompida até a decisão ou correção correspondente e uma nova revisão.
+A versão corrigida de `PILOT-03` recebeu `ACCEPTED`. O caso está concluído, e `PILOT-01` pode começar depois do merge do resultado da revisão na `main`.
