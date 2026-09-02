@@ -2,11 +2,13 @@
 
 ## Estado
 
-`AGUARDANDO_REVISAO_INDEPENDENTE`
+`CONCLUIDA — CORRECTION_REQUIRED`
 
-Este documento congela a versão a ser avaliada, descreve como reproduzir os registros e indica onde encontrar as evidências necessárias. Ele não atribui resultados aos itens do checklist nem antecipa a conclusão da pessoa revisora.
+Este documento congela a versão avaliada, descreve como reproduzir os registros e indica onde encontrar as evidências necessárias. A revisão foi concluída por Denis Toledo em 2 de setembro de 2026; o [resultado completo](resultado-revisao-pilot-03.md) foi `CORRECTION_REQUIRED`.
 
-## Identificação do objeto a revisar
+A identidade, os resultados dos itens e a conclusão refletem as decisões expressamente fornecidas pela pessoa revisora. A pessoa que preparou os registros somente transcreveu essas decisões e a verificação técnica já documentada, sem decidir o resultado.
+
+## Identificação do objeto revisado
 
 | Campo | Valor |
 | --- | --- |
@@ -16,8 +18,8 @@ Este documento congela a versão a ser avaliada, descreve como reproduzir os reg
 | SHA-256 do arquivo | `fb3c1a08aeec702e4d3d192bdb613b29e6dcefe46c6cbb14458eec0eb437321b` |
 | Fonte de março | [Publicação da ABVE de 4 de março de 2026](https://abve.org.br/recarga-publica-rapida-cresce-167-em-12-meses-e-ja-atinge-31-dos-21-mil-eletropostos-da-rede/) |
 | Fonte de junho | [Publicação da ABVE de 22 de junho de 2026](https://abve.org.br/recarga-rapida-dc-cresce-33-em-tres-meses-e-puxa-a-expansao-da-rede/) |
-| Pessoa revisora | A preencher |
-| Data da revisão | A preencher |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 2 de setembro de 2026 |
 | Revisão anterior | `N/A` |
 
 O commit acima é a versão imutável dos registros. O merge na `main` ocorreu depois, sem modificar o conteúdo do arquivo.
@@ -116,15 +118,15 @@ O modelo atual contém dois requisitos relevantes:
 - `metric_definitions.canonical_unit` é obrigatório e representa a unidade técnica usada para armazenar e comparar valores;
 - todo `metric_values.numeric_value` deve apontar para uma definição de métrica e, portanto, para uma unidade canônica.
 
-As observações conseguem preservar os dois valores brutos e sua ambiguidade, mas a camada de métricas não consegue representar esses valores sem escolher uma unidade canônica. A pessoa revisora deve decidir:
+A versão avaliada preserva os dois valores brutos e trata a unidade como ambígua, mas a camada de métricas não representa esses valores sem uma unidade canônica. A questão submetida à pessoa revisora foi:
 
 > O caso é aceitável sem `metric_values`, porque as observações preservam fielmente valores ainda não normalizados, ou a impossibilidade de representar uma medição quantitativa não resolvida na camada de métricas revela uma lacuna bloqueante da fundação?
 
-O pacote não recomenda uma das respostas.
+O resultado independente concluiu que as publicações oferecem base defensável para uma unidade canônica. Como a estrutura atual já comporta essa representação, a ausência de `metric_values` foi classificada como lacuna de registro, e não como lacuna da fundação.
 
-## Registro a ser produzido pela pessoa revisora
+## Registro produzido pela pessoa revisora
 
-O resultado deve ser registrado em um documento separado e conter:
+O [resultado independente de `PILOT-03`](resultado-revisao-pilot-03.md) foi registrado em um documento separado e contém:
 
 1. a identificação completa da revisão e a versão congelada acima;
 2. um resultado individual para todos os itens de independência e todos os itens aplicáveis;
@@ -134,7 +136,9 @@ O resultado deve ser registrado em um documento separado e conter:
 6. a decisão expressa sobre a ausência de `metric_values`;
 7. exatamente um resultado final permitido pelo checklist.
 
-Os resultados possíveis são:
+O resultado selecionado foi `CORRECTION_REQUIRED`: a fundação parece suficiente, mas os registros precisam de correção e nova revisão.
+
+Os resultados permitidos eram:
 
 - `ACCEPTED`, se todos os itens aplicáveis passarem e não existir lacuna bloqueante;
 - `CORRECTION_REQUIRED`, se a fundação for suficiente, mas os registros precisarem de correção;
@@ -143,4 +147,4 @@ Os resultados possíveis são:
 
 ## Regra para avançar
 
-`PILOT-01` só pode começar depois que `PILOT-03` receber `ACCEPTED`. Se o resultado inicial for `FOUNDATION_REVIEW_REQUIRED`, a decisão sobre a fundação, qualquer mudança necessária, a correção dos registros e uma nova revisão devem ocorrer antes do avanço.
+`PILOT-03` recebeu `CORRECTION_REQUIRED`. Os registros devem ser corrigidos com a estrutura existente e submetidos a nova revisão. `PILOT-01` só poderá começar quando a versão corrigida receber `ACCEPTED`.
