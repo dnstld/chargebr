@@ -13,6 +13,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Piloto da fundação](piloto-da-fundacao.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
+- [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
 - [Pacote de revisão independente de PILOT-02](revisao-pilot-02.md)
 - [Resultado da revisão independente de PILOT-02](resultado-revisao-pilot-02.md)
 - [Pacote de revisão independente de PILOT-03](revisao-pilot-03.md)
