@@ -330,8 +330,8 @@ end
 $$;
 
 -- PILOT-03: divergência na base nacional de recarga publicada pela ABVE e Tupi.
--- Os valores permanecem como observações não normalizadas. Não há carga em
--- metric_definitions ou metric_values porque a unidade contada segue ambígua.
+-- A unidade é normalizada conforme a revisão independente, mas os valores
+-- conflitantes permanecem separados e provisórios.
 
 do $$
 declare
@@ -344,6 +344,7 @@ declare
   june_content_item_id bigint;
   march_observation_id bigint;
   june_observation_id bigint;
+  charging_points_metric_id bigint;
   march_evidence_id bigint;
   june_evidence_id bigint;
   march_event_id bigint;
@@ -433,6 +434,38 @@ begin
   )
   returning id into tupi_organization_id;
 
+  insert into public.metric_definitions (
+    metric_key,
+    name,
+    description,
+    metric_domain,
+    value_type,
+    canonical_unit,
+    aggregation_type,
+    temporal_granularity,
+    geographic_granularity,
+    status,
+    methodology_notes,
+    created_at,
+    updated_at
+  )
+  values (
+    'public-semi-public-charging-points',
+    'Pontos públicos e semipúblicos de recarga',
+    'Quantidade de pontos públicos e semipúblicos de recarga de veículos elétricos em uma geografia e período de referência.',
+    'charging_infrastructure',
+    'integer',
+    'charging_point',
+    'latest',
+    'month',
+    'national',
+    'candidate',
+    'Neste recorte, pontos de recarga, eletropostos e carregadores descrevem a mesma unidade. Valores conflitantes da mesma série permanecem separados por observação e provisórios até resolução.',
+    fixture_recorded_at,
+    fixture_recorded_at
+  )
+  returning id into charging_points_metric_id;
+
   insert into public.content_items (
     source_id,
     url,
@@ -516,14 +549,14 @@ begin
     march_content_item_id,
     'quantity',
     'O Brasil tem 21.061 pontos públicos e semipúblicos de recarga de veículos elétricos.',
-    null,
-    'unresolved',
+    'Brasil: 21.061 pontos públicos e semipúblicos de recarga de veículos elétricos em fevereiro de 2026.',
+    'normalized',
     null,
     'Brasil',
     'manual',
     'pontos públicos e semipúblicos de recarga de veículos elétricos',
     'pilot-03-abve-21061-fevereiro-2026',
-    'Período de referência: fevereiro de 2026. A publicação também usa eletropostos e carregadores ao descrever a base. A unidade permanece não normalizada, e nenhuma data diária foi inferida para o período mensal.',
+    'Período de referência: fevereiro de 2026. A publicação também usa eletropostos e carregadores ao descrever a mesma unidade. A normalização não escolhe entre os valores conflitantes, e nenhuma data diária foi inferida para o período mensal.',
     fixture_recorded_at,
     fixture_recorded_at
   )
@@ -548,18 +581,56 @@ begin
     june_content_item_id,
     'quantity',
     'último levantamento, de fevereiro de 2026 (21.060)',
-    null,
-    'unresolved',
+    'Brasil: 21.060 pontos públicos e semipúblicos de recarga de veículos elétricos em fevereiro de 2026.',
+    'normalized',
     null,
     'Brasil',
     'manual',
     'total da rede',
     'pilot-03-abve-21060-fevereiro-2026',
-    'A publicação posterior referencia 21.060 como o total anterior e alterna pontos, eletroposto e carregadores ao descrever a rede. A unidade permanece não normalizada, e nenhuma data diária foi inferida para o período mensal.',
+    'A publicação posterior referencia 21.060 como o total anterior e alterna pontos, eletroposto e carregadores ao descrever a mesma unidade. A normalização não escolhe entre os valores conflitantes, e nenhuma data diária foi inferida para o período mensal.',
     fixture_recorded_at,
     fixture_recorded_at
   )
   returning id into june_observation_id;
+
+  insert into public.metric_values (
+    metric_definition_id,
+    observation_id,
+    numeric_value,
+    period_start,
+    period_end,
+    geography,
+    value_status,
+    notes,
+    created_at,
+    updated_at
+  )
+  values
+    (
+      charging_points_metric_id,
+      march_observation_id,
+      21061,
+      date '2026-02-01',
+      date '2026-02-28',
+      'Brasil',
+      'provisional',
+      'Valor publicado em março. Permanece separado de 21.060 porque a diferença de uma unidade não foi explicada.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      charging_points_metric_id,
+      june_observation_id,
+      21060,
+      date '2026-02-01',
+      date '2026-02-28',
+      'Brasil',
+      'provisional',
+      'Valor retrospectivo publicado em junho. Permanece separado de 21.061 porque a diferença de uma unidade não foi explicada.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    );
 
   insert into public.evidence (
     observation_id,
@@ -663,7 +734,7 @@ begin
     'reported',
     'under_review',
     'pilot-03-abve-21060-referencia-2026-06-22',
-    'O valor conflitante permanece separado de 21.061. A publicação não explica a diferença de uma unidade e não sustenta uma normalização silenciosa.',
+    'O valor conflitante permanece separado de 21.061. A publicação não explica a diferença de uma unidade; a unidade comum foi normalizada de forma explícita após revisão independente.',
     fixture_recorded_at,
     fixture_recorded_at
   )
