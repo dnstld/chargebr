@@ -130,4 +130,8 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Entregar o [pacote de revisão independente de `PILOT-01`](revisao-pilot-01.md) à pessoa revisora. A avaliação será conduzida em etapas curtas e deve decidir se a cadeia pode ser reconstruída de forma estrutural ou se a fundação precisa representar explicitamente os vínculos entre acontecimentos e instrumentos, as relações entre instrumentos ou uma fase própria para encerramento de vigência.
+A [revisão independente de `PILOT-01`](resultado-revisao-pilot-01.md) terminou com `FOUNDATION_REVIEW_REQUIRED` e três lacunas bloqueantes.
+
+A próxima etapa deve tratar somente de `P01-MOD-01`: preparar uma decisão revisável sobre o vínculo estrutural entre acontecimentos e instrumentos regulatórios. `P01-MOD-02`, sobre relações entre instrumentos, e `P01-RES-01`, sobre uma fase específica para encerramento de vigência, permanecem na fila para etapas próprias.
+
+O seed, o schema, as migrações e o banco não devem ser modificados antes da aprovação da decisão correspondente. Depois das decisões e mudanças de fundação necessárias, `PILOT-01` precisará de registros corrigidos e nova revisão independente.

@@ -2,9 +2,9 @@
 
 ## Estado
 
-`AGUARDANDO_REVISAO_INDEPENDENTE`
+`CONCLUIDA — FOUNDATION_REVIEW_REQUIRED`
 
-Este documento congela a primeira versão dos registros de `PILOT-01`, descreve como reproduzi-los e organiza a revisão da cadeia normativa do Programa Mover. O pacote não atribui resultados nem presume que a fundação seja suficiente.
+Este documento congela a primeira versão dos registros de `PILOT-01`, descreve como reproduzi-los e organiza a revisão da cadeia normativa do Programa Mover. A revisão foi concluída por Denis Toledo em 2 de setembro de 2026 com resultado [`FOUNDATION_REVIEW_REQUIRED`](resultado-revisao-pilot-01.md).
 
 ## Identificação do objeto a revisar
 
@@ -14,8 +14,8 @@ Este documento congela a primeira versão dos registros de `PILOT-01`, descreve 
 | Versão dos registros | Commit [`2c5c844cdf531e0e2badea984c91b0b79995f99f`](https://github.com/dnstld/chargebr/commit/2c5c844cdf531e0e2badea984c91b0b79995f99f) |
 | Arquivo | `supabase/seed.sql` |
 | SHA-256 do arquivo | `2588b0a77617ed5e6dca4dad7a54911d396ec168d70e6d98cd16497ea348084f` |
-| Pessoa revisora | A preencher |
-| Data da revisão | A preencher |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 2 de setembro de 2026 |
 | Revisão anterior | `N/A` |
 
 O commit acima é a referência imutável dos registros. O merge na `main` ocorreu depois, sem modificar o conteúdo do seed.
@@ -114,7 +114,7 @@ O conjunto contém somente duas relações explícitas entre instrumentos:
 
 O conjunto não afirma que a lei converteu, substituiu ou sucedeu juridicamente a medida provisória. O encerramento da MP é sustentado pelo ato declaratório, e não inferido da publicação posterior da lei.
 
-## Questões estruturais submetidas à revisão
+## Questões estruturais avaliadas
 
 O schema atual permite registrar instrumentos, datas, observações, evidências e acontecimentos, mas apresenta três escolhas que precisam ser avaliadas de forma independente:
 
@@ -122,7 +122,7 @@ O schema atual permite registrar instrumentos, datas, observações, evidências
 - não existe relação estrutural entre dois registros de `regulatory_instruments`; convalidação e regulamentação aparecem como observações e acontecimentos, mas não como arestas entre instrumentos;
 - `events.event_phase` não possui uma fase específica para encerramento de vigência; o evento de 31 de maio usa `occurrence`, enquanto `regulatory_instruments.expiry_date` preserva a data estruturada.
 
-A pessoa revisora deve decidir se essas escolhas permitem reconstruir o caso com segurança ou se alguma delas contorna uma relação estrutural indispensável. Uma lacuna bloqueante de restrição ou modelo conduz a `FOUNDATION_REVIEW_REQUIRED`; uma correção possível com a estrutura atual conduz a `CORRECTION_REQUIRED`.
+A pessoa revisora concluiu que as três escolhas contornam relações ou estados estruturais indispensáveis. Também confirmou que a estrutura atual não é segura para consultas automáticas da cadeia normativa sem: vínculo explícito entre acontecimentos e instrumentos, relações tipadas entre instrumentos e fase própria para encerramento de vigência. As decisões e lacunas estão registradas no [resultado da revisão](resultado-revisao-pilot-01.md).
 
 ## Mapa de evidências para o checklist
 
@@ -193,9 +193,9 @@ Decidir expressamente sobre a ausência de vínculos entre acontecimentos e inst
 
 Registrar regressões, lacunas e uma síntese independente; então selecionar exatamente um resultado permitido pelo checklist.
 
-## Registro a ser produzido pela pessoa revisora
+## Registro produzido pela pessoa revisora
 
-O resultado da revisão deve ficar em documento separado e conter:
+O [resultado da revisão independente](resultado-revisao-pilot-01.md) ficou em documento separado e contém:
 
 - identificação da versão congelada;
 - `PASS`, `FAIL` ou `N/A` para todos os itens do checklist;
@@ -204,8 +204,8 @@ O resultado da revisão deve ficar em documento separado e conter:
 - síntese reconstruída sem ajuda da pessoa que preparou os registros;
 - exatamente um resultado final.
 
-Os resultados permitidos são `ACCEPTED`, `CORRECTION_REQUIRED`, `FOUNDATION_REVIEW_REQUIRED` e `INCONCLUSIVE`.
+O resultado selecionado foi `FOUNDATION_REVIEW_REQUIRED`.
 
 ## Regra para concluir a fundação
 
-`PILOT-01` e o piloto da fundação só podem ser considerados concluídos se esta versão receber `ACCEPTED`. Qualquer outro resultado mantém a etapa aberta até a decisão ou correção correspondente e uma nova revisão, quando necessária.
+`PILOT-01` e o piloto da fundação não estão concluídos. O próximo passo é a primeira decisão de fundação identificada pela revisão; nenhuma alteração de seed, schema, migration ou banco está autorizada por este resultado.
