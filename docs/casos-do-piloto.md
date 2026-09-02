@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Corrigir os registros de `PILOT-03` conforme o [resultado da revisão independente](resultado-revisao-pilot-03.md). A revisão concluiu que existe base defensável para uma unidade canônica e que a estrutura atual comporta dois valores de métrica distintos. A versão corrigida deve preservar a divergência e passar por nova revisão antes do início de `PILOT-01`.
+Entregar o pacote da [segunda revisão independente de `PILOT-03`](revisao-pilot-03-correcao-01.md) à pessoa revisora. A nova avaliação deve verificar a correção de `P03-REG-01` e possíveis regressões antes do início de `PILOT-01`.
