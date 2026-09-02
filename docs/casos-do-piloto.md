@@ -130,6 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Preparar os registros reproduzíveis de `PILOT-01`, a cadeia normativa do Programa Mover, em uma nova etapa. A [segunda revisão independente de `PILOT-03`](resultado-revisao-pilot-03-correcao-01.md) recebeu `ACCEPTED`, resolveu `P03-REG-01` e não encontrou regressões.
-
-A proposta de avaliar futuramente uma tolerância quantitativa para valores da mesma métrica e do mesmo período foi registrada como `P03-MET-01`. Ela não altera os valores publicados, não reabre `PILOT-03` e não bloqueia o início de `PILOT-01`.
+Revisar os [registros reproduzíveis de `PILOT-01`](../supabase/seed.sql) usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). A revisão deve confirmar que publicação, entrada em vigor, produção de efeitos e encerramento permanecem acontecimentos distintos e decidir se as relações jurídicas explícitas entre instrumentos exigem estrutura adicional na fundação.
