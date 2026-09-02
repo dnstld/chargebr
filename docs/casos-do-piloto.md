@@ -130,4 +130,4 @@ Referências históricas não canônicas:
 
 ## Próxima etapa
 
-Revisar os [registros reproduzíveis de `PILOT-01`](../supabase/seed.sql) usando o [checklist de revisão do piloto](checklist-de-revisao-do-piloto.md). A revisão deve confirmar que publicação, entrada em vigor, produção de efeitos e encerramento permanecem acontecimentos distintos e decidir se as relações jurídicas explícitas entre instrumentos exigem estrutura adicional na fundação.
+Entregar o [pacote de revisão independente de `PILOT-01`](revisao-pilot-01.md) à pessoa revisora. A avaliação será conduzida em etapas curtas e deve decidir se a cadeia pode ser reconstruída de forma estrutural ou se a fundação precisa representar explicitamente os vínculos entre acontecimentos e instrumentos, as relações entre instrumentos ou uma fase própria para encerramento de vigência.
