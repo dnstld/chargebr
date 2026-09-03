@@ -136,6 +136,6 @@ A decisão e a migration de `P01-MOD-01`, sobre o vínculo entre acontecimentos 
 
 A decisão e a migration de `P01-MOD-02`, sobre relações entre instrumentos regulatórios, também foram aprovadas e aplicadas sem carregar dados do piloto.
 
-A próxima etapa trata somente de `P01-RES-01`: revisar a [decisão sobre uma fase específica para encerramento de vigência](decisao-fase-encerramento-vigencia.md). Depois da aprovação, a etapa seguinte será uma migration exclusiva para implementar essa decisão.
+A decisão e a migration de `P01-RES-01`, sobre uma fase específica para encerramento de vigência, foram aprovadas e aplicadas sem carregar dados do piloto.
 
-O seed, o schema, as migrações e o banco não devem ser modificados antes da aprovação da decisão correspondente. Depois das decisões e mudanças de fundação necessárias, `PILOT-01` precisará de registros corrigidos e nova revisão independente.
+As três lacunas de fundação foram implementadas, e a versão corrigida do seed foi incorporada à `main`. A próxima etapa é a [segunda revisão independente de `PILOT-01`](revisao-pilot-01-correcao-01.md). Nenhum dado do piloto deve ser persistido no Supabase durante a revisão.
