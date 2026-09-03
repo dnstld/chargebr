@@ -343,6 +343,10 @@ declare
   expiry_content_id bigint;
   law_content_id bigint;
   decree_content_id bigint;
+  mp_instrument_id bigint;
+  expiry_act_instrument_id bigint;
+  law_instrument_id bigint;
+  decree_instrument_id bigint;
   mp_institution_observation_id bigint;
   mp_effects_observation_id bigint;
   mp_expiry_observation_id bigint;
@@ -661,6 +665,26 @@ begin
       fixture_recorded_at,
       fixture_recorded_at
     );
+
+  select id
+  into strict mp_instrument_id
+  from public.regulatory_instruments
+  where instrument_key = 'mp-1205-2023';
+
+  select id
+  into strict expiry_act_instrument_id
+  from public.regulatory_instruments
+  where instrument_key = 'ato-declaratorio-35-2024-mp-1205';
+
+  select id
+  into strict law_instrument_id
+  from public.regulatory_instruments
+  where instrument_key = 'lei-14902-2024';
+
+  select id
+  into strict decree_instrument_id
+  from public.regulatory_instruments
+  where instrument_key = 'decreto-12435-2025';
 
   insert into public.observations (
     content_item_id,
@@ -1234,7 +1258,7 @@ begin
     'Encerra-se a vigência da MP nº 1.205',
     'O prazo de vigência da MP nº 1.205/2023 encerrou-se em 31 de maio de 2024, conforme declaração posterior do Congresso Nacional.',
     'regulation',
-    'occurrence',
+    'expiry',
     date '2024-05-31',
     'day',
     'Brasil',
@@ -1242,7 +1266,7 @@ begin
     'confirmed',
     'under_review',
     'pilot-01-mp-1205-vigencia-encerrada-2024-05-31',
-    'O vocabulário atual de fases não possui uma fase específica para encerramento; occurrence preserva a data sem tratá-la como publicação.',
+    'A fase expiry identifica o encerramento em 31 de maio sem confundi-lo com a publicação posterior do ato declaratório.',
     fixture_recorded_at,
     fixture_recorded_at
   )
@@ -1588,6 +1612,141 @@ begin
       decree_effective_evidence_id,
       'supports',
       'Sustenta a entrada em vigor do decreto na data da publicação.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    );
+
+  insert into public.event_regulatory_instruments (
+    event_id,
+    regulatory_instrument_id,
+    instrument_role,
+    notes,
+    created_at,
+    updated_at
+  )
+  values
+    (
+      mp_publication_event_id,
+      mp_instrument_id,
+      'subject',
+      'A publicação tem a MP nº 1.205/2023 como instrumento central.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      mp_immediate_effect_event_id,
+      mp_instrument_id,
+      'subject',
+      'A entrada em vigor e os efeitos imediatos pertencem à MP nº 1.205/2023.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      mp_february_effect_event_id,
+      mp_instrument_id,
+      'subject',
+      'A produção de efeitos em fevereiro pertence à MP nº 1.205/2023.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      mp_april_effect_event_id,
+      mp_instrument_id,
+      'subject',
+      'A produção de efeitos em abril pertence à MP nº 1.205/2023.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      mp_expiry_event_id,
+      mp_instrument_id,
+      'subject',
+      'O encerramento de vigência tem a MP nº 1.205/2023 como instrumento central.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      expiry_act_publication_event_id,
+      expiry_act_instrument_id,
+      'subject',
+      'A publicação tem o Ato Declaratório nº 35/2024 como instrumento central.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      law_publication_event_id,
+      law_instrument_id,
+      'subject',
+      'A publicação tem a Lei nº 14.902/2024 como instrumento central.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      law_april_effect_event_id,
+      law_instrument_id,
+      'subject',
+      'A produção de efeitos retroativa pertence à Lei nº 14.902/2024.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      law_immediate_effect_event_id,
+      law_instrument_id,
+      'subject',
+      'A entrada em vigor e os demais efeitos pertencem à Lei nº 14.902/2024.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      law_convalidation_event_id,
+      law_instrument_id,
+      'subject',
+      'A Lei nº 14.902/2024 é o instrumento que expressa a convalidação.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      decree_publication_event_id,
+      decree_instrument_id,
+      'subject',
+      'A publicação tem o Decreto nº 12.435/2025 como instrumento central.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      decree_effective_event_id,
+      decree_instrument_id,
+      'subject',
+      'A entrada em vigor pertence ao Decreto nº 12.435/2025.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    );
+
+  insert into public.regulatory_instrument_relations (
+    source_instrument_id,
+    target_instrument_id,
+    relationship_type,
+    establishing_event_id,
+    notes,
+    created_at,
+    updated_at
+  )
+  values
+    (
+      law_instrument_id,
+      mp_instrument_id,
+      'convalidates_acts_based_on',
+      law_convalidation_event_id,
+      'A relação limita-se aos atos praticados com base na MP nº 1.205/2023, conforme o art. 33 da lei.',
+      fixture_recorded_at,
+      fixture_recorded_at
+    ),
+    (
+      decree_instrument_id,
+      law_instrument_id,
+      'regulates_program_established_by',
+      decree_publication_event_id,
+      'A relação limita-se à regulamentação do Programa Mover instituído pela Lei nº 14.902/2024.',
       fixture_recorded_at,
       fixture_recorded_at
     );
