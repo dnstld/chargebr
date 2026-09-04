@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento avalia o primeiro ciclo operacional do fluxo de inteligência depois da persistência e da revisão da carga canônica `0001`. Ele não cria outra carga, não altera o schema e não autoriza automação.
 
@@ -119,3 +119,13 @@ A seleção do acontecimento e os critérios detalhados da carga `0002` deverão
 6. Está correto manter escala, automação e produto público fora da próxima etapa?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A conclusão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 4 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e a próxima capacidade proposta, sem solicitar correções. O PR está liberado para merge. A carga `0002` não deve começar antes que esta conclusão esteja incorporada à `main` e sua decisão específica seja preparada.
