@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento propõe o acontecimento e as duas linhagens que poderão compor a carga `0002`. Ele não cria a carga, não altera o schema e não modifica dados no Supabase.
 
@@ -172,3 +172,13 @@ Preparar, em uma nova branch:
 - a validação transacional descartável e a proteção da carga `0001` exigidas pela decisão do ciclo.
 
 Nenhuma carga será executada ou persistida antes da revisão e do merge desse próximo pacote.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 4 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a seleção e não solicitou correções. O PR está liberado para merge. A preparação da carga `0002` só poderá começar depois que esta seleção estiver incorporada à `main`.
