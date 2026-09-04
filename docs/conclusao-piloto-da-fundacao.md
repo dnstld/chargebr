@@ -2,9 +2,9 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISAO`
+`APROVADA — FUNDACAO VALIDADA NO ESCOPO DO PILOTO`
 
-O merge deste documento na `main` registra a aprovação da conclusão abaixo. Esta etapa consolida resultados já revisados; não altera registros, schema, migrations ou dados persistentes.
+O merge do documento na `main` registrou a aprovação desta conclusão. A etapa consolidou resultados já revisados; não alterou registros, schema, migrations ou dados persistentes.
 
 ## Conclusão proposta
 
@@ -84,6 +84,6 @@ Novos casos ainda podem revelar lacunas. Quando isso ocorrer, deve continuar val
 
 ## Próximo passo
 
-Depois do merge desta conclusão, o piloto da fundação estará formalmente encerrado. A etapa seguinte deve definir o primeiro ciclo pós-piloto antes de ampliar dados ou iniciar automações.
+O piloto da fundação está formalmente encerrado. A etapa seguinte é revisar a [decisão sobre o primeiro ciclo do fluxo de inteligência](decisao-primeiro-ciclo-fluxo-inteligencia.md) antes de ampliar dados ou iniciar automações.
 
 Essa nova decisão deve escolher um objetivo operacional limitado e seus critérios de aceite, sem importar automaticamente a estrutura ou os registros do Notion.
