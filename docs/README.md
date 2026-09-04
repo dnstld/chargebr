@@ -16,6 +16,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Seleção da carga canônica 0001](selecao-carga-canonica-0001.md)
 - [Revisão da carga canônica 0001](revisao-carga-canonica-0001.md)
 - [Resultado da carga canônica 0001](resultado-carga-canonica-0001.md)
+- [Conclusão do primeiro ciclo do fluxo de inteligência](conclusao-primeiro-ciclo-fluxo-inteligencia.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
