@@ -140,4 +140,4 @@ A decisão e a migration de `P01-RES-01`, sobre uma fase específica para encerr
 
 As três lacunas de fundação foram implementadas, e a versão corrigida do seed foi incorporada à `main`. A [segunda revisão independente de `PILOT-01`](resultado-revisao-pilot-01-correcao-01.md) recebeu `ACCEPTED`, resolveu `P01-MOD-01`, `P01-MOD-02` e `P01-RES-01` e não encontrou regressões nem novas lacunas.
 
-Os três casos do piloto estão concluídos com `ACCEPTED`. A próxima etapa é consolidar, em uma decisão própria, a conclusão geral do piloto da fundação. Nenhum dado dos casos foi persistido no Supabase.
+Os três casos do piloto estão concluídos com `ACCEPTED`. A próxima etapa é revisar a [conclusão geral do piloto da fundação](conclusao-piloto-da-fundacao.md). Nenhum dado dos casos foi persistido no Supabase.

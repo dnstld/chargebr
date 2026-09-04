@@ -61,6 +61,8 @@ O piloto valida a fundação quando os três casos atendem aos critérios sem pe
 
 Quando um caso revelar uma lacuna, ela deve gerar uma decisão documentada e uma alteração pequena e revisável. O dado não deve ser forçado a caber no modelo existente, e o schema não deve ser ampliado por antecipação sem um caso que justifique a mudança.
 
+Os três casos receberam `ACCEPTED`, e todas as lacunas bloqueantes encontradas foram tratadas e reavaliadas. A [conclusão do piloto da fundação](conclusao-piloto-da-fundacao.md) propõe considerar a fundação validada dentro do escopo desta amostra, preservando expressamente os limites do que não foi testado.
+
 ## Entregáveis
 
 - definição e justificativa dos três casos;
