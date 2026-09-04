@@ -65,4 +65,4 @@ Cada estágio depende da validação do anterior. Recursos e formatos específic
 
 ## Prioridade atual
 
-A prioridade é validar a fundação de dados e o fluxo de inteligência antes de construir uma experiência pública ampla ou antecipar funcionalidades comerciais.
+A fundação de dados foi validada no escopo dos três casos do piloto. A prioridade agora é iniciar o fluxo de inteligência com um primeiro ciclo manual, limitado e revisável antes de ampliar a coleta, automatizar decisões ou construir uma experiência pública ampla.
