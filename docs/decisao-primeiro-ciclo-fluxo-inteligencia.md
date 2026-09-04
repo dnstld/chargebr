@@ -2,9 +2,9 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISAO`
+`APROVADA`
 
-O merge deste documento na `main` registra a aprovação da decisão. Nenhuma coleta ou carga de dados é autorizada antes do merge.
+O merge do documento na `main` registrou a aprovação desta decisão. Nenhuma carga de dados foi criada ou executada nesta etapa.
 
 ## Contexto
 
@@ -118,3 +118,5 @@ Uma extensão de schema continua exigindo decisão, migration, aplicação e ver
 Esta decisão não escolhe antecipadamente a publicação. Depois do merge, uma etapa de seleção apresentará poucos candidatos elegíveis com suas fontes primárias. A escolha será registrada antes da preparação da carga.
 
 Também não transforma este procedimento manual no fluxo definitivo do produto. Ao final, o ciclo deverá indicar o que pode ser repetido, o que precisa ser simplificado e qual capacidade operacional deve ser testada em seguida.
+
+A publicação escolhida está registrada na [seleção da carga canônica `0001`](selecao-carga-canonica-0001.md). A seleção precisa ser incorporada à `main` antes da preparação da carga.
