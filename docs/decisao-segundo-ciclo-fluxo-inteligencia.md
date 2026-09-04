@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento define o objetivo e os controles do segundo ciclo. Ele não seleciona fontes ou acontecimentos, não cria a carga `0002`, não altera o schema e não modifica dados no Supabase.
 
@@ -212,3 +212,13 @@ Depois do merge desta decisão, pesquisar poucos candidatos e preparar um docume
 8. Está correto manter volume, automação, produto público e alterações de schema fora desta etapa?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A decisão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 4 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A pesquisa de candidatos e a seleção da carga `0002` só poderão começar depois que esta decisão estiver incorporada à `main`.
