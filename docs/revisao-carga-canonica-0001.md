@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PRONTO PARA REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar o primeiro acontecimento canônico antes que qualquer registro real seja persistido no Supabase. O arquivo da carga é [`data/canonical/0001_jeep-avenger-lancamento-brasil.sql`](../data/canonical/0001_jeep-avenger-lancamento-brasil.sql).
 
@@ -102,3 +102,13 @@ Consulte a publicação oficial e responda:
 7. Os registros, vínculos, limitações e exclusões estão completos?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. O PR não deve ser incorporado antes desse aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 4 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga permanece sem persistência no Supabase e só poderá ser executada depois que esta versão aceita estiver incorporada à `main`.
