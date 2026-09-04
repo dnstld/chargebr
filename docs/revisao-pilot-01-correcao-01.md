@@ -2,9 +2,9 @@
 
 ## Estado
 
-`PRONTA PARA REVISAO`
+`CONCLUIDA — ACCEPTED`
 
-Este documento congela a primeira versão corrigida dos registros de `PILOT-01` para uma segunda revisão independente. O resultado será registrado em documento separado somente depois das respostas da pessoa revisora.
+Este documento congelou a primeira versão corrigida dos registros de `PILOT-01` para sua segunda revisão independente. A revisão foi concluída com resultado [`ACCEPTED`](resultado-revisao-pilot-01-correcao-01.md).
 
 ## Identificação do objeto a revisar
 
@@ -18,9 +18,9 @@ Este documento congela a primeira versão corrigida dos registros de `PILOT-01` 
 | Versão anterior | Commit [`2c5c844cdf531e0e2badea984c91b0b79995f99f`](https://github.com/dnstld/chargebr/commit/2c5c844cdf531e0e2badea984c91b0b79995f99f) |
 | Resultado anterior | [`FOUNDATION_REVIEW_REQUIRED`](resultado-revisao-pilot-01.md) |
 | Lacunas a verificar | `P01-MOD-01`, `P01-MOD-02` e `P01-RES-01` |
-| Pessoa revisora | A confirmar |
-| Data da revisão | A confirmar |
-| Resultado | Pendente |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 4 de setembro de 2026 |
+| Resultado | [`ACCEPTED`](resultado-revisao-pilot-01-correcao-01.md) |
 
 O commit da versão corrigida é a referência imutável desta revisão. O merge na `main` ocorreu depois, sem modificar o conteúdo do seed.
 
@@ -215,9 +215,9 @@ Esta etapa pergunta somente se três coisas ficaram distinguíveis: o encerramen
 
 A pessoa revisora resume o caso com suas próprias palavras, registra qualquer lacuna ou regressão e escolhe exatamente um resultado final. Esta etapa testa se a estrutura pode ser compreendida sem completar relações pela interpretação de texto livre.
 
-## Registro a ser produzido
+## Registro produzido pela pessoa revisora
 
-Depois da revisão, um documento separado deverá conter:
+O [resultado da segunda revisão](resultado-revisao-pilot-01-correcao-01.md) ficou em documento separado e contém:
 
 - identificação da versão corrigida e referência ao resultado anterior;
 - `PASS`, `FAIL` ou `N/A` para todos os itens do checklist;
@@ -230,4 +230,4 @@ Os resultados permitidos continuam sendo `ACCEPTED`, `CORRECTION_REQUIRED`, `FOU
 
 ## Regra para avançar
 
-`PILOT-01` e o piloto da fundação só podem ser concluídos com resultado `ACCEPTED`. Qualquer outro resultado exige registrar e tratar a correção, lacuna de fundação ou limitação de fonte correspondente.
+A versão corrigida de `PILOT-01` recebeu `ACCEPTED`. O caso está concluído, e a conclusão geral do piloto da fundação pode ser consolidada depois do merge deste resultado na `main`.

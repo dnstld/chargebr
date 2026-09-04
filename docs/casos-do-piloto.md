@@ -138,4 +138,6 @@ A decisão e a migration de `P01-MOD-02`, sobre relações entre instrumentos re
 
 A decisão e a migration de `P01-RES-01`, sobre uma fase específica para encerramento de vigência, foram aprovadas e aplicadas sem carregar dados do piloto.
 
-As três lacunas de fundação foram implementadas, e a versão corrigida do seed foi incorporada à `main`. A próxima etapa é a [segunda revisão independente de `PILOT-01`](revisao-pilot-01-correcao-01.md). Nenhum dado do piloto deve ser persistido no Supabase durante a revisão.
+As três lacunas de fundação foram implementadas, e a versão corrigida do seed foi incorporada à `main`. A [segunda revisão independente de `PILOT-01`](resultado-revisao-pilot-01-correcao-01.md) recebeu `ACCEPTED`, resolveu `P01-MOD-01`, `P01-MOD-02` e `P01-RES-01` e não encontrou regressões nem novas lacunas.
+
+Os três casos do piloto estão concluídos com `ACCEPTED`. A próxima etapa é consolidar, em uma decisão própria, a conclusão geral do piloto da fundação. Nenhum dado dos casos foi persistido no Supabase.
