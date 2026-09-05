@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento avalia o terceiro ciclo operacional do fluxo de inteligência depois da persistência, da revisão e do merge da carga canônica `0003`. Ele não cria outra carga, não altera o schema, não modifica dados no Supabase e não autoriza automação.
 
@@ -216,6 +216,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e a próxima capacidade proposta, sem solicitar correções. O PR está liberado para merge. A carga `0004` não deve começar antes que esta conclusão esteja incorporada à `main` e a decisão específica do quarto ciclo seja preparada.
