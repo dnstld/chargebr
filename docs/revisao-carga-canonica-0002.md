@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar o segundo acontecimento canônico antes que qualquer registro novo seja persistido no Supabase.
 
@@ -196,3 +196,13 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 ## Próxima etapa depois do aceite e do merge
 
 Sincronizar a `main`, confirmar que o arquivo incorporado é idêntico ao aceito e executar exatamente a carga `0002` uma vez entre `BEGIN` e `COMMIT`. Em seguida, executar a mesma consulta de verificação e documentar o resultado em `docs/resultado-carga-canonica-0002.md`, em PR separado.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
