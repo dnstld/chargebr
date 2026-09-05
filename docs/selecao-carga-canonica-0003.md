@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento compara candidatos e propõe o recorte do terceiro ciclo do fluxo de inteligência. Ele não cria a carga `0003`, não altera o schema e não modifica dados no Supabase.
 
@@ -290,3 +290,13 @@ Nenhum registro será persistido antes da preparação, da validação descartá
 12. O recorte atende à decisão do terceiro ciclo e pode avançar para o pacote reproduzível da carga `0003`?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A seleção não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a seleção depois do esclarecimento de que `25.782` representa somente os emplacamentos de BEV registrados durante julho de 2026, e não o acumulado de janeiro a julho. O PR está liberado para merge. O pacote reproduzível da carga `0003` só poderá começar depois que esta seleção estiver incorporada à `main`.
