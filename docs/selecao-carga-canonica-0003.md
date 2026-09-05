@@ -75,7 +75,7 @@ Publicações secundárias localizadas repetem `25.782` e atribuem o dado à ABV
 
 - somente o valor `25.782`;
 - somente BEV ou veículos leves 100% elétricos;
-- somente emplacamentos ocorridos em julho de 2026;
+- somente os 25.782 emplacamentos de veículos leves BEV registrados durante o mês de julho de 2026;
 - somente o recorte nacional brasileiro;
 - somente a publicação do resultado pela ABVE Data.
 
