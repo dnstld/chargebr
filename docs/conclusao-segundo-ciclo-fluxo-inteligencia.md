@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento avalia o segundo ciclo operacional do fluxo de inteligência depois da persistência, da revisão e do merge da carga canônica `0002`. Ele não cria outra carga, não altera o schema, não modifica dados no Supabase e não autoriza automação.
 
@@ -145,3 +145,13 @@ A seleção do acontecimento e a definição detalhada da métrica deverão ser 
 8. Está correto manter atualização de registros existentes, escala, automação e produto público fora da próxima etapa?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A conclusão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e a próxima capacidade proposta, sem solicitar correções. O PR está liberado para merge. A carga `0003` não deve começar antes que esta conclusão esteja incorporada à `main` e a decisão específica do terceiro ciclo seja preparada.
