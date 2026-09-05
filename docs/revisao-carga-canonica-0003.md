@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar o primeiro valor quantitativo canônico do ChargeBR antes que qualquer registro novo seja persistido no Supabase.
 
@@ -227,6 +227,8 @@ Sincronizar a `main`, confirmar que os dois arquivos incorporados são idêntico
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
