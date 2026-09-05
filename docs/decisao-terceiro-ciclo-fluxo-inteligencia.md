@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento define o objetivo e os controles do terceiro ciclo. Ele não seleciona fonte, publicação, acontecimento ou número, não cria a carga `0003`, não altera o schema e não modifica dados no Supabase.
 
@@ -260,3 +260,13 @@ Depois do merge desta decisão, pesquisar poucos candidatos e preparar `docs/sel
 10. Os dez critérios de sucesso demonstram o resultado esperado do terceiro ciclo?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A decisão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A pesquisa de candidatos e a seleção da carga `0003` só poderão começar depois que esta decisão estiver incorporada à `main`.
