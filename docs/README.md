@@ -25,6 +25,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: terceiro ciclo do fluxo de inteligência](decisao-terceiro-ciclo-fluxo-inteligencia.md)
 - [Seleção da carga canônica 0003](selecao-carga-canonica-0003.md)
 - [Revisão da carga canônica 0003](revisao-carga-canonica-0003.md)
+- [Resultado da carga canônica 0003](resultado-carga-canonica-0003.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
