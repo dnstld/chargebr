@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EXECUTADA — AGUARDANDO REVISÃO`
+`EXECUTADA E ACEITA — AGUARDANDO MERGE`
 
 Este documento registra a persistência do primeiro acontecimento canônico `corroborated` no Supabase. A execução ocorreu somente depois do `ACCEPTED` da pessoa revisora e do merge do [pacote de revisão](revisao-carga-canonica-0002.md) na `main`.
 
@@ -133,3 +133,13 @@ O resultado deve ser revisado e incorporado à `main` antes da conclusão formal
 8. O conjunto de verificações permite considerar a persistência da carga canônica `0002` bem-sucedida?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Este PR não deve ser incorporado antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 5 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o resultado da execução e não solicitou correções. O PR está liberado para merge. Depois do merge, o segundo ciclo poderá ser concluído formalmente e a etapa seguinte poderá ser decidida.
