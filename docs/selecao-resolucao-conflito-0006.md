@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento seleciona um caso real para o [sexto ciclo do fluxo de inteligência](decisao-sexto-ciclo-fluxo-inteligencia.md). Ele não define a mudança de schema, não cria migration, não prepara a carga `0006` e não modifica dados no Supabase.
 
@@ -304,6 +304,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a seleção e não solicitou correções. O PR está liberado para merge. A decisão de modelagem do caso `0006` só poderá começar depois que esta versão aceita estiver incorporada à `main`.
