@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar a correção material dos emplacamentos de veículos leves eletrificados no Estado de São Paulo em 2024. Nenhum registro novo permanece no Supabase.
 
@@ -228,6 +228,8 @@ Sincronizar a `main`, confirmar que os dois arquivos incorporados são idêntico
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | — |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga `0006` permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
