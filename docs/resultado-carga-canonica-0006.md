@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EXECUTADA — PROPOSTA PARA REVISÃO`
+`EXECUTADA E ACEITA — AGUARDANDO MERGE`
 
 Este documento registra a persistência da primeira resolução quantitativa canônica do ChargeBR no Supabase. A execução ocorreu somente depois do `ACCEPTED` de Denis Toledo e do merge do [pacote de revisão](revisao-carga-canonica-0006.md) na `main`.
 
@@ -232,6 +232,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | — |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o resultado da execução e não solicitou correções. O PR está liberado para merge. Depois do merge, o sexto ciclo poderá ser concluído formalmente.
