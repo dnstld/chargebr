@@ -21,6 +21,8 @@ Este documento reconstrói o conflito quantitativo definido para o [quinto ciclo
 
 As publicações foram reabertas e avaliadas como fontes atuais. Os registros descartáveis do `PILOT-03` foram consultados somente depois da reconstrução factual, para comparar decisões de representação; eles não foram tratados como autoridade para o conteúdo das fontes.
 
+Depois do primeiro envio para revisão, a pesquisa foi ampliada para verificar se a recorrência de `21.061` em outras páginas, redes sociais ou resultados de busca constituía uma confirmação oficial posterior. Essa conferência adicional não alterou o conjunto canônico: não foi localizada nova publicação da ABVE ou da Tupi que declarasse corrigir `21.060` para `21.061`.
+
 ## Conjunto selecionado
 
 | Publicação | Afirmação selecionada | Valor normalizado | Papel no conflito |
@@ -28,7 +30,9 @@ As publicações foram reabertas e avaliadas como fontes atuais. Os registros de
 | [ABVE, 4/3/2026](https://abve.org.br/recarga-publica-rapida-cresce-167-em-12-meses-e-ja-atinge-31-dos-21-mil-eletropostos-da-rede/) | “O Brasil tem 21.061 pontos públicos e semipúblicos de recarga de veículos elétricos”, na atualização da base nacional até fevereiro | `21061` | Valor originalmente publicado para fevereiro |
 | [ABVE, 22/6/2026](https://abve.org.br/recarga-rapida-dc-cresce-33-em-tres-meses-e-puxa-a-expansao-da-rede/) | O último levantamento, de fevereiro de 2026, possuía `21.060` pontos | `21060` | Referência retrospectiva conflitante na atualização até maio |
 
-As duas páginas identificam título, publicador, data e URL. Ambas permaneciam acessíveis na data da pesquisa. Nenhuma errata ou explicação oficial para a diferença foi localizada no site da ABVE ou no site institucional da Tupi.
+As duas páginas identificam título, publicador, data e URL. Ambas permaneciam acessíveis na data da pesquisa. Nenhuma errata ou explicação oficial para a diferença foi localizada no site da ABVE, no canal institucional da ABVE no LinkedIn ou no site institucional da Tupi.
+
+A pesquisa complementar localizou uma [publicação de Ricardo Costa no LinkedIn](https://pt.linkedin.com/posts/ricardo-c-pacheco1987_brasil-ultrapassa-25-mil-eletropostos-e-acelera-activity-7493357114191675392-uCYH) que descreve a passagem de `21.061` para `25.429`. Embora o texto atribua os dados à ABVE e à Tupi, a página identifica Ricardo Costa — e não a ABVE ou a Tupi — como publicador. Por isso, ela é uma reprodução secundária, não uma confirmação institucional nem independente, e não integra a carga.
 
 ## Publicações primárias
 
@@ -95,6 +99,22 @@ Essa conferência aritmética serve apenas para documentar a irregularidade. A c
 
 O conteúdo atual da página ainda exibe `21.060`. A ausência de uma explicação oficial impede tratar a aritmética como autorização para escolher ou corrigir um dos valores.
 
+## Peso documental e significado de “oficial”
+
+As evidências examinadas não possuem o mesmo peso interno:
+
+- `21.061` é afirmado diretamente três vezes na publicação original de março;
+- os componentes AC e DC publicados em março somam `21.061`;
+- os mesmos componentes retrospectivos publicados em junho somam `21.061`;
+- os cinco totais regionais de fevereiro publicados em junho somam `21.061`;
+- `21.060` aparece diretamente no texto comparativo e na linha de total da publicação de junho.
+
+Portanto, `21.061` possui **suporte documental interno mais forte** e é o valor aritmeticamente consistente com todas as parcelas publicadas. Essa conclusão é diferente de afirmar que houve uma correção oficial ou de eleger um vencedor canônico.
+
+Neste documento, “oficial” qualifica a proveniência: ambos os números foram publicados no canal institucional da ABVE. O termo não garante que duas afirmações oficiais sejam coerentes entre si, nem transforma automaticamente a mais consistente em substituta da outra.
+
+O aceite desta seleção significará que o revisor confirmou a transcrição, a comparabilidade, a assimetria das evidências e a proveniência de cada afirmação. Não significará validar `21.061` como o único total verdadeiro, porque a decisão aceita do quinto ciclo exige preservar os dois valores como provisórios e proíbe escolher ou recomendar um vencedor. Uma futura errata, acesso à base primária ou decisão específica de reconciliação poderá alterar esse tratamento em outro ciclo.
+
 ## Núcleo factual selecionado
 
 O núcleo conterá somente:
@@ -104,7 +124,8 @@ O núcleo conterá somente:
 - o objeto comum: pontos públicos e semipúblicos de recarga de veículos elétricos;
 - a geografia Brasil;
 - a participação institucional declarada da ABVE e da Tupi;
-- o fato de que a diferença de uma unidade permanece sem explicação oficial localizada.
+- o fato de que a diferença de uma unidade permanece sem explicação oficial localizada;
+- a assimetria documental: `21.061` é compatível com todas as parcelas publicadas, enquanto `21.060` não é.
 
 Os acontecimentos canônicos serão as duas publicações dos resultados, não a instalação individual dos pontos nem a ocorrência de um crescimento da rede.
 
@@ -130,6 +151,7 @@ Os acontecimentos canônicos serão as duas publicações dos resultados, não a
 - percentuais de cobertura ou participação;
 - interpretações sobre escala, liderança ou efeito de legislação;
 - qualquer número de publicação secundária;
+- qualquer publicação secundária que apenas atribua os números à ABVE e à Tupi;
 - qualquer regra de tolerância.
 
 Os componentes AC, DC e regionais aparecem neste documento apenas para tornar a irregularidade visível. Eles não serão observações, evidências, acontecimentos ou valores da carga.
@@ -197,6 +219,7 @@ Notas metodológicas propostas:
 - neste recorte, “pontos de recarga”, “eletropostos” e “carregadores” são usados pelas publicações para a mesma unidade total;
 - a definição não presume que um ponto corresponda a um local físico, estabelecimento ou estação inteira;
 - valores conflitantes da mesma série permanecem separados por observação e provisórios até resolução documentada;
+- suporte documental interno mais forte pode ser registrado na revisão, mas não muda sozinho o estado nem cria precedência entre valores;
 - `latest` descreve uma fotografia do total para cada referência temporal e não autoriza sobrescrever valores anteriores.
 
 A chave difere da usada no piloto para tornar explícita a geografia nacional. Nenhum registro do piloto foi persistido, portanto não existe definição anterior a migrar ou renomear.
@@ -242,7 +265,7 @@ A chave difere da usada no piloto para tornar explícita a geografia nacional. N
 
 O período representa a fotografia da base até fevereiro, não instalações ocorridas entre 1º e 28 de fevereiro. Usar o mês completo preserva a granularidade declarada sem inventar o dia exato de fechamento da base.
 
-Ambos os valores permanecerão `provisional` mesmo depois do aceite. O aceite validará a transcrição, o escopo e a proveniência do conflito; não validará um número como verdadeiro ou preferencial.
+Ambos os valores permanecerão `provisional` mesmo depois do aceite. O aceite validará a transcrição, o escopo, a proveniência e a avaliação do suporte documental; não converterá a maior consistência de `21.061` em precedência ou verdade canônica.
 
 ## Evidências propostas
 
@@ -293,17 +316,17 @@ Esses identificadores e contagens são propostas para o pacote seguinte. Nenhum 
 
 ## Ausência de resolução
 
-A seleção não encontrou base para:
+A seleção encontrou base para registrar que `21.061` possui suporte documental interno mais forte. Ela não encontrou base para:
 
 - atribuir a diferença a erro de digitação;
 - interpretar a modificação posterior da página de junho como errata;
 - concluir que `21.060` substitui `21.061`;
-- elevar `21.061` por coincidir com as somas de componentes;
+- elevar `21.061` a `validated`, vencedor ou substituto somente por coincidir com as somas de componentes;
 - rejeitar `21.060` por divergir dessas somas;
 - considerar uma unidade de diferença irrelevante;
 - aplicar a margem de cinco discutida no piloto.
 
-O resultado selecionado é, portanto, o **conflito não resolvido**, não um dos dois números.
+O resultado selecionado continua sendo o **conflito não resolvido**, agora acompanhado de uma avaliação explícita e auditável do peso documental de cada número.
 
 ## Adequação ao quinto ciclo
 
@@ -314,6 +337,7 @@ O resultado selecionado é, portanto, o **conflito não resolvido**, não um dos
 | Mesma entidade e cobertura | Atendido, sujeito à revisão |
 | Mesmo período e geografia | Atendido, sujeito à revisão |
 | Ausência de correção oficial localizada | Atendido, sujeito à revisão |
+| Assimetria do suporte documental registrada | Atendido, sujeito à revisão |
 | Uma definição compartilhada | Proposta |
 | Proveniência separada | Proposta |
 | Ambos os valores provisórios | Proposto |
@@ -338,23 +362,24 @@ Nenhum registro será persistido antes da preparação, da validação descartá
 1. A publicação de março sustenta diretamente `21.061` pontos públicos e semipúblicos na base nacional até fevereiro de 2026?
 2. A publicação de junho referencia diretamente `21.060` como o total do levantamento anterior de fevereiro de 2026?
 3. As duas publicações tratam da mesma base, entidade, cobertura, geografia e referência temporal?
-4. Está correto registrar que não foi localizada errata ou explicação oficial para a diferença?
+4. Está correto registrar que não foi localizada errata ou explicação oficial para a diferença e que a publicação secundária encontrada não constitui confirmação institucional ou independente?
 5. A irregularidade interna da página de junho está descrita corretamente, inclusive que suas parcelas AC/DC e regionais somam `21.061` enquanto o total impresso é `21.060`?
+6. Está correto concluir que `21.061` possui suporte documental interno mais forte, sem tratar essa avaliação como correção oficial, precedência ou escolha de vencedor canônico?
 
 ### Metodológicas
 
-6. Está correto usar uma definição comum com unidade `charging_point`, sem afirmar que cada unidade corresponde a um local ou estação inteira?
-7. O período de 1º a 28 de fevereiro representa adequadamente uma fotografia consolidada até o mês, e não instalações ocorridas durante o mês?
-8. Está correto manter os dois valores `provisional`, mesmo depois do aceite, sem escolher vencedor nem aplicar tolerância?
-9. `likely_shared` preserva corretamente que as duas publicações possuem origens documentais distintas, mas provavelmente a mesma base subjacente?
-10. Está correto usar `confirmed` para os acontecimentos sem alegar auditoria, corroboração do valor ou independência entre as páginas?
+7. Está correto usar uma definição comum com unidade `charging_point`, sem afirmar que cada unidade corresponde a um local ou estação inteira?
+8. O período de 1º a 28 de fevereiro representa adequadamente uma fotografia consolidada até o mês, e não instalações ocorridas durante o mês?
+9. Está correto manter os dois valores `provisional`, mesmo depois do aceite, sem escolher vencedor nem aplicar tolerância?
+10. `likely_shared` preserva corretamente que as duas publicações possuem origens documentais distintas, mas provavelmente a mesma base subjacente?
+11. Está correto usar `confirmed` para os acontecimentos sem alegar auditoria, corroboração do valor ou independência entre as páginas?
 
 ### Operacionais
 
-11. A fonte e a organização ABVE podem ser reutilizadas integralmente da carga `0003`?
-12. A Tupi deve ser criada apenas como organização e ligada como `subject` aos dois acontecimentos, sem criar uma segunda fonte de publicação?
-13. As contagens e os registros mínimos propostos são suficientes para reconstruir separadamente os dois valores conflitantes?
-14. O conjunto atende à decisão do quinto ciclo e pode avançar para o pacote reproduzível da carga `0005`, independentemente da ausência da `0004`?
+12. A fonte e a organização ABVE podem ser reutilizadas integralmente da carga `0003`?
+13. A Tupi deve ser criada apenas como organização e ligada como `subject` aos dois acontecimentos, sem criar uma segunda fonte de publicação?
+14. As contagens e os registros mínimos propostos são suficientes para reconstruir separadamente os dois valores conflitantes?
+15. O conjunto atende à decisão do quinto ciclo e pode avançar para o pacote reproduzível da carga `0005`, independentemente da ausência da `0004`?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A seleção não deve ser incorporada antes do aceite.
 
