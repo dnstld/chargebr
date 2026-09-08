@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar a persistência do conflito entre `21.061` e `21.060` pontos públicos e semipúblicos de recarga no Brasil para fevereiro de 2026. Nenhum registro novo permanece no Supabase.
 
@@ -240,6 +240,8 @@ Sincronizar a `main`, confirmar que os dois arquivos incorporados são idêntico
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga `0005` permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
