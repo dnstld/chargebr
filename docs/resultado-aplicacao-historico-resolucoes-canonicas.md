@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EXECUTADA — EM REVISÃO`
+`EXECUTADA E ACEITA — AGUARDANDO MERGE`
 
 Este documento registra a aplicação, no Supabase, da migration estrutural aprovada para a resolução de conflito `0006`. A execução ocorreu somente depois do `ACCEPTED` e do merge do PR #69 na `main`. Nenhum dado do caso `0006` foi carregado nesta etapa.
 
@@ -203,6 +203,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o resultado da aplicação e não solicitou correções. O PR está liberado para merge. A preparação da carga canônica `0006` só poderá começar depois que este resultado estiver incorporado à `main`.
