@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA`
 
 Este documento avalia o quinto ciclo operacional depois da persistência, da revisão e do merge da carga canônica `0005`. Ele não cria outra carga, não altera o schema, não modifica dados no Supabase e não resolve o conflito registrado.
 
@@ -230,6 +230,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e não solicitou correções. O PR está liberado para merge. O sexto ciclo só poderá começar depois que esta versão aceita estiver incorporada à `main`.
