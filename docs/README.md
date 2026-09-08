@@ -37,6 +37,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: sexto ciclo do fluxo de inteligência](decisao-sexto-ciclo-fluxo-inteligencia.md)
 - [Seleção da resolução de conflito 0006](selecao-resolucao-conflito-0006.md)
 - [Decisão de modelagem: resolução de conflito 0006](decisao-modelagem-resolucao-conflito-0006.md)
+- [Resultado da aplicação do histórico de resoluções canônicas](resultado-aplicacao-historico-resolucoes-canonicas.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
