@@ -2,7 +2,7 @@
 
 ## Estado
 
-`INTERROMPIDA — EM REVISÃO`
+`INTERROMPIDA — ACEITA, AGUARDANDO MERGE`
 
 Este documento registra uma seleção sem candidato elegível. Em 5 de setembro de 2026, a ABVE ainda não havia publicado um novo resultado mensal compatível com a definição `monthly-light-bev-registrations-brazil` depois do resultado de julho usado na carga `0003`.
 
@@ -110,7 +110,10 @@ Se alguma resposta for `não`, indique o número e a correção necessária. Est
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
 
+A pessoa revisora aceitou integralmente o registro da interrupção e não solicitou correções. O PR está liberado para merge.
+
+Esse aceite não autoriza preparar ou persistir a carga `0004`. A seleção permanecerá interrompida até que uma nova publicação satisfaça todas as condições de retomada documentadas acima.
