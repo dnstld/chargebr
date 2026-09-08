@@ -31,6 +31,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Seleção da carga canônica 0004 — interrompida](selecao-carga-canonica-0004.md)
 - [Decisão: quinto ciclo do fluxo de inteligência](decisao-quinto-ciclo-fluxo-inteligencia.md)
 - [Seleção da carga canônica 0005](selecao-carga-canonica-0005.md)
+- [Revisão da carga canônica 0005](revisao-carga-canonica-0005.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
