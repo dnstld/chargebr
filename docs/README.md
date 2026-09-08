@@ -55,3 +55,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: relações entre instrumentos regulatórios](decisao-relacoes-entre-instrumentos-regulatorios.md)
 - [Decisão: fase de encerramento de vigência](decisao-fase-encerramento-vigencia.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)
+- [Seleção da resolução de conflito 0006](selecao-resolucao-conflito-0006.md)
+- [Decisão de modelagem: resolução de conflito 0006](decisao-modelagem-resolucao-conflito-0006.md)
+- [Resultado da aplicação do histórico de resoluções canônicas](resultado-aplicacao-historico-resolucoes-canonicas.md)
+- [Revisão da carga canônica 0006](revisao-carga-canonica-0006.md)
