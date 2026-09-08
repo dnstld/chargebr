@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento propõe a menor mudança estrutural necessária para representar o [caso selecionado para a resolução `0006`](selecao-resolucao-conflito-0006.md). Ele não cria migration, não altera o schema e não modifica dados no Supabase.
 
@@ -391,6 +391,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 8 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A migration estrutural só poderá ser criada depois que esta versão aceita estiver incorporada à `main`.
