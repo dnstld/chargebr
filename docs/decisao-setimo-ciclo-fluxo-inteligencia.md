@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento propõe o objetivo e os controles do sétimo ciclo. Ele não seleciona uma publicação, não escolhe valores, não cria SQL, não altera o schema e não modifica dados no Supabase.
 
@@ -299,6 +299,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | — |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 9 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A pesquisa e a seleção do caso `0007` só poderão começar depois que esta versão aceita estiver incorporada à `main`.
