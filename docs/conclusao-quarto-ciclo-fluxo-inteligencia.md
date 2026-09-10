@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento avalia o quarto ciclo depois da seleção, da persistência, da revisão e do merge da carga canônica `0004`. Ele não cria outra carga, não altera o schema, não modifica dados no Supabase e não autoriza cálculos ou automação.
 
@@ -200,6 +200,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 10 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e não solicitou correções. O PR está liberado para merge. A decisão de modelagem do caso `0007` só poderá começar depois que esta versão aceita estiver incorporada à `main`.
