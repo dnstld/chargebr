@@ -46,6 +46,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Conclusão do sexto ciclo do fluxo de inteligência](conclusao-sexto-ciclo-fluxo-inteligencia.md)
 - [Decisão: sétimo ciclo do fluxo de inteligência](decisao-setimo-ciclo-fluxo-inteligencia.md)
 - [Seleção da revisão metodológica 0007](selecao-revisao-metodologica-0007.md)
+- [Decisão de modelagem: revisão metodológica 0007](decisao-modelagem-revisao-metodologica-0007.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
