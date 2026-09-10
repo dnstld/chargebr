@@ -279,6 +279,8 @@ Sincronizar a `main`, confirmar que os dois arquivos incorporados são idêntico
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 10 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga `0004` permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
