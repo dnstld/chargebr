@@ -2,253 +2,342 @@
 
 ## Estado
 
-`INTERROMPIDA — EM REVISÃO`
+`PROPOSTA — EM REVISÃO`
 
-Este documento registra uma pesquisa sem caso elegível para o [sétimo ciclo do fluxo de inteligência](decisao-setimo-ciclo-fluxo-inteligencia.md). A pesquisa confirmou mudanças metodológicas relevantes à eletromobilidade brasileira, mas não localizou, nas fontes primárias examinadas, um par que demonstre simultaneamente um valor anterior corrente e sua substituição por outro valor para o mesmo período, unidade, geografia e pergunta conceitual.
+Este documento seleciona um caso real para o [sétimo ciclo do fluxo de inteligência](decisao-setimo-ciclo-fluxo-inteligencia.md): a mudança da classificação usada pela ABVE Data para o total mensal de veículos leves eletrificados no Brasil a partir de janeiro de 2025.
 
-A interrupção evita marcar como `superseded` um número que nunca foi a representação corrente da série e evita calcular um valor revisado que a própria mantenedora não publicou. Esta etapa não cria SQL, não decide mudança de schema e não consulta nem modifica o Supabase.
+O caso permitirá decidir como o ChargeBR deve preservar valores produzidos por metodologias anteriores, identificar a metodologia vigente e apresentar uma série comparável sem confundir valor publicado pela fonte com valor calculado pelo próprio ChargeBR.
 
-## Parâmetros da pesquisa
-
-| Campo | Valor |
-| --- | --- |
-| Data da pesquisa | 9 de setembro de 2026 |
-| Tema principal | Classificação dos veículos leves eletrificados pela ABVE Data |
-| Geografia obrigatória | Brasil |
-| Objeto procurado | Um valor quantitativo anterior e outro revisado para o mesmo recorte |
-| Fonte obrigatória | Publicação primária da mantenedora da série |
-| Revisão obrigatória | Mudança declarada de método ou classificação, sem erro material |
-| Resultado | Nenhum par elegível localizado |
-| Regra aplicada | Interromper sem forçar `superseded`, série paralela ou valor derivado |
-
-A pesquisa concentrou-se na ABVE Data porque a associação mantém uma série diretamente relacionada ao mercado brasileiro de veículos eletrificados e publicou uma explicação explícita de mudança de classificação. Como conferência adicional, foi examinada a atualização metodológica do E-BUS RADAR/ICCT para emissões evitadas por ônibus elétricos.
-
-## Candidato principal: mudança da classificação da ABVE Data
-
-A ABVE anunciou no balanço de 2024 e formalizou em fevereiro de 2025 uma nova classificação para suas estatísticas principais de veículos leves eletrificados.
-
-Pelo critério adotado a partir de janeiro de 2025, o total principal passou a reunir BEV, PHEV, HEV e HEV Flex. Os micro-híbridos MHEV de 12 V e 48 V deixaram de integrar esse total, embora continuassem divulgados separadamente.
-
-Essa é uma **revisão metodológica real e autoritativa**. O impedimento não está na existência da mudança, mas na relação documental entre os valores disponíveis.
-
-## Fontes primárias examinadas
-
-### Balanço de 2024 e anúncio da mudança
-
-| Campo | Valor observado |
-| --- | --- |
-| Publicador | Associação Brasileira do Veículo Elétrico — ABVE |
-| Título | Eletrificados superam previsões, passam de 170 mil e batem todos os recordes em 2024 |
-| Data exibida | 6 de janeiro de 2025 |
-| URL | <https://abve.org.br/eletrificados-superam-previsoes-passam-de-170-mil-e-batem-todos-os-recordes-em-2024/> |
-| Papel | Publica os números de 2024 e anuncia a mudança a partir de janeiro de 2025 |
-
-A página apresenta:
-
-- `177.358` veículos leves eletrificados emplacados no Brasil entre janeiro e dezembro de 2024;
-- `173.530` no mesmo período depois da exclusão de `3.828` micro-híbridos recém-lançados no último trimestre;
-- `16.185` MHEV no quadro anual por tecnologia;
-- a classificação então usada, que incluía BEV, PHEV, HEV, HEV Flex e MHEV;
-- o anúncio de que, a partir dos números de janeiro de 2025, os requisitos passariam a considerar voltagem da bateria, tração elétrica, potência e contribuição à redução de emissões;
-- a continuidade da publicação de todas as categorias híbridas em tabelas separadas.
-
-### Formalização e primeiro resultado da classificação nova
-
-| Campo | Valor observado |
-| --- | --- |
-| Publicador | Associação Brasileira do Veículo Elétrico — ABVE |
-| Título | ABVE aprimora classificação dos veículos eletrificados a partir de janeiro; veja os números |
-| Data exibida | 10 de fevereiro de 2025 |
-| URL | <https://abve.org.br/abve-aprimora-classificacao-dos-eletrificados-a-partir-de-janeiro-veja-os-numeros/> |
-| Papel | Define a classificação nova e publica o resultado de janeiro de 2025 |
-
-A página declara:
-
-- `12.556` eletrificados leves em janeiro de 2025 pela classificação nova;
-- `16.502` como total que seria obtido pelo critério anterior, incluindo MHEV;
-- `3.946` MHEV no mês, dos quais `2.883` de 12 V e `1.063` de 48 V;
-- exclusão dos MHEV do total principal para acompanhar a evolução da eletromobilidade;
-- início da nova série histórica naquele mês;
-- permanência dos MHEV em quadros separados.
-
-O par é aritmeticamente verificável dentro da própria página: `12.556 + 3.946 = 16.502`. Essa igualdade apenas confirma a transcrição e o efeito quantitativo da classificação; ela não transforma `16.502` em um valor corrente anterior.
-
-### Uso posterior do resultado de janeiro de 2025
-
-| Campo | Valor observado |
-| --- | --- |
-| Publicador | Associação Brasileira do Veículo Elétrico — ABVE |
-| Título | Eletrificados leves atingem 15% de participação de mercado em janeiro |
-| Data exibida | 9 de fevereiro de 2026 |
-| URL | <https://abve.org.br/eletrificados-leves-atingem-15-de-participacao-de-mercado-em-janeiro/> |
-| Papel | Confirma `12.556` como referência histórica de janeiro de 2025 sob os critérios vigentes |
-
-Ao comparar janeiro de 2026 com janeiro de 2025, a ABVE reutiliza `12.556`. A mesma página reafirma que, pelos critérios vigentes desde janeiro de 2025, MHEV não são considerados eletrificados no total principal.
-
-Essa evidência sustenta qual valor integra a série nova. Ela não demonstra que `16.502` tenha integrado a série antiga como resultado corrente antes de ser substituído.
-
-### Uso posterior do total de 2024
-
-| Campo | Valor observado |
-| --- | --- |
-| Publicador | Associação Brasileira do Veículo Elétrico — ABVE |
-| Título | Eletrificados crescem dez vezes mais do que o conjunto do mercado, e vendas chegam a 224 mil veículos em 2025 |
-| Data exibida | 6 de janeiro de 2026 |
-| URL | <https://abve.org.br/eletrificados-crescem-dez-vezes-mais-do-que-conjunto-do-mercado-em-2025-com-224-mil-veiculos-vendidos/> |
-| Papel | Mostra que a ABVE continua usando `177.358` como total histórico de 2024 |
-
-Embora defina os eletrificados de 2025 como BEV, PHEV, HEV e HEV Flex, excluindo MHEV, a publicação compara `223.912` em 2025 com `177.358` em 2024. Portanto, a fonte não trata `173.530` — nem outro total recalculado — como substituto corrente e inequívoco de `177.358` para 2024.
-
-## Por que `16.502` não pode ser marcado como `superseded`
-
-O par de janeiro de 2025 preserva a mesma:
-
-- pergunta conceitual geral: quantidade de emplacamentos que seriam classificados como eletrificados;
-- unidade: emplacamentos de veículos leves;
-- geografia: Brasil;
-- período: janeiro de 2025.
-
-Também identifica claramente os dois critérios. Apesar disso, `16.502` aparece pela primeira vez na mesma publicação que apresenta `12.556`, formulado como o total que **seria** obtido pelo critério anterior.
-
-Não foi localizada uma publicação anterior da ABVE que tivesse apresentado `16.502` como valor corrente de janeiro de 2025. Ao contrário, a ABVE afirma que a série histórica nova começa naquele mês.
-
-Assim:
-
-- `12.556` é o resultado corrente publicado sob a metodologia nova;
-- `16.502` é uma comparação contrafactual calculada pela própria ABVE sob o critério antigo;
-- a diferença metodológica é autoritativa;
-- não existe transição documental de `16.502` como valor corrente para `12.556` como substituto;
-- marcar `16.502` como `superseded` inventaria um estado histórico que a fonte não publicou.
-
-O valor contrafactual pode ser relevante como afirmação metodológica da fonte, mas isso é diferente de representar a substituição de um valor anteriormente corrente.
-
-## Por que `177.358` e `173.530` não formam o par revisado
-
-À primeira vista, os dois totais anuais de 2024 parecem oferecer a versão antiga e a nova. A leitura integral da página mostra que essa conclusão não é sustentável.
-
-O valor `173.530` exclui somente os `3.828` micro-híbridos de 12 V recém-lançados no último trimestre. A classificação formalizada em fevereiro de 2025, porém, exclui do total principal os MHEV de 12 V **e** 48 V.
-
-A própria tabela anual informa `16.185` MHEV em 2024. Logo, `173.530` não representa uma aplicação integral e demonstrada do critério que passaria a vigorar em janeiro de 2025.
-
-Além disso, a ABVE voltou a usar `177.358` em janeiro de 2026 como referência para 2024. Não há declaração de que `173.530` substituiu `177.358` como representação corrente daquele ano.
-
-Seria possível somar BEV, PHEV, HEV e HEV Flex publicados na tabela de 2024 para produzir outro total. O ChargeBR não fará isso nesta seleção porque:
-
-- a ABVE não publicou esse resultado como revisão oficial do total anual;
-- a soma seria um valor derivado pelo ChargeBR;
-- a tabela possui irregularidades de arredondamento e totalização que exigiriam interpretação adicional;
-- a decisão do ciclo proíbe usar aritmética para preencher a falta de uma resolução autoritativa.
-
-## Classificação correta do candidato
-
-| Possibilidade | Avaliação |
-| --- | --- |
-| `material_correction` | Não; a ABVE declara mudança de classificação, não erro no valor antigo |
-| `methodology_revision` | Sim, para a mudança aplicada a partir de janeiro de 2025 |
-| `superseded` para `16.502` | Não demonstrado; o valor antigo é contrafactual, não um resultado corrente anterior |
-| `superseded` para `177.358` | Não demonstrado; a ABVE continua reutilizando esse total para 2024 |
-| Séries paralelas | Parcialmente; MHEV continuam publicados separadamente, mas a fonte não mantém `16.502` como série agregada paralela |
-| Revisão retroativa de 2024 | Não demonstrada integralmente |
-| Mudança prospectiva | Demonstrada a partir de janeiro de 2025 |
-| Caso elegível para a carga `0007` | Não, porque falta o valor corrente anterior posteriormente substituído |
-
-O candidato ensina uma distinção importante: **um valor calculado sob o critério anterior não é automaticamente um valor anterior da série**. Para existir `superseded`, é necessário demonstrar o papel corrente que o valor exercia antes da revisão.
-
-## Conferência adicional: E-BUS RADAR/ICCT
-
-Também foi examinada a publicação [Quantificação das emissões de gases de efeito estufa evitadas por ônibus elétricos na América Latina: uma metodologia simplificada de avaliação do ciclo de vida](https://theicct.org/publication/pt-quantifying-avoided-ghg-emissions-by-e-buses-in-latin-america-aug24/), publicada pelo ICCT em 7 de agosto de 2024.
-
-O documento apresenta uma atualização metodológica real para o E-BUS RADAR. O cálculo passa a considerar o ciclo de vida, incluindo fabricação do veículo e da bateria, manutenção e produção de combustível e eletricidade, com parâmetros específicos por país.
-
-Entretanto, a documentação examinada não publica, para um mesmo período e recorte brasileiro, um valor anterior corrente e outro recalculado sob o método novo. Ela explica o método atualizado e apresenta resultados novos, mas não preserva o par quantitativo necessário para decidir uma transição para `superseded`.
-
-A nota de 23 de agosto de 2024 sobre coeficientes de biodiesel é uma correção de valores na tabela metodológica. Ela não foi usada porque uma correção material está fora da dificuldade definida para este ciclo.
+Esta etapa não decide a estrutura do banco, não cria SQL e não consulta nem modifica o Supabase.
 
 ## Resultado da seleção
 
-**Nenhum caso foi selecionado para modelagem ou carga canônica `0007`.**
+A fonte primária selecionada publica dois valores para o mesmo recorte de janeiro de 2025:
 
-A ABVE oferece a mudança metodológica mais próxima dos requisitos, mas os pares disponíveis falham por razões diferentes:
+| Versão metodológica | Tecnologias incluídas no total | Valor | Papel documental |
+| --- | --- | ---: | --- |
+| Critério anterior | BEV, PHEV, HEV, HEV Flex e MHEV | `16.502` | Total que seria obtido pelo critério anterior |
+| Critério vigente desde janeiro de 2025 | BEV, PHEV, HEV e HEV Flex | `12.556` | Resultado principal da série nova |
 
-1. `16.502` e `12.556`, janeiro de 2025: mesmo recorte e critérios identificáveis, porém o primeiro é contrafactual e nunca aparece como valor corrente anterior;
-2. `177.358` e `173.530`, ano de 2024: o segundo não aplica integralmente a classificação posterior e não substitui o primeiro na prática editorial subsequente da ABVE;
-3. qualquer total anual de 2024 obtido pela soma das categorias aceitas em 2025: não foi diretamente publicado como revisão pela mantenedora e seria derivado pelo ChargeBR;
-4. resultados do E-BUS RADAR: método novo identificado, mas sem par antigo e revisado para o mesmo recorte brasileiro nas fontes primárias examinadas.
+A diferença de `3.946` corresponde ao total de MHEV publicado para o mesmo mês: `2.883` MHEV de 12 V e `1.063` MHEV de 48 V.
 
-Prosseguir exigiria inventar uma cronologia, inferir uma substituição ou calcular um valor não publicado. As três ações são proibidas pela decisão aceita do sétimo ciclo.
+Os dois valores possuem a mesma:
 
-## Motivo da interrupção obrigatória
+- pergunta conceitual geral: quantos emplacamentos de veículos leves pertencem ao agregado chamado de eletrificados pela ABVE;
+- unidade: emplacamentos de veículos leves;
+- geografia: Brasil;
+- referência temporal: janeiro de 2025;
+- autoridade: ABVE Data;
+- base factual mensal.
 
-A decisão do ciclo determina a parada quando:
+O que muda é a definição operacional do agregado: os MHEV deixam de integrar o total principal.
 
-- não houver valor quantitativo anterior e revisado para o mesmo recorte;
-- a mudança for apenas prospectiva sem substituir o valor anterior selecionado;
-- não estiver claro se a série antiga foi substituída ou mantida em paralelo;
-- a decisão depender de aritmética ou interpretação não declarada pela autoridade.
+## Parâmetros do caso
 
-O candidato da ABVE aciona todas essas cautelas. A mudança é prospectiva; o único par exato para janeiro nasce junto; o total anual intermediário não corresponde integralmente ao critério novo; e a fonte continua reutilizando o total antigo de 2024.
+| Campo | Valor selecionado |
+| --- | --- |
+| Data da pesquisa | 9 de setembro de 2026 |
+| Métrica conceitual | Emplacamentos mensais de veículos leves classificados como eletrificados pela ABVE Data |
+| Período medido | 1º a 31 de janeiro de 2025 |
+| Unidade | Emplacamento de veículo leve |
+| Geografia | Brasil |
+| Valor sob o critério anterior | `16502` |
+| Valor sob o critério vigente | `12556` |
+| Diferença explicada pela fonte | `3946` MHEV |
+| Tipo de mudança | Revisão metodológica de classificação |
+| Aplicação declarada | Prospectiva, a partir de janeiro de 2025 |
+| Autoridade | ABVE Data |
+| Dificuldade exclusiva | Separar validade factual, versão metodológica, vigência e papel do valor |
 
-A interrupção não rejeita a metodologia da ABVE nem afirma que algum número esteja errado. Ela apenas reconhece que a evidência disponível não sustenta a transição histórica exigida pelo teste `0007`.
+## Fonte primária selecionada
+
+| Campo | Valor observado |
+| --- | --- |
+| Publicador | Associação Brasileira do Veículo Elétrico — ABVE |
+| Produto de dados | ABVE Data |
+| Título | ABVE aprimora classificação dos veículos eletrificados a partir de janeiro; veja os números |
+| Data exibida | 10 de fevereiro de 2025 |
+| URL | <https://abve.org.br/abve-aprimora-classificacao-dos-eletrificados-a-partir-de-janeiro-veja-os-numeros/> |
+| Idioma | `pt-BR` |
+| Natureza | Publicação institucional da mantenedora da série |
+| Acessibilidade | Página acessível na data da pesquisa |
+
+A publicação declara que:
+
+- o Brasil vendeu `12.556` veículos leves eletrificados em janeiro segundo a classificação nova;
+- o total novo é a soma de BEV, PHEV, HEV e HEV Flex;
+- MHEV não integram mais o total principal para o acompanhamento da eletromobilidade;
+- pelo critério anterior, incluindo MHEV, o total seria `16.502`;
+- os MHEV somaram `3.946` no mês;
+- os MHEV continuariam contabilizados e publicados em quadros separados;
+- a série histórica sob a classificação nova se inicia em janeiro de 2025.
+
+A própria mantenedora fornece os dois resultados e explica a diferença. O ChargeBR não precisa escolher um valor por preferência nem calcular o par selecionado.
+
+## Fontes primárias de contexto
+
+### Anúncio da mudança
+
+| Campo | Valor observado |
+| --- | --- |
+| Título | Eletrificados superam previsões, passam de 170 mil e batem todos os recordes em 2024 |
+| Data exibida | 6 de janeiro de 2025 |
+| URL | <https://abve.org.br/eletrificados-superam-previsoes-passam-de-170-mil-e-batem-todos-os-recordes-em-2024/> |
+| Papel | Anuncia requisitos técnicos novos para os números a partir de janeiro de 2025 |
+
+Essa publicação demonstra que a mudança foi anunciada antes da divulgação do resultado de janeiro. A ABVE informa que passaria a considerar requisitos como voltagem da bateria, tração elétrica, potência da bateria e contribuição à redução de emissões, mantendo as demais categorias híbridas em tabelas separadas.
+
+### Continuidade da classificação nova
+
+| Campo | Valor observado |
+| --- | --- |
+| Título | Eletrificados leves atingem 15% de participação de mercado em janeiro |
+| Data exibida | 9 de fevereiro de 2026 |
+| URL | <https://abve.org.br/eletrificados-leves-atingem-15-de-participacao-de-mercado-em-janeiro/> |
+| Papel | Reutiliza `12.556` como referência de janeiro de 2025 e reafirma a classificação vigente |
+
+A publicação compara janeiro de 2026 com janeiro de 2025 usando `12.556`. Também reafirma que os critérios vigentes desde janeiro de 2025 incluem BEV, PHEV, HEV e HEV Flex e excluem MHEV do total principal.
+
+Essa continuidade permite identificar `12.556` como valor da série sob a metodologia atual, e não apenas como escolha editorial isolada da primeira publicação.
+
+## Duas dimensões que o modelo deverá separar
+
+O caso demonstra que validade factual e vigência metodológica não são a mesma coisa.
+
+| Dimensão | Pergunta | Resultado no caso |
+| --- | --- | --- |
+| Validade factual | O número foi publicado corretamente para o método ao qual está ligado? | `16.502` e `12.556` foram publicados pela ABVE para seus respectivos critérios |
+| Vigência metodológica | Qual critério orienta a série principal a partir de janeiro de 2025? | O critério que exclui MHEV |
+| Papel documental | O valor foi o resultado corrente, uma comparação ou um cálculo do ChargeBR? | `12.556` é corrente; `16.502` é comparação contrafactual publicada pela fonte |
+| Comparabilidade | Os valores respondem à mesma pergunta operacional? | Não sem identificar a versão metodológica |
+
+Um valor não se torna falso porque a classificação deixa de ser vigente. Da mesma forma, um valor calculado sob um critério anterior não deve ser apresentado como se tivesse sido o resultado corrente da série.
+
+## Tratamento proposto para os valores
+
+### `12.556`
+
+- valor diretamente publicado pela ABVE;
+- resultado principal para janeiro de 2025;
+- ligado à metodologia vigente a partir daquele mês;
+- candidato a `validated` depois da revisão humana;
+- candidato a valor exibido por padrão quando o usuário escolher a metodologia atual da ABVE.
+
+### `16.502`
+
+- valor diretamente publicado pela ABVE;
+- produzido pela aplicação do critério anterior ao mesmo conjunto mensal;
+- formulado pela fonte como o total que seria obtido pelo critério anterior;
+- candidato a `validated` quanto à transcrição e à aplicação declarada desse critério;
+- não deve ser marcado como `rejected`;
+- não deve ser descrito como resultado corrente anterior de janeiro de 2025;
+- não deve receber `superseded` apenas por usar a metodologia antiga.
+
+O caso sugere que `superseded` pertence primeiro à **vigência da versão metodológica**, não à veracidade do valor. A decisão de modelagem deverá verificar se o estado de um valor e o estado de uma metodologia precisam ser estruturas separadas.
+
+## Por que o caso é elegível sem inventar uma substituição
+
+O objetivo do sétimo ciclo não é obrigar todo caso de mudança metodológica a terminar com um valor `superseded`. A decisão aceita determina que o estado deve ser consequência da evidência e admite que os valores permaneçam válidos sob definições diferentes.
+
+Neste caso:
+
+- a revisão metodológica é explícita e autoritativa;
+- os dois critérios são identificáveis;
+- os dois valores são publicados pela própria mantenedora;
+- período, unidade e geografia são iguais;
+- o valor corrente sob a metodologia nova é identificável;
+- a classificação anterior deixa de orientar o total principal;
+- a fonte preserva MHEV como série separada;
+- não existe erro material declarado.
+
+A particularidade é que `16.502` não foi publicado anteriormente como resultado corrente. Ele aparece como comparação contrafactual na mesma publicação que divulga `12.556`. Essa característica não invalida o caso metodológico; ela impede somente uma falsa transição histórica do valor para `superseded`.
+
+O caso é selecionado para revelar como representar versões metodológicas e papéis documentais sem usar um único estado para significados diferentes.
+
+## Papel analítico do ChargeBR
+
+O ChargeBR não deve depender de a mantenedora republicar toda a série histórica sempre que uma metodologia mudar. Quando houver dados de entrada suficientes, o ChargeBR poderá produzir uma visão comparável segundo a metodologia atual.
+
+Essa capacidade deverá obedecer a controles mínimos:
+
+1. preservar o valor exatamente como publicado pela fonte;
+2. preservar a metodologia que produziu o valor original;
+3. registrar separadamente qualquer valor recalculado pelo ChargeBR;
+4. identificar a metodologia aplicada ao recálculo;
+5. armazenar fórmula, entradas, unidades e proveniência;
+6. registrar quem revisou e quando aceitou o cálculo;
+7. nunca atribuir o valor derivado à fonte como se ela o tivesse publicado;
+8. impedir o recálculo quando as entradas ou as regras forem ambíguas;
+9. permitir reconstruir o resultado sem depender apenas de texto livre;
+10. manter disponíveis tanto a visão comparável quanto a história publicada.
+
+Portanto, “apresentar os dados pela metodologia atual” não significa sobrescrever números antigos. Significa criar uma projeção analítica versionada sobre a história preservada.
+
+## Comunicação ao usuário final
+
+Para janeiro de 2025, a apresentação poderá distinguir:
+
+> **Metodologia vigente da ABVE:** 12.556 emplacamentos de veículos leves eletrificados no Brasil. Inclui BEV, PHEV, HEV e HEV Flex; não inclui MHEV.
+
+E, na comparação metodológica:
+
+> **Pelo critério anterior:** o mesmo mês teria 16.502 emplacamentos classificados como eletrificados. A diferença de 3.946 corresponde aos MHEV publicados separadamente pela ABVE.
+
+A interface futura deverá permitir pelo menos:
+
+- visão pela metodologia vigente;
+- visão “como publicado”;
+- comparação entre versões metodológicas;
+- identificação de valores publicados pela fonte;
+- identificação inequívoca de valores calculados pelo ChargeBR;
+- acesso à fórmula, aos componentes e às limitações de cada recálculo.
+
+Expressões como “a ABVE corrigiu o total de `16.502` para `12.556`” ou “o valor antigo estava errado” seriam imprecisas e não deverão ser usadas.
+
+## Limite revelado pelo ano de 2024
+
+O balanço anual de 2024 é útil como teste negativo, mas não integra o par canônico desta seleção.
+
+A ABVE publica:
+
+- total anual de `177.358`;
+- total de `173.530` após excluir `3.828` micro-híbridos de 12 V recém-lançados;
+- `16.185` MHEV no quadro anual por tecnologia;
+- valores separados para BEV, PHEV, HEV e HEV Flex.
+
+Aplicar a classificação nova ao ano inteiro gera uma ambiguidade de uma unidade:
+
+- somar BEV, PHEV, HEV e HEV Flex resulta em `161.172`;
+- subtrair os `16.185` MHEV do total `177.358` resulta em `161.173`.
+
+A fonte não publica nenhum desses dois resultados como total anual revisado. Por isso, o ChargeBR não deverá escolher silenciosamente um deles nem apresentar `173.530` como aplicação integral da metodologia nova.
+
+Quando um recálculo não for unívoco, a comunicação correta será informar que o valor comparável pela metodologia atual está indisponível ou permanece em conflito, preservando os componentes e a razão da ambiguidade.
+
+Esse limite confirma por que valores publicados e derivados precisam de papéis diferentes no modelo.
+
+## Recorte canônico
+
+### Incluído
+
+- uma métrica conceitual: emplacamentos mensais classificados como eletrificados pela ABVE Data;
+- janeiro de 2025;
+- Brasil;
+- unidade `vehicle_registration`;
+- `16.502` sob o critério anterior;
+- `12.556` sob o critério vigente;
+- `3.946` MHEV como explicação publicada da diferença;
+- as duas versões de classificação;
+- a natureza contrafactual do valor sob o critério anterior;
+- a continuidade posterior de `12.556` na série nova.
+
+### Excluído
+
+- valores anuais de 2024 como observações canônicas da carga `0007`;
+- `177.358`, `173.530`, `161.172` e `161.173` como valores da métrica selecionada;
+- todos os demais meses;
+- valores individuais de BEV, PHEV, HEV e HEV Flex;
+- participação de mercado;
+- percentuais de crescimento;
+- projeções de vendas;
+- julgamento técnico próprio sobre quais veículos deveriam ser chamados de eletrificados;
+- qualquer recálculo do ChargeBR nesta etapa;
+- correções materiais ou conflitos de outras cargas.
+
+O valor `3.946` será contexto metodológico indispensável para explicar o par, não uma segunda métrica independente do ciclo.
+
+## Requisitos revelados para a decisão de modelagem
+
+A próxima etapa deverá avaliar como representar estruturalmente:
+
+1. uma métrica conceitual estável;
+2. versões distintas da metodologia dessa métrica;
+3. vigência inicial e final de cada versão;
+4. a ligação de cada valor à versão aplicada;
+5. o papel do valor: corrente, contrafactual publicado ou derivado pelo ChargeBR;
+6. validade factual separada de vigência metodológica;
+7. a metodologia atual sem apagar a anterior;
+8. séries mantidas em paralelo, como os MHEV separados;
+9. fórmula e linhagem de futuros recálculos;
+10. impossibilidade documentada de recálculo quando houver ambiguidade;
+11. consulta padrão pela metodologia atual;
+12. consulta histórica “como publicado”.
+
+A decisão deverá comparar esses requisitos com `metric_definitions`, `metric_values`, `content_items`, `observations`, `evidence`, resoluções e transições já existentes. Não deverá presumir que `methodology_notes` em texto livre seja suficiente.
+
+## Adequação ao sétimo ciclo
+
+| Requisito | Avaliação |
+| --- | --- |
+| Uma única métrica, unidade, geografia e referência temporal | Atendido |
+| Dois valores sob critérios distintos | Atendido: `16.502` e `12.556` |
+| Mudança metodológica declarada | Atendida pela ABVE Data |
+| Autoridade sobre a série | Atendida pela mantenedora |
+| Métodos identificáveis | Atendidos pela inclusão ou exclusão de MHEV |
+| Valor corrente identificável | `12.556` sob a metodologia vigente |
+| Valor anterior preservável | `16.502`, com papel contrafactual explícito |
+| Ausência de erro material declarado | Atendida |
+| `superseded` decidido pela evidência | Não aplicável ao valor; candidato à vigência da metodologia anterior |
+| Necessidade de modelagem demonstrada | Dois eixos de estado, versões e papéis de valor ainda precisam ser avaliados |
+| Elegibilidade para carga imediata | Não; exige decisão de modelagem e eventual mudança estrutural |
+
+O aceite desta seleção autorizará somente a preparação da decisão de modelagem.
 
 ## Efeito sobre o repositório e o banco
 
-Esta etapa acrescenta somente este registro documental e seu vínculo no índice.
+Esta etapa acrescenta apenas a documentação da seleção e seu vínculo no índice.
 
-Não serão criados:
+Não serão criados nesta etapa:
 
-- decisão de modelagem do caso `0007`;
 - migration ou alteração de schema;
-- arquivo SQL de carga;
+- arquivo SQL da carga `0007`;
 - consulta de verificação;
 - fonte, publicação, observação, evidência, acontecimento ou valor métrico;
 - resolução ou transição de estado;
+- valor derivado;
 - alteração no seed.
 
 O Supabase não foi consultado nem modificado. Todas as cargas anteriores permanecem inalteradas.
 
-## Condições para retomar a seleção
+## Próxima etapa condicionada
 
-A seleção poderá ser retomada quando uma fonte primária diretamente relevante à eletromobilidade brasileira publicar evidência que satisfaça simultaneamente:
+Depois de `ACCEPTED` e do merge desta seleção, preparar uma decisão separada que compare o caso com o schema atual e proponha a menor representação capaz de separar:
 
-1. um valor anterior que tenha exercido o papel de resultado corrente da série;
-2. um valor revisado para a mesma pergunta conceitual, período, unidade e geografia;
-3. identificação do método ou classificação de cada valor;
-4. declaração da mantenedora de que houve mudança metodológica, não erro material;
-5. indicação de qual método passa a orientar a série corrente;
-6. relação explícita entre o valor anterior e o revisado;
-7. clareza sobre aplicação prospectiva, retroativa ou ambas;
-8. preservação documental suficiente para reconstruir as duas versões sem cálculo próprio;
-9. evidência sobre substituição da versão anterior ou manutenção de séries paralelas;
-10. ausência de dependência de fonte secundária, tolerância, preferência ou recência.
+- conceito da métrica;
+- versão metodológica;
+- vigência da metodologia;
+- validade do valor;
+- papel documental do valor;
+- linhagem de cálculos do ChargeBR.
 
-Uma nova pesquisa deverá substituir esta interrupção somente depois de confirmar todos esses pontos. Não será suficiente encontrar outra mudança de metodologia sem o par quantitativo e a cronologia exigidos.
+A decisão de modelagem deverá definir também como a consulta futura escolherá a metodologia atual e como preservará a visualização “como publicado”. Nenhuma carga será preparada antes dessa decisão e de qualquer mudança estrutural necessária.
 
 ## Perguntas para revisão
 
 ### Factuais
 
 1. A publicação de 10 de fevereiro de 2025 apresenta `12.556` pela classificação nova, `16.502` pelo critério anterior e `3.946` MHEV para janeiro de 2025?
-2. A ABVE declara que a série sob a classificação nova começa em janeiro de 2025 e que os MHEV continuam divulgados separadamente?
-3. A publicação de 9 de fevereiro de 2026 reutiliza `12.556` como referência para janeiro de 2025 sob os critérios vigentes?
-4. A publicação anual de janeiro de 2026 continua usando `177.358` como referência de 2024, mesmo ao definir o total de 2025 sem MHEV?
-5. O documento do ICCT apresenta metodologia atualizada de ciclo de vida, mas não fornece o par antigo e revisado necessário para o mesmo recorte brasileiro?
+2. A ABVE declara que o critério novo inclui BEV, PHEV, HEV e HEV Flex e exclui MHEV do total principal?
+3. Está claro que período, unidade e geografia são iguais nos dois valores e que a diferença decorre da classificação?
+4. A publicação de fevereiro de 2026 reutiliza `12.556` como referência de janeiro de 2025 e confirma a continuidade do critério novo?
 
 ### Metodológicas
 
-6. Está correto não tratar `16.502` como `superseded`, já que ele aparece como contrafactual na mesma publicação do resultado corrente `12.556`?
-7. Está correto não tratar `173.530` como aplicação integral da classificação nova a 2024, pois ele exclui apenas `3.828` dos `16.185` MHEV informados no ano?
-8. Está correto não derivar um novo total anual de 2024 pela soma das categorias, já que a ABVE não o publicou como revisão corrente?
-9. A interrupção distingue adequadamente mudança metodológica real de substituição documental de um valor corrente?
-10. As condições de retomada impedem que uma futura seleção dependa de cronologia inventada, aritmética própria ou fonte secundária?
+5. Está correto selecionar o caso mesmo que `16.502` seja uma comparação contrafactual publicada pela fonte, e não um resultado corrente anterior?
+6. Está correto preservar os dois valores como factualmente válidos sob seus critérios, sem marcar `16.502` como `rejected` ou `superseded`?
+7. Está correto tratar a metodologia anterior — e não automaticamente o valor — como candidata a `superseded` quanto à sua vigência?
+8. Está correto permitir futuros recálculos pelo ChargeBR somente quando método, entradas, fórmula e resultado forem auditáveis?
+9. Está correto exigir que um valor derivado seja identificado como cálculo do ChargeBR e nunca atribuído à fonte?
+10. Está correto não escolher um valor recalculado para 2024 enquanto a diferença de uma unidade permanecer sem resolução?
 
-### Operacionais
+### Produto e operação
 
-11. Está correto não iniciar decisão de modelagem, migration, carga `0007` ou consulta ao Supabase sem um caso elegível?
-12. Está correto manter o sétimo ciclo interrompido e retomar a pesquisa somente quando surgir evidência primária que satisfaça todos os requisitos?
+11. Está correto planejar uma visão padrão pela metodologia atual e uma visão separada “como publicado”?
+12. Os doze requisitos revelados são suficientes para orientar a decisão de modelagem sem escolher antecipadamente o schema?
+13. Está correto avançar, depois do aceite e do merge, somente para a decisão de modelagem, sem preparar ainda a carga `0007`?
+14. Está correto manter SQL, schema e Supabase inalterados nesta etapa?
 
-Se todas as respostas forem `sim`, registre `ACCEPTED`. O aceite confirmará que a interrupção foi corretamente documentada; ele não autorizará modelagem, SQL ou persistência da carga `0007`.
-
-Se alguma resposta for `não`, indique o número e a correção necessária. Este documento não deve ser incorporado antes do aceite.
+Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A seleção não deve ser incorporada antes do aceite.
 
 ## Resultado da revisão
 
