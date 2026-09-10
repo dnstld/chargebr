@@ -30,6 +30,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: quarto ciclo do fluxo de inteligência](decisao-quarto-ciclo-fluxo-inteligencia.md)
 - [Seleção da carga canônica 0004](selecao-carga-canonica-0004.md)
 - [Revisão da carga canônica 0004](revisao-carga-canonica-0004.md)
+- [Resultado da carga canônica 0004](resultado-carga-canonica-0004.md)
 - [Decisão: quinto ciclo do fluxo de inteligência](decisao-quinto-ciclo-fluxo-inteligencia.md)
 - [Seleção da carga canônica 0005](selecao-carga-canonica-0005.md)
 - [Revisão da carga canônica 0005](revisao-carga-canonica-0005.md)
