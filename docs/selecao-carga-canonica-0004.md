@@ -358,6 +358,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | — |
-| Data da revisão | — |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 10 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a retomada da seleção e não solicitou correções. O PR está liberado para merge. O pacote reproduzível da carga `0004` só poderá ser preparado depois que esta seleção estiver incorporada à `main`.
