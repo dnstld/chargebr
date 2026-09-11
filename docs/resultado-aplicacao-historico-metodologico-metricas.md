@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EXECUTADA — AGUARDANDO REVISÃO`
+`EXECUTADA E ACEITA — AGUARDANDO MERGE`
 
 Este documento registra a aplicação, no Supabase, da migration estrutural aprovada
 para o histórico metodológico de métricas. A execução ocorreu somente depois do
@@ -274,6 +274,10 @@ incorporado antes do aceite.
 | Campo | Resultado |
 | --- | --- |
 | Pessoa revisora | Denis Toledo |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
 
+A pessoa revisora aceitou integralmente o resultado da aplicação e não solicitou
+correções. O PR está liberado para merge. A preparação da carga canônica
+`0007` só poderá começar depois que este resultado estiver incorporado à
+`main`.
