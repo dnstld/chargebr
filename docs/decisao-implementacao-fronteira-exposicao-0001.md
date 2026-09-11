@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento transforma a [seleção da fronteira `0001`](selecao-fronteira-exposicao-0001.md) em um desenho concreto de implementação. Ele define objetos, identidades, privilégios, ordem atômica, ativação, verificação e reversão.
 
@@ -555,3 +555,13 @@ A implementação deverá parar se:
 12. A reversão compensatória e as interrupções evitam uma ampliação silenciosa da fronteira?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Esta decisão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A migration estrutural só poderá ser criada depois que esta versão aceita estiver incorporada à `main`.
