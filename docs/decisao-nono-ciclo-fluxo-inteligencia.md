@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento propõe como o ChargeBR escolherá a menor fronteira segura para um consumidor interno usar o contrato `chargebr-methodology-reading-v1`. Ele não escolhe definitivamente uma arquitetura, não cria aplicação, view, função, endpoint ou credencial e não altera schema, dados, RLS, permissões ou configuração do Supabase.
 
@@ -365,3 +365,13 @@ Essas referências orientam a comparação, mas a decisão dependerá também do
 12. As interrupções impedem ampliar silenciosamente privilégios ou duplicar a regra semântica?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Esta decisão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A seleção da fronteira de exposição só poderá começar depois que esta versão aceita estiver incorporada à `main`.
