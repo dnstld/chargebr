@@ -2,7 +2,7 @@
 
 ## Estado
 
-`EXECUTADA — AGUARDANDO REVISÃO`
+`EXECUTADA E ACEITA — AGUARDANDO MERGE`
 
 Este documento registra a aplicação e a verificação estrutural da primeira fronteira privada de leitura do ChargeBR no Supabase. A execução ocorreu somente depois do `ACCEPTED` de Denis Toledo e do merge do PR #92 na `main`.
 
@@ -250,7 +250,7 @@ Adiar esses testes não deixa uma exposição aberta, porque o login permanece s
 
 A implementação estrutural da fronteira `0001` foi aplicada com sucesso e corresponde à decisão aceita. O Supabase agora possui uma função privada, imutavelmente ligada à consulta aprovada, executada por um proprietário restrito e acessível somente por um executor sem login. O login destinado ao futuro backend existe, mas permanece inativo.
 
-Os catálogos confirmam os privilégios mínimos; a leitura administrativa mantém as três projeções completas e a assinatura esperada; o plano mantém o desempenho de referência; e os diagnósticos não apontam nova exposição. O nono ciclo ainda não está concluído: ele dependerá do aceite deste resultado, do merge deste PR e, posteriormente, da ativação e dos testes com a identidade real.
+Os catálogos confirmam os privilégios mínimos; a leitura administrativa mantém as três projeções completas e a assinatura esperada; o plano mantém o desempenho de referência; e os diagnósticos não apontam nova exposição. O nono ciclo ainda não está concluído: depois do aceite deste resultado, ele dependerá do merge deste PR e, posteriormente, da ativação e dos testes com a identidade real.
 
 ## Perguntas para revisão
 
@@ -269,3 +269,13 @@ Os catálogos confirmam os privilégios mínimos; a leitura administrativa mant�
 13. O conjunto de verificações permite considerar bem-sucedida a implementação estrutural da fronteira `0001`?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Este PR não deve ser incorporado antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o resultado da implementação estrutural e não solicitou correções. O PR está liberado para merge. A ativação do login e os testes com a identidade real continuam sendo uma etapa separada e não foram antecipados por este aceite.
