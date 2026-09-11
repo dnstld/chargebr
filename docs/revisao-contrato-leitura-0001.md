@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento apresenta o primeiro contrato de leitura metodológica do ChargeBR. O pacote não cria view, API ou interface, não altera o schema e não modifica dados ou permissões no Supabase.
 
@@ -247,3 +247,13 @@ O contrato é intencionalmente específico ao caso `0007`. Ele não cria uma API
 13. O contrato está pronto para ser aceito como primeira leitura metodológica reproduzível do ChargeBR?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Este PR não deve ser incorporado antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o contrato de leitura metodológica `0001` e não solicitou correções. O PR está liberado para merge.
