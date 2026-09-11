@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento aplica a [decisão do nono ciclo](decisao-nono-ciclo-fluxo-inteligencia.md) ao contrato `chargebr-methodology-reading-v1` e propõe a menor fronteira segura para o primeiro backend interno do ChargeBR.
 
@@ -398,3 +398,13 @@ Essas lacunas não invalidam a comparação. Elas impedem transformar a alternat
 12. Está correto criar uma decisão de implementação separada antes de escrever ou aplicar a migration?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Esta seleção não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a seleção e não solicitou correções. O PR está liberado para merge. A decisão detalhada de implementação só poderá começar depois que esta versão aceita estiver incorporada à `main`.
