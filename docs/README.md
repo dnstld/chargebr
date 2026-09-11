@@ -50,6 +50,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Revisão da carga canônica 0007](revisao-carga-canonica-0007.md)
 - [Resultado da carga canônica 0007](resultado-carga-canonica-0007.md)
 - [Conclusão do sétimo ciclo do fluxo de inteligência](conclusao-setimo-ciclo-fluxo-inteligencia.md)
+- [Decisão: oitavo ciclo do fluxo de inteligência](decisao-oitavo-ciclo-fluxo-inteligencia.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
