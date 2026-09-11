@@ -46,7 +46,7 @@ A carga cria uma única definição conceitual:
 | Unidade | `vehicle_registration` |
 | Agregação | `count` |
 | Granularidade temporal | `month` |
-| Granularidade geográfica | `country` |
+| Granularidade geográfica | `national` |
 | Período dos valores | `2025-01-01` a `2025-01-31` |
 | Geografia | Brasil |
 
