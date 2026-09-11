@@ -43,7 +43,7 @@ O ciclo foi dividido em etapas independentes e revisáveis:
 2. a [seleção do caso `0007`](selecao-revisao-metodologica-0007.md) confirmou a mudança prospectiva da classificação da ABVE e os dois totais publicados para janeiro de 2025;
 3. a [decisão de modelagem](decisao-modelagem-revisao-metodologica-0007.md) demonstrou que texto livre e situação do valor não representavam versões metodológicas;
 4. a migration `metric_methodology_history` criou cinco estruturas aditivas;
-5. o [resultado da aplicação estrutural](resultado-aplicacao-historico-metodologias-metricas.md) confirmou a segurança da mudança;
+5. o [resultado da aplicação estrutural](resultado-aplicacao-historico-metodologico-metricas.md) confirmou a segurança da mudança;
 6. o [pacote da carga `0007`](revisao-carga-canonica-0007.md) foi executado duas vezes em transação descartável e aceito;
 7. a [carga canônica executada](../data/canonical/0007_abve-revisao-metodologica-eletrificados-janeiro-2025.sql) persistiu exatamente o pacote incorporado à `main`;
 8. a [consulta reutilizável](../data/canonical/0007_abve-revisao-metodologica-eletrificados-janeiro-2025.verify.sql) confirmou o estado `complete`;
