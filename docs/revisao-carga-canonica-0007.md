@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este pacote permite revisar como o ChargeBR preservará uma mudança de metodologia sem apagar o critério anterior nem apresentar dois resultados metodologicamente diferentes como uma divergência factual. Nenhum registro novo permanece no Supabase.
 
@@ -219,6 +219,8 @@ Sincronizar a `main`, confirmar que os dois arquivos incorporados são idêntico
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente o pacote e não solicitou correções. O PR está liberado para merge. A carga `0007` permanece ausente do Supabase e só poderá ser persistida depois que esta versão aceita estiver incorporada à `main`.
