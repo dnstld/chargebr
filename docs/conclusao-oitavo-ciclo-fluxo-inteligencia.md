@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento avalia o oitavo ciclo depois da decisão, da implementação do primeiro contrato de leitura, dos ensaios de bloqueio, da revisão e do merge do PR #87. Ele não cria outra consulta, não altera o schema e não modifica dados ou permissões no Supabase.
 
@@ -340,3 +340,13 @@ Uma interrupção deverá produzir uma decisão explícita, não uma ampliação
 13. As interrupções impedem exposição de credencial privilegiada, contorno de RLS e duplicação das regras semânticas na aplicação?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. A conclusão não deve ser incorporada antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a conclusão e não solicitou correções. O PR está liberado para merge. O nono ciclo só poderá começar depois que esta versão aceita estiver incorporada à `main`.
