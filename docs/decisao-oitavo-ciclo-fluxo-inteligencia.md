@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA — EM REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento propõe o objetivo, o contrato e os controles do oitavo ciclo. Ele não cria consulta SQL, view, API ou interface, não altera o schema e não modifica dados no Supabase.
 
@@ -400,7 +400,8 @@ Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | Pendente |
-| Data da revisão | Pendente |
-| Resultado | `PENDING` |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 11 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
 
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O PR está liberado para merge. A preparação do primeiro contrato de leitura só poderá começar depois que esta versão aceita estiver incorporada à `main`.
