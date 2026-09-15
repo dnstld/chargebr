@@ -117,6 +117,8 @@ source aprovada
 
 O cursor só pode avançar depois de uma execução terminal completa. Resultado parcial, falha, bloqueio ou contrato inesperado preserva o cursor de entrada.
 
+A coleta é a camada de descoberta e transporte: ela localiza e descreve material sem decidir sua relevância nem sua promoção canônica, que continuam sob triagem e revisão humana.
+
 ## Responsabilidades das entidades
 
 | Entidade | Responsabilidade | Não é responsável por |
@@ -148,6 +150,7 @@ O cursor só pode avançar depois de uma execução terminal completa. Resultado
 | `cursor_strategy` | configuração pública | define a janela ou marcador, não armazena segredo |
 | `identity_rule` | configuração versionada | campos nativos e fallback usados para identidade de item |
 | `normalization_profile` | texto versionado | identifica a regra que produz fingerprints comparáveis |
+| `removal_policy` | configuração pública | inicialmente `none`; qualquer inferência por ausência exige política e limiar aprovados para o endpoint |
 | `request_config` | objeto público | parâmetros, headers permitidos, timeout e limite de bytes; nunca cookies, tokens ou chaves |
 | `suggested_interval` | duração opcional | orientação operacional, sem criar agenda |
 | `default_retention_class` | vocabulário existente | herda os valores já definidos em `content_items`; pode ser sobrescrito após revisão |
@@ -175,7 +178,7 @@ Configuração inicial:
 | Paginação | `page`, limitada e congelada por janela | `none`; snapshot integral |
 | Identidade primária | `id` do post | composição de `IdeReuniao`, `NumOrdem` e `NumProcesso`; `_id` apenas auxiliar |
 | Sinal de alteração | hash normalizado e `modified` como pista | hash da linha e `DatGeracaoConjuntoDados` como pista |
-| Remoção inferível | não por ausência em página limitada | apenas após snapshots completos e confirmação |
+| Política de remoção inicial | `none`; ausência em página limitada não qualifica | `none`; limiar por snapshots ainda não aprovado |
 
 ## Contrato conceitual de `collection_runs`
 
@@ -185,9 +188,11 @@ Uma execução representa uma invocação completa do coletor, não cada request
 | --- | --- | --- |
 | `id` | identidade interna | chave primária |
 | `source_endpoint_id` | referência | obrigatório, exclusão restrita |
-| `run_key` | texto/UUID | chave única da invocação; reutilizada apenas para retomar a mesma execução interrompida |
+| `run_key` | texto/UUID | chave única da invocação; reutilizada apenas para retomar o mesmo processo antes de ele expirar |
 | `status` | vocabulário | estado da máquina descrita abaixo |
 | `started_at`, `finished_at` | instantes | início obrigatório; fim obrigatório em estado terminal |
+| `last_heartbeat_at` | instante | última atividade confirmada; obrigatório enquanto `running` |
+| `stale_after_at` | instante | prazo explícito recalculado a cada heartbeat para considerar a execução interrompida |
 | `trigger_kind` | vocabulário | inicialmente `manual_local` |
 | `initiated_by` | texto | pessoa ou processo identificável, sem credencial |
 | `collector_name`, `collector_version` | textos | implementação e revisão exatas usadas |
@@ -201,7 +206,7 @@ Uma execução representa uma invocação completa do coletor, não cada request
 | `http_status` | inteiro opcional | estado final quando existe uma única resposta; múltiplas respostas ficam no manifest |
 | `response_content_type`, `etag`, `last_modified` | metadados opcionais | preservados sem inferir veracidade |
 | `response_bytes` | inteiro opcional | volume total recebido, não negativo |
-| `items_found` | inteiro | identidades enumeradas |
+| `items_found` | inteiro | chaves distintas de item enumeradas no manifest, inclusive chaves diagnósticas de rejeitados sem identidade de fonte |
 | `items_new`, `items_unchanged`, `items_changed` | inteiros | classes mutuamente exclusivas por identidade |
 | `items_removal_candidates` | inteiro | ausências qualificadas, nunca remoções automáticas |
 | `items_inaccessible`, `items_rejected` | inteiros | falhas por item e violações do contrato |
@@ -211,12 +216,48 @@ Uma execução representa uma invocação completa do coletor, não cada request
 
 Invariantes:
 
-- contagens são não negativas e coerentes com `items_found`;
-- `finished_at` é nulo somente em `running`;
-- `cursor_out` é nulo em `partial`, `failed` e `blocked`;
+- contagens são inteiros não negativos e obedecem às equações definidas abaixo;
+- `finished_at` é nulo se e somente se o estado é `running`;
+- `running` exige `last_heartbeat_at` e `stale_after_at > last_heartbeat_at`;
+- `cursor_out` é nulo em `partial`, `failed`, `blocked` e `interrupted`;
 - `ready_for_extraction` exige execução completa, manifest válido e hash registrado;
 - uma execução terminal não volta a `running`;
 - logs e erros nunca armazenam credencial, cookie de sessão ou conteúdo integral não autorizado.
+
+### Semântica matemática das contagens
+
+Seja `F` o conjunto de chaves de item distintas enumeradas nas unidades de resposta que a execução conseguiu analisar. Repetições da mesma identidade dentro ou entre páginas contam uma vez. Quando um registro inválido não oferece identidade de fonte, ele recebe somente no manifest uma chave determinística de ocorrência, suficiente para contagem e diagnóstico, mas incapaz de promover conteúdo.
+
+Cada elemento de `F` recebe exatamente uma classificação terminal e exclusiva:
+
+- `N`: novo;
+- `U`: inalterado;
+- `C`: alterado;
+- `I`: inacessível em nível de item depois de descoberto;
+- `J`: rejeitado pelo contrato.
+
+Portanto:
+
+```text
+F = N ⊎ U ⊎ C ⊎ I ⊎ J
+
+items_found
+  = items_new
+  + items_unchanged
+  + items_changed
+  + items_inaccessible
+  + items_rejected
+```
+
+`⊎` indica união disjunta. `items_removal_candidates` não participa da equação: ele conta identidades conhecidas de execuções anteriores que não pertencem a `F` e que satisfazem uma política de remoção aprovada para o endpoint. Requisições repetidas por retry não aumentam nenhuma contagem.
+
+Regras por estado:
+
+- `no_change` exige cobertura completa e `items_new = items_changed = items_removal_candidates = items_inaccessible = items_rejected = 0`; pela equação, `items_found = items_unchanged`, inclusive quando ambos são zero;
+- `succeeded` exige cobertura completa, `items_inaccessible = items_rejected = 0` e `items_new + items_changed + items_removal_candidates > 0`;
+- `partial` e `interrupted` preservam a partição apenas sobre o `F` comprovado, mas exigem `items_removal_candidates = 0`;
+- `failed` e `blocked` representam falha antes de qualquer conjunto analisável: todas as contagens de item são zero;
+- falha de acesso ao endpoint inteiro fica em `error_kind`/`error_code`; não incrementa `items_inaccessible`, que é exclusivamente uma contagem por item.
 
 ## Estados
 
@@ -238,7 +279,7 @@ candidate → active ↔ paused
 ### Execução
 
 ```text
-running → succeeded | no_change | partial | failed | blocked
+running → succeeded | no_change | partial | failed | blocked | interrupted
 ```
 
 - `succeeded`: todas as unidades previstas foram processadas e o manifest é válido;
@@ -246,8 +287,11 @@ running → succeeded | no_change | partial | failed | blocked
 - `partial`: houve saída válida, mas a cobertura prevista não terminou;
 - `failed`: erro transitório ou operacional impediu resultado utilizável;
 - `blocked`: política, autenticação, formato ou contrato inesperado exige decisão humana.
+- `interrupted`: a execução deixou de emitir heartbeat, ultrapassou `stale_after_at` e foi encerrada por reconciliação.
 
 `succeeded` e `no_change` são os únicos estados que podem produzir `cursor_out`. `partial` nunca promove os itens incompletos diretamente; o manifest pode ajudar diagnóstico ou uma repetição idempotente.
+
+O coletor atualiza `last_heartbeat_at` em limites observáveis, pelo menos antes e depois de cada request, página ou snapshot, e recalcula `stale_after_at` usando o intervalo registrado na configuração efetiva. Esse intervalo deve ser maior que seus timeouts e esperas de retry. Antes de iniciar outra execução no mesmo endpoint, a pessoa operadora ou o próprio coletor deve reconciliar qualquer `running` vencido: marca-o `interrupted`, preenche `finished_at` com o instante da reconciliação, conserva `last_heartbeat_at` como último sinal real, registra erro sanitizado, retém somente resultados comprovados e mantém `cursor_out` nulo. A repetição começa com novo `run_key`; uma execução já reconciliada não é reaberta.
 
 ## Retry
 
@@ -255,7 +299,7 @@ running → succeeded | no_change | partial | failed | blocked
 2. Timeout, desconexão, `408`, `425`, `429` e `5xx` podem ser repetidos com espera crescente e pequena variação aleatória. `Retry-After` prevalece; espera superior ao limite manual encerra a execução como `failed`.
 3. `400`, `401`, `403`, `404` ou `410` no endpoint, violação de robots/termos, formato inesperado, resposta acima do limite e falha de validação não recebem retry cego; terminam como `blocked`.
 4. Falha depois de páginas válidas produz `partial`, conserva o cursor de entrada e preserva hashes das páginas concluídas.
-5. Uma nova tentativa iniciada pela pessoa operadora cria novo `run_key`. Retomar a mesma execução após queda do processo reutiliza o `run_key` e não cria uma segunda linha.
+5. Uma nova tentativa iniciada pela pessoa operadora cria novo `run_key`. Antes de `stale_after_at`, a retomada do mesmo processo pode reutilizar o `run_key`; depois da reconciliação como `interrupted`, qualquer repetição usa uma nova chave.
 6. O coletor não repete escrita canônica: a v1 produz artefatos de simulação e revisão.
 
 ## Deduplicação
@@ -288,7 +332,7 @@ Para a mesma fixture, versão de coletor, configuração e janela, o coletor dev
 - uma repetição deliberada cria novo `collection_run`, mas não cria outro candidato equivalente;
 - persistência futura deverá usar constraint única e operação atômica baseada na identidade, nunca `SELECT` seguido de `INSERT` sem proteção;
 - conflito entre identidade existente e conteúdo incompatível interrompe o efeito e vai para revisão;
-- `partial`, `failed` e `blocked` não avançam checkpoint nem confirmam ausência.
+- `partial`, `failed`, `blocked` e `interrupted` não avançam checkpoint nem confirmam ausência.
 
 ## Conteúdo novo, alterado, removido e inacessível
 
@@ -298,11 +342,11 @@ Para a mesma fixture, versão de coletor, configuração e janela, o coletor dev
 | Inalterado | mesma identidade e mesmo fingerprint de versão | registrar nova observação operacional no manifest; não duplicar item ou observação |
 | Alterado | mesma identidade e fingerprint diferente | candidato a nova versão; conservar anterior; relação `corrects`, `revises` ou `replaces` só após evidência e revisão |
 | Ausente | não apareceu na coleta corrente | nenhuma conclusão em janela incremental ou execução parcial |
-| Candidato a remoção | `404`/`410` da URL conhecida ou ausência em dois snapshots integrais completos consecutivos | sinalizar para revisão; nunca apagar ou inativar automaticamente |
+| Candidato a remoção | identidade conhecida satisfaz uma política e um limiar previamente aprovados para o endpoint | sinalizar para revisão; nunca apagar ou inativar automaticamente |
 | Inacessível | timeout, permissão, bloqueio ou erro de transporte | registrar falha; não converter em remoção nem alterar endpoint após um único caso |
 | Rejeitado | registro viola o contrato esperado | preservar motivo e amostra mínima segura; bloquear promoção |
 
-Para ABVE, uma ausência na janela paginada não prova remoção. Para o snapshot integral ANEEL, a ausência pode gerar candidato somente se dois snapshots completos consecutivos concordarem; mudança de chave/estrutura invalida essa inferência.
+Para ABVE, uma ausência na janela paginada não prova remoção. Para ANEEL, comparar snapshots completos pode revelar ausências, mas este documento não aprova quantidade de snapshots, duração ou outro limiar para convertê-las em `removal_candidate`. Ambos os endpoints começam com `removal_policy = none`; qualquer regra futura será endpoint-specific, revisada separadamente e invalidada quando chave, estrutura ou cobertura mudarem.
 
 ## Limite entre coleta, extração e revisão
 
@@ -387,7 +431,7 @@ Este PR não propõe tabelas adicionais para essas lacunas. No primeiro ensaio, 
 1. O endpoint WordPress da ABVE continuará aceitável após uma confirmação explícita de frequência e retenção?
 2. Qual janela e quantidade de páginas ABVE oferecem uma amostra suficiente sem varrer o arquivo inteiro?
 3. A chave composta ANEEL permanece estável após recargas do DataStore ou precisa incluir outro campo?
-4. Dois snapshots completos são suficientes para sinalizar remoção na ANEEL?
+4. Qual política e limiar endpoint-specific, se algum, poderá transformar ausência em candidato a remoção na ANEEL?
 5. Qual tamanho e duração reais do dump ANEEL no ambiente local controlado?
 6. O manifest por request/item deverá permanecer arquivo versionado ou ganhar persistência própria antes da primeira escrita remota?
 7. Onde candidatos e decisões de revisão serão representados sem misturá-los às tabelas canônicas?
@@ -404,14 +448,16 @@ Esta fundação está aceita quando a revisão confirmar que:
 4. cada endpoint possui URL oficial, formato, identidade, paginação/snapshot, limites e amostra verificável;
 5. `source_endpoints` separa fonte, local coletável e configuração pública sem guardar segredo;
 6. `collection_runs` preserva sucesso, nenhuma mudança, parcial, falha e bloqueio;
-7. retry não esconde falha, não cria loop agressivo e não avança cursor após resultado incompleto;
-8. repetição deliberada preserva novo histórico operacional sem duplicar candidatos equivalentes;
-9. alteração cria candidato a versão e nunca sobrescreve a anterior;
-10. ausência e inacessibilidade não provocam remoção automática;
-11. ABVE exercita conteúdo editorial paginado e ANEEL exercita snapshot tabular regulatório;
-12. a fronteira entre coleta, extração e revisão humana é testável;
-13. o coletor inicial está limitado a execução manual/local, simulação e artefatos revisáveis;
-14. os requisitos ainda não representáveis e as perguntas em aberto estão explícitos;
-15. este PR contém somente documentação e nenhuma mudança de migration, schema, Supabase ou código.
+7. uma execução `running` vencida é reconciliada como `interrupted`, sem cursor de saída e sem reabertura;
+8. as contagens formam a partição explícita de `items_found`, enquanto `items_removal_candidates` permanece disjunto;
+9. retry não esconde falha, não cria loop agressivo e não avança cursor após resultado incompleto;
+10. repetição deliberada preserva novo histórico operacional sem duplicar candidatos equivalentes;
+11. alteração cria candidato a versão e nunca sobrescreve a anterior;
+12. ausência e inacessibilidade não provocam remoção automática, e nenhum limiar ANEEL foi aprovado;
+13. ABVE exercita conteúdo editorial paginado e ANEEL exercita snapshot tabular regulatório;
+14. a fronteira entre coleta, extração e revisão humana é testável;
+15. o coletor inicial está limitado a execução manual/local, simulação e artefatos revisáveis;
+16. os requisitos ainda não representáveis e as perguntas em aberto estão explícitos;
+17. este PR contém somente documentação e nenhuma mudança de migration, schema, Supabase ou código.
 
 Depois do aceite, a próxima etapa poderá preparar a migration de `source_endpoints` e `collection_runs` em PR separado. Este documento não autoriza sua criação ou aplicação.
