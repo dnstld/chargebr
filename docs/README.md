@@ -58,6 +58,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: implementação da fronteira de exposição 0001](decisao-implementacao-fronteira-exposicao-0001.md)
 - [Resultado da implementação da fronteira de exposição 0001](resultado-implementacao-fronteira-exposicao-0001.md)
 - [Decisão: pipeline de coleta antes do runtime](decisao-pipeline-coleta-antes-runtime.md)
+- [Fundação do pipeline de coleta v1](fundacao-pipeline-coleta-v1.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
