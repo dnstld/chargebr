@@ -65,4 +65,15 @@ Cada estágio depende da validação do anterior. Recursos e formatos específic
 
 ## Prioridade atual
 
-A fundação de dados foi validada no escopo dos três casos do piloto. A prioridade agora é iniciar o fluxo de inteligência com um primeiro ciclo manual, limitado e revisável antes de ampliar a coleta, automatizar decisões ou construir uma experiência pública ampla.
+A fundação de dados e os primeiros ciclos manuais validaram como o ChargeBR representa fontes, conteúdos, observações, acontecimentos, métricas, conflitos e mudanças metodológicas. Uma fronteira privada de leitura também foi instalada para um futuro backend, mas sua identidade operacional permanece sem senha e não será ativada nesta fase.
+
+A prioridade agora é construir o pipeline de coleta antes de escolher runtime ou backend. A primeira fase será manual, local e revisável:
+
+1. modelar `source_endpoints` e `collection_runs`;
+2. criar um coletor manual/local;
+3. validar conectores iniciais para ABVE e ANEEL;
+4. provar deduplicação e idempotência;
+5. extrair `observations` como candidatas rastreáveis;
+6. manter revisão humana antes da persistência canônica.
+
+Automação agendada, hospedagem, backend, API, frontend e produto público ficam adiados. O runtime será escolhido somente depois que as coletas reais revelarem duração, volume, dependências, frequência, concorrência, segredos e necessidades de observabilidade.
