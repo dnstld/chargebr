@@ -2,7 +2,7 @@
 
 ## Estado
 
-`AGUARDANDO REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento substitui a decisão de escolher agora o runtime do primeiro backend interno. A nova prioridade do ChargeBR é construir e validar o pipeline de coleta antes de selecionar hospedagem, backend ou forma definitiva de execução.
 
@@ -347,3 +347,13 @@ A direção collection-first pausa a ativação operacional do nono ciclo. Quand
 14. As interrupções impedem coleta indevida, duplicação, perda de versões e aceite automático?
 
 Se todas as respostas forem `sim`, registre `ACCEPTED`. Se alguma resposta for `não`, indique o número e a correção necessária. Este PR não deve ser incorporado antes do aceite.
+
+## Resultado da revisão
+
+| Campo | Resultado |
+| --- | --- |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 15 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a direção collection-first e não solicitou correções. O PR está liberado para merge. Depois do merge, a próxima etapa será selecionar os endpoints iniciais da ABVE e da ANEEL, mantendo runtime, backend, hospedagem e ativação da fronteira `0001` adiados.
