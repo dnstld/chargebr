@@ -62,6 +62,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: source canônica da ANEEL](decisao-source-aneel.md)
 - [Modelagem de source_endpoints e collection_runs v1](modelagem-source-endpoints-collection-runs-v1.md)
 - [Preflight do source endpoint ABVE WordPress Noticias](preflight-source-endpoint-abve-wordpress.md)
+- [Preflight do source endpoint ANEEL — Pautas e Atas](preflight-source-endpoint-aneel-board-meetings.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
