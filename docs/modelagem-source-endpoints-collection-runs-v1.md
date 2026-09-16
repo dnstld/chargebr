@@ -30,7 +30,7 @@ A verificação foi feita sobre a `main` no commit `943c7b73401199321e86b8ed0554
 7. Haverá um índice geral por `(source_endpoint_id, started_at desc, id desc)` e um índice parcial para a última execução completa por `(source_endpoint_id, finished_at desc, id desc) where status in ('succeeded', 'no_change')`.
 8. Haverá no máximo um `running` por endpoint, garantido por índice único parcial. Uma execução vencida precisa ser reconciliada como `interrupted` antes de outra começar.
 9. Estados terminais de `collection_runs` são imutáveis por trigger. A mesma trigger exige inserção inicial como `running`, permite somente atualizações de um `running` e protege os campos que identificam e delimitam a invocação.
-10. A trigger de `source_endpoints` invalida a revisão de acesso quando URL, request, termos ou robots mudam, exige uma revisão estritamente mais nova para o endpoint continuar `active` e torna toda linha `retired` imutável.
+10. A trigger de `source_endpoints` invalida a revisão de acesso quando URL, request, paginação, cursor, termos ou robots mudam, exige uma revisão estritamente mais nova para o endpoint continuar `active` e torna toda linha `retired` imutável.
 11. A política inicial de remoção é literalmente `none`, com `CHECK (removal_policy = 'none')`. Não há `removal_config` nem vocabulário de políticas futuras. Na v1, `items_removal_candidates` também é sempre zero; uma política futura exigirá decisão e migration que alterem ambas as constraints.
 12. RLS será habilitada sem policies. Todos os privilégios serão revogados de `public`, `anon`, `authenticated` e `service_role`, inclusive nas sequences; nenhum grant será concedido. Somente o proprietário/administração de migration terá acesso até uma decisão criar uma identidade de collector.
 
@@ -160,9 +160,15 @@ Uma trigger `BEFORE UPDATE` deve impedir alteração de `source_id` e `endpoint_
    ```sql
    NEW.endpoint_url  is distinct from OLD.endpoint_url
    or NEW.request_config is distinct from OLD.request_config
+   or NEW.pagination_strategy is distinct from OLD.pagination_strategy
+   or NEW.pagination_config is distinct from OLD.pagination_config
+   or NEW.cursor_strategy is distinct from OLD.cursor_strategy
+   or NEW.cursor_config is distinct from OLD.cursor_config
    or NEW.terms_url   is distinct from OLD.terms_url
    or NEW.robots_url  is distinct from OLD.robots_url
    ```
+
+   `identity_rule`, `normalization_profile` e `default_retention_class` não participam dessa comparação: são regras pós-acesso e não alteram o transporte.
 
 3. Se houve mudança sensível e `NEW.status = 'active'`, aceitar a atualização somente quando `NEW.access_reviewed_at` não for nulo e representar uma revisão nova: se `OLD.access_reviewed_at` não for nulo, o novo instante deve ser estritamente maior. Reutilizar o mesmo timestamp é rejeitado. Isso permite uma alteração atômica de configuração já revisada, mas não permite que uma revisão anterior valide a configuração nova.
 4. Se houve mudança sensível e `NEW.status <> 'active'`, exigir `NEW.access_reviewed_at is null`. A revisão anterior é invalidada de forma explícita. Depois que a configuração estiver estável, uma atualização separada pode registrar um novo `access_reviewed_at`; somente então o endpoint pode voltar a `active`.
@@ -539,7 +545,7 @@ Esta decisão está pronta para orientar a migration quando a revisão confirmar
 3. todos os campos, tipos, nullability, defaults, FKs e `ON DELETE` estão decididos;
 4. vocabulários usam `text + CHECK` e nenhuma migration precisará escolher enums;
 5. os seis campos JSONB têm escopo e estrutura definidos sem esconder método, formato, status, retenção ou política de remoção;
-6. mudança de `endpoint_url`, `request_config`, `terms_url` ou `robots_url` invalida a revisão anterior e não pode permanecer `active` sem revisão estritamente mais nova;
+6. mudança de `endpoint_url`, `request_config`, `pagination_strategy`, `pagination_config`, `cursor_strategy`, `cursor_config`, `terms_url` ou `robots_url` invalida a revisão anterior e não pode permanecer `active` sem revisão estritamente mais nova; `identity_rule`, `normalization_profile` e retenção permanecem fora dessa regra por serem pós-acesso;
 7. uma linha `retired` é integralmente imutável, inclusive configuração, notas e `updated_at`;
 8. `endpoint_url`, `terms_url` e `robots_url` rejeitam userinfo/credenciais;
 9. heartbeat, staleness, timestamps, cursor, erro, manifest e handoff possuem invariantes testáveis;
