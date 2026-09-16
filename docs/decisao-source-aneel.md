@@ -28,7 +28,7 @@ Conteúdo publicado em `gov.br/aneel` e em domínios ou subdomínios oficiais da
 
 `is_primary_source = true` registra uma capacidade da fonte, não uma garantia sobre todo item. Atos, decisões, dados, comunicados e documentos produzidos, emitidos ou custodiados pela própria ANEEL podem sustentar evidência primária sobre o que a Agência decidiu, publicou ou mantém. Material de terceiros reproduzido em um canal da ANEEL continua sujeito à avaliação de proveniência do item.
 
-`publisher_group = 'Governo Federal'` segue o precedente governamental existente no seed para uma fonte do Poder Executivo federal. O campo agrupa a família institucional sem substituir o publicador específico: a source continua sendo a ANEEL, autarquia com identidade e autoridade próprias, e não o Ministério de Minas e Energia.
+`publisher_group = null` porque o ChargeBR ainda não possui uma semântica canônica suficientemente definida para o campo em fontes institucionais ou governamentais. O valor não deve ser inferido de fixture ou piloto. Ele permanecerá vazio até uma decisão própria estabelecer sua finalidade e granularidade, sem alterar que a source representa a ANEEL e não o Ministério de Minas e Energia.
 
 Não há motivo documental para adiar o cadastro. A identidade, a natureza institucional, a homepage e a autoria do portal de dados estão confirmadas por páginas oficiais, e a fundação do pipeline já trata a ausência dessa source como pré-requisito. A persistência, porém, depende de aceite desta decisão e deve ocorrer isoladamente.
 
@@ -44,10 +44,10 @@ Não há motivo documental para adiar o cadastro. A identidade, a natureza insti
 | `country_code` | `BR` |
 | `language_codes` | `['pt-BR', 'en']` |
 | `is_primary_source` | `true` |
-| `publisher_group` | `Governo Federal` |
+| `publisher_group` | `null` |
 | `notes` | `Fonte institucional da Agência Nacional de Energia Elétrica em seus domínios e subdomínios oficiais, inclusive o Portal de Dados Abertos; a natureza primária depende de o conteúdo ter sido produzido, emitido ou custodiado pela própria Agência.` |
 
-O nome curto segue o padrão da source `ABVE`: preserva a denominação institucional reconhecida e deixa o nome completo explícito no grupo ou nas notas. Neste caso, o grupo registra o Poder Executivo federal e as notas preservam o nome completo da Agência.
+O nome curto segue o padrão da source `ABVE`: preserva a denominação institucional reconhecida, enquanto as notas explicitam o nome completo da Agência. O valor nulo do grupo publicador é deliberado e não representa dúvida sobre a identidade do publicador.
 
 ## Evidências utilizadas
 
@@ -58,11 +58,11 @@ O nome curto segue o padrão da source `ABVE`: preserva a denominação instituc
 - [Sobre o Portal de Dados Abertos](https://dadosabertos.aneel.gov.br/about): atribui à própria ANEEL o Plano de Dados Abertos e declara que o portal disponibiliza dados produzidos ou custodiados pela Agência.
 - [Organização ANEEL no Portal de Dados Abertos](https://dadosabertos.aneel.gov.br/organization/agencia-nacional-de-energia-eletrica): agrupa os conjuntos sob “Agência Nacional de Energia Elétrica”, confirmando que o portal não é um publicador distinto.
 - [Pautas e Atas das Reuniões Públicas da Diretoria](https://dadosabertos.aneel.gov.br/dataset/pautas-e-atas-das-reunioes-publicas-da-diretoria): atribui o conjunto à Agência e distingue `SGE/ANEEL` como autor e `CEGDI/ANEEL` como mantenedor, ambos internos à mesma source.
-- Evidência interna: `supabase/migrations/20260831123209_sources.sql` define os vocabulários e a semântica dos campos; `data/canonical/0003_abve-bev-emplacamentos-julho-2026.sql` demonstra source aprovada com nome curto, grupo publicador e produto institucional reunidos; `supabase/seed.sql` fornece o precedente de `government_regulator` e `publisher_group = 'Governo Federal'`; `docs/fundacao-pipeline-coleta-v1.md` exige uma source ANEEL anterior a qualquer endpoint.
+- Evidência interna: `supabase/migrations/20260831123209_sources.sql` define os vocabulários dos campos e permite `publisher_group` nulo; `data/canonical/0003_abve-bev-emplacamentos-julho-2026.sql` demonstra source aprovada com nome curto e produto institucional reunidos; `docs/fundacao-pipeline-coleta-v1.md` exige uma source ANEEL anterior a qualquer endpoint.
 
 ## Riscos ou ambiguidades
 
-- `publisher_group` não possui vocabulário controlado. `Governo Federal` é consistente com o precedente disponível, mas a revisão deve confirmar que o campo continuará representando a família institucional, e não repetir o nome legal da source.
+- `publisher_group` não possui semântica ou granularidade canônica suficiente para fontes institucionais ou governamentais. Mantê-lo nulo evita transformar um fixture de piloto em regra; uma decisão futura poderá defini-lo separadamente.
 - A seção inglesa é oficial e atual, porém resumida. `en` registra idioma efetivamente publicado, sem prometer paridade de cobertura com `pt-BR`.
 - Os domínios e sistemas da ANEEL podem ser migrados ou descontinuados. A homepage identifica a source; não funciona como lista permanente de endpoints autorizados.
 - `is_primary_source = true` pode ser interpretado de forma ampla demais se for separado das notas. A natureza primária precisa continuar sendo avaliada por conteúdo e por afirmação.
@@ -74,7 +74,7 @@ O nome curto segue o padrão da source `ABVE`: preserva a denominação instituc
 2. O registro proposto satisfaz integralmente as constraints atuais de `public.sources`.
 3. A homepage institucional corrente representa melhor a source inteira do que qualquer produto especializado.
 4. `government_regulator`, `BR`, `['pt-BR', 'en']` e `is_primary_source = true` permanecem sustentados pelas evidências oficiais e pelas ressalvas documentadas.
-5. `publisher_group = 'Governo Federal'` é aceito como agrupamento institucional sem apagar a autoria própria da ANEEL.
+5. `publisher_group = null` é preservado até uma decisão própria definir a semântica e a granularidade do campo para fontes institucionais ou governamentais.
 6. Todos os domínios, subdomínios, portais e unidades internas permanecem subordinados à mesma source, sem criação de `source_endpoints` neste PR.
 7. O diff contém apenas este documento e sua entrada em `docs/README.md`, sem SQL, migration, schema, Supabase, dados ou código.
 
