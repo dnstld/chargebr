@@ -60,7 +60,7 @@ O bootstrap manual deve declarar sua amostra: no maximo os 100 posts mais recent
 
 `minimum_excerpt` continua correto. A API entrega o corpo editorial integral em `content.rendered`, mas a politica do ChargeBR nao arquiva integralmente conteudo editorial por padrao. O corpo pode ser processado transitoriamente para normalizacao, fingerprint e extracao; a persistencia padrao deve se limitar a metadados, referencia externa e excerto minimo necessario a revisao e proveniencia.
 
-A pagina oficial da ABVE declara “Todos os direitos reservados” e nao foi identificada licenca aberta para as noticias. A politica de privacidade/uso nao concede licenca de republicacao. Isso reforca `minimum_excerpt`, sem transformar este preflight em parecer juridico.
+A pagina oficial da ABVE declara “Todos os direitos reservados” e nao foi identificada licenca aberta para as noticias. A politica de privacidade/uso nao concede licenca de republicacao nem constitui termos formais do endpoint ou do conteudo; por isso ela permanece como evidencia revisada, mas nao preenche `terms_url`. Isso reforca `minimum_excerpt`, sem transformar este preflight em parecer juridico.
 
 ## Registro completo proposto
 
@@ -121,7 +121,7 @@ normalization_profile: abve-wordpress-post-v1
 removal_policy: none
 suggested_interval: "7 days"
 default_retention_class: minimum_excerpt
-terms_url: https://abve.org.br/politica-de-privacidade/
+terms_url: null
 robots_url: https://abve.org.br/robots.txt
 access_reviewed_at: 2026-09-16T09:12:35Z
 notes: >-
@@ -131,8 +131,10 @@ notes: >-
   edicoes, retrodatacao, despublicacao ou exclusao durante o run podem alterar
   conteudo ou deslocar paginas. Deduplicar por id, registrar headers por pagina
   e nao comprometer cursor quando a cobertura planejada nao terminar.
-  A URL em terms_url e a pagina oficial de privacidade/uso identificada; ela
-  nao constitui termos especificos da API nem licenca de republicacao.
+  A pagina https://abve.org.br/politica-de-privacidade/ foi revisada como
+  evidencia oficial de privacidade, cookies, uso geral e reserva de direitos,
+  mas nao constitui termos especificos da API nem licenca de republicacao;
+  por isso terms_url permanece nulo.
   Nao ha SLA ou rate limit publicado identificado. Coleta inicial manual,
   conservadora e sem inferencia de remocao.
 ```
