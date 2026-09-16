@@ -30,8 +30,9 @@ A verificação foi feita sobre a `main` no commit `943c7b73401199321e86b8ed0554
 7. Haverá um índice geral por `(source_endpoint_id, started_at desc, id desc)` e um índice parcial para a última execução completa por `(source_endpoint_id, finished_at desc, id desc) where status in ('succeeded', 'no_change')`.
 8. Haverá no máximo um `running` por endpoint, garantido por índice único parcial. Uma execução vencida precisa ser reconciliada como `interrupted` antes de outra começar.
 9. Estados terminais de `collection_runs` são imutáveis por trigger. A mesma trigger exige inserção inicial como `running`, permite somente atualizações de um `running` e protege os campos que identificam e delimitam a invocação.
-10. A política inicial de remoção é literalmente `none`, com `CHECK (removal_policy = 'none')`. Não há `removal_config` nem vocabulário de políticas futuras. Na v1, `items_removal_candidates` também é sempre zero; uma política futura exigirá decisão e migration que alterem ambas as constraints.
-11. RLS será habilitada sem policies. Todos os privilégios serão revogados de `public`, `anon`, `authenticated` e `service_role`, inclusive nas sequences; nenhum grant será concedido. Somente o proprietário/administração de migration terá acesso até uma decisão criar uma identidade de collector.
+10. A trigger de `source_endpoints` invalida a revisão de acesso quando URL, request, termos ou robots mudam, exige uma revisão estritamente mais nova para o endpoint continuar `active` e torna toda linha `retired` imutável.
+11. A política inicial de remoção é literalmente `none`, com `CHECK (removal_policy = 'none')`. Não há `removal_config` nem vocabulário de políticas futuras. Na v1, `items_removal_candidates` também é sempre zero; uma política futura exigirá decisão e migration que alterem ambas as constraints.
+12. RLS será habilitada sem policies. Todos os privilégios serão revogados de `public`, `anon`, `authenticated` e `service_role`, inclusive nas sequences; nenhum grant será concedido. Somente o proprietário/administração de migration terá acesso até uma decisão criar uma identidade de collector.
 
 ## `public.source_endpoints`
 
@@ -62,9 +63,9 @@ Uma linha representa um local lógico e uma configuração pública de coleta pe
 | `removal_policy` | `text` | não | `'none'` | na v1, somente `none` |
 | `suggested_interval` | `interval` | sim | — | orientação positiva, sem criar agenda |
 | `default_retention_class` | `text` | não | `'metadata_only'` | mesmo vocabulário de `content_items`: `metadata_only`, `minimum_excerpt`, `full_document`, `external_reference` |
-| `terms_url` | `text` | sim | — | URL HTTPS pública de termos/licença, não vazia |
-| `robots_url` | `text` | sim | — | URL HTTPS pública de robots, não vazia |
-| `access_reviewed_at` | `timestamptz` | sim | — | instante da revisão de acesso; obrigatório quando `active` |
+| `terms_url` | `text` | sim | — | URL HTTPS pública de termos/licença, não vazia e sem userinfo/credencial |
+| `robots_url` | `text` | sim | — | URL HTTPS pública de robots, não vazia e sem userinfo/credencial |
+| `access_reviewed_at` | `timestamptz` | sim | — | instante da revisão da configuração sensível atual; obrigatório quando `active` |
 | `notes` | `text` | sim | — | limitações não estruturadas, não vazio quando presente |
 | `created_at` | `timestamptz` | não | `now()` | auditoria de criação |
 | `updated_at` | `timestamptz` | não | `now()` | auditoria mantida explicitamente na alteração |
@@ -137,7 +138,9 @@ check (removal_policy = 'none')
 check (suggested_interval is null or suggested_interval > interval '0 seconds')
 check (default_retention_class in ('metadata_only', 'minimum_excerpt', 'full_document', 'external_reference'))
 check (terms_url is null or terms_url ~ '^https://[^[:space:]]+$')
+check (terms_url is null or terms_url !~ '^https://[^/]*@')
 check (robots_url is null or robots_url ~ '^https://[^[:space:]]+$')
+check (robots_url is null or robots_url !~ '^https://[^/]*@')
 check (status <> 'active' or access_reviewed_at is not null)
 check (notes is null or btrim(notes) <> '')
 check (updated_at >= created_at)
@@ -145,7 +148,27 @@ check (updated_at >= created_at)
 
 A migration deve acrescentar checks de tipo e positividade para `timeout_ms` e `max_response_bytes` e de objeto para `query_params`/`headers` quando presentes. A expressão exata pode usar operadores JSONB ou JSONPath, desde que rejeite tipo incorreto sem lançar erro de cast durante validação.
 
-O índice da unique `(source_id, endpoint_key)` já atende buscas por source. Não é necessário índice isolado por `status` na v1. Uma trigger deve impedir alteração de `source_id` e `endpoint_key` após insert e impedir qualquer transição de `retired` para outro status. As demais transições válidas são as já aceitas: `candidate → active|retired`, `active → paused|unavailable|retired`, `paused → active|retired` e `unavailable → active|retired`; permanecer no mesmo status é permitido para editar configuração ou notas.
+O índice da unique `(source_id, endpoint_key)` já atende buscas por source. Não é necessário índice isolado por `status` na v1.
+
+### Revisão de acesso e imutabilidade do endpoint
+
+Uma trigger `BEFORE UPDATE` deve impedir alteração de `source_id` e `endpoint_key` depois do insert e aplicar, nesta ordem, as regras abaixo.
+
+1. Se `OLD.status = 'retired'`, rejeitar qualquer update, inclusive update sem mudança material ou mantendo `status = 'retired'`. Configuração, notas, `access_reviewed_at` e `updated_at` ficam imutáveis. A transição para `retired` ainda pode gravar a fotografia final; a imutabilidade começa depois que essa transição foi persistida.
+2. Considerar que houve mudança sensível de acesso quando qualquer uma destas comparações for verdadeira:
+
+   ```sql
+   NEW.endpoint_url  is distinct from OLD.endpoint_url
+   or NEW.request_config is distinct from OLD.request_config
+   or NEW.terms_url   is distinct from OLD.terms_url
+   or NEW.robots_url  is distinct from OLD.robots_url
+   ```
+
+3. Se houve mudança sensível e `NEW.status = 'active'`, aceitar a atualização somente quando `NEW.access_reviewed_at` não for nulo e representar uma revisão nova: se `OLD.access_reviewed_at` não for nulo, o novo instante deve ser estritamente maior. Reutilizar o mesmo timestamp é rejeitado. Isso permite uma alteração atômica de configuração já revisada, mas não permite que uma revisão anterior valide a configuração nova.
+4. Se houve mudança sensível e `NEW.status <> 'active'`, exigir `NEW.access_reviewed_at is null`. A revisão anterior é invalidada de forma explícita. Depois que a configuração estiver estável, uma atualização separada pode registrar um novo `access_reviewed_at`; somente então o endpoint pode voltar a `active`.
+5. Se não houve mudança sensível, a constraint `status <> 'active' or access_reviewed_at is not null` continua suficiente para uma transição a `active`; o timestamp existente ainda corresponde à mesma configuração sensível.
+
+As transições válidas permanecem as já aceitas: `candidate → active|retired`, `active → paused|unavailable|retired`, `paused → active|retired` e `unavailable → active|retired`. Permanecer no mesmo status permite editar configuração ou notas somente quando o estado não é `retired` e as regras de revisão acima são satisfeitas.
 
 ## `public.collection_runs`
 
@@ -354,6 +377,8 @@ O índice único parcial resolve a concorrência no próprio PostgreSQL. Se exis
 | Regra | Banco | Aplicação/coletor |
 | --- | --- | --- |
 | vocabulários, nullability, formatos básicos e FKs | `CHECK`, `NOT NULL`, FK | — |
+| revisão após mudança sensível do endpoint | trigger invalida o timestamp anterior ou exige um estritamente mais novo para continuar `active` | executa a revisão real e fornece seu instante |
+| histórico de endpoint `retired` | trigger rejeita qualquer update posterior | cria outro endpoint se surgir um alvo lógico diferente; não reabre nem reescreve o retirado |
 | um `running` por endpoint | índice único parcial | reconcilia o vencido antes de tentar novamente |
 | terminal nunca reabre nem muda | trigger | trata erro de concorrência sem recriar a mesma linha |
 | `finished_at` e relações temporais | constraints | fornece relógio coerente e heartbeat nos limites definidos |
@@ -499,7 +524,7 @@ Em um snapshot ANEEL completo posterior sem mudanças, `no_change` representa to
 3. JSONB é necessário para parâmetros e checkpoints heterogêneos, mas exige validação de aplicação além dos checks estruturais. Não deve virar escape para novos invariantes importantes.
 4. O banco não detecta todos os segredos por conteúdo. Allowlist, revisão e sanitização continuam bloqueios obrigatórios antes de escrever.
 5. O índice único impede dois `running`, mas disponibilidade depende de reconciliação correta dos runs vencidos.
-6. A trigger de transição e imutabilidade é parte da garantia e precisa de testes específicos na migration; grants sozinhos não bastam.
+6. As triggers de revisão de acesso, imutabilidade de endpoint retirado e transição de runs são parte da garantia e precisam de testes específicos na migration; grants sozinhos não bastam.
 7. `public` mantém coerência com o schema atual, mas qualquer exposição futura pela Data API exige decisão e policies próprias. A ausência atual de policies/grants é intencional.
 8. Ativar remoção exigirá nova decisão: vocabulário, limiar, evidência, alteração da constraint do endpoint e retirada coordenada do zero obrigatório em runs.
 9. Candidatos, requests/páginas, itens por run e decisões de revisão continuam no manifest; não são modelados por estas duas tabelas.
@@ -514,14 +539,17 @@ Esta decisão está pronta para orientar a migration quando a revisão confirmar
 3. todos os campos, tipos, nullability, defaults, FKs e `ON DELETE` estão decididos;
 4. vocabulários usam `text + CHECK` e nenhuma migration precisará escolher enums;
 5. os seis campos JSONB têm escopo e estrutura definidos sem esconder método, formato, status, retenção ou política de remoção;
-6. heartbeat, staleness, timestamps, cursor, erro, manifest e handoff possuem invariantes testáveis;
-7. terminalidade é imutável por trigger e existe no máximo um `running` por endpoint;
-8. a equação de `items_found`, a ortogonalidade conceitual de remoção e as regras por status estão preservadas;
-9. `removal_policy = none` e zero removal candidates são garantidos sem inventar política futura;
-10. as consultas de histórico recente e último run completo possuem índices próprios;
-11. ABVE paginado, ANEEL snapshot, `no_change`, alteração, parcial, bloqueio e reconciliação como `interrupted` cabem no modelo;
-12. nenhuma credencial, segredo, dado canônico ou endpoint real foi criado;
-13. runtime, backend, hospedagem, candidatos a observations e demais lacunas do PR #95 continuam fora de escopo.
+6. mudança de `endpoint_url`, `request_config`, `terms_url` ou `robots_url` invalida a revisão anterior e não pode permanecer `active` sem revisão estritamente mais nova;
+7. uma linha `retired` é integralmente imutável, inclusive configuração, notas e `updated_at`;
+8. `endpoint_url`, `terms_url` e `robots_url` rejeitam userinfo/credenciais;
+9. heartbeat, staleness, timestamps, cursor, erro, manifest e handoff possuem invariantes testáveis;
+10. terminalidade de runs é imutável por trigger e existe no máximo um `running` por endpoint;
+11. a equação de `items_found`, a ortogonalidade conceitual de remoção e as regras por status estão preservadas;
+12. `removal_policy = none` e zero removal candidates são garantidos sem inventar política futura;
+13. as consultas de histórico recente e último run completo possuem índices próprios;
+14. ABVE paginado, ANEEL snapshot, `no_change`, alteração, parcial, bloqueio e reconciliação como `interrupted` cabem no modelo;
+15. nenhuma credencial, segredo, dado canônico ou endpoint real foi criado;
+16. runtime, backend, hospedagem, candidatos a observations e demais lacunas do PR #95 continuam fora de escopo.
 
 ## Próximo passo
 
