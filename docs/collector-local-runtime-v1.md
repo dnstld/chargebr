@@ -12,6 +12,10 @@ O único adapter executável é `abve`, resolvido por `sources.slug = 'abve'` e 
 
 O collector é manual/local, determinístico e collection-first. Ele persiste apenas `collection_runs` e uma referência ao manifest local. Não promove conteúdo, não escreve fatos canônicos e não usa AI durante coleta, validação, classificação ou hashing.
 
+Este documento supersede exclusivamente a restrição anterior da fundação que proibia qualquer escrita remota pelo primeiro collector manual/local. Na runtime v1, a única persistência remota autorizada é `public.collection_runs`.
+
+Continuam proibidas escritas em `sources`, `source_endpoints`, `content_items`, `observations`, `evidence`, `events`, métricas, `organizations`, `regulatory_instruments` e demais entidades canônicas. Continuam proibidos `postgres`, `service_role` e os logins privados existentes.
+
 Ficam mantidas as decisões anteriores: `removal_policy = none`; retries HTTP pertencem ao mesmo run; uma nova invocação deliberada cria outro run; `partial`, `failed`, `blocked` e `interrupted` não produzem `cursor_out`; somente `succeeded` e `no_change` podem avançar o cursor.
 
 ## Estado atual
@@ -149,6 +153,20 @@ Uma execução normal segue exatamente esta ordem:
 
 As queries de heartbeat e a transição terminal são updates condicionais com `WHERE id = $run_id AND status = 'running'`. Zero linhas atualizadas significa corrida ou estado inesperado e deve interromper o processo; nunca se faz update cego ou reabertura de terminal.
 
+### Identificadores operacionais
+
+Os identificadores persistidos no run e repetidos no manifest são:
+
+```text
+collector_name = chargebr-local-collector
+collector_version = Git commit SHA completo do código do collector executado
+contract_version = chargebr-local-collector-contract-v1
+```
+
+`collector_name` é estável entre versões. `collector_version` identifica de forma exata e reproduzível a implementação executada e deve ser o SHA completo do commit, nunca package version, timestamp, branch name ou `latest`. `contract_version` muda somente quando o contrato operacional muda.
+
+`config_fingerprint` continua incluindo `contract_version`. Ele não inclui `collector_version`, porque a revisão exata da implementação já possui coluna e campo próprios.
+
 ### Heartbeat
 
 O lease v1 é de cinco minutos. Cada heartbeat usa um instante UTC capturado pelo processo e grava:
@@ -176,6 +194,19 @@ Há heartbeat antes e depois de cada tentativa HTTP, antes e depois de uma esper
 
 `handoff_status` é `ready_for_extraction` somente em `succeeded`; é `not_produced` em `running`/`no_change` e `withheld` nos demais terminais. Manifest e hash são obrigatórios em `succeeded`/`no_change`; para outros estados são persistidos juntos apenas quando existe um artefato sanitizado e verificável.
 
+### Handoff `ready_for_extraction`
+
+Em `succeeded`, `handoff_status = ready_for_extraction` significa que o manifest fornece identidade, URL canônica, versões de endpoint/contrato, normalized content fingerprint e proveniência do run. Ele não contém nem autoriza arquivamento do corpo editorial integral da ABVE.
+
+Uma etapa futura de extração somente pode reobter o conteúdo por meio do endpoint aprovado e precisa, nesta ordem:
+
+1. obter novamente o mesmo item;
+2. aplicar exatamente o `normalization_profile` registrado;
+3. recalcular o normalized content fingerprint;
+4. exigir igualdade exata com o fingerprint do manifest.
+
+Se o conteúdo estiver indisponível, não puder ser validado ou produzir fingerprint diferente, a extração não pode continuar usando aquele run como evidência do conteúdo. O handoff deve ser bloqueado e uma nova coleta deve ser exigida. O re-fetch sozinho nunca prova que o conteúdo original permaneceu igual sem a comparação exata de fingerprint.
+
 ## Concorrência e stale runs
 
 Antes de inserir, o collector procura o único `running` permitido pelo índice parcial:
@@ -192,6 +223,12 @@ Uma violação de unicidade de `collection_runs_one_running_per_endpoint_idx` du
 ## HTTP/retry
 
 Cada página usa a URL e os parâmetros públicos do endpoint, com `before` congelado, `per_page = 50`, no máximo duas páginas e limite de 2.000.000 bytes por resposta. O timeout de cada tentativa é 30.000 ms. Cada página admite no máximo três tentativas dentro do mesmo `collection_run`.
+
+Cada request HTTP admite no máximo três redirects. Antes de seguir cada `Location`, o collector exige HTTPS, ausência de userinfo e hostname exatamente igual ao `hostname` do `endpoint_url` aprovado. Para ABVE v1, o único hostname permitido é `abve.org.br`.
+
+O collector não segue redirect para outro hostname, IP literal, `localhost`, loopback, link-local ou rede privada. A regra de mesmo hostname já bloqueia esses destinos no contrato ABVE; a v1 não cria infraestrutura genérica de resolução de IP. `www.abve.org.br` é outro hostname e também exige nova revisão de acesso, sem redirect silencioso.
+
+Exceder três redirects ou receber redirect cross-host termina o run como `blocked`, com `error_kind = access_policy` e, respectivamente, `error_code = redirect_limit_exceeded` ou `redirect_host_not_allowed`.
 
 Recebem retry: timeout, desconexão, `408`, `425`, `429` e `5xx`. O backoff local usa 1 segundo antes da segunda tentativa e 2 segundos antes da terceira, com full jitter uniforme entre zero e o valor-base. `Retry-After`, em segundos ou data HTTP válida, substitui o backoff quando resultar em espera de até 240 segundos. Valor maior encerra o run como `failed`/`rate_limit`; o lease de cinco minutos não pode ser ultrapassado por uma única espera mais a tentativa seguinte.
 
@@ -212,9 +249,9 @@ O manifest contém, no mínimo:
 manifest_version = chargebr-collection-manifest-v1
 run_key
 endpoint_key
-collector_name
-collector_version
-contract_version
+collector_name = chargebr-local-collector
+collector_version = <Git commit SHA completo do código executado>
+contract_version = chargebr-local-collector-contract-v1
 config_fingerprint
 started_at
 window = {start, end, freeze_before}
@@ -261,9 +298,9 @@ Todos os hashes usam SHA-256 e hexadecimal minúsculo sobre bytes UTF-8.
 
 ### `config_fingerprint`
 
-É o SHA-256 do JSON canônico contendo: `contract_version`, source slug, endpoint key, URL, tipo, método, formato, status, `request_config`, estratégias/configurações de paginação e cursor, `identity_rule`, `normalization_profile`, `removal_policy`, classe de retenção, `terms_url` e `robots_url`.
+É o SHA-256 do JSON canônico contendo: `contract_version = chargebr-local-collector-contract-v1`, source slug, endpoint key, URL, tipo, método, formato, status, `request_config`, estratégias/configurações de paginação e cursor, `identity_rule`, `normalization_profile`, `removal_policy`, classe de retenção, `terms_url` e `robots_url`.
 
-Ficam de fora IDs internos, timestamps de auditoria, `access_reviewed_at`, notes, `suggested_interval`, credenciais e qualquer valor do run. `collector_version` possui coluna própria.
+Ficam de fora IDs internos, timestamps de auditoria, `access_reviewed_at`, notes, `suggested_interval`, credenciais e qualquer valor do run. `collector_version`, definido como o Git commit SHA completo do código executado, possui coluna própria e não participa de `config_fingerprint`.
 
 ### Raw response hash
 
@@ -310,7 +347,7 @@ Mudança de `X-WP-Total`/`X-WP-TotalPages` entre páginas, identidade duplicada 
 | `transport` | `connect_timeout`, `read_timeout`, `dns_error`, `tls_error`, `connection_reset` |
 | `http` | `http_400`, `http_404`, `http_410`, `http_5xx_exhausted` |
 | `rate_limit` | `http_429_exhausted`, `retry_after_too_long` |
-| `access_policy` | `authentication_required`, `robots_restricted`, `terms_changed` |
+| `access_policy` | `authentication_required`, `robots_restricted`, `terms_changed`, `redirect_limit_exceeded`, `redirect_host_not_allowed` |
 | `contract` | `endpoint_not_active`, `schema_mismatch`, `pagination_inconsistent`, `prior_manifest_unavailable` |
 | `format` | `content_type_unexpected`, `json_invalid` |
 | `size_limit` | `response_too_large` |
@@ -326,7 +363,7 @@ Status, host, path público, página, tentativa, byte count e nome da validaçã
 - uma role dedicada com RLS é a única identidade do collector;
 - conexão administrativa nunca é fallback;
 - toda query usa parâmetros; URL resulta somente do contrato público validado;
-- redirects são limitados e cada destino precisa permanecer HTTPS, sem userinfo ou credencial;
+- cada request admite no máximo três redirects, sempre HTTPS, sem userinfo e exatamente para `abve.org.br`; cross-host e `www.abve.org.br` bloqueiam o run;
 - timeout, limite de bytes, `max_pages` e retry são obrigatórios;
 - arquivos locais usam permissões restritas ao usuário e nomes derivados somente de UUID validado;
 - bodies temporários são apagados e não são promovidos a retenção integral;
@@ -354,6 +391,9 @@ A implementação futura só está pronta quando testes locais e de integração
 13. a role consegue somente os reads/writes declarados, RLS limita tudo ao endpoint ABVE e tentativas de `DELETE` ou acesso canônico falham;
 14. a única persistência remota é `collection_runs`; `content_items`, `observations` e `evidence` permanecem intocados;
 15. nenhum teste ou ensaio chama ANEEL enquanto não houver decisão separada de promoção.
+16. `collector_name`, `collector_version` e `contract_version` seguem exatamente os valores e derivações deste documento, e `config_fingerprint` inclui o contrato mas não o SHA do collector;
+17. redirects respeitam o máximo de três e o mesmo hostname `abve.org.br`, bloqueando qualquer destino diferente;
+18. `ready_for_extraction` não arquiva body e uma extração futura só aceita re-fetch cujo fingerprint recalculado seja exatamente igual ao manifest.
 
 ## Plano de implementação
 
