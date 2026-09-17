@@ -8,7 +8,7 @@ Este documento registra o preflight feito em 16 de setembro de 2026 para o prime
 
 Foram respeitadas as decisoes de `docs/fundacao-pipeline-coleta-v1.md`, `docs/modelagem-source-endpoints-collection-runs-v1.md` e da migration `20260916083548_source_endpoints_collection_runs_v1.sql`. A source existente tambem foi conferida: `sources.slug = 'abve'` identifica uma fonte `approved`, primaria, brasileira, em `pt-BR`, com homepage `https://abve.org.br`. O futuro cadastro deve resolver essa linha pelo slug, nunca fixar o `id` observado em um ambiente.
 
-O instante de congelamento usado nas consultas de posts foi `2026-09-16T09:09:35Z`. A revisao de acesso foi concluida em `2026-09-16T09:12:35Z`.
+O instante de congelamento usado nas consultas originais de posts foi `2026-09-16T09:09:35Z`. A revisao original de acesso foi concluida em `2026-09-16T09:12:35Z`; a projecao corrigida de nove campos foi revalidada em `2026-09-17T21:05:11Z`.
 
 ## Contrato observado
 
@@ -29,7 +29,7 @@ O instante de congelamento usado nas consultas de posts foi `2026-09-16T09:09:35
 | Identidade | `id` inteiro, nativo e somente leitura no contrato WordPress; 100 IDs distintos em 100 itens |
 | Campos requeridos | os nove campos projetados são obrigatórios; `date_gmt` é necessário para cobertura temporal |
 | Forma do texto | `title`, `excerpt` e `content` sao objetos; o texto/HTML fica em `rendered`, e `excerpt`/`content` tambem expuseram `protected` |
-| Volume observado | 674.245 bytes para 100 posts com os oito campos; `283` posts e `3` paginas nessa consulta |
+| Volume observado | evidencia historica pre-`date_gmt`: 674.245 bytes para 100 posts com os oito campos; `283` posts e `3` paginas nessa consulta |
 | Rate limit | nenhum header de quota, `Retry-After` ou limite publicado foi identificado; isso nao equivale a ausencia garantida de rate limit |
 | Validators HTTP | `ETag` e `Last-Modified` nao foram observados nas respostas JSON amostradas |
 
@@ -128,7 +128,7 @@ suggested_interval: "7 days"
 default_retention_class: minimum_excerpt
 terms_url: null
 robots_url: https://abve.org.br/robots.txt
-access_reviewed_at: 2026-09-16T09:12:35Z
+access_reviewed_at: 2026-09-17T21:05:11Z
 notes: >-
   Endpoint publico do WordPress para posts da categoria Noticias (13).
   A revisao confirmou GET sem autenticacao, paginacao e campos projetados.
@@ -154,6 +154,10 @@ Os limites sao operacionais, nao copias do exemplo de modelagem:
 
 ## Evidencias verificadas
 
+### Evidencia historica pre-`date_gmt`
+
+As dez evidencias abaixo pertencem ao preflight de `2026-09-16T09:12:35Z` e validam somente a projecao anterior de oito campos. Elas nao validam, isoladamente, o contrato corrigido de nove campos.
+
 1. `GET /wp-json/wp/v2/categories/13` retornou `200`, JSON e `{id: 13, name: "Noticias", slug: "noticias", count: 283}`.
 2. A pagina de 100 posts congelada retornou `200`, JSON, `X-WP-Total: 283`, `X-WP-TotalPages: 3` e `Link` para a pagina 2.
 3. Os 100 itens tinham IDs inteiros e distintos; nenhum omitiu `id`, `date`, `modified`, `slug`, `link`, `title`, `excerpt` ou `content`.
@@ -165,9 +169,13 @@ Os limites sao operacionais, nao copias do exemplo de modelagem:
 9. `https://abve.org.br/politica-de-privacidade/` retornou `200` e continha politica de privacidade, compromisso de uso adequado e reserva de direitos; nao continha termos especificos da API nem licenca aberta para noticias.
 10. Nenhuma resposta exigiu cookie, token ou credencial, e nao foi observado bloqueio, captcha, `429`, header de quota ou `Retry-After`.
 
-## Requests minimos usados no preflight
+### Revalidacao da projecao de nove campos
 
-Foram feitos sete requests HTTP diretos ao dominio da ABVE. Somente um trouxe 100 posts; os demais retornaram metadados, erro controlado ou um item.
+Em `2026-09-17T21:05:11Z`, um unico `GET` publico, sem autenticacao, consultou um item com `_fields=id,date,date_gmt,modified,slug,link,title,excerpt,content`. O resultado compacto foi: HTTP `200`; `application/json; charset=UTF-8`; exatamente os nove campos presentes; `date_gmt` presente no formato WordPress `YYYY-MM-DDTHH:MM:SS`. Nenhum body editorial foi arquivado ou incluido nesta evidencia.
+
+## Requests historicos usados no preflight
+
+No preflight historico, anterior a `date_gmt`, foram feitos sete requests HTTP diretos ao dominio da ABVE. Somente um trouxe 100 posts; os demais retornaram metadados, erro controlado ou um item. Essa lista documenta a evidencia anterior e nao representa a revalidacao da projecao de nove campos.
 
 ```text
 GET https://abve.org.br/wp-json/wp/v2/categories/13?_fields=id,name,slug,link,count
@@ -219,7 +227,7 @@ Tambem foram consultadas as tres paginas oficiais do WordPress ligadas acima par
 2. O registro futuro corresponde integralmente ao YAML acima e satisfaz as constraints da migration atual.
 3. O coletor fixa uma unica vez `before = run_started_at` em RFC 3339 UTC e reutiliza o valor em todas as paginas.
 4. O coletor envia explicitamente `categories=13`, `context=view`, `orderby=date`, `order=desc` e o `_fields` aprovado.
-5. Cada pagina valida status `200`, content type JSON, estrutura dos oito campos, IDs inteiros e headers de paginacao.
+5. Cada pagina valida status `200`, content type JSON, estrutura dos nove campos, IDs inteiros e headers de paginacao.
 6. IDs sao deduplicados no run; alteracao de totais, duplicidade entre paginas, schema inesperado ou pagina limite antes da fronteira produz `partial` ou `blocked`, nunca sucesso silencioso.
 7. `cursor_out` so e comprometido quando a amostra planejada termina; falha, mutacao detectada ou limite insuficiente preserva `cursor_in`.
 8. A primeira execucao permanece manual/local, limitada a duas paginas de 50 itens, sem varrer o arquivo completo.
@@ -230,7 +238,7 @@ Tambem foram consultadas as tres paginas oficiais do WordPress ligadas acima par
 
 ## Decisao explicita
 
-**`active`.** O endpoint pode ser cadastrado como ativo para execucao manual porque a URL oficial respondeu, o contrato minimo foi comprovado, o acesso nao exigiu autenticacao, a paginacao e os limites foram verificados, robots e a pagina oficial de uso foram revisados e foram definidos limites conservadores. `access_reviewed_at` deve ser `2026-09-16T09:12:35Z` para exatamente a configuracao proposta.
+**`active`.** O endpoint pode ser cadastrado como ativo para execucao manual porque a URL oficial respondeu, o contrato minimo foi comprovado, o acesso nao exigiu autenticacao, a paginacao e os limites foram verificados, robots e a pagina oficial de uso foram revisados e foram definidos limites conservadores. `access_reviewed_at` deve ser `2026-09-17T21:05:11Z` para exatamente a configuracao proposta.
 
 `active` nao afirma SLA, licenca de republicacao nem snapshot perfeito. Afirma que o acesso manual dentro dos limites acima passou pelo preflight e que as ressalvas conhecidas podem ser tratadas pelo manifest, pela retencao minima e pelas regras de falha/cursor ja aprovadas.
 

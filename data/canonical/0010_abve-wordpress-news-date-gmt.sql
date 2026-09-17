@@ -53,6 +53,8 @@ declare
       "boundary_field": "date_gmt"
     }
   $json$::jsonb;
+  new_access_reviewed_at constant timestamptz :=
+    timestamptz '2026-09-17T21:05:11Z';
   canonical_pagination_config constant jsonb := $json$
     {
       "page_parameter": "page",
@@ -148,6 +150,7 @@ begin
       to_jsonb(se)
       - 'request_config'
       - 'cursor_config'
+      - 'access_reviewed_at'
       - 'updated_at'
     )::text),
     case
@@ -192,7 +195,9 @@ begin
         and se.terms_url is null
         and se.robots_url is not distinct from 'https://abve.org.br/robots.txt'
         and se.access_reviewed_at is not distinct from
-          timestamptz '2026-09-16T09:12:35Z'
+          new_access_reviewed_at
+        and se.updated_at is not distinct from
+          new_access_reviewed_at
         and se.notes is not distinct from canonical_notes
         and se.request_config is not distinct from new_request_config
         and se.cursor_config is not distinct from new_cursor_config
@@ -209,10 +214,14 @@ begin
   if target_state = 'old' then
     update public.source_endpoints
        set request_config = new_request_config,
-           cursor_config = new_cursor_config
+           cursor_config = new_cursor_config,
+           access_reviewed_at = new_access_reviewed_at,
+           updated_at = new_access_reviewed_at
      where id = target_endpoint_id
        and request_config is not distinct from old_request_config
-       and cursor_config is not distinct from old_cursor_config;
+       and cursor_config is not distinct from old_cursor_config
+       and access_reviewed_at is not distinct from
+         timestamptz '2026-09-16T09:12:35Z';
 
     get diagnostics updated_rows = row_count;
 
@@ -234,6 +243,10 @@ begin
      where se.id = target_endpoint_id
        and se.request_config is not distinct from new_request_config
        and se.cursor_config is not distinct from new_cursor_config
+       and se.access_reviewed_at is not distinct from
+         new_access_reviewed_at
+       and se.updated_at is not distinct from
+         new_access_reviewed_at
   ) then
     raise exception 'Carga 0010: o endpoint ABVE não terminou no estado NEW.';
   end if;
@@ -267,6 +280,7 @@ begin
       to_jsonb(se)
       - 'request_config'
       - 'cursor_config'
+      - 'access_reviewed_at'
       - 'updated_at'
     )::text)
     into

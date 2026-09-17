@@ -419,7 +419,7 @@ Cria o scaffold Node.js/TypeScript ESM com pnpm e lockfile, fixa versões, adici
 
 ### C. Adapter HTTP ABVE e classificação determinística
 
-Implementa URL/paginação/freeze, limites, retry, validação dos oito campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
+Implementa URL/paginação/freeze, limites, retry, validação dos nove campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
 
 ### D. Integração com collection_runs
 
