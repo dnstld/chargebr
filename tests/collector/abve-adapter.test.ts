@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   ABVE_ENDPOINT_CONTRACT,
+  abveConfigFingerprint,
   collectAbve,
   type AbveAdapterDependencies,
   type AbveCursor,
@@ -13,6 +14,7 @@ import { COLLECTOR_NAME, MANIFEST_VERSION } from "../../src/collector/constants.
 import { sha256Bytes } from "../../src/collector/hash.js";
 import {
   createManifestPayload,
+  responseManifestHash,
   type CollectionManifestV1,
   type ManifestItem,
 } from "../../src/collector/manifest.js";
@@ -39,6 +41,12 @@ function wpPost(id: number | null, date: string, overrides: Record<string, unkno
     content: { rendered: "<p>Content</p>", protected: false },
     ...overrides,
   };
+}
+
+function wpPosts(startId: number, count: number, newestTimestamp: number): Record<string, unknown>[] {
+  return Array.from({ length: count }, (_value, index) =>
+    wpPost(startId + index, new Date(newestTimestamp - (index * 1_000)).toISOString())
+  );
 }
 
 function jsonResponse(
@@ -102,7 +110,15 @@ function input(cursor: AbveCursor | null = null, prior?: CollectionManifestV1): 
     run_started_at: RUN_STARTED_AT,
     cursor_in: cursor,
   };
-  return prior === undefined ? base : { ...base, prior_manifest: { manifest: prior } };
+  return prior === undefined
+    ? base
+    : {
+        ...base,
+        prior_manifest: {
+          manifest: prior,
+          expected_hash: responseManifestHash(prior.payload),
+        },
+      };
 }
 
 function priorManifest(items: readonly ManifestItem[] = []): CollectionManifestV1 {
@@ -208,8 +224,8 @@ test("a missing or hash-divergent required baseline blocks without HTTP", async 
 test("pagination uses pages 1 and 2 and freezes before across retries and pages", async () => {
   const { deps, log } = dependencies([
     rawResponse(null, 408),
-    jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 2, totalPages: 2 }),
-    jsonResponse([wpPost(2, "2026-01-02T11:00:00")], { total: 2, totalPages: 2 }),
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), { total: 51, totalPages: 2 }),
+    jsonResponse([wpPost(51, "2026-01-02T11:00:00.000Z")], { total: 51, totalPages: 2 }),
   ]);
   const outcome = await collectAbve(input(), deps);
   assert.equal(outcome.status, "succeeded");
@@ -225,8 +241,8 @@ test("pagination uses pages 1 and 2 and freezes before across retries and pages"
 
 test("the cursor boundary is strictly less than the prior before value", async () => {
   const { deps } = dependencies([
-    jsonResponse([wpPost(1, "2026-01-02T00:00:00.000Z")], { total: 2, totalPages: 2 }),
-    jsonResponse([wpPost(2, "2026-01-01T23:59:59.000Z")], { total: 2, totalPages: 2 }),
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T00:00:49.000Z")), { total: 51, totalPages: 2 }),
+    jsonResponse([wpPost(51, "2026-01-01T23:59:59.000Z")], { total: 51, totalPages: 2 }),
   ]);
   const outcome = await collectAbve(input(CURSOR, priorManifest()), deps);
   assert.equal(outcome.status, "succeeded");
@@ -234,10 +250,18 @@ test("the cursor boundary is strictly less than the prior before value", async (
   assert.deepEqual(outcome.cursor_out, { version: "abve-time-window-v1", before: RUN_STARTED_AT });
 });
 
+test("incremental coverage is partial when the only page does not cross the prior boundary", async () => {
+  const original = wpPost(1, "2026-01-02T00:00:00.000Z");
+  const { deps } = dependencies([jsonResponse([original], { total: 1, totalPages: 1 })]);
+  const outcome = await collectAbve(input(CURSOR, priorManifest([validItem(original)])), deps);
+  assert.equal(outcome.status, "partial");
+  assert.equal(outcome.cursor_out, null);
+});
+
 test("max pages before the prior boundary is partial and does not advance cursor", async () => {
   const { deps } = dependencies([
-    jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 3, totalPages: 3 }),
-    jsonResponse([wpPost(2, "2026-01-02T11:00:00")], { total: 3, totalPages: 3 }),
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), { total: 101, totalPages: 3 }),
+    jsonResponse(wpPosts(51, 50, Date.parse("2026-01-02T11:59:10.000Z")), { total: 101, totalPages: 3 }),
   ]);
   const outcome = await collectAbve(input(CURSOR, priorManifest()), deps);
   assert.equal(outcome.status, "partial");
@@ -247,9 +271,10 @@ test("max pages before the prior boundary is partial and does not advance cursor
 
 test("duplicate identity and changing WordPress totals produce partial", async (context) => {
   await context.test("duplicate identity", async () => {
+    const firstPage = wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z"));
     const { deps } = dependencies([
-      jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 2, totalPages: 2 }),
-      jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 2, totalPages: 2 }),
+      jsonResponse(firstPage, { total: 51, totalPages: 2 }),
+      jsonResponse([wpPost(1, "2026-01-02T12:00:00.000Z")], { total: 51, totalPages: 2 }),
     ]);
     const outcome = await collectAbve(input(), deps);
     assert.equal(outcome.status, "partial");
@@ -258,8 +283,8 @@ test("duplicate identity and changing WordPress totals produce partial", async (
 
   await context.test("changing totals", async () => {
     const { deps } = dependencies([
-      jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 2, totalPages: 2 }),
-      jsonResponse([wpPost(2, "2026-01-02T11:00:00")], { total: 1, totalPages: 1 }),
+      jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), { total: 51, totalPages: 2 }),
+      jsonResponse([wpPost(51, "2026-01-02T11:00:00.000Z")], { total: 50, totalPages: 1 }),
     ]);
     const outcome = await collectAbve(input(), deps);
     assert.equal(outcome.status, "partial");
@@ -320,7 +345,7 @@ test("a body disconnect retries, while exhaustion after a valid page is partial"
   assert.equal(JSON.stringify(success).includes("sensitive detail"), false);
 
   const partial = dependencies([
-    jsonResponse([wpPost(1, "2026-01-02T12:00:00")], { total: 2, totalPages: 2 }),
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), { total: 51, totalPages: 2 }),
     rawResponse(null, 503),
     rawResponse(null, 503),
     rawResponse(null, 503),
@@ -361,6 +386,17 @@ test("Retry-After above 240 seconds fails as rate_limit", async () => {
   assert.equal(outcome.error?.error_kind, "rate_limit");
   assert.equal(outcome.error?.error_code, "retry_after_too_long");
   assert.deepEqual(log.sleeps, []);
+});
+
+test("Retry-After above 240 seconds after a valid page is partial", async () => {
+  const { deps } = dependencies([
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), { total: 51, totalPages: 2 }),
+    rawResponse(null, 429, { "Retry-After": "241" }),
+  ]);
+  const outcome = await collectAbve(input(), deps);
+  assert.equal(outcome.status, "partial");
+  assert.equal(outcome.cursor_out, null);
+  assert.equal(outcome.counts.items_new, 50);
 });
 
 test("400, 401, 403, 404, and 410 block without retry", async (context) => {
@@ -463,7 +499,7 @@ test("one malformed item among valid items is partial and safely rejected", asyn
   assert.equal(rejected?.manifest_item.diagnostic?.message.includes("missing protected"), false);
 });
 
-test("an observable descending-order gap is partial", async () => {
+test("an observable descending-order inversion is partial", async () => {
   const { deps } = dependencies([jsonResponse([
     wpPost(1, "2026-01-02T10:00:00"),
     wpPost(2, "2026-01-02T11:00:00"),
@@ -471,6 +507,110 @@ test("an observable descending-order gap is partial", async () => {
   const outcome = await collectAbve(input(), deps);
   assert.equal(outcome.status, "partial");
   assert.equal(outcome.error?.error_code, "pagination_inconsistent");
+});
+
+test("an observable pagination cardinality gap is partial", async () => {
+  const { deps } = dependencies([
+    jsonResponse([wpPost(1, "2026-01-02T10:00:00")], { total: 100, totalPages: 2 }),
+    jsonResponse([wpPost(2, "2026-01-02T09:00:00")], { total: 100, totalPages: 2 }),
+  ]);
+  const outcome = await collectAbve(input(), deps);
+  assert.equal(outcome.status, "partial");
+  assert.equal(outcome.cursor_out, null);
+  assert.equal(outcome.error?.error_code, "pagination_inconsistent");
+});
+
+test("failed and blocked outcomes expose zero terminal counts", async (context) => {
+  const zeroCounts = {
+    items_found: 0,
+    items_new: 0,
+    items_unchanged: 0,
+    items_changed: 0,
+    items_inaccessible: 0,
+    items_rejected: 0,
+    items_removal_candidates: 0,
+  };
+
+  await context.test("blocked after the only item is rejected", async () => {
+    const malformed = wpPost(1, "2026-01-02T10:00:00", {
+      content: { rendered: "missing protected" },
+    });
+    const { deps } = dependencies([jsonResponse([malformed])]);
+    const outcome = await collectAbve(input(), deps);
+    assert.equal(outcome.status, "blocked");
+    assert.deepEqual(outcome.counts, zeroCounts);
+  });
+
+  await context.test("failed before any usable output", async () => {
+    const { deps } = dependencies([
+      rawResponse(null, 503),
+      rawResponse(null, 503),
+      rawResponse(null, 503),
+    ]);
+    const outcome = await collectAbve(input(), deps);
+    assert.equal(outcome.status, "failed");
+    assert.deepEqual(outcome.counts, zeroCounts);
+  });
+});
+
+test("incremental prior manifest requires an expected hash and detects payload tampering", async (context) => {
+  const original = priorManifest();
+
+  await context.test("missing expected hash", async () => {
+    const { deps, log } = dependencies([]);
+    const outcome = await collectAbve({
+      ...input(CURSOR),
+      prior_manifest: { manifest: original } as unknown as NonNullable<CollectAbveInput["prior_manifest"]>,
+    }, deps);
+    assert.equal(outcome.status, "blocked");
+    assert.equal(outcome.error?.error_code, "prior_manifest_unavailable");
+    assert.deepEqual(outcome.counts, {
+      items_found: 0,
+      items_new: 0,
+      items_unchanged: 0,
+      items_changed: 0,
+      items_inaccessible: 0,
+      items_rejected: 0,
+      items_removal_candidates: 0,
+    });
+    assert.equal(log.urls.length, 0);
+  });
+
+  await context.test("payload changed after hashing", async () => {
+    const expectedHash = responseManifestHash(original.payload);
+    const tampered: CollectionManifestV1 = {
+      ...original,
+      payload: {
+        ...original.payload,
+        window: { ...original.payload.window, end: "2026-01-02T01:00:00.000Z" },
+      },
+    };
+    const { deps, log } = dependencies([]);
+    const outcome = await collectAbve({
+      ...input(CURSOR),
+      prior_manifest: { manifest: tampered, expected_hash: expectedHash },
+    }, deps);
+    assert.equal(outcome.status, "blocked");
+    assert.equal(outcome.error?.error_code, "prior_manifest_unavailable");
+    assert.equal(log.urls.length, 0);
+  });
+});
+
+test("ABVE config fingerprint excludes suggested interval and includes request config", () => {
+  const baseline = abveConfigFingerprint(ABVE_ENDPOINT_CONTRACT);
+  const intervalOnly = {
+    ...ABVE_ENDPOINT_CONTRACT,
+    suggested_interval: "14 days",
+  } as unknown as typeof ABVE_ENDPOINT_CONTRACT;
+  const requestChanged = {
+    ...ABVE_ENDPOINT_CONTRACT,
+    request_config: {
+      ...ABVE_ENDPOINT_CONTRACT.request_config,
+      timeout_ms: 29_999,
+    },
+  } as unknown as typeof ABVE_ENDPOINT_CONTRACT;
+  assert.equal(abveConfigFingerprint(intervalOnly), baseline);
+  assert.notEqual(abveConfigFingerprint(requestChanged), baseline);
 });
 
 test("raw response hash covers exact bytes before parsing", async () => {
@@ -488,12 +628,12 @@ test("raw response hash covers exact bytes before parsing", async () => {
 
 test("requests are sorted and deterministic headers exclude volatile values", async () => {
   const { deps } = dependencies([
-    jsonResponse([wpPost(1, "2026-01-02T12:00:00")], {
-      total: 2,
+    jsonResponse(wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")), {
+      total: 51,
       totalPages: 2,
       headers: { Date: "volatile", Server: "hidden", "Set-Cookie": "secret=value", ETag: "stable" },
     }),
-    jsonResponse([wpPost(2, "2026-01-02T11:00:00")], { total: 2, totalPages: 2 }),
+    jsonResponse([wpPost(51, "2026-01-02T11:00:00.000Z")], { total: 51, totalPages: 2 }),
   ]);
   const outcome = await collectAbve(input(), deps);
   assert.deepEqual(outcome.requests.map(({ page }) => page), [1, 2]);

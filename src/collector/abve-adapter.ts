@@ -149,7 +149,7 @@ export interface AbveCursor {
 
 export interface PriorManifestInput {
   readonly manifest: CollectionManifestV1;
-  readonly expected_hash?: string;
+  readonly expected_hash: string;
 }
 
 export interface CollectAbveInput {
@@ -266,13 +266,14 @@ export async function collectAbve(
     const safeWindowStart = input.cursor_in !== null && isUtcInstant(input.cursor_in.before)
       ? input.cursor_in.before
       : null;
-    const sortedCollected = [...collected].sort((left, right) =>
+    const terminalWithoutOutput = status === "failed" || status === "blocked";
+    const sortedCollected = (terminalWithoutOutput ? [] : [...collected]).sort((left, right) =>
       compare(canonicalJson(left.manifest_item.native_identity), canonicalJson(right.manifest_item.native_identity)) ||
       (left.manifest_item.diagnostic?.page ?? 0) - (right.manifest_item.diagnostic?.page ?? 0) ||
       (left.manifest_item.diagnostic?.index ?? 0) - (right.manifest_item.diagnostic?.index ?? 0),
     );
     const payload = createManifestPayload({
-      config_fingerprint: endpointConfigFingerprint(contractMatches(input.contract) ? input.contract : ABVE_ENDPOINT_CONTRACT),
+      config_fingerprint: abveConfigFingerprint(contractMatches(input.contract) ? input.contract : ABVE_ENDPOINT_CONTRACT),
       endpoint_key: ABVE_ENDPOINT_CONTRACT.endpoint_key,
       window: {
         start: safeWindowStart,
@@ -324,7 +325,7 @@ export async function collectAbve(
     requests.push(pageResult.request);
 
     if (!pageResult.ok) {
-      if (pageResult.terminalStatus === "failed" && validItemCount > 0 && pageResult.diagnostic.error_code !== "retry_after_too_long") {
+      if (pageResult.terminalStatus === "failed" && validItemCount > 0) {
         return finish("partial", pageResult.diagnostic);
       }
       return finish(pageResult.terminalStatus, pageResult.diagnostic);
@@ -340,6 +341,12 @@ export async function collectAbve(
     } else if (totals.total !== firstTotal || totals.totalPages !== firstTotalPages) {
       return finish("partial", diagnostic("contract", "pagination_inconsistent", "WordPress pagination totals changed between pages"));
     }
+    const paginationCardinalityError = validatePaginationCardinality(
+      totals,
+      page,
+      input.contract.pagination_config.page_size,
+      pageResult.body.length,
+    );
 
     for (let index = 0; index < pageResult.body.length; index += 1) {
       const validation = validateAndNormalizeAbvePost(pageResult.body[index]);
@@ -414,6 +421,13 @@ export async function collectAbve(
       }
     }
 
+    if (paginationCardinalityError !== null) {
+      return finish(
+        validItemCount > 0 ? "partial" : "blocked",
+        diagnostic("contract", "pagination_inconsistent", paginationCardinalityError),
+      );
+    }
+
     if (input.cursor_in !== null && boundaryCrossed) {
       break;
     }
@@ -424,6 +438,9 @@ export async function collectAbve(
       break;
     }
     if (firstTotalPages !== null && page >= firstTotalPages) {
+      if (!isBootstrap) {
+        return finish("partial", diagnostic("contract", "pagination_inconsistent", "The available pages ended before crossing the prior boundary"));
+      }
       break;
     }
   }
@@ -469,7 +486,10 @@ function createBaseline(input: CollectAbveInput):
   | { readonly ok: true; readonly fingerprints: Map<string, string> }
   | { readonly ok: false; readonly diagnostic: CollectorDiagnostic } {
   const prior = input.prior_manifest;
-  if (input.cursor_in !== null && (prior === undefined || prior === null)) {
+  if (
+    input.cursor_in !== null &&
+    (prior === undefined || prior === null || typeof prior.expected_hash !== "string")
+  ) {
     return { ok: false, diagnostic: priorManifestUnavailable() };
   }
   if (prior === undefined || prior === null) {
@@ -485,10 +505,7 @@ function createBaseline(input: CollectAbveInput):
     ) {
       return { ok: false, diagnostic: priorManifestUnavailable() };
     }
-    if (
-      prior.expected_hash !== undefined &&
-      responseManifestHash(prior.manifest.payload) !== prior.expected_hash
-    ) {
+    if (responseManifestHash(prior.manifest.payload) !== prior.expected_hash) {
       return { ok: false, diagnostic: priorManifestUnavailable() };
     }
   } catch {
@@ -747,11 +764,51 @@ async function fetchFollowingRedirects(
   }
 }
 
-function endpointConfigFingerprint(contract: AbveEndpointContract): string {
+export function abveConfigFingerprint(contract: AbveEndpointContract): string {
   return configFingerprint({
     contract_version: CONTRACT_VERSION,
-    ...(contract as unknown as Record<string, CanonicalJsonValue>),
+    source_slug: contract.source_slug,
+    endpoint_key: contract.endpoint_key,
+    endpoint_url: contract.endpoint_url,
+    endpoint_type: contract.endpoint_type,
+    access_method: contract.access_method,
+    response_format: contract.response_format,
+    status: contract.status,
+    request_config: contract.request_config as unknown as CanonicalJsonValue,
+    pagination_strategy: contract.pagination_strategy,
+    pagination_config: contract.pagination_config as unknown as CanonicalJsonValue,
+    cursor_strategy: contract.cursor_strategy,
+    cursor_config: contract.cursor_config as unknown as CanonicalJsonValue,
+    identity_rule: contract.identity_rule as unknown as CanonicalJsonValue,
+    normalization_profile: contract.normalization_profile,
+    removal_policy: contract.removal_policy,
+    default_retention_class: contract.default_retention_class,
+    terms_url: contract.terms_url,
+    robots_url: contract.robots_url,
   });
+}
+
+function validatePaginationCardinality(
+  totals: { readonly total: number; readonly totalPages: number },
+  page: number,
+  pageSize: number,
+  actualCount: number,
+): string | null {
+  const expectedTotalPages = totals.total === 0 ? 0 : Math.ceil(totals.total / pageSize);
+  if (totals.totalPages !== expectedTotalPages) {
+    return "WordPress total pages is inconsistent with total items and page size";
+  }
+  if (totals.total === 0) {
+    return actualCount === 0 ? null : "WordPress returned items while reporting an empty result set";
+  }
+  if (page >= 1 && page <= totals.totalPages) {
+    const remaining = Math.max(totals.total - ((page - 1) * pageSize), 0);
+    const expectedCount = Math.min(pageSize, remaining);
+    if (actualCount !== expectedCount) {
+      return "WordPress page item count is inconsistent with pagination totals";
+    }
+  }
+  return null;
 }
 
 function buildPageUrl(contract: AbveEndpointContract, page: number, freeze: string): string {
