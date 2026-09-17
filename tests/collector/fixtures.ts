@@ -60,18 +60,24 @@ export const REQUEST_FIXTURES: readonly ManifestRequest[] = [
   {
     page: 2,
     canonical_url: "https://example.invalid/posts?page=2",
+    attempt_count: 1,
+    outcome: "success",
     status_code: 200,
     content_type: "application/json",
     byte_length: 20,
     response_body_sha256: HASH_B,
+    stable_headers: { "Content-Type": "application/json" },
   },
   {
     page: 1,
     canonical_url: "https://example.invalid/posts?page=1",
+    attempt_count: 1,
+    outcome: "success",
     status_code: 200,
     content_type: "application/json",
     byte_length: 10,
     response_body_sha256: HASH_A,
+    stable_headers: { "Content-Type": "application/json" },
   },
 ];
 

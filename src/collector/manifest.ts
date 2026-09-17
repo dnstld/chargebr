@@ -20,20 +20,49 @@ export const ITEM_CLASSIFICATIONS = [
 
 export type ItemClassification = (typeof ITEM_CLASSIFICATIONS)[number];
 
+export interface ManifestItemDiagnostic {
+  readonly code: string;
+  readonly message: string;
+  readonly page: number;
+  readonly index: number;
+}
+
 export interface ManifestItem {
-  readonly native_identity: CanonicalJsonValue;
-  readonly canonical_url: string;
-  readonly content_fingerprint: string;
+  readonly native_identity: CanonicalJsonValue | null;
+  readonly canonical_url: string | null;
+  readonly content_fingerprint: string | null;
   readonly classification: ItemClassification;
+  readonly diagnostic?: ManifestItemDiagnostic;
+}
+
+export interface ManifestStableHeaders {
+  readonly "Content-Type"?: string;
+  readonly "Content-Length"?: string;
+  readonly ETag?: string;
+  readonly "Last-Modified"?: string;
+  readonly "X-WP-Total"?: string;
+  readonly "X-WP-TotalPages"?: string;
+  readonly Link?: string;
 }
 
 export interface ManifestRequest {
   readonly page: number;
   readonly canonical_url: string;
-  readonly status_code: number;
-  readonly content_type: string;
+  readonly attempt_count: number;
+  readonly outcome: string;
+  readonly status_code: number | null;
+  readonly content_type: string | null;
   readonly byte_length: number;
-  readonly response_body_sha256: string;
+  readonly response_body_sha256: string | null;
+  readonly stable_headers: ManifestStableHeaders;
+}
+
+export interface ManifestAttempt {
+  readonly page: number;
+  readonly attempt: number;
+  readonly outcome: string;
+  readonly status_code?: number;
+  readonly retry_delay_ms?: number;
 }
 
 export interface ManifestWindow {
@@ -68,6 +97,7 @@ export interface ManifestEnvelope {
   readonly collector_version: string;
   readonly started_at: string;
   readonly request_attempt_count?: number;
+  readonly attempt_history?: readonly ManifestAttempt[];
   readonly duration_ms?: number;
 }
 
@@ -114,7 +144,9 @@ export function sortManifestItems(items: readonly ManifestItem[]): ManifestItem[
     );
     return identityOrder !== 0
       ? identityOrder
-      : compareLexicographically(left.canonical_url, right.canonical_url);
+      : compareLexicographically(left.canonical_url ?? "", right.canonical_url ?? "") ||
+          (left.diagnostic?.page ?? 0) - (right.diagnostic?.page ?? 0) ||
+          (left.diagnostic?.index ?? 0) - (right.diagnostic?.index ?? 0);
   });
 }
 
@@ -148,7 +180,10 @@ export function createManifestPayload(
 
 export function responseManifestHash(payload: ManifestPayload): string {
   validateManifestPayload(payload);
-  return sha256CanonicalJson(payload);
+  return sha256CanonicalJson({
+    ...payload,
+    requests: payload.requests.map(({ attempt_count: _attemptCount, ...request }) => request),
+  });
 }
 
 export function configFingerprint(projection: PublicConfigProjection): string {
@@ -201,20 +236,39 @@ export function validateManifestPayload(payload: ManifestPayload): void {
     if (!Number.isInteger(request.byte_length) || request.byte_length < 0) {
       throw new Error("Invalid request byte_length");
     }
-    if (!Number.isInteger(request.status_code) || request.status_code < 100 || request.status_code > 599) {
+    if (!Number.isInteger(request.attempt_count) || request.attempt_count < 1) {
+      throw new Error("Invalid request attempt_count");
+    }
+    if (!/^[a-z0-9_]+$/u.test(request.outcome)) {
+      throw new Error("Invalid request outcome");
+    }
+    if (
+      request.status_code !== null &&
+      (!Number.isInteger(request.status_code) || request.status_code < 100 || request.status_code > 599)
+    ) {
       throw new Error("Invalid request status_code");
     }
-    if (!SHA256_HEX.test(request.response_body_sha256)) {
+    if (request.response_body_sha256 !== null && !SHA256_HEX.test(request.response_body_sha256)) {
       throw new Error("Invalid response_body_sha256");
     }
+    validateStableHeaders(request.stable_headers);
   }
 
   for (const item of payload.items) {
     if (!ITEM_CLASSIFICATIONS.includes(item.classification)) {
       throw new Error("Invalid item classification");
     }
-    if (!SHA256_HEX.test(item.content_fingerprint)) {
+    if (
+      item.content_fingerprint !== null &&
+      !SHA256_HEX.test(item.content_fingerprint)
+    ) {
       throw new Error("Invalid content_fingerprint");
+    }
+    if (
+      item.classification !== "rejected" &&
+      (item.native_identity === null || item.canonical_url === null || item.content_fingerprint === null)
+    ) {
+      throw new Error("Classified item is missing identity or fingerprint");
     }
   }
 
@@ -228,6 +282,24 @@ export function validateManifestPayload(payload: ManifestPayload): void {
   const expectedCounts = deriveAggregateCounts(payload.items);
   if (sha256CanonicalJson(expectedCounts) !== sha256CanonicalJson(payload.aggregate_counts)) {
     throw new Error("Aggregate counts do not match items");
+  }
+}
+
+const STABLE_HEADER_NAMES = new Set([
+  "Content-Type",
+  "Content-Length",
+  "ETag",
+  "Last-Modified",
+  "X-WP-Total",
+  "X-WP-TotalPages",
+  "Link",
+]);
+
+function validateStableHeaders(headers: ManifestStableHeaders): void {
+  for (const [name, value] of Object.entries(headers)) {
+    if (!STABLE_HEADER_NAMES.has(name) || typeof value !== "string") {
+      throw new Error("Invalid stable request header");
+    }
   }
 }
 
