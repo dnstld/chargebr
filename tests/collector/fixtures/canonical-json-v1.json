@@ -1,0 +1,11 @@
+{
+  "input": {
+    "z": "line\n\"quoted\"",
+    "a": {
+      "é": "café",
+      "a": true
+    },
+    "array": [3, null, false]
+  },
+  "expected": "{\"a\":{\"a\":true,\"é\":\"café\"},\"array\":[3,null,false],\"z\":\"line\\n\\\"quoted\\\"\"}"
+}
