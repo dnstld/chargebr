@@ -33,6 +33,13 @@ O instante de congelamento usado nas consultas de posts foi `2026-09-16T09:09:35
 | Rate limit | nenhum header de quota, `Retry-After` ou limite publicado foi identificado; isso nao equivale a ausencia garantida de rate limit |
 | Validators HTTP | `ETag` e `Last-Modified` nao foram observados nas respostas JSON amostradas |
 
+Nota de correcao normativa (2026-09-18): a tabela acima preserva a evidencia
+observada originalmente. O contrato vigente acrescenta `date_gmt` a `_fields`.
+`date` continua sendo o horario local do site e parte do normalized content
+fingerprint; `date_gmt` e metadado operacional, interpretado explicitamente
+como UTC e usado no controle da ordenacao observada e na comparacao da
+fronteira incremental.
+
 A consulta temporal de fronteira usou o `date` do post mais recente, `2026-09-15T10:08:37`, com fuso `-03:00`. O total caiu de `283` para `282`, o post `id = 19701` saiu da resposta e `id = 19690` passou a ser o primeiro resultado. Esse mesmo `id`, slug e link ja haviam aparecido na segunda pagina de uma consulta independente, o que fornece evidencia pratica de estabilidade da identidade entre combinacoes diferentes de `page`, `per_page` e `before`. O preflight nao transforma essa observacao curta em garantia perpetua; por isso `link` normalizado permanece como fallback.
 
 As referencias de comportamento do CMS sao o [contrato de posts do WordPress](https://developer.wordpress.org/rest-api/reference/posts/), a [documentacao de paginacao](https://developer.wordpress.org/rest-api/using-the-rest-api/pagination/) e o [parametro global `_fields`](https://developer.wordpress.org/rest-api/using-the-rest-api/global-parameters/#_fields). A evidencia decisiva para este cadastro, contudo, foi a resposta atual do dominio da ABVE.
@@ -91,7 +98,7 @@ request_config:
     context: view
     orderby: date
     order: desc
-    _fields: id,date,modified,slug,link,title,excerpt,content
+    _fields: id,date,date_gmt,modified,slug,link,title,excerpt,content
   headers:
     Accept: application/json
 pagination_strategy: page
@@ -214,7 +221,7 @@ Tambem foram consultadas as tres paginas oficiais do WordPress ligadas acima par
 2. O registro futuro corresponde integralmente ao YAML acima e satisfaz as constraints da migration atual.
 3. O coletor fixa uma unica vez `before = run_started_at` em RFC 3339 UTC e reutiliza o valor em todas as paginas.
 4. O coletor envia explicitamente `categories=13`, `context=view`, `orderby=date`, `order=desc` e o `_fields` aprovado.
-5. Cada pagina valida status `200`, content type JSON, estrutura dos oito campos, IDs inteiros e headers de paginacao.
+5. Cada pagina valida status `200`, content type JSON, estrutura dos nove campos, IDs inteiros e headers de paginacao.
 6. IDs sao deduplicados no run; alteracao de totais, duplicidade entre paginas, schema inesperado ou pagina limite antes da fronteira produz `partial` ou `blocked`, nunca sucesso silencioso.
 7. `cursor_out` so e comprometido quando a amostra planejada termina; falha, mutacao detectada ou limite insuficiente preserva `cursor_in`.
 8. A primeira execucao permanece manual/local, limitada a duas paginas de 50 itens, sem varrer o arquivo completo.

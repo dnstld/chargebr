@@ -222,7 +222,7 @@ Uma violação de unicidade de `collection_runs_one_running_per_endpoint_idx` du
 
 ## HTTP/retry
 
-Cada página usa a URL e os parâmetros públicos do endpoint, com `before` congelado, `per_page = 50`, no máximo duas páginas e limite de 2.000.000 bytes por resposta. O timeout de cada tentativa é 30.000 ms. Cada página admite no máximo três tentativas dentro do mesmo `collection_run`.
+Cada página usa a URL e os parâmetros públicos do endpoint, com `before` congelado, `per_page = 50`, no máximo duas páginas e limite de 2.000.000 bytes por resposta. A projeção de resposta inclui `id,date,date_gmt,modified,slug,link,title,excerpt,content`. O timeout de cada tentativa é 30.000 ms. Cada página admite no máximo três tentativas dentro do mesmo `collection_run`.
 
 Cada request HTTP admite no máximo três redirects. Antes de seguir cada `Location`, o collector exige HTTPS, ausência de userinfo e hostname exatamente igual ao `hostname` do `endpoint_url` aprovado. Para ABVE v1, o único hostname permitido é `abve.org.br`.
 
@@ -308,7 +308,7 @@ Ficam de fora IDs internos, timestamps de auditoria, `access_reviewed_at`, notes
 
 ### Normalized content fingerprint
 
-O perfil `abve-wordpress-post-v1` produz um objeto de chaves fixas com `date`, `modified`, `slug`, URL canônica, `title.rendered`, `excerpt.rendered`, `excerpt.protected`, `content.rendered` e `content.protected`. A identidade `id` permanece separada.
+O perfil `abve-wordpress-post-v1` produz um objeto de chaves fixas com `date`, `modified`, `slug`, URL canônica, `title.rendered`, `excerpt.rendered`, `excerpt.protected`, `content.rendered` e `content.protected`. `date` é o horário de publicação local do WordPress e permanece no normalized content fingerprint. `date_gmt` é metadado operacional de controle, deve ser interpretado explicitamente como UTC e não pertence ao normalized content fingerprint. A identidade `id` permanece separada.
 
 Strings normalizam CRLF/CR para LF e Unicode para NFC. O HTML é preservado como string: não se removem tags, scripts, atributos, entidades ou whitespace interno nesta versão. O objeto é serializado por `chargebr-canonical-json-v1` e então hasheado. Mudança de regra exige novo `normalization_profile`.
 
@@ -332,7 +332,7 @@ O cursor versionado é:
 
 No bootstrap, `cursor_in = null`, `window_start = null` e `window_end = run_started_at`. O freeze enviado em todas as páginas é `before = run_started_at`. Processar as duas páginas de 50 itens conclui a amostra bootstrap declarada, mesmo que exista arquivo histórico mais antigo; isso não é alegação de cobertura retroativa.
 
-Em run posterior, `cursor_in` é o `cursor_out` do run completo mais recente, `window_start = cursor_in.before` e `window_end = run_started_at`. O collector processa em `date desc` e considera cruzada a fronteira anterior apenas quando encontra item com `date` estritamente anterior a `cursor_in.before`. Item exatamente na fronteira não é descartado, pois o `before` do run anterior era exclusivo.
+Em run posterior, `cursor_in` é o `cursor_out` do run completo mais recente, `window_start = cursor_in.before` e `window_end = run_started_at`. O request mantém `orderby=date&order=desc`, enquanto o collector usa exclusivamente `date_gmt` como campo temporal para conferir a ordenação observada e comparar a fronteira. O WordPress serializa `date_gmt` sem `Z`; o collector deve interpretá-lo explicitamente como UTC. A fronteira anterior é cruzada somente quando `instant(item.date_gmt) < instant(cursor_in.before)`. Valor exatamente igual à fronteira não a cruza, pois o `before` do run anterior era exclusivo.
 
 Quando a cobertura planejada é completa, `cursor_out` copia a estrutura acima com `before = run_started_at`. `cursor_out` só é gravado na mesma transição terminal para `succeeded` ou `no_change`.
 
@@ -409,7 +409,7 @@ Cria o scaffold Node.js/TypeScript ESM com pnpm e lockfile, fixa versões, adici
 
 ### C. Adapter HTTP ABVE e classificação determinística
 
-Implementa URL/paginação/freeze, limites, retry, validação dos oito campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
+Implementa URL/paginação/freeze, limites, retry, validação dos nove campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
 
 ### D. Integração com collection_runs
 
