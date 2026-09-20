@@ -2,7 +2,7 @@
 
 ## Estado e escopo
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento abre a fase **Criação da interface** e define quem a constrói e
 como. Ele estabelece o time de agentes, o processo de desenvolvimento e a
@@ -208,6 +208,10 @@ indique o número e a correção necessária.
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | |
-| Data da revisão | |
-| Resultado | |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 20 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções. O
+PR está liberado para merge. O ciclo 01 só poderá começar depois que esta versão
+aceita estiver incorporada à `main`.
