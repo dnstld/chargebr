@@ -113,6 +113,6 @@ indique o número e a correção necessária.
 
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | |
-| Data da revisão | |
-| Resultado | |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 20 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
