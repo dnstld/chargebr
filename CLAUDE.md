@@ -119,16 +119,19 @@ não como provada.
   sobre o índigo ou como forma
 - Paleta categórica de gráfico, validada nos seis testes em ambos os modos:
   claro `#4640A7 #036429 #B28D04` · escuro `#706FE2 #067833 #B28D04`
-- Família de display: Alumni Sans, para logo e títulos apenas
+- Cor primária: `brand.primary = #302681`, ainda que ausente do logo
+- Tipografia: **Inter é a família única do sistema**, variável, com os eixos
+  `wght` e `opsz`. Tokens de dado numérico ativam `tnum` e `zero`
+- Área de proteção do logo: um terço da sua altura
+- Sem variante monocromática ou de fundo escuro nesta fase
 
 ## Decisões em aberto — nunca presuma
 
-1. Qual cor é `brand.primary`: `#302681` não aparece no logo.
-2. Qual a família de texto com algarismos tabulares.
-3. Variantes do logo: monocromática, fundo escuro, símbolo isolado, área de
-   proteção e tamanho mínimo.
-4. Framework da aplicação. Adiado deliberadamente. `@chargebr/ui` não importa
+1. Framework da aplicação. Adiado deliberadamente. `@chargebr/ui` não importa
    framework algum. TanStack Start é hipótese para o back office, não decisão.
+
+As decisões de identidade visual foram fechadas em
+`docs/decisao-identidade-visual.md`.
 
 Se uma tarefa exigir uma dessas decisões, pare e registre a lacuna.
 

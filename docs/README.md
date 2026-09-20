@@ -86,3 +86,4 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 
 - [Decisão: Criação da interface](decisao-criacao-da-interface.md)
 - [Processo de desenvolvimento — spec-driven](processo-de-desenvolvimento-sdd.md)
+- [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
