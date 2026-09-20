@@ -120,7 +120,7 @@ O que esta spec deliberadamente não resolve.
 O que falta decidir, e por quem. Nunca preencher por suposição.
 
 ## Perguntas para revisão
-Numeradas. Se todas forem `sim`, registre `ACEITA`.
+Numeradas. Se todas forem `sim`, registre `ACCEPTED`.
 
 ## Resultado da revisão
 | Campo | Resultado |

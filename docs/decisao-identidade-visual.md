@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA — AGUARDANDO MERGE`
 
 Este documento fecha três das quatro decisões que a decisão de criação da
 interface deixou em aberto. Não cria token, componente, pacote ou dependência,
@@ -116,3 +116,5 @@ indique o número e a correção necessária.
 | Pessoa revisora | Denis Toledo |
 | Data da revisão | 20 de setembro de 2026 |
 | Resultado | `ACCEPTED` |
+
+A pessoa revisora aceitou integralmente a decisão e não solicitou correções.
