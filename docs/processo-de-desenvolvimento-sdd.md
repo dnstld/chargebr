@@ -125,9 +125,9 @@ Numeradas. Se todas forem `sim`, registre `ACEITA`.
 ## Resultado da revisão
 | Campo | Resultado |
 | --- | --- |
-| Pessoa revisora | |
-| Data | |
-| Resultado | |
+| Pessoa revisora | Denis Toledo |
+| Data da revisão | 20 de setembro de 2026 |
+| Resultado | `ACCEPTED` |
 ```
 
 ## Envelope de handoff
