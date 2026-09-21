@@ -65,7 +65,7 @@ rules:
   proposal:
     - Diga explicitamente o que a mudança não faz
     - Nenhuma decisão em aberto pode ser preenchida por suposição; registre a lacuna e pare
-  spec:
+  specs:
     - Todo critério de aceite nomeia o teste que o prova
     - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
     - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
