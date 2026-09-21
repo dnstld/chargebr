@@ -87,3 +87,4 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: configuração inicial do workspace](decisao-configuracao-inicial-do-workspace.md)
 - [Seleção da ferramenta de desenvolvimento spec-driven](selecao-ferramenta-spec-driven.md)
 - [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
+- [Decisão: critério de paleta categórica](decisao-criterio-de-paleta-categorica.md)
