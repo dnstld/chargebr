@@ -1,0 +1,36 @@
+
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/Users/denistoledo/Documents/projects/chargebr[39m
+
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/style-literals.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/type-suppression.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/typography.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/index.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/dtcg.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/rules.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/palette.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/build.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/theme.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 317[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 316[2mms[22m[39m
+ [32m✓[39m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 320[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 319[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
+[2m   Start at [22m 20:06:00
+[2m   Duration [22m 1.81s[2m (tests 34%, setup 24%, environment 11%, transform 11%, import 11%, worker 8%)[22m
+
