@@ -31,6 +31,6 @@
 
 ## 6. Integração contínua
 
-- [ ] 6.1 Criar o workflow que executa `pnpm verify` em todo pull request publicando resultado por etapa, e verificar numa execução real que as quatro etapas aparecem separadas
-- [ ] 6.2 Abrir um pull request com uma falha plantada e verificar que a integração contínua reprova e o merge fica bloqueado
-- [ ] 6.3 Ativar a proteção da branch principal no GitHub, tentar um push direto e verificar que é recusado sem reescrita de histórico
+- [x] 6.1 Criar o workflow que executa `pnpm verify` em todo pull request publicando resultado por etapa, e verificar numa execução real que as quatro etapas aparecem separadas
+- [x] 6.2 Abrir um pull request com uma falha plantada e verificar que a integração contínua reprova e o merge fica bloqueado
+- [x] 6.3 Ativar a proteção da branch principal no GitHub, tentar um push direto e verificar que é recusado sem reescrita de histórico
