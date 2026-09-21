@@ -82,6 +82,50 @@ quem escreveu corrige e submete de novo.
 A pessoa supervisora aceita e faz merge. O `escriba-do-projeto` registra a
 conclusão do ciclo em `docs/`, no rito do projeto, e atualiza o índice.
 
+## Comandos
+
+O ritual não é lembrado, é executado. Quatro comandos cobrem o ciclo inteiro:
+
+| Comando | O que faz |
+| --- | --- |
+| `/ciclo <n> <slug-en> [tipo]` | Confere a árvore, atualiza a `main`, cria a branch na convenção e pede a spec ao gerente de produto |
+| `/verificar [spec]` | Dispara os três pareceres em paralelo e resume numa tabela |
+| `/pr [título]` | Faz push e abre o pull request com o corpo já no padrão |
+| `/aceitar <arquivo>` | Registra o aceite humano: estado, tabela e frase de fechamento |
+
+Quem digita é a pessoa supervisora. Os comandos removem a chance de a
+convenção de branch, o formato de PR ou o valor `ACCEPTED` serem esquecidos.
+
+## Quem opera o git
+
+O git é operado pela **sessão principal**, através dos comandos acima. Nenhum
+subagente cria branch, commita, dá push ou abre pull request — eles escrevem
+arquivos na árvore de trabalho e devolvem.
+
+O merge é sempre da pessoa supervisora, nunca automático.
+
+## Via rápida para ticket pequeno
+
+Os seis portões existem para mudança que altera contrato, token, camada
+atômica ou regra de domínio. Para ticket pequeno eles cobram cerimônia demais.
+
+Um ticket é **pequeno** quando, e somente quando, todas valerem:
+
+- não cria nem altera token;
+- não cria nem altera contrato de componente já publicado;
+- não toca em primitiva de domínio;
+- não introduz dependência;
+- cabe num PR que uma pessoa revisa de uma sentada.
+
+Nesse caso, os portões 1 e 2 se fundem: `spec.md` recebe também o desenho, numa
+seção `## Desenho`, e passa por **um único aceite**. Os portões 4, 5 e 6
+permanecem intactos — implementação, verificação tripla e aceite humano não
+mudam.
+
+Quem classifica o ticket como pequeno é o gerente de produto, e a classificação
+fica escrita na spec. Qualquer parecerista pode contestá-la; contestada, o
+ticket volta ao caminho completo.
+
 ## Modelo de especificação
 
 ```markdown
@@ -120,7 +164,7 @@ O que esta spec deliberadamente não resolve.
 O que falta decidir, e por quem. Nunca preencher por suposição.
 
 ## Perguntas para revisão
-Numeradas. Se todas forem `sim`, registre `ACEITA`.
+Numeradas. Se todas forem `sim`, registre `ACCEPTED`.
 
 ## Resultado da revisão
 | Campo | Resultado |

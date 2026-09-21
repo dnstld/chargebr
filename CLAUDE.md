@@ -92,6 +92,15 @@ decisão → seleção → revisão independente → resultado → conclusão, e
 no formato já estabelecido ali. Uma decisão nunca implementa. Implementação é PR
 próprio. Nada é incorporado antes do aceite explícito da pessoa revisora.
 
+O corpo do pull request é em PT-BR, com estas seções nesta ordem: `Resumo`
+em bullets; `Estado atual confirmado` com fatos verificados; `Decisão
+operacional` quando houver escolha a justificar; `Escopo`, dizendo o que o PR é
+e, explicitamente, o que ele não faz; e `Verificação`, com o que foi conferido.
+
+O ritual é executado por comandos, não lembrado: `/ciclo`, `/verificar`, `/pr`
+e `/aceitar`. O git é operado pela sessão principal; nenhum subagente cria
+branch, commita, dá push ou abre pull request.
+
 O ciclo de desenvolvimento é spec-driven e está definido em
 `docs/processo-de-desenvolvimento-sdd.md`. Nenhum código é escrito antes de uma
 especificação aceita.
