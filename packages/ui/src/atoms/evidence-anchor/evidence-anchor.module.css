@@ -1,0 +1,22 @@
+/* Âncora de evidência: um link, com foco visível pelo anel de foco dos tokens.
+   Os estados vêm dos atributos de dado da primitiva de comportamento, nunca de
+   pseudo-classe própria, para que teclado e ponteiro produzam o mesmo estado. */
+.anchor {
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  color: var(--color-action-primary);
+  text-decoration: underline;
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.anchor[data-hovered] {
+  text-decoration: none;
+}
+
+.anchor[data-focus-visible] {
+  outline: var(--space-1) solid var(--color-focus-ring);
+  outline-offset: var(--space-1);
+}

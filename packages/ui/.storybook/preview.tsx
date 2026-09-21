@@ -1,4 +1,5 @@
 import "@chargebr/tokens/tokens.css";
+import "./preview.css";
 import type { Preview } from "@storybook/react-vite";
 import { applyTheme, THEME_LABEL, THEMES, type Theme } from "./theme";
 

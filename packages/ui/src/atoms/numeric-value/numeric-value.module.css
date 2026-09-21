@@ -1,0 +1,25 @@
+/* Número: consome os tokens de dado numérico, que ativam algarismos tabulares
+   e zero cortado. É isso que faz números de larguras diferentes alinharem
+   pela mesma posição quando empilhados. Os papéis seguem a mesma regra do
+   Texto: distinção que não depende só de cor. */
+.number {
+  font-family: var(--text-data-family);
+  font-size: var(--text-data-size);
+  font-weight: var(--text-data-weight);
+  line-height: var(--text-data-line-height);
+  font-variant-numeric: var(--text-data-numeric);
+  color: var(--color-text-primary);
+}
+
+.primary {
+  font-weight: var(--font-weight-semibold);
+}
+
+.counterfactual {
+  font-style: italic;
+}
+
+.context {
+  font-size: var(--font-size-1);
+  color: var(--color-text-secondary);
+}

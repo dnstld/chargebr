@@ -4,14 +4,16 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./atoms": "./src/atoms/index.ts"
   },
   "scripts": {
     "storybook": "storybook dev --port 6006 --no-open",
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@chargebr/tokens": "workspace:*"
+    "@chargebr/tokens": "workspace:*",
+    "react-aria-components": "1.21.1"
   },
   "peerDependencies": {
     "react": "^19.0.0",

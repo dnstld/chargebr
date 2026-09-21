@@ -1,0 +1,6 @@
+/* Coluna de números alinhada pela direita, como numa tabela. Só layout. */
+.column {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-gap-sm);
+}

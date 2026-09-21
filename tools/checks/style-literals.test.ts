@@ -31,9 +31,11 @@ const GUARDED_PROPERTIES = [
   /^(line-height|letter-spacing)$/,
 ];
 
-// O que pode sobrar num valor guardado depois de retirar as referências a token.
+// O que pode sobrar num valor guardado depois de retirar as referências a token:
+// palavras-chave da linguagem, sem magnitude. `italic` e `oblique` entram
+// porque são o par de `normal` em font-style; a inclinação não tem token.
 const ALLOWED_KEYWORDS =
-  /\b(inherit|initial|unset|revert|revert-layer|currentColor|transparent|none|auto|normal|0)\b/gi;
+  /\b(inherit|initial|unset|revert|revert-layer|currentColor|transparent|none|auto|normal|italic|oblique|0)\b/gi;
 
 // Literal de cor, em qualquer propriedade e em qualquer arquivo.
 const COLOR_LITERAL =
