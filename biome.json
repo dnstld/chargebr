@@ -1,0 +1,46 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+  "files": {
+    "includes": ["apps/**", "packages/**"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noTsIgnore": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["next", "next/**", "react-dom", "react-dom/**"],
+                    "message": "Pacote da biblioteca não pode importar framework de aplicação."
+                  },
+                  {
+                    "group": ["**/apps/**"],
+                    "message": "Pacote da biblioteca não pode importar de uma aplicação do repositório."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
