@@ -85,6 +85,19 @@ possuem ferramenta de escrita. Elas reprovam e explicam; quem escreveu corrige.
 ter terminado. Registrar uma lacuna é resultado válido; ampliar escopo em
 silêncio não é.
 
+## Fonte de verdade
+
+Este arquivo, na `main`, é a única constituição. Qualquer outra cópia — anexo de
+Project, resumo de conversa, plano combinado verbalmente — é lembrança, não
+regra. Divergiu, o repositório vence.
+
+Uma convenção que existe apenas numa conversa não governa. Se deve valer,
+precisa estar versionada.
+
+Portão com aceite próprio tem branch própria, sempre em
+`<tipo>/<nome-em-ingles-kebab>`. Prefixo fora dos tipos `feat`, `fix`, `docs`,
+`db`, `data` e `chore` não existe.
+
 ## Rito de trabalho
 
 PRs pequenos e revisáveis, com aceite humano registrado. O rito documental é
