@@ -88,7 +88,9 @@ O ritual não é lembrado, é executado. Quatro comandos cobrem o ciclo inteiro:
 
 | Comando | O que faz |
 | --- | --- |
-| `/ciclo <n> <slug-en> [tipo]` | Confere a árvore, atualiza a `main`, cria a branch na convenção e pede a spec ao gerente de produto |
+| `/ciclo <n> <slug-en> [tipo]` | Portão 1 — confere a árvore, atualiza a `main`, cria a branch na convenção e pede a spec ao gerente de produto |
+| `/desenho <spec>` | Portão 2 — confere o aceite da spec, cria a branch do desenho e aciona o agente dono |
+| `/tarefas <spec>` | Portão 3 — quebra o desenho em tarefas com dono único e marcador `[P]` |
 | `/verificar [spec]` | Dispara os três pareceres em paralelo e resume numa tabela |
 | `/pr [título]` | Faz push e abre o pull request com o corpo já no padrão |
 | `/aceitar <arquivo>` | Registra o aceite humano: estado, tabela e frase de fechamento |
@@ -125,6 +127,34 @@ mudam.
 Quem classifica o ticket como pequeno é o gerente de produto, e a classificação
 fica escrita na spec. Qualquer parecerista pode contestá-la; contestada, o
 ticket volta ao caminho completo.
+
+## Uma branch por portão
+
+Portão que tem aceite próprio tem branch própria. Desenho e implementação nunca
+compartilham branch: quando compartilham, a implementação entra no PR do
+desenho e o aceite do portão 2 deixa de existir de fato.
+
+O nome segue a constituição — `<tipo>/<nome-em-ingles-kebab>`, sem exceção e
+sem prefixo inventado:
+
+| Portão | Objeto | Branch |
+| --- | --- | --- |
+| 1 | `spec.md` | `docs/<slug>-spec` |
+| 2 | `desenho.md` | `docs/<slug>-design` |
+| 3 | `tarefas.md` | `docs/<slug>-tasks` |
+| 4 | código, história, teste | `<tipo>/<slug>` |
+
+Portões 1 a 3 podem ser agrupados numa branch só quando o ticket for pequeno
+pela definição da via rápida. Acima disso, um por um.
+
+## Fonte de verdade
+
+O `CLAUDE.md` da `main` é a única constituição. Qualquer outra cópia — anexo de
+Project, resumo de conversa, plano combinado verbalmente — é lembrança, não
+regra. Divergiu, o repositório vence.
+
+Nada governa este projeto sem estar versionado. Uma convenção que existe apenas
+numa conversa não é convenção: é opinião que ainda não foi revisada.
 
 ## Modelo de especificação
 
