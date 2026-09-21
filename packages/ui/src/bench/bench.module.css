@@ -1,0 +1,10 @@
+/* A bancada só consome tokens: nenhum valor literal de estilo aqui. */
+.surface {
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+  padding: var(--space-inset-md);
+  border-radius: var(--radius-surface);
+  font-family: var(--text-body-family);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+}

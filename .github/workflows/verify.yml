@@ -25,6 +25,11 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # As histórias rodam num navegador real dentro de verify:test; o binário
+      # é instalação, não etapa de verificação.
+      - name: Install browser
+        run: pnpm --filter @chargebr/ui exec playwright install chromium --with-deps
+
       # Cada etapa é um passo próprio para que o resultado apareça separado no
       # pull request. `!cancelled()` garante que as quatro etapas reportem
       # mesmo quando uma anterior falha, sem reescrever a semântica de `verify`.
