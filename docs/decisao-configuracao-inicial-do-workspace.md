@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA`
 
 ## Escopo
 
@@ -149,12 +149,32 @@ Consequências mantidas daquele documento: `#009440` não serve a texto de corpo
 `#FFCB00` só funciona sobre o índigo ou como forma, e não existe variante
 monocromática nesta fase.
 
-### D6 — Processo: spec-driven, com ferramenta em seleção
+### D6 — Processo: OpenSpec
 
-O que está decidido aqui é **onde** o spec-driven entra e **como** ele convive
-com o rito documental. **Qual** ferramenta o executa está em
-[seleção própria](selecao-ferramenta-spec-driven.md) e esta decisão não fecha
-enquanto aquela não for aceita.
+Selecionado em [`selecao-ferramenta-spec-driven.md`](selecao-ferramenta-spec-driven.md),
+aceito em 21 de setembro de 2026. `@fission-ai/openspec` 1.13.1, Node, MIT.
+
+```bash
+npx @fission-ai/openspec@latest init . --tools claude --language pt-BR
+```
+
+#### O que a ferramenta instala
+
+| Caminho | Conteúdo |
+| --- | --- |
+| `.claude/commands/opsx/*.md` | seis comandos |
+| `.claude/skills/openspec-*/SKILL.md` | seis skills |
+| `openspec/config.yaml` | schema, contexto e regras por artefato |
+| `openspec/specs/` | especificações vivas |
+| `openspec/changes/archive/` | histórico de mudanças aplicadas |
+
+#### O fluxo
+
+`/opsx:propose` → `/opsx:apply` → `/opsx:archive`, com `explore`, `update` e
+`sync` em volta. Uma mudança nasce com `proposal.md`, um recorte de spec,
+`design.md` e `tasks.md`; ao ser arquivada, ela atualiza a spec viva em
+`openspec/specs/`. A verdade corrente fica num lugar só; o histórico fica no
+arquivo.
 
 #### Onde o spec-driven entra
 
@@ -171,29 +191,45 @@ não descreve comportamento.
 | Documento | Responde | Onde vive |
 | --- | --- | --- |
 | Decisão e seleção | qual caminho, e por que este e não os outros | `docs/` |
-| Spec, desenho e tarefas | o que o entregável faz e como é construído | diretório da ferramenta escolhida |
+| Proposta, spec, desenho e tarefas | o que o entregável faz e como é construído | `openspec/` |
 
-O rito de `docs/` não é substituído. A ferramenta governa o ciclo de código; as
+O rito de `docs/` não é substituído. O OpenSpec governa o ciclo de código; as
 escolhas estruturais continuam em `docs/decisao-*.md` e `docs/selecao-*.md`.
 
 #### Convenção de branch
 
-Se a ferramenta escolhida impuser nome de branch, **ela vence nos ciclos de
-spec**, e a convenção `<tipo>/<nome-em-ingles-kebab>` fica reservada a PRs
-avulsos — `docs`, `chore`, `fix`. Nada de editar script da ferramenta para
-forçar o prefixo: fork local reaparece a cada atualização.
+O OpenSpec **não impõe nome de branch**. A convenção
+`<tipo>/<nome-em-ingles-kebab>` dos 115 PRs permanece íntegra, para todos os
+PRs. A colisão que existiria com o Spec Kit desaparece com esta escolha.
 
-#### O que nenhuma ferramenta decide
+#### Regras do projeto
 
-Registrar para que nada disso seja tratado depois como se tivesse vindo pronto:
+O `openspec/config.yaml` recebe o contexto e as regras por artefato. O
+`--language pt-BR` grava o bloco de idioma; as regras abaixo são acrescentadas
+por nós, e adotam a auditoria mecânica como prática sem adotar a dependência de
+terceiro que a implementaria:
 
-1. **Os princípios do projeto.** Toda candidata oferece um lugar para eles —
-   constituição, contexto de configuração — e todas o entregam vazio.
+```yaml
+rules:
+  spec:
+    - Todo critério de aceite nomeia o teste que o prova
+  tasks:
+    - Tarefa sem teste correspondente não é considerada pronta
+```
+
+A conferência roda no `pnpm verify`, que já é o portão da D3.
+
+As oito restrições de domínio desta decisão entram em `context`, para que toda
+spec nasça sabendo que os três eixos não colapsam, que `unresolved` não agrega
+e que `blocked` não exibe número.
+
+#### O que o OpenSpec não decide
+
+1. **O contexto e as regras do projeto.** O `config.yaml` chega comentado, sem
+   nenhuma regra ativa. O conteúdo é nosso.
 2. **A stack.** São as decisões D1 a D5 deste documento.
-3. **O idioma dos cabeçalhos.** Nenhuma candidata traduz cabeçalho estrutural;
-   no melhor caso ela instrui a escrever o conteúdo em PT-BR.
-4. **Testes.** Ao menos uma candidata trata tarefa de teste como opcional,
-   gerada só quando pedida. Toda spec deste projeto pede testes explicitamente.
+3. **Os cabeçalhos estruturais.** Ficam em inglês, junto com `SHALL` e `MUST`,
+   por instrução da própria ferramenta. O conteúdo é em PT-BR.
 
 ## Stack ratificada
 
@@ -251,8 +287,8 @@ expressáveis antes de qualquer tela existir.
 | R3 | Fronteira `"use client"` vaza para o consumidor | `"use client"` no arquivo do componente; regra verificada no lint |
 | R4 | A fase infla até virar produto | Nenhuma rota de negócio, nenhuma chamada a banco e nenhum dado real |
 | R5 | Gabaritos em inglês diluem o rito em PT-BR | Conteúdo escrito em PT-BR sob cabeçalhos estruturais em inglês |
-| R6 | Ferramenta de processo abandonada ou com atualização que quebra | Candidata com licença aberta e repositório público; versão registrada na seleção |
-| R7 | A ferramenta não gera tarefa de teste por padrão | Toda spec pede testes explicitamente; ausência de tarefa de teste reprova o portão |
+| R6 | Ferramenta de processo abandonada ou com atualização que quebra | OpenSpec é MIT com repositório público e artefatos em markdown; migrar custa reescrever cabeçalho, não recuperar dado |
+| R7 | A ferramenta não exige teste por padrão | Regras em `openspec/config.yaml`: todo critério de aceite nomeia seu teste, tarefa sem teste não é pronta |
 
 ## Decisões em aberto
 
@@ -264,10 +300,9 @@ Nenhuma é exigida pelos ciclos 1 a 6. Registrar antes do ciclo 7.
 
 ## Sequência até o primeiro objetivo
 
-Antes do ciclo 1, dois passos de implantação que não são ciclos: instalar a
-ferramenta escolhida em `selecao-ferramenta-spec-driven.md` e preencher o lugar
-que ela reserva aos princípios do projeto. Sem isso, o passo de plano não tem
-contra o que verificar.
+Antes do ciclo 1, um passo de implantação que não é ciclo: rodar o
+`openspec init` e preencher `openspec/config.yaml` com o contexto do projeto, as
+oito restrições de domínio e as duas regras de teste acima.
 
 Cada ciclo é um PR pequeno, com spec, plano, tarefas e aceite humano
 registrado.
@@ -293,8 +328,8 @@ que a camada não as sustenta é mais barato do que descobrir no ciclo 7.
 3. Biome substituindo Prettier e ESLint é aceitável, dado que a11y é provada por execução?
 4. CSS Modules com custom properties sustenta a proibição de valor literal de estilo?
 5. Está correto o spec-driven entrar já na fundação do workspace?
-6. A convenção de branch da ferramenta deve mesmo vencer nos ciclos de spec?
-7. Os quatro itens que nenhuma ferramenta decide estão completos?
+6. As duas regras de teste em `config.yaml` substituem bem a auditoria mecânica?
+7. Os três itens que o OpenSpec não decide estão completos?
 8. As oito restrições de domínio estão completas e com os nomes corretos?
 9. A sequência de ciclos está na ordem certa, com primitivas de domínio antes de gráficos?
 10. O isolamento declarado em R1 é suficiente para não tocar no que está fora do workspace?

@@ -2,7 +2,7 @@
 
 ## Estado
 
-`PROPOSTA PARA REVISÃO`
+`ACEITA`
 
 ## Escopo
 
