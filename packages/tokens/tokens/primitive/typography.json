@@ -1,0 +1,40 @@
+{
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "sans": {
+        "$description": "Inter é a única família do sistema (docs/decisao-identidade-visual.md). Eixos wght e opsz.",
+        "$value": ["Inter", "system-ui", "sans-serif"]
+      }
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "regular": { "$value": 400 },
+      "medium": { "$value": 500 },
+      "semibold": { "$value": 600 }
+    },
+    "size": {
+      "$type": "dimension",
+      "1": { "$value": { "value": 12, "unit": "px" } },
+      "2": { "$value": { "value": 13, "unit": "px" } },
+      "3": { "$value": { "value": 14, "unit": "px" } },
+      "4": { "$value": { "value": 16, "unit": "px" } },
+      "5": { "$value": { "value": 20, "unit": "px" } },
+      "6": { "$value": { "value": 24, "unit": "px" } },
+      "7": { "$value": { "value": 32, "unit": "px" } }
+    },
+    "line-height": {
+      "$type": "number",
+      "$description": "Altura de linha sem unidade, multiplicadora do corpo.",
+      "tight": { "$value": 1.2 },
+      "snug": { "$value": 1.35 },
+      "normal": { "$value": 1.5 }
+    },
+    "numeric": {
+      "$type": "fontVariantNumeric",
+      "$description": "Tipo de extensão deste repositório: valor de font-variant-numeric. tabular-nums ativa o recurso OpenType tnum; slashed-zero ativa zero.",
+      "data": { "$value": "tabular-nums slashed-zero" },
+      "text": { "$value": "normal" }
+    }
+  }
+}
