@@ -81,3 +81,9 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: relações entre instrumentos regulatórios](decisao-relacoes-entre-instrumentos-regulatorios.md)
 - [Decisão: fase de encerramento de vigência](decisao-fase-encerramento-vigencia.md)
 - [Decisão: precisão da data de publicação](decisao-precisao-da-data-de-publicacao.md)
+
+## Interface
+
+- [Decisão: configuração inicial do workspace](decisao-configuracao-inicial-do-workspace.md)
+- [Seleção da ferramenta de desenvolvimento spec-driven](selecao-ferramenta-spec-driven.md)
+- [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
