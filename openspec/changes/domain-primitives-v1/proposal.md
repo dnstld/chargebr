@@ -58,7 +58,7 @@ inventar fixtures, e inventar evidência é exatamente o que a metodologia recus
 
 Não cria tela, rota, layout de página ou aplicação. Não busca dado e não conhece
 o formato do contrato de leitura: a tradução entre o contrato e a forma da
-biblioteca é responsabilidade de quem consome, e nenhum adaptador é publicado
-enquanto houver um único consumidor previsto.
+biblioteca é responsabilidade de quem consome. Nenhum adaptador é publicado neste
+ciclo — decisão adiada, com o motivo e o ponto de revisão no desenho.
 
 Não entrega gráfico, que é o ciclo 6.

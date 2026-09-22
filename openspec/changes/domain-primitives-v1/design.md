@@ -29,9 +29,22 @@ próprios tipos, e a tradução do contrato `chargebr-methodology-reading-v1` pa
 eles é responsabilidade de quem consome. Isso mantém `@chargebr/ui` independente
 do banco: mudança de coluna ou de projeção não atravessa a camada de interface.
 
-Publicar um adaptador junto foi considerado e recusado por antecipação: existe um
-consumidor previsto, o back office. Quando houver um segundo, extrair o
-mapeamento já escrito é barato; manter um adaptador que ninguém usa, não.
+Publicar um adaptador junto foi considerado e adiado, não descartado. São dois os
+consumidores previstos em `docs/estrategia-de-produto.md`: o back office, no
+estágio 2, e o produto público de informação, no estágio 3. Com dois consumidores,
+o argumento de evitar código sem usuário não se sustenta — o mapeamento será
+escrito duas vezes se nada for compartilhado.
+
+O que sustenta o adiamento é outra coisa: **não se sabe ainda se os dois leem a
+mesma forma.** O back office consome o contrato metodológico, com proveniência,
+contrafactual e estado de revisão. O produto público consome o que é publicável,
+e ainda não existe contrato definido para ele. Um adaptador escrito agora
+codificaria as suposições do primeiro consumidor e seria descoberto errado pelo
+segundo, que é o pior dos dois mundos: código sem usuário **e** errado.
+
+Revisão desta decisão: quando o contrato de leitura do produto público existir. Se
+as formas coincidirem, o mapeamento do back office vira adaptador publicado; se
+divergirem, cada consumidor mantém o seu, e o adiamento terá sido a escolha certa.
 
 **Fixtures derivadas de saída real, não inventadas.** As histórias usam dados
 moldados a partir do que o contrato de leitura já produz para a carga `0007`.
