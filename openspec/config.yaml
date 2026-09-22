@@ -69,6 +69,8 @@ rules:
     - Todo critério de aceite nomeia o teste que o prova
     - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
     - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
+    - "O corpo de um requisito contém só o que obriga; a razão vai em bloco próprio, aberto por **Por quê:**"
+    - "Frase que não obriga, mas sem a qual muda o que é exigido, não é razão: reescreva-a como obrigação"
   design:
     - Nenhum valor literal de cor, espaçamento, raio, sombra ou tipografia em código de componente; só token
     - Componente que usa React Aria ou estado do cliente declara "use client" no próprio arquivo
