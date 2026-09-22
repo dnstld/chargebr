@@ -95,7 +95,9 @@ As duas seguintes custaram uma sonda descartável, e mostraram que a falha acont
 
 **Gatilho de retomada:** uma história de interação dos próximos ciclos — qualquer átomo ou primitiva que exercite ponteiro ou teclado — reprovar no CI com a mesma assinatura: estado pós-interação que não chega dentro do `waitFor`, com o ambiente reportando capacidade e o documento limpo. Quando isso acontecer, o incidente deixa de ser de uma história e passa a ser da bancada, e o primeiro passo é o listener nativo descrito acima.
 
-Até lá: reexecução pelo botão quando "Sob o ponteiro" reprovar sozinha, e nada de `retry` nem de tempo limite maior — os dois esconderiam exatamente o dado que o gatilho precisa ver.
+Até lá: nada de `retry` nem de tempo limite maior — os dois esconderiam exatamente o dado que o gatilho precisa ver.
+
+**Encerramento (22 de setembro de 2026).** A reexecução pelo botão foi substituída pela remoção: `hovered` saiu dos estados declarados no contrato do `EvidenceAnchor` e a história "Sob o ponteiro" saiu da bancada. O contrato declara estado que a bancada verifica; enquanto a causa era desconhecida, declarar `hovered` mantinha no contrato uma promessa que nenhuma história verde sustentava. O que saiu foi a declaração, não o comportamento: `data-hovered` continua vindo do React Aria em tempo de execução e o estilo `.anchor[data-hovered]` continua no CSS. O gatilho de retomada acima permanece válido — passa a depender da primeira história de ponteiro que a bancada ganhar de novo.
 
 ## Descarte
 
