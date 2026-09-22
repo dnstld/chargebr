@@ -56,12 +56,24 @@ export const SobOPonteiro: Story = {
   name: "Sob o ponteiro",
   tags: ["state:hovered"],
   play: async ({ canvas, args }) => {
+    // SONDA TEMPORÁRIA: o que o ambiente reporta sobre ponteiro antes da
+    // interação. Vai para o console e para a mensagem da asserção, porque o
+    // reporter padrão só mostra o console de testes que falham. Remover depois
+    // de capturar a saída no CI.
+    const probe = `[sonda:ponteiro] ${JSON.stringify({
+      "hover: hover": matchMedia("(hover: hover)").matches,
+      "any-hover: hover": matchMedia("(any-hover: hover)").matches,
+      "pointer: fine": matchMedia("(pointer: fine)").matches,
+      maxTouchPoints: navigator.maxTouchPoints,
+      userAgent: navigator.userAgent,
+    })}`;
+    console.log(probe);
     const anchor = canvas.getByRole("link", { name: args.label });
     await userEvent.hover(anchor);
     // Mesmo motivo da história de foco: o estado chega com o render, não com
     // o evento.
     await waitFor(() => {
-      expect(anchor.hasAttribute("data-hovered")).toBe(true);
+      expect(anchor.hasAttribute("data-hovered"), probe).toBe(true);
       expect(getComputedStyle(anchor).textDecorationLine).toBe("none");
     });
   },
