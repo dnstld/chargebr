@@ -17,11 +17,11 @@
       "strong": { "$value": "{color.gray.600}" }
     },
     "action": {
-      "primary": { "$value": "{color.indigo.400}" },
-      "primary-hover": { "$value": "{color.indigo.600}" }
+      "primary": { "$value": "{color.indigo.300}" },
+      "primary-hover": { "$value": "{color.indigo.200}" }
     },
     "focus": {
-      "ring": { "$value": "{color.indigo.400}" }
+      "ring": { "$value": "{color.indigo.300}" }
     },
     "chart": {
       "surface": {

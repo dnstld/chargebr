@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "node --import tsx src/cli/build.ts",
-    "palette:report": "node --import tsx src/cli/palette-report.ts"
+    "palette:report": "node --import tsx src/cli/palette-report.ts",
+    "contrast:report": "node --import tsx src/cli/contrast-report.ts"
   },
   "devDependencies": {
     "@types/culori": "4.0.1",

@@ -1,7 +1,7 @@
 import { expect } from "storybook/test";
 import { accessibleNameFromContent } from "../bench/accessible-name";
-import { hasValue } from "./series";
 import type { ChartSeries } from "./series";
+import { hasValue } from "./series";
 
 // As provas das restrições de domínio no desenho, executadas em história e
 // portanto nos dois temas. Ficam aqui, e não em cada arquivo de história,
@@ -42,6 +42,100 @@ function segmentsTouching(
   );
 }
 
+// A superfície de gráfico hospeda apenas o desenho — marca, eixo e grade — e
+// nenhum texto interativo. É por isso que o piso que vale contra ela, para as
+// séries, é o de objeto gráfico e não o de texto: nome do gráfico, legenda,
+// ausências declaradas e representação em texto ficam na superfície da página.
+// Esta afirmação é o que impede que essa premissa decaia sem ser notada.
+//
+// O que é observável na árvore renderizada: elemento alcançável por foco e
+// manipulador de ponteiro escrito como atributo. Um manipulador ligado por
+// propriedade do React não aparece no DOM — ele é delegado na raiz —, e é por
+// isso que o desenho fica fora da árvore de acessibilidade e sem nada
+// focalizável: sem alvo de foco não há caminho de teclado até um manipulador.
+const FOCUSABLE = [
+  "a[href]",
+  "area[href]",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "details",
+  "iframe",
+  "audio[controls]",
+  "video[controls]",
+  '[contenteditable]:not([contenteditable="false"])',
+  "[tabindex]",
+].join(", ");
+
+const POINTER_ATTRIBUTES = [
+  "onclick",
+  "ondblclick",
+  "onmousedown",
+  "onmouseup",
+  "onmouseenter",
+  "onmouseleave",
+  "onmouseover",
+  "onmouseout",
+  "onpointerdown",
+  "onpointerup",
+  "onpointerenter",
+  "onpointerleave",
+  "onpointerover",
+  "onpointerout",
+  "ontouchstart",
+  "ontouchend",
+] as const;
+
+function describeElement(element: Element): string {
+  const attributes = [...element.attributes]
+    .map((attribute) =>
+      attribute.value.length > 24
+        ? `${attribute.name}="…"`
+        : `${attribute.name}="${attribute.value}"`,
+    )
+    .join(" ");
+  const tag = element.tagName.toLowerCase();
+  return attributes.length > 0 ? `<${tag} ${attributes}>` : `<${tag}>`;
+}
+
+function withSelf(root: Element): Element[] {
+  return [root, ...root.querySelectorAll("*")];
+}
+
+async function expectNoInteractiveWithin(
+  root: Element,
+  where: string,
+): Promise<void> {
+  await expect(
+    withSelf(root)
+      .filter((element) => element.matches(FOCUSABLE))
+      .map(describeElement),
+    `elemento alcançável por foco em ${where}`,
+  ).toEqual([]);
+
+  await expect(
+    withSelf(root)
+      .filter((element) =>
+        POINTER_ATTRIBUTES.some((attribute) => element.hasAttribute(attribute)),
+      )
+      .map(describeElement),
+    `manipulador de ponteiro em ${where}`,
+  ).toEqual([]);
+}
+
+// Dentro de `[data-plot]` não há elemento alcançável por foco nem manipulador
+// de ponteiro. Roda em toda história de gráfico, e portanto nos dois temas.
+export async function expectNoInteractiveInPlot(
+  canvasElement: HTMLElement,
+): Promise<void> {
+  const chart = chartOf(canvasElement);
+  const plots = [...chart.querySelectorAll("[data-plot]")];
+  for (const plot of plots) {
+    await expectNoInteractiveWithin(plot, "[data-plot]");
+  }
+}
+
 // Projeção bloqueada substitui o gráfico. Nem eixo, nem grade, nem rótulo de
 // escala, nem tabela de valores: eixo vazio comunica intervalo e ordem de
 // grandeza, e isso é informação sobre um dado que a metodologia mandou não
@@ -69,6 +163,13 @@ export async function expectBlockedReplacesChart(
 
   const blocked = chart.querySelector('[data-primitive="blocked-projection"]');
   await expect(blocked).not.toBeNull();
+
+  // A proibição de interativo vale também no caminho em que o desenho é
+  // substituído: sem superfície de gráfico, e com a primitiva que ocupou o
+  // lugar dela igualmente sem foco nem ponteiro.
+  await expectNoInteractiveInPlot(canvasElement);
+  if (blocked !== null)
+    await expectNoInteractiveWithin(blocked, "projeção bloqueada");
   for (const reason of reasons) {
     await expect(
       chart.querySelector(`[data-reason="${reason}"]`),
