@@ -4,6 +4,7 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig, type TestProjectConfiguration } from "vitest/config";
 // Extensão explícita: o carregador nativo de configuração do Vite não resolve
 // importação sem extensão.
+import { BENCH_OPTIMIZE_DEPS } from "./.storybook/optimize-deps.ts";
 import { THEME_LABEL, THEMES, type Theme } from "./.storybook/theme.ts";
 
 const configDir = fileURLToPath(new URL("./.storybook", import.meta.url));
@@ -15,9 +16,8 @@ const configDir = fileURLToPath(new URL("./.storybook", import.meta.url));
 function benchProject(theme: Theme): TestProjectConfiguration {
   return {
     plugins: [storybookTest({ configDir })],
-    // Dependência descoberta só ao renderizar faria o Vite reotimizar e
-    // recarregar no meio da execução; declarada, é pré-empacotada antes.
-    optimizeDeps: { include: ["react-aria-components"] },
+    // Pré-empacotamento explícito, antes da execução; ver optimize-deps.ts.
+    optimizeDeps: BENCH_OPTIMIZE_DEPS,
     test: {
       name: THEME_LABEL[theme].toLowerCase(),
       setupFiles: [`${configDir}/vitest.setup.${theme}.ts`],
