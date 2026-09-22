@@ -3,6 +3,7 @@ import {
   expectBlockedReplacesChart,
   expectLegendNamesSeries,
   expectMissingDeclared,
+  expectNoInteractiveInPlot,
   expectNoLegend,
   expectTextEquivalent,
   expectUnresolvedHatchedAndDetached,
@@ -44,6 +45,7 @@ export const TresSeries: Story = {
     series: [...THREE_SERIES],
   },
   play: async ({ canvasElement }) => {
+    await expectNoInteractiveInPlot(canvasElement);
     await expectLegendNamesSeries(
       canvasElement,
       THREE_SERIES.map((one) => one.name),
@@ -69,6 +71,7 @@ export const UmaSerie: Story = {
     series: [CURRENT_METHODOLOGY],
   },
   play: async ({ canvasElement }) => {
+    await expectNoInteractiveInPlot(canvasElement);
     await expectNoLegend(canvasElement);
     await expectTextEquivalent(canvasElement, [CURRENT_METHODOLOGY]);
   },
@@ -84,6 +87,7 @@ export const DuasSeriesDoContrato: Story = {
     series: [...FROM_CONTRACT],
   },
   play: async ({ canvasElement }) => {
+    await expectNoInteractiveInPlot(canvasElement);
     await expectLegendNamesSeries(
       canvasElement,
       FROM_CONTRACT.map((one) => one.name),

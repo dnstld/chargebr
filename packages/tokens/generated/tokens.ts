@@ -71,6 +71,16 @@ export const tokens = {
     light: "#036429",
     dark: "#036429",
   },
+  "color-indigo-200": {
+    css: "var(--color-indigo-200)",
+    light: "#a8aefe",
+    dark: "#a8aefe",
+  },
+  "color-indigo-300": {
+    css: "var(--color-indigo-300)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
   "color-indigo-400": {
     css: "var(--color-indigo-400)",
     light: "#706fe2",
@@ -284,12 +294,12 @@ export const tokens = {
   "color-action-primary": {
     css: "var(--color-action-primary)",
     light: "#302681",
-    dark: "#706fe2",
+    dark: "#8788fe",
   },
   "color-action-primary-hover": {
     css: "var(--color-action-primary-hover)",
     light: "#4640a7",
-    dark: "#4640a7",
+    dark: "#a8aefe",
   },
   "color-border-default": {
     css: "var(--color-border-default)",
@@ -334,7 +344,7 @@ export const tokens = {
   "color-focus-ring": {
     css: "var(--color-focus-ring)",
     light: "#302681",
-    dark: "#706fe2",
+    dark: "#8788fe",
   },
   "color-surface-base": {
     css: "var(--color-surface-base)",
@@ -564,12 +574,12 @@ export const tokens = {
   "button-primary-background": {
     css: "var(--button-primary-background)",
     light: "#302681",
-    dark: "#706fe2",
+    dark: "#8788fe",
   },
   "button-primary-background-hover": {
     css: "var(--button-primary-background-hover)",
     light: "#4640a7",
-    dark: "#4640a7",
+    dark: "#a8aefe",
   },
   "button-primary-text": {
     css: "var(--button-primary-text)",

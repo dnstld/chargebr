@@ -16,6 +16,8 @@
   --color-green-500: #009440;
   --color-green-600: #067833;
   --color-green-700: #036429;
+  --color-indigo-200: #a8aefe;
+  --color-indigo-300: #8788fe;
   --color-indigo-400: #706fe2;
   --color-indigo-600: #4640a7;
   --color-indigo-700: #302681;
@@ -124,8 +126,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-action-primary: var(--color-indigo-400);
-    --color-action-primary-hover: var(--color-indigo-600);
+    --color-action-primary: var(--color-indigo-300);
+    --color-action-primary-hover: var(--color-indigo-200);
     --color-border-default: var(--color-gray-800);
     --color-border-strong: var(--color-gray-600);
     --color-chart-axis: var(--color-gray-400);
@@ -134,7 +136,7 @@
     --color-chart-series-2: var(--color-green-600);
     --color-chart-series-3: var(--color-yellow-600);
     --color-chart-surface: var(--color-gray-900);
-    --color-focus-ring: var(--color-indigo-400);
+    --color-focus-ring: var(--color-indigo-300);
     --color-surface-base: var(--color-gray-950);
     --color-surface-raised: var(--color-gray-900);
     --color-surface-sunken: var(--color-gray-950);
@@ -146,8 +148,8 @@
 }
 
 :root[data-theme="dark"] {
-  --color-action-primary: var(--color-indigo-400);
-  --color-action-primary-hover: var(--color-indigo-600);
+  --color-action-primary: var(--color-indigo-300);
+  --color-action-primary-hover: var(--color-indigo-200);
   --color-border-default: var(--color-gray-800);
   --color-border-strong: var(--color-gray-600);
   --color-chart-axis: var(--color-gray-400);
@@ -156,7 +158,7 @@
   --color-chart-series-2: var(--color-green-600);
   --color-chart-series-3: var(--color-yellow-600);
   --color-chart-surface: var(--color-gray-900);
-  --color-focus-ring: var(--color-indigo-400);
+  --color-focus-ring: var(--color-indigo-300);
   --color-surface-base: var(--color-gray-950);
   --color-surface-raised: var(--color-gray-900);
   --color-surface-sunken: var(--color-gray-950);
