@@ -26,16 +26,22 @@ export function stateTag(state: string): `${typeof STATE_TAG_PREFIX}${string}` {
   return `${STATE_TAG_PREFIX}${state}`;
 }
 
-export function defineAtom<const State extends string>(contract: {
-  readonly name: string;
-  readonly component: ComponentType<never>;
-  readonly states: readonly State[];
-}): AtomContract<State> {
+// O mesmo contrato serve às primitivas de domínio: elas também declaram
+// estados enumeráveis e também precisam de história para cada um. O que muda
+// é só o nome da camada na mensagem de erro.
+export function defineContract<const State extends string>(
+  layer: string,
+  contract: {
+    readonly name: string;
+    readonly component: ComponentType<never>;
+    readonly states: readonly State[];
+  },
+): AtomContract<State> {
   const seen = new Set<string>();
   for (const state of contract.states) {
     if (seen.has(state)) {
       throw new Error(
-        `Átomo ${contract.name} declara o estado "${state}" duas vezes`,
+        `${layer} ${contract.name} declara o estado "${state}" duas vezes`,
       );
     }
     seen.add(state);
@@ -45,4 +51,12 @@ export function defineAtom<const State extends string>(contract: {
     component: contract.component,
     states: Object.freeze([...contract.states]),
   });
+}
+
+export function defineAtom<const State extends string>(contract: {
+  readonly name: string;
+  readonly component: ComponentType<never>;
+  readonly states: readonly State[];
+}): AtomContract<State> {
+  return defineContract("Átomo", contract);
 }

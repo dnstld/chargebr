@@ -51,6 +51,21 @@ moldados a partir do que o contrato de leitura já produz para a carga `0007`.
 É o que permite entregar três primitivas sem inventar evidência — e é também a
 razão de conflito e par de redação ficarem de fora deste ciclo.
 
+Duas consequências dessa decisão apareceram na implementação e ficam registradas:
+
+- **Contexto é redação, não número.** O contrato entrega o contexto MHEV como
+  `documentary_context` com `is_metric_value: false`: redação original,
+  redação normalizada e evidência, e nenhum campo numérico. Extrair `3.946` do
+  texto seria calcular o que a fonte não publicou como valor. A posição de
+  contexto da primitiva de valor recebe, portanto, texto com proveniência — a
+  redação original, nunca a normalizada no lugar dela — composto pelo átomo de
+  texto no papel de contexto. Principal e contrafactual seguem numéricos.
+- **O eixo sem valor vem da saída real.** O contrato projeta
+  `verification_level` e `workflow_status` pelo acontecimento aceito, e não
+  projeta `normalization_status`. A fixture derivada da saída declara esse eixo
+  sem valor; a história em que os três eixos têm valor usa a variante derivada
+  da carga, que grava `normalized` na observação, com a origem anotada.
+
 **Vocabulário como módulo, com sobrescrita por propriedade.** Um dicionário
 exportado, usado por padrão. Quem consome sobrescreve termo a termo, por
 propriedade. Um provedor de contexto foi considerado e recusado por ora: acrescenta
@@ -83,6 +98,11 @@ três itens, três eixos, nenhum fundido.
   revelar lacunas → aceito; a alternativa seria inventar as outras duas.
 - A checagem de cobertura foi escrita para átomos → estendê-la a primitivas é
   tarefa deste ciclo, não consequência automática.
+- A enumeração de razões de bloqueio espelha os códigos do contrato, embora
+  seja da biblioteca → se o contrato ganhar um código, a biblioteca precisa de
+  razão, termo e história novos; o teste de completude do vocabulário e a
+  cobertura de histórias reprovam a razão que faltar termo ou história, mas
+  nada avisa que o contrato mudou. Aceito: é o preço da forma própria.
 
 ## Migration Plan
 

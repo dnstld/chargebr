@@ -1,14 +1,19 @@
 /// <reference types="vite/client" />
 import { expect, test } from "vitest";
+import { PRIMITIVES } from "../domain/index";
 import { type AtomContract, STATE_TAG_PREFIX } from "./contract";
 import { ATOMS } from "./index";
 
-// Todo estado declarado no contrato de um átomo tem história. A comparação é
-// por enumeração: os estados vêm do contrato (valor em tempo de execução), e
-// as histórias vêm dos próprios módulos de história, ligadas ao átomo pela
-// identidade do componente em `meta.component` e ao estado pela tag
-// `state:<estado>`. Sem esta checagem, "todo estado tem história" é promessa
-// que decai no terceiro átomo.
+// Todo estado declarado no contrato de um átomo ou de uma primitiva tem
+// história. A comparação é por enumeração: os estados vêm do contrato (valor
+// em tempo de execução), e as histórias vêm dos próprios módulos de história,
+// ligadas ao componente pela identidade em `meta.component` e ao estado pela
+// tag `state:<estado>`. Sem esta checagem, "todo estado tem história" é
+// promessa que decai no terceiro átomo.
+//
+// As duas camadas entram na mesma lista: o contrato é o mesmo, e a varredura
+// cobre src/ inteiro, não só este diretório.
+const CONTRACTS: readonly AtomContract[] = [...ATOMS, ...PRIMITIVES];
 
 interface StoryMeta {
   component?: unknown;
@@ -20,7 +25,7 @@ interface StoryModule {
   [storyExport: string]: unknown;
 }
 
-const storyModules = import.meta.glob<StoryModule>("./**/*.stories.tsx", {
+const storyModules = import.meta.glob<StoryModule>("../**/*.stories.tsx", {
   eager: true,
 });
 
@@ -77,15 +82,15 @@ function coverageOf(atom: AtomContract): Coverage {
   return coverage.get(atom.component) ?? { stories: [], byState: new Map() };
 }
 
-test("todo átomo tem história", () => {
-  const without = ATOMS.filter(
+test("todo átomo e toda primitiva têm história", () => {
+  const without = CONTRACTS.filter(
     (atom) => coverageOf(atom).stories.length === 0,
   ).map((atom) => atom.name);
   expect(without).toEqual([]);
 });
 
 test("todo estado declarado tem história", () => {
-  const missing = ATOMS.flatMap((atom) =>
+  const missing = CONTRACTS.flatMap((atom) =>
     atom.states
       .filter((state) => !coverageOf(atom).byState.has(state))
       .map((state) => `${atom.name}: estado "${state}" sem história`),
@@ -93,8 +98,8 @@ test("todo estado declarado tem história", () => {
   expect(missing).toEqual([]);
 });
 
-test("toda tag de estado nomeia estado declarado pelo átomo", () => {
-  const unknown = ATOMS.flatMap((atom) => {
+test("toda tag de estado nomeia estado declarado pelo componente", () => {
+  const unknown = CONTRACTS.flatMap((atom) => {
     const declared = new Set<string>(atom.states);
     return [...coverageOf(atom).byState.entries()]
       .filter(([state]) => !declared.has(state))
