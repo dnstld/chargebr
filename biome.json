@@ -72,6 +72,16 @@
                       "node:dns"
                     ],
                     "message": "Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de rede."
+                  },
+                  {
+                    "group": [
+                      "**/queries/**",
+                      "**/supabase/**",
+                      "**/data/canonical/**",
+                      "**/src/**",
+                      "**/tests/**"
+                    ],
+                    "message": "A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome."
                   }
                 ]
               }

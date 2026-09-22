@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./atoms": "./src/atoms/index.ts"
+    "./atoms": "./src/atoms/index.ts",
+    "./domain": "./src/domain/index.ts",
+    "./vocabulary": "./src/vocabulary/index.ts"
   },
   "scripts": {
     "storybook": "storybook dev --port 6006 --no-open",
