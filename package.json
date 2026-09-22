@@ -14,7 +14,7 @@
     "verify:types": "pnpm -r exec tsc --noEmit",
     "verify:format": "biome format .",
     "verify:lint": "biome lint .",
-    "verify:test": "vitest run --passWithNoTests"
+    "verify:test": "vitest run --passWithNoTests --reporter=verbose"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
