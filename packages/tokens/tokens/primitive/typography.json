@@ -35,6 +35,12 @@
       "$description": "Tipo de extensão deste repositório: valor de font-variant-numeric. tabular-nums ativa o recurso OpenType tnum; slashed-zero ativa zero.",
       "data": { "$value": "tabular-nums slashed-zero" },
       "text": { "$value": "normal" }
+    },
+    "style": {
+      "$type": "fontStyle",
+      "$description": "Tipo de extensão deste repositório: valor de font-style.",
+      "normal": { "$value": "normal" },
+      "italic": { "$value": "italic" }
     }
   }
 }

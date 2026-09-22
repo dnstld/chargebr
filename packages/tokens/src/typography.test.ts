@@ -22,3 +22,11 @@ test("toda família de texto resolve para Inter", () => {
     expect(tokens[`text-${role}-family`].light).toMatch(/^Inter,/);
   }
 });
+
+// Inclinação: o papel contrafactual é itálico por token, não por literal no
+// componente. É a única inclinação semântica; o restante do sistema é normal.
+test("o papel contrafactual tem inclinação por token", () => {
+  expect(tokens["text-counterfactual-style"].light).toBe("italic");
+  expect(tokens["text-counterfactual-style"].dark).toBe("italic");
+  expect(tokens["font-style-normal"].light).toBe("normal");
+});

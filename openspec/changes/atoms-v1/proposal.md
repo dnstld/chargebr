@@ -37,8 +37,10 @@ Nenhuma.
 - **Dependências novas:** primitivas de comportamento acessível, para os átomos
   que têm interação. Justificadas no desenho.
 - **Verificação:** ganha a checagem de estado sem história.
-- **Intocados:** `packages/tokens`, `apps/`, `src/`, `tests/`, `data/`,
-  `queries/`, `supabase/`.
+- **Tokens:** `packages/tokens` ganha um token de inclinação
+  (`text.counterfactual.style`), porque o papel contrafactual é itálico e
+  inclinação não tinha token; sem ele, o átomo teria literal de tipografia.
+- **Intocados:** `apps/`, `src/`, `tests/`, `data/`, `queries/`, `supabase/`.
 
 ## Os seis átomos e de onde vêm
 

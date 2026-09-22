@@ -141,43 +141,39 @@ undefined
 Revertido: sim
 Permanente: packages/ui/src/atoms/contracts.typecheck.tsx mantém o uso sem eixo sob @ts-expect-error com justificativa; se o eixo virar opcional, a supressão sobra e verify:types reprova.
 
-=== 3.3 Eixo no nome acessível: sensibilidade do teste ===
-Plantio: aria-label={label} (sem o eixo) em status-marker.tsx
+=== 3.3 Eixo no nome acessível: sensibilidade do teste (semântica sem ARIA: eixo em texto visualmente oculto) ===
+Plantio (a): <VisuallyHidden>{axisLabel}: </VisuallyHidden> removido de status-marker.tsx
 Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/status-marker
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
-TestingLibraryElementError: 
+Error: 
 Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nivel-de-verificacao&addonPanel=storybook/interactions/panel
 
-Unable to find an accessible element with the role "img" and name "Verificação: Confirmado"
-
+esperado um marcador com nome acessível "Verificação: Confirmado"; nomes presentes: "Confirmado", "Corroborado", "Não verificado"
 --
  FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
-TestingLibraryElementError: 
+Error: 
 Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--estado-do-fluxo&addonPanel=storybook/interactions/panel
 
-Unable to find an accessible element with the role "img" and name "Fluxo: Aceito"
-
+esperado um marcador com nome acessível "Fluxo: Aceito"; nomes presentes: "Aceito", "Em revisão", "Candidato"
 --
- FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Normalização
-TestingLibraryElementError: 
-Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--normalizacao&addonPanel=storybook/interactions/panel
+Revertido: sim
+Plantio (b): display: none no utilitário de texto oculto (o eixo sairia da árvore de acessibilidade)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
 
-Unable to find an accessible element with the role "img" and name "Normalização: Normalizado"
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nivel-de-verificacao&addonPanel=storybook/interactions/panel
 
+esperado um marcador com nome acessível "Verificação: Confirmado"; nomes presentes: "Confirmado", "Corroborado", "Não verificado"
 --
- FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Não resolvido é hachurado
-TestingLibraryElementError: 
-Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nao-resolvido&addonPanel=storybook/interactions/panel
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--estado-do-fluxo&addonPanel=storybook/interactions/panel
 
-Unable to find an accessible element with the role "img" and name "Normalização: Não resolvido"
-
+esperado um marcador com nome acessível "Fluxo: Aceito"; nomes presentes: "Aceito", "Em revisão", "Candidato"
 --
-      Tests  4 failed (4)
-   Start at  21:11:54
-   Duration  846ms (setup 46%, tests 40%, worker 13%, import 1%)
-
 Revertido: sim
 
 === 3.4 Preenchimento sólido em não resolvido reprova ===
@@ -359,3 +355,12 @@ Histórias dos átomos por tema:
 |@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Redações lado a lado
       Tests  86 passed (86)
  Test Files  25 passed (25)
+=== Revisão: semântica do marcador sem ARIA e itálico por token ===
+Mudanças: StatusMarker sem role/aria-roledescription, eixo em texto visualmente oculto (utilitário VisuallyHidden, só token);
+token text.counterfactual.style (fontStyle, tipo de extensão) em @chargebr/tokens; linha do guard style-literals restaurada.
+Comando: pnpm verify (cache do Vite apagado antes) — exit: 0
+Checked 76 files in 15ms. No fixes applied.
+Checked 76 files in 18ms. No fixes applied.
+ Test Files  25 passed (25)
+      Tests  87 passed (87)
+

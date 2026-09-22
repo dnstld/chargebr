@@ -15,7 +15,7 @@
 }
 
 .counterfactual {
-  font-style: italic;
+  font-style: var(--text-counterfactual-style);
 }
 
 .context {

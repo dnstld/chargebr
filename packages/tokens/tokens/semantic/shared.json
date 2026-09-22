@@ -83,6 +83,10 @@
         "$type": "fontVariantNumeric",
         "$value": "{font.numeric.data}"
       }
+    },
+    "counterfactual": {
+      "$description": "Papel contrafactual de um valor: o que seria, e não o que é. Inclinado, para que a distinção não dependa só de cor.",
+      "style": { "$type": "fontStyle", "$value": "{font.style.italic}" }
     }
   }
 }

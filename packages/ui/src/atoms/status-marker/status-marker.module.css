@@ -1,7 +1,9 @@
-/* Marcador de estado: um quadrado de preenchimento e dois textos, o eixo e o
-   estado. O preenchimento diz só uma coisa: resolvido (sólido) ou não
-   resolvido (hachura). Que estado é, e de que eixo, é o texto que diz. */
+/* Marcador de estado: um quadrado de preenchimento e o texto do estado, com o
+   eixo em texto oculto. O preenchimento diz só uma coisa: resolvido (sólido)
+   ou não resolvido (hachura). Que estado é, e de que eixo, é o texto que diz.
+   position: relative ancora o texto oculto dentro do marcador. */
 .marker {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--space-gap-sm);
@@ -29,8 +31,4 @@
 
 .hatched {
   background: transparent;
-}
-
-.axis {
-  color: var(--color-text-secondary);
 }

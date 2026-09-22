@@ -22,9 +22,12 @@ export const DTCG_TYPES = [
   "typography",
 ] as const;
 
-// Tipo de extensão deste repositório. A especificação não cobre variantes
-// numéricas de fonte; o valor é o de `font-variant-numeric` em CSS.
-export const EXTENSION_TYPES = ["fontVariantNumeric"] as const;
+// Tipos de extensão deste repositório. A especificação não cobre variantes
+// numéricas nem inclinação de fonte; os valores são os de
+// `font-variant-numeric` e `font-style` em CSS.
+export const EXTENSION_TYPES = ["fontVariantNumeric", "fontStyle"] as const;
+
+const FONT_STYLES = new Set(["normal", "italic", "oblique"]);
 
 const KNOWN_TYPES: readonly string[] = [...DTCG_TYPES, ...EXTENSION_TYPES];
 
@@ -186,6 +189,12 @@ function checkValue(
     case "fontVariantNumeric":
       if (typeof value !== "string")
         problems.push(`${where}: fontVariantNumeric precisa ser string`);
+      return;
+    case "fontStyle":
+      if (typeof value !== "string" || !FONT_STYLES.has(value))
+        problems.push(
+          `${where}: fontStyle precisa ser "normal", "italic" ou "oblique"`,
+        );
       return;
     default:
       // Tipo definido pela especificação mas não usado aqui: a forma não é conferida.

@@ -166,6 +166,16 @@ export const tokens = {
     light: "32px",
     dark: "32px",
   },
+  "font-style-italic": {
+    css: "var(--font-style-italic)",
+    light: "italic",
+    dark: "italic",
+  },
+  "font-style-normal": {
+    css: "var(--font-style-normal)",
+    light: "normal",
+    dark: "normal",
+  },
   "font-weight-medium": {
     css: "var(--font-weight-medium)",
     light: "500",
@@ -450,6 +460,11 @@ export const tokens = {
     css: "var(--text-body-weight)",
     light: "400",
     dark: "400",
+  },
+  "text-counterfactual-style": {
+    css: "var(--text-counterfactual-style)",
+    light: "italic",
+    dark: "italic",
   },
   "text-data-family": {
     css: "var(--text-data-family)",

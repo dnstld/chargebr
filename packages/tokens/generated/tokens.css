@@ -35,6 +35,8 @@
   --font-size-5: 20px;
   --font-size-6: 24px;
   --font-size-7: 32px;
+  --font-style-italic: italic;
+  --font-style-normal: normal;
   --font-weight-medium: 500;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
@@ -93,6 +95,7 @@
   --text-body-numeric: var(--font-numeric-text);
   --text-body-size: var(--font-size-3);
   --text-body-weight: var(--font-weight-regular);
+  --text-counterfactual-style: var(--font-style-italic);
   --text-data-family: var(--font-family-sans);
   --text-data-line-height: var(--font-line-height-snug);
   --text-data-numeric: var(--font-numeric-data);

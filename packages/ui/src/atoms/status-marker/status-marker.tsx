@@ -1,4 +1,5 @@
 import { defineAtom } from "../contract";
+import { VisuallyHidden } from "../../utilities/visually-hidden";
 import { Hatch } from "../hatch/hatch";
 import styles from "./status-marker.module.css";
 
@@ -34,10 +35,11 @@ export interface StatusMarkerProps<Axis extends StatusAxis> {
   label: string;
 }
 
-// Marcador de estado. O eixo integra o nome acessível — "Normalização: não
+// Marcador de estado. O eixo integra o nome acessível — "Normalização: Não
 // resolvido" — para que leitor de tela não colapse os três eixos num só, que é
-// o que a restrição de domínio proíbe. O papel `img` com descrição própria faz
-// o marcador ser anunciado como uma unidade, com esse nome.
+// o que a restrição de domínio proíbe. O nome sai do próprio conteúdo, sem
+// ARIA: o estado é texto visível e o eixo é texto visualmente oculto, na
+// mesma ordem em que seriam lidos.
 export function StatusMarker<Axis extends StatusAxis>({
   axis,
   status,
@@ -46,21 +48,14 @@ export function StatusMarker<Axis extends StatusAxis>({
 }: StatusMarkerProps<Axis>) {
   const hatched = status === UNRESOLVED;
   return (
-    <span
-      className={styles.marker}
-      role="img"
-      aria-roledescription="marcador de estado"
-      aria-label={`${axisLabel}: ${label}`}
-      data-axis={axis}
-      data-status={status}
-    >
+    <span className={styles.marker} data-axis={axis} data-status={status}>
       <span
         className={`${styles.fill} ${hatched ? styles.hatched : styles.solid}`}
         data-fill={hatched ? "hatch" : "solid"}
       >
         {hatched ? <Hatch /> : null}
       </span>
-      <span className={styles.axis}>{axisLabel}</span>
+      <VisuallyHidden>{axisLabel}: </VisuallyHidden>
       <span>{label}</span>
     </span>
   );

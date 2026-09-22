@@ -2,6 +2,7 @@ import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
+import { accessibleNameFromContent } from "../../bench/accessible-name";
 import { resolveColor } from "../../bench/computed";
 import { HATCH_MIN_SIZE } from "../hatch/hatch";
 import { type Status, type StatusAxis, StatusMarker } from "./status-marker";
@@ -65,19 +66,45 @@ function AxisRow<Axis extends StatusAxis>({ axis }: { axis: Axis }) {
   );
 }
 
-// O eixo integra o nome acessível: o marcador é encontrado pelo nome
-// "<eixo>: <estado>", lido pelo mesmo algoritmo que o leitor de tela usa.
+// Localiza um marcador pelo nome acessível calculado a partir do conteúdo,
+// "<eixo>: <estado>". Não há ARIA: o nome é o texto, com o eixo visualmente
+// oculto mas presente na árvore de acessibilidade.
+function markerNamed(canvasElement: HTMLElement, name: string): HTMLElement {
+  const markers = [
+    ...canvasElement.querySelectorAll<HTMLElement>("[data-axis][data-status]"),
+  ];
+  const found = markers.filter(
+    (marker) => accessibleNameFromContent(marker) === name,
+  );
+  if (found.length !== 1) {
+    throw new Error(
+      `esperado um marcador com nome acessível "${name}"; nomes presentes: ${markers
+        .map((marker) => `"${accessibleNameFromContent(marker)}"`)
+        .join(", ")}`,
+    );
+  }
+  return found[0] as HTMLElement;
+}
+
+// O eixo integra o nome acessível: cada marcador é encontrado pelo nome
+// "<eixo>: <estado>", e o eixo, embora fora da tela, não está oculto para a
+// tecnologia assistiva. Já o texto visível é só o estado.
 async function expectAxisInAccessibleName<Axis extends StatusAxis>(
-  canvas: Parameters<NonNullable<Story["play"]>>[0]["canvas"],
+  canvasElement: HTMLElement,
   axis: Axis,
 ): Promise<void> {
   const labels = LABELS[axis];
   for (const [status, label] of Object.entries(labels.status)) {
-    const marker = canvas.getByRole("img", {
-      name: `${labels.axis}: ${label}`,
-    });
+    const marker = markerNamed(canvasElement, `${labels.axis}: ${label}`);
     await expect(marker.getAttribute("data-axis")).toBe(axis);
     await expect(marker.getAttribute("data-status")).toBe(status);
+    await expect(marker.querySelector("span[aria-hidden]")).toBeNull();
+    await expect(marker.getAttribute("role")).toBeNull();
+
+    const visible = [...marker.querySelectorAll<HTMLElement>("span")].filter(
+      (span) => span.getBoundingClientRect().width > HATCH_MIN_SIZE,
+    );
+    await expect(visible.map((span) => span.textContent)).toEqual([label]);
   }
 }
 
@@ -91,8 +118,8 @@ export const NivelDeVerificacao: Story = {
     label: LABELS.verification_level.status.confirmed,
   },
   render: () => <AxisRow axis="verification_level" />,
-  play: async ({ canvas }) => {
-    await expectAxisInAccessibleName(canvas, "verification_level");
+  play: async ({ canvasElement }) => {
+    await expectAxisInAccessibleName(canvasElement, "verification_level");
   },
 };
 
@@ -106,8 +133,8 @@ export const EstadoDoFluxo: Story = {
     label: LABELS.workflow_status.status.accepted,
   },
   render: () => <AxisRow axis="workflow_status" />,
-  play: async ({ canvas }) => {
-    await expectAxisInAccessibleName(canvas, "workflow_status");
+  play: async ({ canvasElement }) => {
+    await expectAxisInAccessibleName(canvasElement, "workflow_status");
   },
 };
 
@@ -121,8 +148,8 @@ export const Normalizacao: Story = {
     label: LABELS.normalization_status.status.normalized,
   },
   render: () => <AxisRow axis="normalization_status" />,
-  play: async ({ canvas }) => {
-    await expectAxisInAccessibleName(canvas, "normalization_status");
+  play: async ({ canvasElement }) => {
+    await expectAxisInAccessibleName(canvasElement, "normalization_status");
   },
 };
 
@@ -159,13 +186,13 @@ export const NaoResolvido: Story = {
       />
     </div>
   ),
-  play: async ({ canvas, globals }) => {
+  play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
     const solidColor = resolveColor(tokens["color-text-secondary"][theme]);
     const transparent = resolveColor("transparent");
 
     const unresolved = fillOf(
-      canvas.getByRole("img", { name: "Normalização: Não resolvido" }),
+      markerNamed(canvasElement, "Normalização: Não resolvido"),
     );
     await expect(unresolved.getAttribute("data-fill")).toBe("hatch");
     await expect(getComputedStyle(unresolved).backgroundColor).toBe(
@@ -178,7 +205,7 @@ export const NaoResolvido: Story = {
     ).toBeGreaterThanOrEqual(HATCH_MIN_SIZE);
 
     const resolved = fillOf(
-      canvas.getByRole("img", { name: "Normalização: Normalizado" }),
+      markerNamed(canvasElement, "Normalização: Normalizado"),
     );
     await expect(resolved.getAttribute("data-fill")).toBe("solid");
     await expect(getComputedStyle(resolved).backgroundColor).toBe(solidColor);
