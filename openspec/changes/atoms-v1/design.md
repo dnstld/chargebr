@@ -51,7 +51,10 @@ render. Validar em execução transferiria o erro para quem lê a tela.
 **O eixo integra o nome acessível.** Não basta o marcador exibir o eixo
 visualmente: quem usa leitor de tela precisa ouvir a que eixo aquele estado
 pertence, senão os três eixos independentes colapsam num só na leitura — que é
-exatamente o que a restrição proíbe, só que numa modalidade diferente.
+exatamente o que a restrição proíbe, só que numa modalidade diferente. O nome
+sai do próprio conteúdo, sem ARIA: o estado é texto visível e o eixo é texto
+visualmente oculto, porque um marcador de estado não é imagem e
+`aria-roledescription` tem suporte irregular — onde falta, o rótulo some.
 
 **Distinção por propriedade não cromática, verificada por leitura de estilo
 computado.** Os três papéis diferem em peso, tamanho ou textura, e o teste lê as

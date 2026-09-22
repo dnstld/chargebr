@@ -1,0 +1,8 @@
+/* A hachura preenche o contêiner que a recebe e desenha com a cor corrente:
+   tamanho e cor são decisão de quem a usa, sempre por token. */
+.hatch {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  color: inherit;
+}

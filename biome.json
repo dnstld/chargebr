@@ -34,8 +34,57 @@
                   {
                     "group": ["**/apps/**"],
                     "message": "Pacote da biblioteca não pode importar de uma aplicação do repositório."
+                  },
+                  {
+                    "group": [
+                      "@supabase/*",
+                      "@supabase/**",
+                      "pg",
+                      "postgres",
+                      "kysely",
+                      "drizzle-orm",
+                      "drizzle-orm/**",
+                      "@prisma/client",
+                      "swr",
+                      "@tanstack/react-query",
+                      "@tanstack/query-core",
+                      "@apollo/client",
+                      "@apollo/client/**",
+                      "urql",
+                      "graphql-request"
+                    ],
+                    "message": "Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de dados."
+                  },
+                  {
+                    "group": [
+                      "axios",
+                      "ky",
+                      "got",
+                      "node-fetch",
+                      "undici",
+                      "http",
+                      "https",
+                      "net",
+                      "dns",
+                      "node:http",
+                      "node:https",
+                      "node:net",
+                      "node:dns"
+                    ],
+                    "message": "Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de rede."
                   }
                 ]
+              }
+            },
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "fetch": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "XMLHttpRequest": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "WebSocket": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "EventSource": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca."
+                }
               }
             }
           }

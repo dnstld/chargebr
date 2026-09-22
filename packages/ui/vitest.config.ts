@@ -15,6 +15,9 @@ const configDir = fileURLToPath(new URL("./.storybook", import.meta.url));
 function benchProject(theme: Theme): TestProjectConfiguration {
   return {
     plugins: [storybookTest({ configDir })],
+    // Dependência descoberta só ao renderizar faria o Vite reotimizar e
+    // recarregar no meio da execução; declarada, é pré-empacotada antes.
+    optimizeDeps: { include: ["react-aria-components"] },
     test: {
       name: THEME_LABEL[theme].toLowerCase(),
       setupFiles: [`${configDir}/vitest.setup.${theme}.ts`],
@@ -28,8 +31,18 @@ function benchProject(theme: Theme): TestProjectConfiguration {
   };
 }
 
+// Contratos: testes que leem o que os átomos declaram e o que as histórias
+// exercitam, sem renderizar. Rodam em Node, fora do navegador.
+const contractsProject: TestProjectConfiguration = {
+  test: {
+    name: "contratos",
+    include: ["src/**/*.test.ts"],
+    environment: "node",
+  },
+};
+
 export default defineConfig({
   test: {
-    projects: THEMES.map(benchProject),
+    projects: [...THEMES.map(benchProject), contractsProject],
   },
 });

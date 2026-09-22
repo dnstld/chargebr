@@ -1,0 +1,6 @@
+/* Marcadores lado a lado, cada um dizendo a que eixo pertence. Só layout. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-gap-lg);
+}
