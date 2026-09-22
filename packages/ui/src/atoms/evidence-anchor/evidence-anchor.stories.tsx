@@ -57,18 +57,27 @@ export const SobOPonteiro: Story = {
   tags: ["state:hovered"],
   play: async ({ canvas, args }) => {
     // SONDA TEMPORÁRIA: o que o ambiente reporta sobre ponteiro antes da
-    // interação. Vai para o console e para a mensagem da asserção, porque o
-    // reporter padrão só mostra o console de testes que falham. Remover depois
-    // de capturar a saída no CI.
+    // interação, mais o estado residual de histórias anteriores. Vai para o
+    // console e para a mensagem da asserção, porque o reporter padrão só
+    // mostra o console de testes que falham. Remover depois de capturar a
+    // saída no CI.
+    const playStart = performance.now();
+    const anchor = canvas.getByRole("link", { name: args.label });
+    const staleFocusVisible = document.querySelector("[data-focus-visible]");
     const probe = `[sonda:ponteiro] ${JSON.stringify({
+      playStartMs: Math.round(playStart),
       "hover: hover": matchMedia("(hover: hover)").matches,
       "any-hover: hover": matchMedia("(any-hover: hover)").matches,
       "pointer: fine": matchMedia("(pointer: fine)").matches,
       maxTouchPoints: navigator.maxTouchPoints,
+      staleFocusVisible: staleFocusVisible
+        ? `${staleFocusVisible.tagName.toLowerCase()}${staleFocusVisible === anchor ? " (a própria âncora)" : ""}`
+        : null,
+      hoveredBeforeHover: anchor.hasAttribute("data-hovered"),
+      activeElement: document.activeElement?.tagName.toLowerCase() ?? null,
       userAgent: navigator.userAgent,
     })}`;
     console.log(probe);
-    const anchor = canvas.getByRole("link", { name: args.label });
     await userEvent.hover(anchor);
     // Mesmo motivo da história de foco: o estado chega com o render, não com
     // o evento.
