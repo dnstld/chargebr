@@ -88,3 +88,4 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Seleção da ferramenta de desenvolvimento spec-driven](selecao-ferramenta-spec-driven.md)
 - [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
 - [Decisão: critério de paleta categórica](decisao-criterio-de-paleta-categorica.md)
+- [Incidente: instabilidade da bancada em "Sob o ponteiro"](incidente-instabilidade-da-bancada.md)
