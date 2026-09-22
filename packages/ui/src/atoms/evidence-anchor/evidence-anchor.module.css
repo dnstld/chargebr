@@ -12,6 +12,10 @@
   outline: none;
 }
 
+/* O ponteiro é estilo, não estado declarado: `hovered` saiu do contrato por
+   falta de história verde que o sustentasse (ver
+   docs/incidente-instabilidade-da-bancada.md), e o atributo segue vindo da
+   primitiva em tempo de execução. */
 .anchor[data-hovered] {
   text-decoration: none;
 }

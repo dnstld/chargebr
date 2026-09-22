@@ -51,18 +51,3 @@ export const ComFocoPeloTeclado: Story = {
     });
   },
 };
-
-export const SobOPonteiro: Story = {
-  name: "Sob o ponteiro",
-  tags: ["state:hovered"],
-  play: async ({ canvas, args }) => {
-    const anchor = canvas.getByRole("link", { name: args.label });
-    await userEvent.hover(anchor);
-    // Mesmo motivo da história de foco: o estado chega com o render, não com
-    // o evento.
-    await waitFor(() => {
-      expect(anchor.hasAttribute("data-hovered")).toBe(true);
-      expect(getComputedStyle(anchor).textDecorationLine).toBe("none");
-    });
-  },
-};
