@@ -10,6 +10,10 @@ import {
 } from "culori";
 import type { Theme } from "./source.js";
 
+// Os temas entram aqui para que quem executa a checagem — este pacote ou quem
+// declara formas de gráfico — não precise redeclarar a lista.
+export { THEMES, type Theme } from "./source.js";
+
 // As seis checagens da paleta categórica de gráfico. Este arquivo é o critério:
 // o modelo de simulação e os limiares de corte declarados aqui fazem parte da
 // definição, não do detalhe de implementação. Uma troca de biblioteca ou de
@@ -63,6 +67,15 @@ export const THRESHOLDS = {
   surfaceContrastFloor: 3,
 } as const;
 
+// Listas de pares que as checagens de separação podem executar. Qual delas
+// vale não é preferência de quem verifica: decorre da forma que vai desenhar
+// as marcas. Numa forma em que só vizinhos se tocam, comparar todos os pares
+// reprovaria por um encontro que nunca acontece; numa forma em que qualquer
+// marca pode encostar em qualquer outra, comparar só os adjacentes deixaria
+// passar o encontro que acontece.
+export const PAIR_SCOPES = ["adjacent", "all"] as const;
+export type PairScope = (typeof PAIR_SCOPES)[number];
+
 export interface PaletteSeries {
   /** Nome do token, para a mensagem: `color.chart.series.1`. */
   name: string;
@@ -75,6 +88,8 @@ export interface PaletteInput {
   series: PaletteSeries[];
   /** Superfície de gráfico do tema; `undefined` quando não foi declarada. */
   surface: string | undefined;
+  /** Lista de pares que as checagens de separação executam; o padrão é a mais dura. */
+  pairScope?: PairScope;
 }
 
 export interface PairDistance {
@@ -85,6 +100,8 @@ export interface PairDistance {
 export interface CheckResult {
   check: string;
   failures: string[];
+  /** Pares efetivamente comparados, quando a checagem compara pares. */
+  pairs?: [string, string][];
   /** Pior par da checagem, quando ela compara pares. */
   worst?: PairDistance;
   /** Registro informativo do caso mais apertado, quando a checagem não compara pares. */
@@ -93,6 +110,8 @@ export interface CheckResult {
 
 export interface PaletteReport {
   theme: Theme;
+  /** Lista de pares executada neste relatório. */
+  pairScope: PairScope;
   passed: boolean;
   results: CheckResult[];
   /** Pior par entre todas as checagens de separação, com a checagem de origem. */
@@ -114,10 +133,17 @@ function hueDelta(a: number, b: number): number {
   return raw > 180 ? 360 - raw : raw;
 }
 
-function pairs<T>(items: T[]): [T, T][] {
+// Pares a comparar. Em `all`, cada série contra todas as outras; em
+// `adjacent`, só as vizinhas na ordem declarada — que é a ordem em que a forma
+// desenha as marcas.
+export function pairs<T>(items: T[], scope: PairScope = "all"): [T, T][] {
   const out: [T, T][] = [];
   for (let i = 0; i < items.length; i++) {
-    for (let j = i + 1; j < items.length; j++) {
+    const last =
+      scope === "adjacent"
+        ? Math.min(i + 1, items.length - 1)
+        : items.length - 1;
+    for (let j = i + 1; j <= last; j++) {
       const a = items[i];
       const b = items[j];
       if (a !== undefined && b !== undefined) out.push([a, b]);
@@ -132,11 +158,14 @@ function separation(
   series: PaletteSeries[],
   floor: number,
   simulate: (color: string) => string,
+  scope: PairScope,
   target?: number,
 ): CheckResult {
   const failures: string[] = [];
+  const compared: [string, string][] = [];
   let worst: PairDistance | undefined;
-  for (const [a, b] of pairs(series)) {
+  for (const [a, b] of pairs(series, scope)) {
+    compared.push([a.name, b.name]);
     const d = distance(simulate(a.value), simulate(b.value));
     const pair: [string, string] = [a.name, b.name];
     if (worst === undefined || d < worst.distance)
@@ -147,14 +176,14 @@ function separation(
       );
     }
   }
-  if (!worst) return { check, failures };
+  if (!worst) return { check, failures, pairs: compared };
   const detail =
     target !== undefined && worst.distance < target
       ? `pior par abaixo do alvo ${target}`
       : undefined;
   return detail
-    ? { check, failures, worst, detail }
-    : { check, failures, worst };
+    ? { check, failures, pairs: compared, worst, detail }
+    : { check, failures, pairs: compared, worst };
 }
 
 function simulated(
@@ -171,6 +200,7 @@ const deuteranopia = simulated(filterDeficiencyDeuter(SIMULATION.severity));
 
 export function checkPalette(input: PaletteInput): PaletteReport {
   const { theme, series, surface } = input;
+  const pairScope: PairScope = input.pairScope ?? "all";
   const results: CheckResult[] = [];
 
   // 1. Âncoras de matiz em ordem fixa.
@@ -233,6 +263,7 @@ export function checkPalette(input: PaletteInput): PaletteReport {
       series,
       THRESHOLDS.cvdSeparationFloor,
       protanopia,
+      pairScope,
       THRESHOLDS.cvdSeparationTarget,
     ),
   );
@@ -243,6 +274,7 @@ export function checkPalette(input: PaletteInput): PaletteReport {
       series,
       THRESHOLDS.cvdSeparationFloor,
       deuteranopia,
+      pairScope,
       THRESHOLDS.cvdSeparationTarget,
     ),
   );
@@ -255,6 +287,7 @@ export function checkPalette(input: PaletteInput): PaletteReport {
       series,
       THRESHOLDS.normalSeparationFloor,
       (c) => c,
+      pairScope,
     ),
   );
 
@@ -302,6 +335,7 @@ export function checkPalette(input: PaletteInput): PaletteReport {
 
   return {
     theme,
+    pairScope,
     passed: results.every((r) => r.failures.length === 0),
     results,
     worstPair,
@@ -317,6 +351,7 @@ export function paletteFailures(report: PaletteReport): string[] {
 export function paletteInput(
   theme: Theme,
   resolved: Record<string, Record<Theme, string>>,
+  pairScope: PairScope = "all",
 ): PaletteInput {
   const series = Object.keys(resolved)
     .filter((name) => /^color-chart-series-\d+$/.test(name))
@@ -329,5 +364,6 @@ export function paletteInput(
     theme,
     series,
     surface: resolved["color-chart-surface"]?.[theme],
+    pairScope,
   };
 }

@@ -6,15 +6,22 @@
   "exports": {
     ".": "./src/index.ts",
     "./atoms": "./src/atoms/index.ts",
+    "./charts": "./src/charts/index.ts",
     "./domain": "./src/domain/index.ts",
     "./vocabulary": "./src/vocabulary/index.ts"
   },
   "scripts": {
+    "charts:palette-report": "node --import tsx src/charts/palette-report.ts",
     "storybook": "storybook dev --port 6006 --no-open",
     "build-storybook": "storybook build"
   },
   "dependencies": {
     "@chargebr/tokens": "workspace:*",
+    "@visx/axis": "4.0.0",
+    "@visx/grid": "4.0.0",
+    "@visx/group": "4.0.0",
+    "@visx/scale": "4.0.0",
+    "@visx/shape": "4.0.0",
     "react-aria-components": "1.21.1"
   },
   "peerDependencies": {
@@ -32,6 +39,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "storybook": "10.6.0",
+    "tsx": "4.20.6",
     "vite": "8.3.0"
   }
 }
