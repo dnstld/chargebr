@@ -26,7 +26,7 @@ test("cada átomo expõe seus estados como valor enumerável", () => {
       "unresolved",
     ],
     DeclaredAbsence: ["blocked", "unknown"],
-    EvidenceAnchor: ["idle", "hovered", "focus-visible"],
+    EvidenceAnchor: ["idle", "focus-visible"],
   });
 });
 
