@@ -1,0 +1,123 @@
+/* O gráfico é uma figura: nome, legenda, desenho, ausências declaradas e a
+   representação em texto, nesta ordem. */
+.chart {
+  margin: 0;
+  display: grid;
+  row-gap: var(--space-gap-sm);
+  color: var(--color-text-primary);
+}
+
+.title {
+  font-family: var(--text-heading-family);
+  font-size: var(--text-heading-size);
+  font-weight: var(--text-heading-weight);
+  line-height: var(--text-heading-line-height);
+  color: var(--color-text-primary);
+}
+
+.scaleLabel {
+  margin: 0;
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  color: var(--color-text-secondary);
+}
+
+/* A superfície do gráfico é a do desenho, e só dela: é contra ela que a paleta
+   categórica foi verificada, e é nela que as marcas caem. O texto ao redor —
+   nome, legenda, ausências, tabela — fica na superfície da página, onde os
+   átomos que o compõem já foram verificados. */
+.plot {
+  inline-size: 100%;
+  background-color: var(--color-chart-surface);
+  padding: var(--space-inset-sm);
+  border-radius: var(--radius-surface);
+}
+
+.plot svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.legend {
+  display: grid;
+  row-gap: var(--space-gap-sm);
+}
+
+.legendTitle {
+  margin: 0;
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  color: var(--color-text-secondary);
+}
+
+.legendItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-gap-md);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-gap-sm);
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-line-height);
+  color: var(--color-text-primary);
+}
+
+.swatch {
+  inline-size: var(--space-4);
+  block-size: var(--space-4);
+  flex: none;
+}
+
+.absences {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  row-gap: var(--space-gap-sm);
+}
+
+.table {
+  border-collapse: collapse;
+  inline-size: 100%;
+  font-family: var(--text-body-family);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  color: var(--color-text-primary);
+}
+
+.caption {
+  text-align: start;
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  color: var(--color-text-secondary);
+  padding-block-end: var(--space-gap-sm);
+}
+
+.table th,
+.table td {
+  text-align: start;
+  vertical-align: baseline;
+  padding-block: var(--space-gap-sm);
+  padding-inline-end: var(--space-gap-md);
+}
+
+.cellValue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-gap-sm);
+  flex-wrap: wrap;
+}

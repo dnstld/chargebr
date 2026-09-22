@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import { expect, test } from "vitest";
+import { CHARTS } from "../charts/index";
 import { PRIMITIVES } from "../domain/index";
 import { type AtomContract, STATE_TAG_PREFIX } from "./contract";
 import { ATOMS } from "./index";
@@ -11,9 +12,11 @@ import { ATOMS } from "./index";
 // tag `state:<estado>`. Sem esta checagem, "todo estado tem história" é
 // promessa que decai no terceiro átomo.
 //
-// As duas camadas entram na mesma lista: o contrato é o mesmo, e a varredura
-// cobre src/ inteiro, não só este diretório.
-const CONTRACTS: readonly AtomContract[] = [...ATOMS, ...PRIMITIVES];
+// As três camadas entram na mesma lista: o contrato é o mesmo, e a varredura
+// cobre src/ inteiro, não só este diretório. As formas de gráfico entraram no
+// ciclo 6 pelo mesmo contrato — declaram estados do domínio, e cada estado
+// declarado precisa de história que o exercite.
+const CONTRACTS: readonly AtomContract[] = [...ATOMS, ...PRIMITIVES, ...CHARTS];
 
 interface StoryMeta {
   component?: unknown;
@@ -82,7 +85,7 @@ function coverageOf(atom: AtomContract): Coverage {
   return coverage.get(atom.component) ?? { stories: [], byState: new Map() };
 }
 
-test("todo átomo e toda primitiva têm história", () => {
+test("todo átomo, primitiva e forma de gráfico têm história", () => {
   const without = CONTRACTS.filter(
     (atom) => coverageOf(atom).stories.length === 0,
   ).map((atom) => atom.name);

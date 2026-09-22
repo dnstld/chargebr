@@ -1,3 +1,4 @@
+import type { FixtureOrigin } from "../../fixture-origin";
 import type { AxisStatuses } from "../status-panel/status-panel";
 import type {
   EvidencePath,
@@ -19,6 +20,10 @@ import type { BlockedProjectionProps } from "../blocked-projection/blocked-proje
 //
 // Onde o contrato NÃO produz um campo, a fixture não o inventa: diz que ele
 // não vem do contrato e de onde a variante que o traz o tirou.
+
+export const FIXTURE_ORIGIN: FixtureOrigin = "contract";
+export const FIXTURE_ORIGIN_NOTE =
+  "Saída do contrato de leitura chargebr-methodology-reading-v1 para a carga canônica 0007, registrada em docs/revisao-contrato-leitura-0001.md; STATUSES_FROM_LOAD e os ensaios de bloqueio anotam sua própria origem no ponto em que são declarados.";
 
 // as_published.values[*].evidence[0].publication.url — a mesma publicação
 // sustenta o principal, o contrafactual e o contexto (evidências

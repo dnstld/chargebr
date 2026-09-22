@@ -50,6 +50,21 @@ export const VOCABULARY = {
   absence: {
     blockedProjection: "Projeção bloqueada",
     statusMissing: "Sem valor",
+    // Ponto sem valor numa série. Não é bloqueio — não houve cálculo a
+    // recusar — e não é zero: é informação que não existe naquela posição.
+    pointMissing: "Sem valor registrado",
+  },
+  chart: {
+    legend: "Legenda",
+    valueTable: "Valores do gráfico",
+    series: "Série",
+    category: "Categoria",
+    evidence: "Evidência",
+    // Aparece ao lado de um valor não resolvido numa forma que empilha: a
+    // marca fica visível e separada, e nunca entra numa soma.
+    notAggregated: "Não somado aos resolvidos",
+    // Nome do que a tabela é para quem não vê o desenho.
+    textEquivalent: "Representação em texto do gráfico",
   },
 } as const;
 

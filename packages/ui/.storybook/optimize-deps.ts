@@ -23,6 +23,11 @@ export const BENCH_OPTIMIZE_DEPS: DepOptimizationOptions = {
     "react",
     "react/jsx-dev-runtime",
     "react-aria-components",
+    // O que a camada de gráficos importa: escalas, eixos, grade e grupo.
+    "@visx/axis",
+    "@visx/grid",
+    "@visx/group",
+    "@visx/scale",
     "@storybook/react-vite",
     "storybook/test",
     // O que as anotações da bancada (.storybook/) importam.

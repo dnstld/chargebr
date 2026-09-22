@@ -1,15 +1,18 @@
+import { HATCH } from "@chargebr/tokens";
 import { useId } from "react";
 import { defineAtom } from "../contract";
 import styles from "./hatch.module.css";
 
 // Período do padrão, em unidades do espaço do usuário do SVG: um traço e um
-// vão de mesma largura, inclinados a 45°.
-export const HATCH_PERIOD = 4;
+// vão de mesma largura, inclinados pelo ângulo da definição compartilhada.
+// Os três números vêm de HATCH, em @chargebr/tokens, e é de lá que o padrão
+// SVG dos gráficos também os lê: uma definição, duas implementações.
+export const HATCH_PERIOD = HATCH.period;
 
 // Menor lado, em px, em que a textura ainda é lida como hachura e não como
 // cinza uniforme: três períodos, o que garante ao menos três traços visíveis
 // na diagonal. Quem renderiza a hachura abaixo disso perde o sinal.
-export const HATCH_MIN_SIZE = HATCH_PERIOD * 3;
+export const HATCH_MIN_SIZE = HATCH.minSize;
 
 export interface HatchProps {
   /**
@@ -31,17 +34,17 @@ export function Hatch({ label }: HatchProps) {
         <pattern
           id={patternId}
           patternUnits="userSpaceOnUse"
-          width={HATCH_PERIOD}
-          height={HATCH_PERIOD}
-          patternTransform="rotate(45)"
+          width={HATCH.period}
+          height={HATCH.period}
+          patternTransform={`rotate(${HATCH.angleDegrees})`}
         >
           <line
             x1={0}
             y1={0}
             x2={0}
-            y2={HATCH_PERIOD}
+            y2={HATCH.period}
             stroke="currentColor"
-            strokeWidth={HATCH_PERIOD / 2}
+            strokeWidth={HATCH.strokeWidth}
           />
         </pattern>
       </defs>
