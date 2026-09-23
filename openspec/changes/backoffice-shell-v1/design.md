@@ -149,7 +149,7 @@ Não é cópia da lista de `packages/**`. Cada item, e a razão dele:
 
 | Proibido em `apps/**` | Razão |
 | --- | --- |
-| `**/apps/**` | Uma aplicação nunca alcança arquivo de outra. O que for comum entre duas aplicações é publicado por um pacote, com mapa de exportações e verificação próprios. Hoje há uma aplicação só: a regra entra antes da segunda, que é quando ela deixa de ser barata. |
+| `**/apps/**`, e os caminhos relativos que escapam da aplicação (`../../**` e mais fundos) | Uma aplicação nunca alcança arquivo de outra. O que for comum entre duas aplicações é publicado por um pacote, com mapa de exportações e verificação próprios. Hoje há uma aplicação só: a regra entra antes da segunda, que é quando ela deixa de ser barata. Os caminhos relativos entraram na implementação e não estavam nesta tabela: a regra casa com o texto da importação, e de `apps/backoffice/app/` um arquivo de outra aplicação se escreve `../../outra/...`, que nunca soletra `apps/`. Sem eles a proibição não pega o caso que a motiva. O preço é que uma rota aninhada em `app/a/b/` passaria a precisar de `../../` para alcançar a própria aplicação, e reprovaria: hoje não existe rota aninhada — o conjunto de rotas emitidas é declarado, e declarar uma segunda é ato deliberado —, e o ciclo que trouxer a primeira reabre esta linha. |
 | `@chargebr/*/src/**`, `**/packages/**` | O mapa de exportações do pacote é o contrato. Caminho interno transforma arquivo de implementação em interface pública sem que ninguém tenha decidido isso, e congela a estrutura interna do pacote no consumidor. |
 | `**/queries/**`, `**/supabase/**`, `**/data/canonical/**`, `**/src/**`, `**/tests/**` | Árvore herdada, fora do workspace e fora do perímetro, com destino não decidido. Uma aplicação que a alcance por caminho relativo amarra a interface à forma do coletor e fura o requisito "Perímetro isolado", que promete que esses diretórios não são lidos pela verificação. |
 | Clientes de dado: `@supabase/*`, `pg`, `postgres`, `kysely`, `drizzle-orm`, `@prisma/client`, `swr`, `@tanstack/react-query`, `@tanstack/query-core`, `@apollo/client`, `urql`, `graphql-request` | Este ciclo não busca dado. A regra é o que torna a exclusão verificável em vez de combinada. **É a única da lista com data para reabrir:** o ciclo que trouxer o contrato de leitura decide onde a busca mora, e reescreve esta linha. |
@@ -185,7 +185,13 @@ O perímetro continua sendo lista fechada e nomeada, e não `packages/ui/src`
 inteiro: história, fixture e arquivo de checagem de tipos exibem dado e prova,
 não declaram vocabulário, e continuam fora.
 
-`tools/checks/type-suppression.test.ts` não muda.
+`tools/checks/type-suppression.test.ts` muda só no que a construção obrigou: o
+perímetro e a lógica ficam como estavam — já declarava `PERIMETER = ["packages",
+"apps"]` e já tratava o diretório inexistente —, e o diretório de artefatos
+entra na lista de diretórios pulados. A razão apareceu na implementação: o
+framework gera dentro dele um arquivo com supressão de tipo sem justificativa, e
+sem a exclusão o guardião reprova o que a própria verificação acabou de gerar —
+o mesmo motivo pelo qual esse diretório já fica fora da formatação e do lint.
 
 ### A moldura entra na cobertura de histórias que já existe
 

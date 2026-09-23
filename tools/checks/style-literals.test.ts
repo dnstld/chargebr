@@ -9,9 +9,18 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // Fora de @chargebr/tokens, nenhum arquivo declara valor literal de cor,
 // espaço, raio, sombra ou tipografia: só consome token. O pacote de tokens é a
 // única fonte de literais, por definição, e por isso fica fora do perímetro.
-const PERIMETER = join(ROOT, "packages");
-const EXEMPT_PACKAGES = new Set(["tokens"]);
-const SKIPPED_DIRS = new Set(["node_modules", "storybook-static"]);
+//
+// O perímetro são as duas áreas do workspace, `packages/*` e `apps/*`: código
+// novo nasce nas duas, e a proibição vale igual nas duas. Área acrescentada
+// entra na varredura sem edição aqui; área ainda inexistente é ignorada.
+const PERIMETER_AREAS = ["packages", "apps"];
+// A isenção é por nome de pacote — o que o package.json declara —, e não por
+// posição na lista de áreas: qualquer outro diretório chamado "tokens" é
+// varrido como qualquer outro.
+const EXEMPT_PACKAGE_NAMES = new Set(["@chargebr/tokens"]);
+// `.next` é saída da construção, não conteúdo verificado: o guardião não a lê,
+// pela mesma razão que a formatação e o lint não a leem.
+const SKIPPED_DIRS = new Set(["node_modules", "storybook-static", ".next"]);
 const CSS_EXTENSIONS = [".css"];
 const SCRIPT_EXTENSIONS = [".ts", ".tsx"];
 
@@ -61,17 +70,41 @@ function collectFiles(dir: string, extensions: string[], found: string[]): void 
   }
 }
 
-function packagesInPerimeter(): string[] {
-  let entries: string[];
+// Nome declarado pelo pacote naquele diretório. Diretório sem manifesto legível
+// não tem nome de pacote, e portanto não pode estar isento.
+function packageNameOf(dir: string): string | null {
   try {
-    entries = readdirSync(PERIMETER);
+    const manifest: unknown = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    if (typeof manifest === "object" && manifest !== null && "name" in manifest) {
+      const { name } = manifest as { name?: unknown };
+      return typeof name === "string" ? name : null;
+    }
   } catch {
-    return [];
+    return null;
   }
-  return entries
-    .filter((entry) => !EXEMPT_PACKAGES.has(entry))
-    .map((entry) => join(PERIMETER, entry))
-    .filter((path) => statSync(path).isDirectory());
+  return null;
+}
+
+function packagesInPerimeter(): string[] {
+  const packages: string[] = [];
+  for (const area of PERIMETER_AREAS) {
+    const areaPath = join(ROOT, area);
+    let entries: string[];
+    try {
+      entries = readdirSync(areaPath);
+    } catch {
+      continue; // área do perímetro ainda não existe (ex.: apps/)
+    }
+    for (const entry of entries) {
+      if (SKIPPED_DIRS.has(entry)) continue;
+      const path = join(areaPath, entry);
+      if (!statSync(path).isDirectory()) continue;
+      const name = packageNameOf(path);
+      if (name !== null && EXEMPT_PACKAGE_NAMES.has(name)) continue;
+      packages.push(path);
+    }
+  }
+  return packages;
 }
 
 function stripComments(css: string): string {

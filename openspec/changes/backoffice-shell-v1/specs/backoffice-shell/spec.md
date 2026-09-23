@@ -209,7 +209,14 @@ atalho e devolve a pessoa ao mesmo lugar.
 
 - **WHEN** a moldura é navegada por teclado e o link de salto é acionado
 - **THEN** o elemento focado passa a ser a região de conteúdo principal
-- **Prova:** história da moldura na bancada que tabula, aciona e lê o elemento focado, nos dois temas
+- **Prova:** história da moldura na bancada que tabula até o salto, confere o
+  destino dele e navega até esse fragmento, lendo o elemento focado, nos dois
+  temas. A navegação é feita pelo fragmento, e não acionando a âncora: acionar
+  uma âncora dentro da bancada derruba a conexão do executor com a página, por
+  teclado, por clique e por clique programático. O que a âncora acrescentaria à
+  afirmação é que ela navega para o próprio href, e o href é conferido na mesma
+  história; o resto — o alvo do fragmento receber o foco — é o que a moldura
+  decide, e é o que a afirmação mede
 
 ### Requirement: Moldura recebe por propriedade todo texto que exibe
 

@@ -8,6 +8,7 @@
     "./atoms": "./src/atoms/index.ts",
     "./charts": "./src/charts/index.ts",
     "./domain": "./src/domain/index.ts",
+    "./shell": "./src/shell/index.ts",
     "./vocabulary": "./src/vocabulary/index.ts"
   },
   "scripts": {

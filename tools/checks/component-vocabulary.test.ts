@@ -7,18 +7,26 @@ import { expect, test } from "vitest";
 // Raiz do repositório, a partir da localização deste arquivo (tools/checks/).
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
-// O texto em português que uma primitiva de domínio exibe vem do módulo de
-// vocabulário de @chargebr/ui, e só dele. Este guardião lê cada arquivo de
-// primitiva pela árvore sintática — não por expressão regular sobre o texto —
-// e reprova qualquer literal de string ou texto JSX que pareça rótulo:
-// contém letra acentuada, ou é frase de duas ou mais palavras, ou é uma
-// palavra capitalizada. Identificadores como "primary", "data-slot" ou
-// "blocked-projection" passam; "Sem valor", "Verificação" e "Principal" não.
+// O texto em português que um componente exibe não é decisão dele: vem do
+// módulo de vocabulário de @chargebr/ui, no caso das primitivas de domínio, ou
+// por propriedade de quem compõe, no caso da moldura. Nos dois casos a regra é
+// a mesma — o componente não declara o rótulo no próprio arquivo —, e por isso
+// é um guardião só, e não dois que divergem no dia em que um receber caso novo.
 //
-// Perímetro: os componentes em packages/ui/src/domain. Histórias, fixtures e
-// arquivos de checagem de tipo ficam de fora: exibem dado e prova, não
-// declaram vocabulário.
-const PERIMETER = join(ROOT, "packages/ui/src/domain");
+// Este guardião lê cada arquivo de componente pela árvore sintática — não por
+// expressão regular sobre o texto — e reprova qualquer literal de string ou
+// texto JSX que pareça rótulo: contém letra acentuada, ou é frase de duas ou
+// mais palavras, ou é uma palavra capitalizada. Identificadores como "primary",
+// "data-slot" ou "blocked-projection" passam; "Sem valor", "Verificação" e
+// "Principal" não.
+//
+// Os perímetros são lista fechada e nomeada, e não packages/ui/src inteiro:
+// história, fixture e arquivo de checagem de tipos exibem dado e prova, não
+// declaram vocabulário, e continuam fora.
+const PERIMETERS: Readonly<Record<string, string>> = {
+  "primitivas de domínio": join(ROOT, "packages/ui/src/domain"),
+  moldura: join(ROOT, "packages/ui/src/shell"),
+};
 const COMPONENT_EXTENSION = ".tsx";
 const EXCLUDED_SUFFIXES = [".stories.tsx", ".typecheck.tsx", ".test.tsx"];
 const SKIPPED_DIRS = new Set(["node_modules", "fixtures"]);
@@ -94,18 +102,28 @@ function literalsIn(file: string): string[] {
   return violations;
 }
 
-function labelsDeclaredInPrimitives(): string[] {
+function componentFilesIn(perimeter: string): string[] {
   const files: string[] = [];
-  collectComponentFiles(PERIMETER, files);
-  return files.flatMap(literalsIn);
+  collectComponentFiles(perimeter, files);
+  return files;
 }
 
-test("nenhuma primitiva de domínio declara rótulo em português no próprio arquivo", () => {
-  expect(labelsDeclaredInPrimitives()).toEqual([]);
+function labelsDeclaredInComponents(): string[] {
+  return Object.values(PERIMETERS).flatMap((perimeter) =>
+    componentFilesIn(perimeter).flatMap(literalsIn),
+  );
+}
+
+test("nenhum componente que exibe texto declara rótulo em português no próprio arquivo", () => {
+  expect(labelsDeclaredInComponents()).toEqual([]);
 });
 
-test("o perímetro contém as primitivas publicadas", () => {
-  const files: string[] = [];
-  collectComponentFiles(PERIMETER, files);
-  expect(files.length).toBeGreaterThanOrEqual(3);
+// Cada perímetro é cobrado separadamente: um perímetro que esvazie — por
+// diretório movido ou renomeado — deixaria de ser varrido em silêncio, e a
+// checagem passaria a valer sobre menos código sem que nada reprovasse.
+test("cada perímetro nomeado contém componentes", () => {
+  const empty = Object.entries(PERIMETERS)
+    .filter(([, perimeter]) => componentFilesIn(perimeter).length === 0)
+    .map(([name]) => name);
+  expect(empty).toEqual([]);
 });

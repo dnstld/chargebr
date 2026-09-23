@@ -1,0 +1,6 @@
+/* A superfície do documento, para que o que estiver fora da caixa da moldura
+   não fique branco no tema escuro. Só token, como a folha da bancada. */
+body {
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+}
