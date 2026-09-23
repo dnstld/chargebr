@@ -1,0 +1,185 @@
+
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/Users/denistoledo/Documents/projects/chargebr[39m
+
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/style-literals.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/type-suppression.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/typography.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/index.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/dtcg.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/rules.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/palette.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/build.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/theme.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 317[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 316[2mms[22m[39m
+ [32m✓[39m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 320[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 319[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
+[2m   Start at [22m 20:06:00
+[2m   Duration [22m 1.81s[2m (tests 34%, setup 24%, environment 11%, transform 11%, import 11%, worker 8%)[22m
+
+
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/Users/denistoledo/Documents/projects/chargebr[39m
+
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/style-literals.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/type-suppression.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/typography.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/index.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/rules.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/dtcg.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/palette.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/build.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/theme.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 298[2mms[22m[39m
+ [32m✓[39m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 308[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 307[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
+[2m   Start at [22m 20:08:03
+[2m   Duration [22m 1.78s[2m (tests 35%, setup 24%, transform 12%, environment 10%, import 10%, worker 8%)[22m
+
+
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+Plugin "vitest:mocks:interceptor" defines Vite-specific hooks (configureServer) in a plugin returned from applyToEnvironment. These hooks will be ignored.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/Users/denistoledo/Documents/projects/chargebr[39m
+
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/style-literals.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[46m guards [49m[39m tools/checks/type-suppression.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/index.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 1[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/typography.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/rules.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/dtcg.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/palette.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/theme.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m [30m[46m @chargebr/tokens [49m[39m src/build.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+ [32m✓[39m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 316[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 315[2mms[22m[39m
+ [31m❯[39m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/a11y-probe.stories.tsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 324[2mms[22m[39m
+[31m   [31m×[31m Sem Alt[39m[33m 323[2mms[22m[39m
+ [32m✓[39m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/bench.stories.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 347[2mms[22m[39m
+   [33m[2m✓[22m[39m Superfície base[33m 346[2mms[22m[39m
+ [31m❯[39m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/a11y-probe.stories.tsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 359[2mms[22m[39m
+[31m   [31m×[31m Sem Alt[39m[33m 358[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[42m @chargebr/ui (escuro) (chromium) [49m[39m src/bench/a11y-probe.stories.tsx[2m > [22mSem Alt
+[31m[1mError[22m: 
+[34mClick to debug the error directly in Storybook: http://localhost:6006/?path=/story/bench-a11y-probe--sem-alt&addonPanel=storybook/interactions/panel[31m
+
+[2mexpect([22m[31mreceived[31m[2m).toHaveNoViolations([22m[32mexpected[31m[2m)[22m
+
+Expected the HTML found at $('img') to have no violations:
+
+[90m<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">[31m
+
+Received:
+
+[31m"Images must have alternative text (image-alt)"[31m
+
+[33mFix any of the following:[31m
+[33m  Element does not have an alt attribute[31m
+[33m  aria-label attribute does not exist or is empty[31m
+[33m  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty[31m
+[33m  Element has no title attribute[31m
+[33m  Element's default semantics were not overridden with role="none" or role="presentation"[31m
+
+You can find more information on this issue here: 
+[34mhttps://dequeuniversity.com/rules/axe/4.13/image-alt?application=axeAPI[31m[39m
+[90m [2m❯[22m Proxy.expectWrapper ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m25981:49[22m[39m
+[90m [2m❯[22m Proxy.<anonymous> ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m25523:101[22m[39m
+[90m [2m❯[22m Proxy.methodWrapper ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m21126:23[22m[39m
+[90m [2m❯[22m Instrumenter.invoke ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m2551:20[22m[39m
+[90m [2m❯[22m Instrumenter.intercept ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m2454:138[22m[39m
+[90m [2m❯[22m Instrumenter.track ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m2445:83[22m[39m
+[90m [2m❯[22m Proxy.toHaveNoViolations ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/test-DSDATxow.js?v=1486d3d8:[2m2423:151[22m[39m
+[90m [2m❯[22m Object.applyAfterEach ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/csf-Cu8K0uHV.js?v=1486d3d8:[2m6525:4[22m[39m
+[90m [2m❯[22m runStory ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/e5258b655bab3e042ea2779ed24a295421b8b880/deps/csf-Cu8K0uHV.js?v=1486d3d8:[2m6843:100[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[45m @chargebr/ui (claro) (chromium) [49m[39m src/bench/a11y-probe.stories.tsx[2m > [22mSem Alt
+[31m[1mError[22m: 
+[34mClick to debug the error directly in Storybook: http://localhost:6006/?path=/story/bench-a11y-probe--sem-alt&addonPanel=storybook/interactions/panel[31m
+
+[2mexpect([22m[31mreceived[31m[2m).toHaveNoViolations([22m[32mexpected[31m[2m)[22m
+
+Expected the HTML found at $('img') to have no violations:
+
+[90m<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">[31m
+
+Received:
+
+[31m"Images must have alternative text (image-alt)"[31m
+
+[33mFix any of the following:[31m
+[33m  Element does not have an alt attribute[31m
+[33m  aria-label attribute does not exist or is empty[31m
+[33m  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty[31m
+[33m  Element has no title attribute[31m
+[33m  Element's default semantics were not overridden with role="none" or role="presentation"[31m
+
+You can find more information on this issue here: 
+[34mhttps://dequeuniversity.com/rules/axe/4.13/image-alt?application=axeAPI[31m[39m
+[90m [2m❯[22m Proxy.expectWrapper ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m25981:49[22m[39m
+[90m [2m❯[22m Proxy.<anonymous> ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m25523:101[22m[39m
+[90m [2m❯[22m Proxy.methodWrapper ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m21126:23[22m[39m
+[90m [2m❯[22m Instrumenter.invoke ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m2551:20[22m[39m
+[90m [2m❯[22m Instrumenter.intercept ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m2454:138[22m[39m
+[90m [2m❯[22m Instrumenter.track ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m2445:83[22m[39m
+[90m [2m❯[22m Proxy.toHaveNoViolations ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=1486d3d8:[2m2423:151[22m[39m
+[90m [2m❯[22m Object.applyAfterEach ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/csf-Cu8K0uHV.js?v=1486d3d8:[2m6525:4[22m[39m
+[90m [2m❯[22m runStory ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/csf-Cu8K0uHV.js?v=1486d3d8:[2m6843:100[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (13)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m38 passed[39m[22m[90m (40)[39m
+[2m   Start at [22m 20:08:54
+[2m   Duration [22m 1.93s[2m (tests 39%, setup 33%, worker 9%, import 7%, transform 6%, environment 6%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.

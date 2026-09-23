@@ -1,0 +1,50 @@
+name: verify
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # As histórias rodam num navegador real dentro de verify:test; o binário
+      # é instalação, não etapa de verificação.
+      - name: Install browser
+        run: pnpm --filter @chargebr/ui exec playwright install chromium --with-deps
+
+      # Cada etapa é um passo próprio para que o resultado apareça separado no
+      # pull request. `!cancelled()` garante que as quatro etapas reportem
+      # mesmo quando uma anterior falha, sem reescrever a semântica de `verify`.
+      - name: verify:types
+        if: ${{ !cancelled() }}
+        run: pnpm run verify:types
+
+      - name: verify:format
+        if: ${{ !cancelled() }}
+        run: pnpm run verify:format
+
+      - name: verify:lint
+        if: ${{ !cancelled() }}
+        run: pnpm run verify:lint
+
+      - name: verify:test
+        if: ${{ !cancelled() }}
+        run: pnpm run verify:test

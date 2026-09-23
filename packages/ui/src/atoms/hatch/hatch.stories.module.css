@@ -1,0 +1,16 @@
+/* Caixas que recebem a hachura: a cor é a de texto secundário, o tamanho vem
+   por estilo em linha, a partir da constante que o átomo declara. */
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-gap-md);
+}
+
+.box {
+  color: var(--color-text-secondary);
+}
+
+.large {
+  inline-size: var(--space-9);
+  block-size: var(--space-8);
+}

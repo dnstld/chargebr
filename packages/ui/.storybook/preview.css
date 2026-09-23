@@ -1,0 +1,7 @@
+/* A bancada renderiza sobre a superfície base do tema, como a aplicação fará:
+   sem isto, átomos sem fundo próprio seriam medidos sobre o branco do
+   navegador nos dois temas. Só token, como em qualquer arquivo da bancada. */
+body {
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+}

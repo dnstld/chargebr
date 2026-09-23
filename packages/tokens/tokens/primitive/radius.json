@@ -1,0 +1,13 @@
+{
+  "radius": {
+    "$type": "dimension",
+    "none": { "$value": { "value": 0, "unit": "px" } },
+    "sm": { "$value": { "value": 2, "unit": "px" } },
+    "md": { "$value": { "value": 4, "unit": "px" } },
+    "lg": { "$value": { "value": 8, "unit": "px" } },
+    "full": {
+      "$description": "Raio que arredonda por completo qualquer caixa de altura razoável.",
+      "$value": { "value": 9999, "unit": "px" }
+    }
+  }
+}

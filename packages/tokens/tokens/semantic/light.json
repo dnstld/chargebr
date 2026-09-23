@@ -1,0 +1,41 @@
+{
+  "color": {
+    "$type": "color",
+    "surface": {
+      "base": { "$value": "{color.white}" },
+      "sunken": { "$value": "{color.gray.50}" },
+      "raised": { "$value": "{color.white}" }
+    },
+    "text": {
+      "primary": { "$value": "{color.gray.900}" },
+      "secondary": { "$value": "{color.gray.600}" },
+      "muted": { "$value": "{color.gray.500}" },
+      "on-action": { "$value": "{color.white}" }
+    },
+    "border": {
+      "default": { "$value": "{color.gray.200}" },
+      "strong": { "$value": "{color.gray.400}" }
+    },
+    "action": {
+      "primary": { "$value": "{color.indigo.700}" },
+      "primary-hover": { "$value": "{color.indigo.600}" }
+    },
+    "focus": {
+      "ring": { "$value": "{color.indigo.700}" }
+    },
+    "chart": {
+      "surface": {
+        "$description": "Superfície contra a qual a paleta categórica é conferida neste tema.",
+        "$value": "{color.white}"
+      },
+      "grid": { "$value": "{color.gray.200}" },
+      "axis": { "$value": "{color.gray.500}" },
+      "series": {
+        "$description": "Paleta categórica, em ordem fixa de matiz: índigo, verde, amarelo.",
+        "1": { "$value": "{color.indigo.600}" },
+        "2": { "$value": "{color.green.700}" },
+        "3": { "$value": "{color.yellow.600}" }
+      }
+    }
+  }
+}

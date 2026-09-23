@@ -1,0 +1,37 @@
+/* Valor com proveniência: três posições fixas, uma por papel, empilhadas.
+   O principal ocupa a primeira linha sozinho; contrafactual e contexto vêm
+   em linhas próprias abaixo. A posição é parte da distinção entre papéis,
+   somada à tipografia que os átomos já aplicam. Só layout: cor, peso e
+   tamanho ficam nos átomos. */
+.value {
+  display: grid;
+  grid-template-areas:
+    "primary"
+    "counterfactual"
+    "context";
+  row-gap: var(--space-gap-sm);
+  align-items: baseline;
+}
+
+.primary,
+.counterfactual,
+.context {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-gap-md);
+  row-gap: var(--space-gap-sm);
+}
+
+.primary {
+  grid-area: primary;
+}
+
+.counterfactual {
+  grid-area: counterfactual;
+}
+
+.context {
+  grid-area: context;
+}

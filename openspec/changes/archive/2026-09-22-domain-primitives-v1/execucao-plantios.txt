@@ -1,0 +1,296 @@
+Execuções registradas dos plantios da mudança domain-primitives-v1.
+Cada bloco: o que foi plantado, o comando, a saída relevante, e a confirmação
+de que o plantio foi revertido (diff vazio contra a cópia de segurança).
+Saídas recortadas às linhas que nomeiam a falha; cores de terminal removidas.
+
+=== 1.3 Rótulo em português declarado dentro de uma primitiva ===
+Plantio: reason="Sem valor" (literal) no lugar de vocabulary.absence.statusMissing em packages/ui/src/domain/status-panel/status-panel.tsx
+Comando: npx vitest run --project guards
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |guards| tools/checks/domain-vocabulary.test.ts > nenhuma primitiva de domínio declara rótulo em português no próprio arquivo
+AssertionError: expected [ Array(1) ] to deeply equal []
+- Expected
++ Received
+- []
++ [
++   "packages/ui/src/domain/status-panel/status-panel.tsx:57 — \"Sem valor\"",
++ ]
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 3 passed (4)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/status-panel
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termos vêm do vocabulário
+AssertionError: 
+texto exibido que não veio do vocabulário nem de propriedade: expected [ 'Sem valor' ] to deeply equal []
+- Expected
++ Received
+- Array []
++ Array [
++   "Sem valor",
++ ]
+     59|     "texto exibido que não veio do vocabulário nem de propriedade",
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 1.2 Sobrescrita termo a termo: sensibilidade do teste ===
+Plantio: resolveTerms ignora o termo fornecido (terms[term] = text) em packages/ui/src/vocabulary/vocabulary.ts
+Comando: npx vitest run --project "@chargebr/ui (contratos)" packages/ui/src/vocabulary
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (contratos)| src/vocabulary/vocabulary.test.ts > um termo fornecido substitui o padrão e os demais permanecem
+AssertionError: expected 'Confirmado' to be 'Confirmada' // Object.is equality
+Expected: "Confirmada"
+Received: "Confirmado"
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termos vêm do vocabulário
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termo sobrescrito
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termos vêm do vocabulário
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termo sobrescrito
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termos vêm do vocabulário
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termo sobrescrito
+ Test Files  3 failed (3)
+      Tests  6 failed | 10 passed (16)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 2.2 Importação do contrato de leitura ou do banco dentro de packages/ui ===
+Plantio: em packages/ui/src/domain/blocked-projection/blocked-projection.tsx, quatro importações — ../../../../../queries/contract (tipo), ../../../../../src/collector/cli, ../../../../../supabase/seed.sql e ../../../../../data/canonical/0007
+Comando: pnpm run verify:lint
+   > 8 │ import type { ReadingContract } from "../../../../../queries/contract";
+   > 9 │ import { collect } from "../../../../../src/collector/cli";
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:8:38 lint/style/noRestrictedImports ━━━━━━━━━━
+  × A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome.
+   > 8 │ import type { ReadingContract } from "../../../../../queries/contract";
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:9:25 lint/style/noRestrictedImports ━━━━━━━━━━
+  × A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome.
+   > 9 │ import { collect } from "../../../../../src/collector/cli";
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:10:8 lint/style/noRestrictedImports ━━━━━━━━━━
+  × A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome.
+  > 10 │ import "../../../../../supabase/seed.sql";
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:11:8 lint/style/noRestrictedImports ━━━━━━━━━━
+  × A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome.
+  > 11 │ import "../../../../../data/canonical/0007";
+Found 4 errors.
+Found 2 warnings.
+  × Some errors were emitted while running checks.
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 2.2 (b) Padrão simplificado: **/src/** cobre qualquer profundidade ===
+Plantio: import type de ../../../../../src/contracts/methodology-reading-v1 e de ../../../../../queries/contract em packages/ui/src/domain/blocked-projection/blocked-projection.tsx
+Comando: pnpm run verify:lint
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:8:24 lint/style/noRestrictedImports ━━━━━━━━━━
+packages/ui/src/domain/blocked-projection/blocked-projection.tsx:9:24 lint/style/noRestrictedImports ━━━━━━━━━━
+Found 2 errors.
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 3.1 Valor sem proveniência reprova em verify:types ===
+Plantio: <ValueWithProvenance primary={{ value: 12556 }} /> sem evidence numa história de packages/ui/src/domain/value-with-provenance/value-with-provenance.stories.tsx
+Comando: pnpm run verify:types
+src/domain/value-with-provenance/value-with-provenance.stories.tsx(175,38): error TS2741: Property 'evidence' is missing in type '{ value: number; }' but required in type 'ProvenancedNumber'.
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 2: tsc --noEmit
+ ELIFECYCLE  Command failed with exit code 1.
+Revertido: diff contra a cópia de segurança vazio: sim
+Permanente: packages/ui/src/domain/contracts.typecheck.tsx mantém o uso sem proveniência (principal e contrafactual) sob @ts-expect-error com justificativa; se a proveniência virar opcional, a supressão sobra e verify:types reprova.
+
+=== 3.2 Proveniência alcançável por teclado: sensibilidade do teste ===
+Plantio: o caminho do principal renderizado como <span> com o rótulo, sem âncora, em packages/ui/src/domain/value-with-provenance/value-with-provenance.tsx
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/value-with-provenance
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Metodologia vigente
+TestingLibraryElementError: 
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Proveniência pelo teclado
+AssertionError: 
+Expected: "primary"
+Received: "counterfactual"
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 3.3 Contrafactual na posição do principal reprova ===
+Plantio: .counterfactual { grid-area: primary; } em packages/ui/src/domain/value-with-provenance/value-with-provenance.module.css (as duas posições se sobrepõem)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/value-with-provenance
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Como publicado
+AssertionError: 
+expected 0 to be greater than or equal to 56.640625
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+Revertido: diff contra a cópia de segurança vazio: sim
+Propriedade não cromática: a prova é a mesma dos átomos (expectRolesDistinctWithoutColor sobre os valores das três posições); a sensibilidade foi provada em atoms-v1 (plantio 2.3) e não é repetida.
+
+=== 4.1 Bloqueio sem razão reprova em verify:types ===
+Plantio: <BlockedProjection /> sem reasons e <BlockedProjection reasons={[]} /> em histórias de packages/ui/src/domain/blocked-projection/blocked-projection.stories.tsx
+Comando: pnpm run verify:types
+src/domain/blocked-projection/blocked-projection.stories.tsx(155,18): error TS2741: Property 'reasons' is missing in type '{}' but required in type 'BlockedProjectionProps'.
+src/domain/blocked-projection/blocked-projection.stories.tsx(160,36): error TS2322: Type '[]' is not assignable to type 'readonly ["metric_not_found" | "scope_mismatch" | "methodology_missing" | "methodology_cycle" | "current_methodology_not_unique" | "primary_value_not_unique" | "value_method_mismatch" | ... 4 more ... | "unexpected_cardinality", ...("metric_not_found" | ... 10 more ... | "unexpected_cardinality")[]]'.
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 2: tsc --noEmit
+Revertido: diff contra a cópia de segurança vazio: sim
+Permanente: packages/ui/src/domain/contracts.typecheck.tsx mantém os dois usos sob @ts-expect-error com justificativa.
+
+=== 4.2 Dígito no conteúdo acessível da projeção bloqueada reprova ===
+Plantio: <p>{0}</p> renderizado abaixo do termo de bloqueio em packages/ui/src/domain/blocked-projection/blocked-projection.tsx
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/blocked-projection
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Proveniência incompleta
+AssertionError: 
+expected 'Projeção bloqueada0Proveniência incom…' not to match /\d/
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Métrica ausente
+AssertionError: 
+expected 'Projeção bloqueada0Metodologia vigent…' not to match /\d/
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Metodologia vigente ambígua
+AssertionError: 
+expected 'Projeção bloqueada0Componentes da met…' not to match /\d/
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Todas as razões
+AssertionError: 
+expected 'Projeção bloqueada0Métrica não encont…' not to match /\d/
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termo sobrescrito
+AssertionError: 
+expected 'Projeção bloqueada0Cadeia de evidênci…' not to match /\d/
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 5.2 Eixo fora do nome acessível do item reprova ===
+Plantio: axisLabel="" no marcador composto pelo painel, em packages/ui/src/domain/status-panel/status-panel.tsx (o item passa a se chamar só pelo estado)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/status-panel
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Três eixos com valor
+AssertionError: 
+item do eixo verification_level: expected [] to have a length of 1 but got +0
+     50|     await expect(named, `item do eixo ${axis}`).toHaveLength(1);
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Eixo sem valor
+AssertionError: 
+item do eixo verification_level: expected [] to have a length of 1 but got +0
+     50|     await expect(named, `item do eixo ${axis}`).toHaveLength(1);
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Não resolvido no painel
+AssertionError: 
+item do eixo verification_level: expected [] to have a length of 1 but got +0
+     50|     await expect(named, `item do eixo ${axis}`).toHaveLength(1);
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termo sobrescrito
+AssertionError: 
+ Test Files  1 failed (1)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 5.3 Eixo sem valor omitido reprova ===
+Plantio: AXES.filter((axis) => statuses[axis] !== null) antes do map em packages/ui/src/domain/status-panel/status-panel.tsx (o eixo sem valor some do painel)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/domain/status-panel
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Eixo sem valor
+AssertionError: 
+expected [ <li …(3)>…(1)</li>, …(1) ] to have a length of 3 but got 2
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+Revertido: diff contra a cópia de segurança vazio: sim
+
+=== 6.1 Estado de primitiva sem história reprova ===
+Plantio: STATUS_PANEL_STATES = ["all_valued", "axis_unvalued", "planted"] em packages/ui/src/domain/status-panel/status-panel.tsx
+Comando: npx vitest run --project "@chargebr/ui (contratos)"
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  |@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo estado declarado tem história
+AssertionError: expected [ Array(1) ] to deeply equal []
+- Expected
++ Received
+- []
++ [
++   "StatusPanel: estado \"planted\" sem história",
++ ]
+     96|       .map((state) => `${atom.name}: estado "${state}" sem história`),
+ FAIL  |@chargebr/ui (contratos)| src/domain/contract.test.ts > cada primitiva expõe seus estados como valor enumerável
+AssertionError: expected { ValueWithProvenance: [ …(3) ], …(2) } to deeply equal { ValueWithProvenance: [ …(3) ], …(2) }
+- Expected
++ Received
++     "planted",
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 11 passed (13)
+Revertido: diff contra a cópia de segurança vazio: sim
+Contratos passando de novo:
+ Test Files  4 passed (4)
+      Tests  13 passed (13)
+
+=== 6.2 pnpm verify três vezes seguidas em árvore limpa ===
+Árvore: nenhum plantio pendente (todas as cópias de segurança conferidas acima).
+Execução 1 — exit: 0
+> chargebr@ verify /Users/denistoledo/Documents/projects/chargebr
+> pnpm run verify:types && pnpm run verify:format && pnpm run verify:lint && pnpm run verify:test
+> chargebr@ verify:types /Users/denistoledo/Documents/projects/chargebr
+> pnpm -r exec tsc --noEmit
+> chargebr@ verify:format /Users/denistoledo/Documents/projects/chargebr
+> biome format .
+Checked 95 files in 6ms. No fixes applied.
+> chargebr@ verify:lint /Users/denistoledo/Documents/projects/chargebr
+> biome lint .
+Checked 95 files in 12ms. No fixes applied.
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+ Test Files  34 passed (34)
+      Tests  128 passed (128)
+Execução 2 — exit: 0
+> chargebr@ verify /Users/denistoledo/Documents/projects/chargebr
+> pnpm run verify:types && pnpm run verify:format && pnpm run verify:lint && pnpm run verify:test
+> chargebr@ verify:types /Users/denistoledo/Documents/projects/chargebr
+> pnpm -r exec tsc --noEmit
+> chargebr@ verify:format /Users/denistoledo/Documents/projects/chargebr
+> biome format .
+Checked 95 files in 5ms. No fixes applied.
+> chargebr@ verify:lint /Users/denistoledo/Documents/projects/chargebr
+> biome lint .
+Checked 95 files in 11ms. No fixes applied.
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+ Test Files  34 passed (34)
+      Tests  128 passed (128)
+Execução 3 — exit: 0
+> chargebr@ verify /Users/denistoledo/Documents/projects/chargebr
+> pnpm run verify:types && pnpm run verify:format && pnpm run verify:lint && pnpm run verify:test
+> chargebr@ verify:types /Users/denistoledo/Documents/projects/chargebr
+> pnpm -r exec tsc --noEmit
+> chargebr@ verify:format /Users/denistoledo/Documents/projects/chargebr
+> biome format .
+Checked 95 files in 6ms. No fixes applied.
+> chargebr@ verify:lint /Users/denistoledo/Documents/projects/chargebr
+> biome lint .
+Checked 95 files in 12ms. No fixes applied.
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+ Test Files  34 passed (34)
+      Tests  128 passed (128)
+
+Nota sobre cache frio: numa execução anterior, a primeira após apagar node_modules/.vite e node_modules/.cache/storybook, o projeto escuro reprovou 8 histórias (hatch e blocked-projection) com "SyntaxError: missing ) after argument list" ao carregar o módulo — sintoma de reotimização de dependências do Vite no meio da execução, não de asserção. Cinco execuções seguintes com o cache apagado antes de cada uma (cold-a a cold-e) passaram todas: 34 arquivos, 128 testes. Não reproduzido; registrado por honestidade, como assunto da bancada e não desta mudança.
+
+Comando: npx vitest run --reporter=verbose (histórias das primitivas por tema)
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Metodologia vigente ambígua
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Métrica ausente
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Proveniência incompleta
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termos vêm do vocabulário
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Todas as razões
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Eixo sem valor
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Não resolvido no painel
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termos vêm do vocabulário
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Três eixos com valor
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Como publicado
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Metodologia vigente
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Proveniência pelo teclado
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (claro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termos vêm do vocabulário
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Metodologia vigente ambígua
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Métrica ausente
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Proveniência incompleta
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Termos vêm do vocabulário
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/blocked-projection/blocked-projection.stories.tsx > Todas as razões
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Eixo sem valor
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Não resolvido no painel
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Termos vêm do vocabulário
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/status-panel/status-panel.stories.tsx > Três eixos com valor
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Como publicado
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Metodologia vigente
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Proveniência pelo teclado
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termo sobrescrito
+ ✓ |@chargebr/ui (escuro) (chromium)| src/domain/value-with-provenance/value-with-provenance.stories.tsx > Termos vêm do vocabulário
+ Test Files  34 passed (34)
+      Tests  128 passed (128)

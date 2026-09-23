@@ -1,0 +1,16 @@
+/* Painel de estados: três itens lado a lado, sem marcador de lista e sem
+   separador que sugira hierarquia entre os eixos. Só layout. */
+.panel {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-gap-lg);
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}

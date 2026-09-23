@@ -1,0 +1,18 @@
+{
+  "button": {
+    "$description": "Mínimo da camada de componente: prova a regra de referência antes de existir componente.",
+    "primary": {
+      "background": { "$type": "color", "$value": "{color.action.primary}" },
+      "background-hover": {
+        "$type": "color",
+        "$value": "{color.action.primary-hover}"
+      },
+      "text": { "$type": "color", "$value": "{color.text.on-action}" }
+    },
+    "radius": { "$type": "dimension", "$value": "{radius.control}" },
+    "padding-inline": { "$type": "dimension", "$value": "{space.inset.md}" },
+    "padding-block": { "$type": "dimension", "$value": "{space.inset.sm}" },
+    "font-size": { "$type": "dimension", "$value": "{text.label.size}" },
+    "font-weight": { "$type": "fontWeight", "$value": "{text.label.weight}" }
+  }
+}

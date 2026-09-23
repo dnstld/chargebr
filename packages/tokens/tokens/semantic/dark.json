@@ -1,0 +1,41 @@
+{
+  "color": {
+    "$type": "color",
+    "surface": {
+      "base": { "$value": "{color.gray.950}" },
+      "sunken": { "$value": "{color.gray.950}" },
+      "raised": { "$value": "{color.gray.900}" }
+    },
+    "text": {
+      "primary": { "$value": "{color.gray.100}" },
+      "secondary": { "$value": "{color.gray.300}" },
+      "muted": { "$value": "{color.gray.400}" },
+      "on-action": { "$value": "{color.gray.950}" }
+    },
+    "border": {
+      "default": { "$value": "{color.gray.800}" },
+      "strong": { "$value": "{color.gray.600}" }
+    },
+    "action": {
+      "primary": { "$value": "{color.indigo.300}" },
+      "primary-hover": { "$value": "{color.indigo.200}" }
+    },
+    "focus": {
+      "ring": { "$value": "{color.indigo.300}" }
+    },
+    "chart": {
+      "surface": {
+        "$description": "Superfície contra a qual a paleta categórica é conferida neste tema: a superfície elevada, onde os gráficos vivem.",
+        "$value": "{color.gray.900}"
+      },
+      "grid": { "$value": "{color.gray.800}" },
+      "axis": { "$value": "{color.gray.400}" },
+      "series": {
+        "$description": "Paleta categórica, em ordem fixa de matiz: índigo, verde, amarelo.",
+        "1": { "$value": "{color.indigo.400}" },
+        "2": { "$value": "{color.green.600}" },
+        "3": { "$value": "{color.yellow.600}" }
+      }
+    }
+  }
+}

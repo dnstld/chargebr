@@ -1,0 +1,105 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+  "files": {
+    "includes": ["apps/**", "packages/**", "!**/storybook-static"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noTsIgnore": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["next", "next/**"],
+                    "message": "Pacote da biblioteca não pode importar framework de aplicação (rotas, servidor, convenção de páginas)."
+                  },
+                  {
+                    "group": ["**/apps/**"],
+                    "message": "Pacote da biblioteca não pode importar de uma aplicação do repositório."
+                  },
+                  {
+                    "group": [
+                      "@supabase/*",
+                      "@supabase/**",
+                      "pg",
+                      "postgres",
+                      "kysely",
+                      "drizzle-orm",
+                      "drizzle-orm/**",
+                      "@prisma/client",
+                      "swr",
+                      "@tanstack/react-query",
+                      "@tanstack/query-core",
+                      "@apollo/client",
+                      "@apollo/client/**",
+                      "urql",
+                      "graphql-request"
+                    ],
+                    "message": "Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de dados."
+                  },
+                  {
+                    "group": [
+                      "axios",
+                      "ky",
+                      "got",
+                      "node-fetch",
+                      "undici",
+                      "http",
+                      "https",
+                      "net",
+                      "dns",
+                      "node:http",
+                      "node:https",
+                      "node:net",
+                      "node:dns"
+                    ],
+                    "message": "Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de rede."
+                  },
+                  {
+                    "group": [
+                      "**/queries/**",
+                      "**/supabase/**",
+                      "**/data/canonical/**",
+                      "**/src/**",
+                      "**/tests/**"
+                    ],
+                    "message": "A forma de entrada é da biblioteca: pacote da biblioteca não importa tipo, esquema, consulta ou dado do contrato de leitura nem do banco. A tradução do contrato para a forma da biblioteca é de quem consome."
+                  }
+                ]
+              }
+            },
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "fetch": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "XMLHttpRequest": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "WebSocket": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca.",
+                  "EventSource": "Componente recebe todo dado por propriedade: nenhuma chamada de rede dentro de pacote da biblioteca."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

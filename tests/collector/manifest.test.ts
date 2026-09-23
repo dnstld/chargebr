@@ -72,6 +72,19 @@ test("envelope changes do not affect response hash while payload changes do", ()
   assert.notEqual(responseManifestHash(first.payload), responseManifestHash(changedPayload));
 });
 
+test("attempt counts and history do not affect the deterministic response hash", () => {
+  const first = createManifestFixture();
+  const requests = first.payload.requests.map((request) => ({
+    ...request,
+    attempt_count: request.attempt_count + 2,
+  }));
+  const changedAttempts = {
+    ...first.payload,
+    requests,
+  };
+  assert.equal(responseManifestHash(first.payload), responseManifestHash(changedAttempts));
+});
+
 test("config fingerprint requires the contract and excludes collector_version", () => {
   assert.equal(PUBLIC_CONFIG_FIXTURE.contract_version, CONTRACT_VERSION);
   assert.match(configFingerprint(PUBLIC_CONFIG_FIXTURE), /^[0-9a-f]{64}$/u);

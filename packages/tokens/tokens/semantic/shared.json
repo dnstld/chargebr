@@ -1,0 +1,92 @@
+{
+  "space": {
+    "$type": "dimension",
+    "inset": {
+      "$description": "Preenchimento interno de um contêiner.",
+      "sm": { "$value": "{space.3}" },
+      "md": { "$value": "{space.4}" },
+      "lg": { "$value": "{space.6}" }
+    },
+    "gap": {
+      "$description": "Distância entre itens irmãos.",
+      "sm": { "$value": "{space.2}" },
+      "md": { "$value": "{space.3}" },
+      "lg": { "$value": "{space.5}" }
+    },
+    "section": {
+      "$description": "Separação entre blocos de página.",
+      "$value": "{space.8}"
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "control": {
+      "$description": "Raio de controles interativos: botão, campo, seletor.",
+      "$value": "{radius.md}"
+    },
+    "surface": {
+      "$description": "Raio de superfícies elevadas: cartão, painel, menu.",
+      "$value": "{radius.lg}"
+    },
+    "pill": { "$value": "{radius.full}" }
+  },
+  "elevation": {
+    "$type": "shadow",
+    "raised": { "$value": "{shadow.sm}" },
+    "overlay": { "$value": "{shadow.md}" },
+    "modal": { "$value": "{shadow.lg}" }
+  },
+  "text": {
+    "body": {
+      "family": { "$type": "fontFamily", "$value": "{font.family.sans}" },
+      "size": { "$type": "dimension", "$value": "{font.size.3}" },
+      "weight": { "$type": "fontWeight", "$value": "{font.weight.regular}" },
+      "line-height": {
+        "$type": "number",
+        "$value": "{font.line-height.normal}"
+      },
+      "numeric": {
+        "$type": "fontVariantNumeric",
+        "$value": "{font.numeric.text}"
+      }
+    },
+    "label": {
+      "family": { "$type": "fontFamily", "$value": "{font.family.sans}" },
+      "size": { "$type": "dimension", "$value": "{font.size.2}" },
+      "weight": { "$type": "fontWeight", "$value": "{font.weight.medium}" },
+      "line-height": { "$type": "number", "$value": "{font.line-height.snug}" },
+      "numeric": {
+        "$type": "fontVariantNumeric",
+        "$value": "{font.numeric.text}"
+      }
+    },
+    "heading": {
+      "family": { "$type": "fontFamily", "$value": "{font.family.sans}" },
+      "size": { "$type": "dimension", "$value": "{font.size.5}" },
+      "weight": { "$type": "fontWeight", "$value": "{font.weight.semibold}" },
+      "line-height": {
+        "$type": "number",
+        "$value": "{font.line-height.tight}"
+      },
+      "numeric": {
+        "$type": "fontVariantNumeric",
+        "$value": "{font.numeric.text}"
+      }
+    },
+    "data": {
+      "$description": "Dado numérico: identificadores, contagens, valores em tabela. Algarismos tabulares e zero cortado.",
+      "family": { "$type": "fontFamily", "$value": "{font.family.sans}" },
+      "size": { "$type": "dimension", "$value": "{font.size.2}" },
+      "weight": { "$type": "fontWeight", "$value": "{font.weight.regular}" },
+      "line-height": { "$type": "number", "$value": "{font.line-height.snug}" },
+      "numeric": {
+        "$type": "fontVariantNumeric",
+        "$value": "{font.numeric.data}"
+      }
+    },
+    "counterfactual": {
+      "$description": "Papel contrafactual de um valor: o que seria, e não o que é. Inclinado, para que a distinção não dependa só de cor.",
+      "style": { "$type": "fontStyle", "$value": "{font.style.italic}" }
+    }
+  }
+}
