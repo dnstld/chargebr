@@ -7,6 +7,7 @@ function post(overrides: Record<string, unknown> = {}): Record<string, unknown> 
   return {
     id: 10,
     date: "2026-01-02T10:00:00",
+    date_gmt: "2026-01-02T13:00:00",
     modified: "2026-01-02T11:00:00",
     slug: "notícia",
     link: "https://abve.org.br/Noticia/?utm_source=x&b=2&a=1",
@@ -25,6 +26,7 @@ test("ABVE normalization applies NFC/newlines and preserves HTML", () => {
   assert.equal(result.post.normalized.excerpt.rendered, "<p>A\nB</p>");
   assert.equal(result.post.normalized.content.rendered, "<script>x()</script>\n<p>C</p>");
   assert.equal(result.post.canonicalUrl, "https://abve.org.br/Noticia?a=1&b=2");
+  assert.equal(result.post.publicationInstant, Date.parse("2026-01-02T13:00:00Z"));
 });
 
 test("ABVE identity uses id first and canonical link as its only fallback", () => {
@@ -37,9 +39,13 @@ test("ABVE identity uses id first and canonical link as its only fallback", () =
   assert.deepEqual(fallback.post.identity, { link: "https://abve.org.br/Noticia?a=1&b=2" });
 });
 
-test("ABVE fingerprint excludes id and is stable after normalization", () => {
+test("ABVE fingerprint excludes id and date_gmt and is stable after normalization", () => {
   const first = validateAndNormalizeAbvePost(post({ id: 10 }));
-  const second = validateAndNormalizeAbvePost(post({ id: 11, title: { rendered: "Café\nTítulo" } }));
+  const second = validateAndNormalizeAbvePost(post({
+    id: 11,
+    date_gmt: "2026-01-02T14:00:00",
+    title: { rendered: "Café\nTítulo" },
+  }));
   assert.equal(first.ok, true);
   assert.equal(second.ok, true);
   if (!first.ok || !second.ok) return;
@@ -54,4 +60,19 @@ test("ABVE validator rejects malformed projected fields without retaining values
     code: "schema_mismatch",
     message: "item is missing a projected WordPress field or has an invalid field type",
   });
+});
+
+test("ABVE validator requires a valid offsetless date_gmt value", () => {
+  for (const dateGmt of [undefined, "2026-01-02T13:00:00Z", "not-a-date"]) {
+    const candidate = post();
+    if (dateGmt === undefined) {
+      delete candidate.date_gmt;
+    } else {
+      candidate.date_gmt = dateGmt;
+    }
+    const result = validateAndNormalizeAbvePost(candidate);
+    assert.equal(result.ok, false);
+    if (result.ok) continue;
+    assert.equal(result.code, "schema_mismatch");
+  }
 });

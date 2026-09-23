@@ -224,6 +224,8 @@ Uma violação de unicidade de `collection_runs_one_running_per_endpoint_idx` du
 
 Cada página usa a URL e os parâmetros públicos do endpoint, com `before` congelado, `per_page = 50`, no máximo duas páginas e limite de 2.000.000 bytes por resposta. O timeout de cada tentativa é 30.000 ms. Cada página admite no máximo três tentativas dentro do mesmo `collection_run`.
 
+O request ABVE projeta exatamente `id,date,date_gmt,modified,slug,link,title,excerpt,content`. `date` é o wall-clock de publicação no timezone configurado do site e preserva a semântica/ordenação da fonte; `date_gmt` é o instante de publicação em UTC usado para cobertura temporal. `date_gmt` é obrigatório em todo post válido considerado na cobertura.
+
 Cada request HTTP admite no máximo três redirects. Antes de seguir cada `Location`, o collector exige HTTPS, ausência de userinfo e hostname exatamente igual ao `hostname` do `endpoint_url` aprovado. Para ABVE v1, o único hostname permitido é `abve.org.br`.
 
 O collector não segue redirect para outro hostname, IP literal, `localhost`, loopback, link-local ou rede privada. A regra de mesmo hostname já bloqueia esses destinos no contrato ABVE; a v1 não cria infraestrutura genérica de resolução de IP. `www.abve.org.br` é outro hostname e também exige nova revisão de acesso, sem redirect silencioso.
@@ -300,6 +302,8 @@ Todos os hashes usam SHA-256 e hexadecimal minúsculo sobre bytes UTF-8.
 
 É o SHA-256 do JSON canônico contendo: `contract_version = chargebr-local-collector-contract-v1`, source slug, endpoint key, URL, tipo, método, formato, status, `request_config`, estratégias/configurações de paginação e cursor, `identity_rule`, `normalization_profile`, `removal_policy`, classe de retenção, `terms_url` e `robots_url`.
 
+Por isso, adicionar `date_gmt` a `request_config._fields` e declarar `cursor_config.boundary_field = date_gmt` altera legitimamente o `config_fingerprint`; o valor continua derivado pelo runtime e não é hardcoded.
+
 Ficam de fora IDs internos, timestamps de auditoria, `access_reviewed_at`, notes, `suggested_interval`, credenciais e qualquer valor do run. `collector_version`, definido como o Git commit SHA completo do código executado, possui coluna própria e não participa de `config_fingerprint`.
 
 ### Raw response hash
@@ -309,6 +313,8 @@ Ficam de fora IDs internos, timestamps de auditoria, `access_reviewed_at`, notes
 ### Normalized content fingerprint
 
 O perfil `abve-wordpress-post-v1` produz um objeto de chaves fixas com `date`, `modified`, `slug`, URL canônica, `title.rendered`, `excerpt.rendered`, `excerpt.protected`, `content.rendered` e `content.protected`. A identidade `id` permanece separada.
+
+`date_gmt` não participa desse objeto nem do normalized content fingerprint: é metadata operacional de cobertura/cursor. O perfil permanece `abve-wordpress-post-v1`, e acrescentar `date_gmt` à resposta não muda fingerprints existentes para o mesmo conteúdo. O `date` normalizado continua sendo o wall-clock publicado pelo site; não recebe `Z` nem é reinterpretado como UTC.
 
 Strings normalizam CRLF/CR para LF e Unicode para NFC. O HTML é preservado como string: não se removem tags, scripts, atributos, entidades ou whitespace interno nesta versão. O objeto é serializado por `chargebr-canonical-json-v1` e então hasheado. Mudança de regra exige novo `normalization_profile`.
 
@@ -332,7 +338,11 @@ O cursor versionado é:
 
 No bootstrap, `cursor_in = null`, `window_start = null` e `window_end = run_started_at`. O freeze enviado em todas as páginas é `before = run_started_at`. Processar as duas páginas de 50 itens conclui a amostra bootstrap declarada, mesmo que exista arquivo histórico mais antigo; isso não é alegação de cobertura retroativa.
 
-Em run posterior, `cursor_in` é o `cursor_out` do run completo mais recente, `window_start = cursor_in.before` e `window_end = run_started_at`. O collector processa em `date desc` e considera cruzada a fronteira anterior apenas quando encontra item com `date` estritamente anterior a `cursor_in.before`. Item exatamente na fronteira não é descartado, pois o `before` do run anterior era exclusivo.
+Em run posterior, `cursor_in` é o `cursor_out` do run completo mais recente, `window_start = cursor_in.before` e `window_end = run_started_at`. O collector preserva a ordenação/source semantics em `date desc`, mas compara a fronteira UTC exclusivamente pelo campo `date_gmt`: a fronteira foi cruzada apenas quando `date_gmt < cursor_in.before`. Se `date_gmt == cursor_in.before`, a fronteira não foi cruzada e o item não é descartado, pois o `before` do run anterior era exclusivo.
+
+O WordPress pode retornar `date_gmt` sem sufixo de timezone. Somente pela semântica específica desse campo, por exemplo, `date_gmt = 2026-09-17T13:00:00` significa `2026-09-17T13:00:00Z`. Essa regra não se aplica genericamente a `date` nem a `modified`: `date` é wall-clock no timezone do site, enquanto `cursor_in.before` é sempre um instante RFC 3339 UTC.
+
+Exemplo de regressão: com `date = 2026-09-17T10:00:00`, `date_gmt = 2026-09-17T13:00:00` e `cursor_in.before = 2026-09-17T12:00:00Z`, a comparação correta é `13:00Z < 12:00Z`, portanto falsa e a fronteira não foi cruzada. Tratar o `date` como `10:00Z` teria produzido incorretamente `10:00Z < 12:00Z` e cruzado a fronteira.
 
 Quando a cobertura planejada é completa, `cursor_out` copia a estrutura acima com `before = run_started_at`. `cursor_out` só é gravado na mesma transição terminal para `succeeded` ou `no_change`.
 
@@ -409,7 +419,7 @@ Cria o scaffold Node.js/TypeScript ESM com pnpm e lockfile, fixa versões, adici
 
 ### C. Adapter HTTP ABVE e classificação determinística
 
-Implementa URL/paginação/freeze, limites, retry, validação dos oito campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
+Implementa URL/paginação/freeze, limites, retry, validação dos nove campos, identidade/fallback, normalização, fingerprints, comparação de manifests e estados agregados usando fixtures. Não escreve tabelas canônicas.
 
 ### D. Integração com collection_runs
 

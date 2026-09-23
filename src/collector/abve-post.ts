@@ -2,6 +2,8 @@ import { canonicalizeUrl } from "./canonical-url.js";
 import { sha256CanonicalJson } from "./hash.js";
 import type { CanonicalJsonValue } from "./canonical-json.js";
 
+const WORDPRESS_LOCAL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?$/u;
+
 export interface NormalizedAbvePost {
   readonly date: string;
   readonly modified: string;
@@ -17,6 +19,7 @@ export interface ValidatedAbvePost {
   readonly canonicalUrl: string;
   readonly normalized: NormalizedAbvePost;
   readonly fingerprint: string;
+  readonly publicationInstant: number;
 }
 
 export type AbvePostValidation =
@@ -29,6 +32,7 @@ export function validateAndNormalizeAbvePost(value: unknown): AbvePostValidation
   }
 
   const date = stringField(value, "date");
+  const dateGmt = stringField(value, "date_gmt");
   const modified = stringField(value, "modified");
   const slug = stringField(value, "slug");
   const link = stringField(value, "link");
@@ -36,10 +40,15 @@ export function validateAndNormalizeAbvePost(value: unknown): AbvePostValidation
   const excerpt = renderedField(value, "excerpt", true);
   const content = renderedField(value, "content", true);
   if (
-    date === null || modified === null || slug === null || link === null || title === null ||
+    date === null || dateGmt === null || modified === null || slug === null || link === null || title === null ||
     excerpt === null || content === null
   ) {
     return invalid("item is missing a projected WordPress field or has an invalid field type");
+  }
+
+  const publicationInstant = wordpressGmtDateToInstant(dateGmt);
+  if (!WORDPRESS_LOCAL_DATETIME.test(date) || publicationInstant === null) {
+    return invalid("item date or date_gmt is not a supported WordPress timestamp");
   }
 
   let canonicalUrl: string;
@@ -80,6 +89,7 @@ export function validateAndNormalizeAbvePost(value: unknown): AbvePostValidation
       canonicalUrl,
       normalized,
       fingerprint: sha256CanonicalJson(normalized),
+      publicationInstant,
     },
   };
 }
@@ -98,6 +108,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringField(value: Record<string, unknown>, key: string): string | null {
   return typeof value[key] === "string" ? value[key] : null;
+}
+
+function wordpressGmtDateToInstant(value: string): number | null {
+  if (!WORDPRESS_LOCAL_DATETIME.test(value)) {
+    return null;
+  }
+  const parsed = Date.parse(`${value}Z`);
+  return Number.isNaN(parsed) ? null : parsed;
 }
 
 function renderedField(
