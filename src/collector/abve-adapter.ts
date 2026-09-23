@@ -206,6 +206,7 @@ export interface AbveAdapterDependencies {
   readonly random: () => number;
   readonly now: () => number;
   readonly createAbortTimeout: (milliseconds: number) => AbortTimeout;
+  readonly isFatalError?: (error: unknown) => boolean;
 }
 
 interface PageSuccess {
@@ -535,6 +536,9 @@ async function fetchPage(
       response = await fetchFollowingRedirects(pageUrl, contract, dependencies.fetch, timeout.signal);
     } catch (error) {
       timeout.cancel();
+      if (dependencies.isFatalError?.(error) === true) {
+        throw error;
+      }
       if (error instanceof RedirectViolation) {
         attempts.push({ page, attempt, outcome: error.code, status_code: error.statusCode });
         return {
@@ -655,6 +659,9 @@ async function fetchPage(
       bytes = await readBodyLimited(response, contract.request_config.max_response_bytes);
     } catch (error) {
       timeout.cancel();
+      if (dependencies.isFatalError?.(error) === true) {
+        throw error;
+      }
       if (error instanceof ResponseTooLarge) {
         attempts.push({ page, attempt, outcome: "response_too_large", status_code: response.status });
         return {
