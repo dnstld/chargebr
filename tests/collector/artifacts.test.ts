@@ -4,7 +4,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { runArtifactPaths, writeManifestAtomic } from "../../src/collector/artifacts.js";
+import {
+  manifestReference,
+  readManifestReference,
+  runArtifactPaths,
+  writeManifestAtomic,
+} from "../../src/collector/artifacts.js";
 import { createManifestFixture } from "./fixtures.js";
 
 test("artifact paths accept only canonical UUID run keys", () => {
@@ -45,4 +50,16 @@ test("failed manifest write cleans up the part file", async (context) => {
 
   await assert.rejects(writeManifestAtomic(root, manifest));
   await assert.rejects(access(paths.manifestPart));
+});
+
+test("local manifest references round-trip and reject paths outside the artifact root", async (context) => {
+  const root = await mkdtemp(join(tmpdir(), "chargebr-artifacts-reference-"));
+  context.after(async () => rm(root, { recursive: true, force: true }));
+  const manifest = createManifestFixture();
+  await writeManifestAtomic(root, manifest);
+
+  const reference = manifestReference(manifest.envelope.run_key);
+  assert.deepEqual(await readManifestReference(root, reference), manifest);
+  await assert.rejects(readManifestReference(root, "local:../manifest.v1.json"));
+  await assert.rejects(readManifestReference(root, "https://example.invalid/manifest.v1.json"));
 });
