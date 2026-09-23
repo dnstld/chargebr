@@ -1,5 +1,5 @@
-import { chmod, mkdir, open, rename, unlink } from "node:fs/promises";
-import { join } from "node:path";
+import { chmod, mkdir, open, readFile, rename, unlink } from "node:fs/promises";
+import { isAbsolute, join, normalize, sep } from "node:path";
 
 import { canonicalJson } from "./canonical-json.js";
 import { MANIFEST_FILE_NAME } from "./constants.js";
@@ -51,6 +51,29 @@ export async function writeManifestAtomic(
     await unlink(paths.manifestPart).catch(() => undefined);
     throw error;
   }
+}
+
+export async function readManifestReference(
+  rootDirectory: string,
+  reference: string,
+): Promise<CollectionManifestV1> {
+  const prefix = "local:";
+  if (!reference.startsWith(prefix)) {
+    throw new Error("manifest reference is not local");
+  }
+  const relativePath = normalize(reference.slice(prefix.length));
+  const allowedPrefix = `.chargebr${sep}collection-runs${sep}`;
+  if (isAbsolute(relativePath) || !relativePath.startsWith(allowedPrefix)) {
+    throw new Error("manifest reference is outside the collector artifact root");
+  }
+  const parsed = JSON.parse(await readFile(join(rootDirectory, relativePath), "utf8")) as unknown;
+  validateManifest(parsed as CollectionManifestV1);
+  return parsed as CollectionManifestV1;
+}
+
+export function manifestReference(runKey: string): string {
+  runArtifactPaths(".", runKey);
+  return `local:.chargebr/collection-runs/${runKey}/${MANIFEST_FILE_NAME}`;
 }
 
 async function syncDirectory(directory: string): Promise<void> {
