@@ -25,6 +25,7 @@ const MAX_ATTEMPTS = 3;
 const MAX_REDIRECTS = 3;
 const MAX_RETRY_AFTER_MS = 240_000;
 const RETRY_BASE_MS = [1_000, 2_000] as const;
+const ABVE_WORDPRESS_DATE_UTC_OFFSET = "-03:00";
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 const PUBLIC_LINK_QUERY_KEYS = new Set([
   "_fields",
@@ -325,7 +326,7 @@ export async function collectAbve(
     requests.push(pageResult.request);
 
     if (!pageResult.ok) {
-      if (pageResult.terminalStatus === "failed" && validItemCount > 0) {
+      if (validItemCount > 0) {
         return finish("partial", pageResult.diagnostic);
       }
       return finish(pageResult.terminalStatus, pageResult.diagnostic);
@@ -333,7 +334,10 @@ export async function collectAbve(
 
     const totals = parseTotals(pageResult.request.stable_headers);
     if (totals === null) {
-      return finish("blocked", diagnostic("contract", "schema_mismatch", "WordPress pagination headers are missing or invalid"));
+      return finish(
+        validItemCount > 0 ? "partial" : "blocked",
+        diagnostic("contract", "schema_mismatch", "WordPress pagination headers are missing or invalid"),
+      );
     }
     if (firstTotal === null) {
       firstTotal = totals.total;
@@ -376,7 +380,7 @@ export async function collectAbve(
       }
       seen.add(identityKey);
 
-      const itemDate = comparableWpDate(validation.post.normalized.date);
+      const itemDate = abveWordPressDateToInstant(validation.post.normalized.date);
       if (itemDate === null) {
         hasRejected = true;
         collected.push({
@@ -501,7 +505,15 @@ function createBaseline(input: CollectAbveInput):
     if (
       prior.manifest.manifest_version !== MANIFEST_VERSION ||
       prior.manifest.payload.endpoint_key !== ABVE_ENDPOINT_CONTRACT.endpoint_key ||
-      prior.manifest.payload.contract_version !== CONTRACT_VERSION
+      prior.manifest.payload.contract_version !== CONTRACT_VERSION ||
+      prior.manifest.payload.config_fingerprint !== abveConfigFingerprint(input.contract) ||
+      (
+        input.cursor_in !== null &&
+        (
+          prior.manifest.payload.window.end !== input.cursor_in.before ||
+          prior.manifest.payload.window.freeze_before !== input.cursor_in.before
+        )
+      )
     ) {
       return { ok: false, diagnostic: priorManifestUnavailable() };
     }
@@ -957,9 +969,9 @@ function retryDelay(attempt: number, random: () => number): number {
   return Math.floor(sample * base);
 }
 
-function comparableWpDate(value: string): number | null {
+function abveWordPressDateToInstant(value: string): number | null {
   const candidate = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?$/u.test(value)
-    ? `${value}Z`
+    ? `${value}${ABVE_WORDPRESS_DATE_UTC_OFFSET}`
     : value;
   const parsed = Date.parse(candidate);
   return Number.isNaN(parsed) ? null : parsed;

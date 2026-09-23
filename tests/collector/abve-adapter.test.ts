@@ -121,7 +121,11 @@ function input(cursor: AbveCursor | null = null, prior?: CollectionManifestV1): 
       };
 }
 
-function priorManifest(items: readonly ManifestItem[] = []): CollectionManifestV1 {
+function priorManifest(
+  items: readonly ManifestItem[] = [],
+  boundary = CURSOR.before,
+  configFingerprint = abveConfigFingerprint(ABVE_ENDPOINT_CONTRACT),
+): CollectionManifestV1 {
   return {
     manifest_version: MANIFEST_VERSION,
     envelope: {
@@ -131,12 +135,12 @@ function priorManifest(items: readonly ManifestItem[] = []): CollectionManifestV
       started_at: "2026-01-02T00:00:00.000Z",
     },
     payload: createManifestPayload({
-      config_fingerprint: "a".repeat(64),
+      config_fingerprint: configFingerprint,
       endpoint_key: ABVE_ENDPOINT_CONTRACT.endpoint_key,
       window: {
         start: null,
-        end: "2026-01-02T00:00:00.000Z",
-        freeze_before: "2026-01-02T00:00:00.000Z",
+        end: boundary,
+        freeze_before: boundary,
       },
       requests: [],
       items,
@@ -250,6 +254,26 @@ test("the cursor boundary is strictly less than the prior before value", async (
   assert.deepEqual(outcome.cursor_out, { version: "abve-time-window-v1", before: RUN_STARTED_AT });
 });
 
+test("ABVE local WordPress dates use the approved minus-three offset for cursor boundaries", async (context) => {
+  const post = wpPost(1, "2026-09-15T10:00:00");
+
+  for (const [name, before, expectedStatus] of [
+    ["cursor before the absolute post instant", "2026-09-15T12:00:00.000Z", "partial"],
+    ["cursor after the absolute post instant", "2026-09-15T14:00:00.000Z", "succeeded"],
+    ["cursor equal to the absolute post instant", "2026-09-15T13:00:00.000Z", "partial"],
+  ] as const) {
+    await context.test(name, async () => {
+      const cursor: AbveCursor = { version: "abve-time-window-v1", before };
+      const { deps } = dependencies([jsonResponse([post])]);
+      const outcome = await collectAbve({
+        ...input(cursor, priorManifest([], before)),
+        run_started_at: "2026-09-16T00:00:00.000Z",
+      }, deps);
+      assert.equal(outcome.status, expectedStatus);
+    });
+  }
+});
+
 test("incremental coverage is partial when the only page does not cross the prior boundary", async () => {
   const original = wpPost(1, "2026-01-02T00:00:00.000Z");
   const { deps } = dependencies([jsonResponse([original], { total: 1, totalPages: 1 })]);
@@ -354,6 +378,49 @@ test("a body disconnect retries, while exhaustion after a valid page is partial"
   assert.equal(outcome.status, "partial");
   assert.equal(outcome.cursor_out, null);
   assert.equal(outcome.error?.error_code, "http_5xx_exhausted");
+  assert.equal(outcome.requests[0]?.outcome, "success");
+  assert.equal(outcome.items.length, 50);
+  assert.equal(outcome.counts.items_new, 50);
+});
+
+test("a blocker after a valid page preserves prior evidence as partial", async (context) => {
+  const firstPage = () => jsonResponse(
+    wpPosts(1, 50, Date.parse("2026-01-02T12:00:00.000Z")),
+    { total: 51, totalPages: 2 },
+  );
+  const cases: Array<[string, () => Response, string]> = [
+    ["HTTP 403", () => rawResponse(null, 403), "authentication_required"],
+    ["invalid JSON", () => rawResponse("not json", 200, { "Content-Type": "application/json" }), "json_invalid"],
+    [
+      "invalid pagination headers",
+      () => rawResponse(JSON.stringify([wpPost(51, "2026-01-02T11:00:00.000Z")]), 200, {
+        "Content-Type": "application/json",
+      }),
+      "schema_mismatch",
+    ],
+    [
+      "response too large",
+      () => rawResponse(null, 200, {
+        "Content-Type": "application/json",
+        "Content-Length": "2000001",
+      }),
+      "response_too_large",
+    ],
+  ];
+
+  for (const [name, secondPage, errorCode] of cases) {
+    await context.test(name, async () => {
+      const { deps } = dependencies([firstPage(), secondPage()]);
+      const outcome = await collectAbve(input(), deps);
+      assert.equal(outcome.status, "partial");
+      assert.equal(outcome.cursor_out, null);
+      assert.equal(outcome.error?.error_code, errorCode);
+      assert.equal(outcome.requests[0]?.outcome, "success");
+      assert.equal(outcome.requests.length, 2);
+      assert.equal(outcome.items.length, 50);
+      assert.equal(outcome.counts.items_new, 50);
+    });
+  }
 });
 
 test("Retry-After seconds and HTTP-date replace jitter", async (context) => {
@@ -593,6 +660,53 @@ test("incremental prior manifest requires an expected hash and detects payload t
     assert.equal(outcome.status, "blocked");
     assert.equal(outcome.error?.error_code, "prior_manifest_unavailable");
     assert.equal(log.urls.length, 0);
+  });
+});
+
+test("incremental prior manifest must match configuration and cursor window", async (context) => {
+  async function assertPriorBlocked(prior: CollectionManifestV1): Promise<void> {
+    const { deps, log } = dependencies([]);
+    const outcome = await collectAbve(input(CURSOR, prior), deps);
+    assert.equal(outcome.status, "blocked");
+    assert.equal(outcome.error?.error_kind, "contract");
+    assert.equal(outcome.error?.error_code, "prior_manifest_unavailable");
+    assert.equal(log.urls.length, 0);
+  }
+
+  await context.test("different config fingerprint", async () => {
+    await assertPriorBlocked(priorManifest([], CURSOR.before, "b".repeat(64)));
+  });
+
+  await context.test("different window end", async () => {
+    const compatible = priorManifest();
+    const incompatible: CollectionManifestV1 = {
+      ...compatible,
+      payload: {
+        ...compatible.payload,
+        window: { ...compatible.payload.window, end: "2026-01-01T23:59:59.000Z" },
+      },
+    };
+    await assertPriorBlocked(incompatible);
+  });
+
+  await context.test("different freeze boundary", async () => {
+    const compatible = priorManifest();
+    const incompatible: CollectionManifestV1 = {
+      ...compatible,
+      payload: {
+        ...compatible.payload,
+        window: { ...compatible.payload.window, freeze_before: "2026-01-01T23:59:59.000Z" },
+      },
+    };
+    await assertPriorBlocked(incompatible);
+  });
+
+  await context.test("fully compatible manifest", async () => {
+    const original = wpPost(1, "2026-01-01T12:00:00");
+    const { deps } = dependencies([jsonResponse([original])]);
+    const outcome = await collectAbve(input(CURSOR, priorManifest([validItem(original)])), deps);
+    assert.equal(outcome.status, "no_change");
+    assert.equal(outcome.items[0]?.manifest_item.classification, "unchanged");
   });
 });
 
