@@ -1,0 +1,24 @@
+/* Texto: um papel por classe. A distinção entre papéis não pode depender só
+   de cor (ver spec interface-atoms): principal pesa mais, contrafactual é
+   itálico, contexto é menor. A cor acompanha, mas nunca sozinha. */
+.text {
+  font-family: var(--text-body-family);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-body-weight);
+  line-height: var(--text-body-line-height);
+  font-variant-numeric: var(--text-body-numeric);
+  color: var(--color-text-primary);
+}
+
+.primary {
+  font-weight: var(--font-weight-semibold);
+}
+
+.counterfactual {
+  font-style: var(--text-counterfactual-style);
+}
+
+.context {
+  font-size: var(--text-label-size);
+  color: var(--color-text-secondary);
+}

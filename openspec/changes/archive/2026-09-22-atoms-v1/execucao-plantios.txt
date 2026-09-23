@@ -1,0 +1,366 @@
+Execuções registradas dos plantios da mudança atoms-v1.
+Cada bloco: o que foi plantado, o comando, a saída relevante, e a confirmação
+de que o plantio foi revertido (git status limpo no arquivo plantado).
+Saídas recortadas às linhas que nomeiam a falha; cores de terminal removidas.
+
+=== 1.2 Estado sem história ===
+Plantio: ABSENCE_KINDS = ["blocked", "unknown", "planted"] em packages/ui/src/atoms/declared-absence/declared-absence.tsx
+Comando: npx vitest run --project "@chargebr/ui (contratos)"
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (contratos)| src/atoms/contract.test.ts > cada átomo expõe seus estados como valor enumerável
+AssertionError: expected { Text: [ 'primary', …(2) ], …(5) } to deeply equal { Text: [ 'primary', …(2) ], …(5) }
+
+- Expected
++ Received
+
+@@ -1,9 +1,10 @@
+  {
+    "DeclaredAbsence": [
+      "blocked",
+      "unknown",
++     "planted",
+    ],
+--
+ FAIL  |@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo estado declarado tem história
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "DeclaredAbsence: estado \"planted\" sem história",
++ ]
+
+ ❯ src/atoms/stories-coverage.test.ts:93:19
+     91|       .map((state) => `${atom.name}: estado "${state}" sem história`),
+     92|   );
+     93|   expect(missing).toEqual([]);
+       |                   ^
+     94| });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 4 passed (6)
+   Start at  21:09:16
+   Duration  311ms (import 81%, transform 17%, tests 2%, worker 1%)
+
+Revertido: ABSENCE_KINDS de volta a ["blocked", "unknown"]; contratos passando de novo (ver abaixo).
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+
+=== 1.3 Átomo que importa cliente de dados ou chama a rede ===
+Plantio (a): import { createClient } from "@supabase/supabase-js" em packages/ui/src/atoms/text/text.tsx
+Plantio (b): fetch("/api/frota") dentro do mesmo componente
+Comando: pnpm run verify:lint
+> biome lint .
+
+packages/ui/src/atoms/text/text.tsx:2:30 lint/style/noRestrictedImports ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Componente recebe todo dado por propriedade: pacote da biblioteca não importa cliente de dados.
+  
+    1 │ import type { ReactNode } from "react";
+  > 2 │ import { createClient } from "@supabase/supabase-js";
+      │                              ^^^^^^^^^^^^^^^^^^^^^^^
+--
+  
+
+packages/ui/src/atoms/text/text.tsx:18:3 lint/style/noRestrictedGlobals ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Do not use the global variable fetch.
+  
+    16 │ export function Text({ valueRole, children }: TextProps) {
+    17 │   createClient("", "");
+  > 18 │   fetch("/api/frota");
+--
+
+Checked 72 files in 9ms. No fixes applied.
+Found 2 errors.
+lint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+ ELIFECYCLE  Command failed with exit code 1.
+Revertido: text.tsx restaurado; diff contra a cópia de segurança vazio: sim
+Checked 72 files in 9ms. No fixes applied.
+
+=== 2.2 Alinhamento: sensibilidade do teste ===
+Plantio: font-variant-numeric: var(--text-body-numeric) (normal) em numeric-value.module.css, no lugar do token de dado
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/numeric-value
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Coluna alinhada
+AssertionError: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-número--coluna-alinhada&addonPanel=storybook/interactions/panel
+
+expected 1.609375 to be less than 0.05
+ ❯ Instrumenter.invoke ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=7b6f5437:2551:20
+ ❯ Instrumenter.intercept ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=7b6f5437:2454:138
+ ❯ Instrumenter.track ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=7b6f5437:2445:83
+ ❯ Proxy.toBeLessThan ../../node_modules/.cache/storybook/10.6.0/cf2b3586c3306b4807f6db4de1d02795c4ac689b20be6bdbdc9bf77fe75fb418/sb-vitest/vitest/98a793c74ad2c06dfc3f73cf0ba22d52493f0843/deps/test-DSDATxow.js?v=7b6f5437:2423:151
+--
+      Tests  1 failed | 4 passed (5)
+   Start at  21:10:57
+   Duration  962ms (tests 55%, setup 35%, worker 10%, import 1%)
+
+Revertido: sim
+
+=== 2.3 Distinção sem cor: sensibilidade do teste ===
+Plantio: .counterfactual sem itálico e .context sem tamanho próprio em text.module.css (só a cor distinguiria contrafactual de contexto)
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Papéis distintos sem cor
+AssertionError: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-texto--papeis-distintos&addonPanel=storybook/interactions/panel
+
+counterfactual e context só diferem em cor: expected { fontWeight: '400', …(5) } to not deeply equal { fontWeight: '400', …(5) }
+--
+      Tests  1 failed | 4 passed (5)
+   Start at  21:11:10
+   Duration  948ms (tests 55%, setup 35%, worker 10%, import 1%)
+
+Revertido: sim
+
+=== 3.2 Marcador sem eixo reprova em verify:types ===
+Plantio: <StatusMarker status="confirmed" axisLabel="Verificação" label="Confirmado" /> sem axis numa história de status-marker.stories.tsx
+Comando: pnpm run verify:types
+src/atoms/status-marker/status-marker.stories.tsx(189,14): error TS2322: Type '{ name: string; render: () => React.JSX.Element; }' is not assignable to type 'StoryAnnotations$1<ReactRenderer, { axis: "verification_level" | "workflow_status" | "normalization_status"; status: "confirmed" | "corroborated" | "unverified" | "accepted" | ... 4 more ... | "unresolved"; axisLabel: string; label: string; }, { ...; }>'.
+  Property 'args' is missing in type '{ name: string; render: () => React.JSX.Element; }' but required in type '{ args: { axis: "verification_level" | "workflow_status" | "normalization_status"; status: "confirmed" | "corroborated" | "unverified" | "accepted" | "under_review" | "candidate" | "normalized" | "not_attempted" | "unresolved"; axisLabel: string; label: string; }; }'.
+src/atoms/status-marker/status-marker.stories.tsx(191,18): error TS2741: Property 'axis' is missing in type '{ status: "confirmed"; axisLabel: string; label: string; }' but required in type 'StatusMarkerProps<"verification_level" | "workflow_status" | "normalization_status">'.
+undefined
+/Users/denistoledo/Documents/projects/chargebr/packages/ui:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 2: tsc --noEmit
+ ELIFECYCLE  Command failed with exit code 1.
+Revertido: sim
+Permanente: packages/ui/src/atoms/contracts.typecheck.tsx mantém o uso sem eixo sob @ts-expect-error com justificativa; se o eixo virar opcional, a supressão sobra e verify:types reprova.
+
+=== 3.3 Eixo no nome acessível: sensibilidade do teste (semântica sem ARIA: eixo em texto visualmente oculto) ===
+Plantio (a): <VisuallyHidden>{axisLabel}: </VisuallyHidden> removido de status-marker.tsx
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/status-marker
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nivel-de-verificacao&addonPanel=storybook/interactions/panel
+
+esperado um marcador com nome acessível "Verificação: Confirmado"; nomes presentes: "Confirmado", "Corroborado", "Não verificado"
+--
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--estado-do-fluxo&addonPanel=storybook/interactions/panel
+
+esperado um marcador com nome acessível "Fluxo: Aceito"; nomes presentes: "Aceito", "Em revisão", "Candidato"
+--
+Revertido: sim
+Plantio (b): display: none no utilitário de texto oculto (o eixo sairia da árvore de acessibilidade)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nivel-de-verificacao&addonPanel=storybook/interactions/panel
+
+esperado um marcador com nome acessível "Verificação: Confirmado"; nomes presentes: "Confirmado", "Corroborado", "Não verificado"
+--
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--estado-do-fluxo&addonPanel=storybook/interactions/panel
+
+esperado um marcador com nome acessível "Fluxo: Aceito"; nomes presentes: "Aceito", "Em revisão", "Candidato"
+--
+Revertido: sim
+
+=== 3.4 Preenchimento sólido em não resolvido reprova ===
+Plantio: .hatched { background: var(--color-text-secondary); } em status-marker.module.css
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/status-marker
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Não resolvido é hachurado
+AssertionError: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-marcador-de-estado--nao-resolvido&addonPanel=storybook/interactions/panel
+
+expected 'rgb(85, 85, 95)' to be 'rgba(0, 0, 0, 0)' // Object.is equality
+
+Expected: "rgba(0, 0, 0, 0)"
+Received: "rgb(85, 85, 95)"
+
+--
+      Tests  1 failed | 3 passed (4)
+   Start at  21:12:07
+   Duration  977ms (tests 56%, setup 34%, worker 9%, import 1%)
+
+Revertido: sim
+
+=== 4.1 Ausência sem valor: sensibilidade do teste ===
+Plantio: DeclaredAbsence renderizando "0" antes da razão, em declared-absence.tsx
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/declared-absence
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Projeção bloqueada
+AssertionError: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-ausência-declarada--projecao-bloqueada&addonPanel=storybook/interactions/panel
+
+expected '0 Projeção bloqueada por cobertura in…' not to match /\d/
+
+Expected: "/\d/"
+Received: "0 Projeção bloqueada por cobertura insuficiente"
+--
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Informação desconhecida
+AssertionError: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-ausência-declarada--informacao-desconhecida&addonPanel=storybook/interactions/panel
+
+expected '0 Data sem precisão conhecida' not to match /\d/
+
+Expected: "/\d/"
+Received: "0 Data sem precisão conhecida"
+--
+      Tests  2 failed (2)
+   Start at  21:12:57
+   Duration  798ms (setup 48%, tests 37%, worker 14%, import 1%)
+
+Revertido: sim
+
+=== 4.2 Ausência sem razão reprova em verify:types ===
+Plantio: <DeclaredAbsence kind="blocked" /> sem reason numa história de declared-absence.stories.tsx
+Comando: pnpm run verify:types
+src/atoms/declared-absence/declared-absence.stories.tsx(48,14): error TS2322: Type '{ name: string; render: () => React.JSX.Element; }' is not assignable to type 'StoryAnnotations$1<ReactRenderer, { kind: "blocked" | "unknown"; reason: string; }, { kind: "blocked" | "unknown"; reason: string; }>'.
+  Property 'args' is missing in type '{ name: string; render: () => React.JSX.Element; }' but required in type '{ args: { kind: "blocked" | "unknown"; reason: string; }; }'.
+src/atoms/declared-absence/declared-absence.stories.tsx(50,18): error TS2741: Property 'reason' is missing in type '{ kind: "blocked"; }' but required in type 'DeclaredAbsenceProps'.
+undefined
+/Users/denistoledo/Documents/projects/chargebr/packages/ui:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 2: tsc --noEmit
+ ELIFECYCLE  Command failed with exit code 1.
+Revertido: sim
+Permanente: packages/ui/src/atoms/contracts.typecheck.tsx mantém o uso sem razão sob @ts-expect-error com justificativa.
+
+=== 4.4 Âncora sem nome acessível reprova na checagem de acessibilidade ===
+Plantio: história com label: "" (âncora sem texto) em evidence-anchor.stories.tsx
+Comando: npx vitest run --project "@chargebr/ui (claro)" packages/ui/src/atoms/evidence-anchor
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@chargebr/ui (claro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Plantio sem nome
+Error: 
+Click to debug the error directly in Storybook: http://localhost:6006/?path=/story/átomos-âncora-de-evidência--plantio&addonPanel=storybook/interactions/panel
+
+expect(received).toHaveNoViolations(expected)
+
+Expected the HTML found at $('._anchor_6tz58_4') to have no violations:
+
+<a class="_anchor_6tz58_4" data-rac="" href="#evidencia-abve-2025-01" tabindex="0" data-react-aria-pressable="true"></a>
+
+Received:
+
+"Links must have discernible text (link-name)"
+
+Fix all of the following:
+  Element is in tab order and does not have accessible text
+
+Fix any of the following:
+  Element does not have text that is visible to screen readers
+  aria-label attribute does not exist or is empty
+  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty
+  Element has no title attribute
+
+--
+      Tests  1 failed | 3 passed (4)
+   Start at  21:13:09
+   Duration  1.13s (tests 48%, setup 30%, import 13%, worker 8%)
+
+Revertido: sim
+
+=== 5.1 Cobertura de histórias na árvore limpa ===
+Comando: npx vitest run --project "@chargebr/ui (contratos)"
+ ✓ |@chargebr/ui (contratos)| src/atoms/contract.test.ts > cada átomo expõe seus estados como valor enumerável 1ms
+ ✓ |@chargebr/ui (contratos)| src/atoms/contract.test.ts > o contrato é imutável e liga o átomo ao seu componente 0ms
+ ✓ |@chargebr/ui (contratos)| src/atoms/contract.test.ts > estado declarado duas vezes é recusado ao definir o contrato 0ms
+ ✓ |@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo átomo tem história 1ms
+ ✓ |@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo estado declarado tem história 0ms
+ ✓ |@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > toda tag de estado nomeia estado declarado pelo átomo 0ms
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+
+=== 5.2 pnpm verify na árvore limpa (cache do Vite apagado antes) ===
+Comando: pnpm verify
+> chargebr@ verify /Users/denistoledo/Documents/projects/chargebr
+> pnpm run verify:types && pnpm run verify:format && pnpm run verify:lint && pnpm run verify:test
+> chargebr@ verify:types /Users/denistoledo/Documents/projects/chargebr
+> pnpm -r exec tsc --noEmit
+> chargebr@ verify:format /Users/denistoledo/Documents/projects/chargebr
+> biome format .
+Checked 73 files in 14ms. No fixes applied.
+> chargebr@ verify:lint /Users/denistoledo/Documents/projects/chargebr
+> biome lint .
+Checked 73 files in 18ms. No fixes applied.
+> chargebr@ verify:test /Users/denistoledo/Documents/projects/chargebr
+> vitest run --passWithNoTests
+ RUN  v5.0.1 /Users/denistoledo/Documents/projects/chargebr
+ Test Files  25 passed (25)
+      Tests  86 passed (86)
+   Start at  21:13:52
+   Duration  3.73s (setup 31%, tests 29%, transform 22%, worker 10%, import 6%, environment 1%)
+pnpm verify exit code: 0
+Comando: npx vitest run --reporter=verbose (duas vezes, para comparar)
+Execução 1 vs 2 (linhas de teste, sem duração): idênticas
+Histórias dos átomos por tema:
+|@chargebr/ui (claro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Informação desconhecida
+|@chargebr/ui (claro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Projeção bloqueada
+|@chargebr/ui (claro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Com foco pelo teclado
+|@chargebr/ui (claro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Em repouso
+|@chargebr/ui (claro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Sob o ponteiro
+|@chargebr/ui (claro) (chromium)| src/atoms/hatch/hatch.stories.tsx > Decorativa, ao lado do texto
+|@chargebr/ui (claro) (chromium)| src/atoms/hatch/hatch.stories.tsx > No limite mínimo
+|@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Coluna alinhada
+|@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Contexto
+|@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Contrafactual
+|@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Papéis distintos sem cor
+|@chargebr/ui (claro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Principal
+|@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
+|@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Normalização
+|@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Não resolvido é hachurado
+|@chargebr/ui (claro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
+|@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Contexto
+|@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Contrafactual
+|@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Papéis distintos sem cor
+|@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Principal
+|@chargebr/ui (claro) (chromium)| src/atoms/text/text.stories.tsx > Redações lado a lado
+|@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > toda tag de estado nomeia estado declarado pelo átomo
+|@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo estado declarado tem história
+|@chargebr/ui (contratos)| src/atoms/stories-coverage.test.ts > todo átomo tem história
+|@chargebr/ui (escuro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Informação desconhecida
+|@chargebr/ui (escuro) (chromium)| src/atoms/declared-absence/declared-absence.stories.tsx > Projeção bloqueada
+|@chargebr/ui (escuro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Com foco pelo teclado
+|@chargebr/ui (escuro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Em repouso
+|@chargebr/ui (escuro) (chromium)| src/atoms/evidence-anchor/evidence-anchor.stories.tsx > Sob o ponteiro
+|@chargebr/ui (escuro) (chromium)| src/atoms/hatch/hatch.stories.tsx > Decorativa, ao lado do texto
+|@chargebr/ui (escuro) (chromium)| src/atoms/hatch/hatch.stories.tsx > No limite mínimo
+|@chargebr/ui (escuro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Coluna alinhada
+|@chargebr/ui (escuro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Contexto
+|@chargebr/ui (escuro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Contrafactual
+|@chargebr/ui (escuro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Papéis distintos sem cor
+|@chargebr/ui (escuro) (chromium)| src/atoms/numeric-value/numeric-value.stories.tsx > Principal
+|@chargebr/ui (escuro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Estado do fluxo
+|@chargebr/ui (escuro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Normalização
+|@chargebr/ui (escuro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Não resolvido é hachurado
+|@chargebr/ui (escuro) (chromium)| src/atoms/status-marker/status-marker.stories.tsx > Nível de verificação
+|@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Contexto
+|@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Contrafactual
+|@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Papéis distintos sem cor
+|@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Principal
+|@chargebr/ui (escuro) (chromium)| src/atoms/text/text.stories.tsx > Redações lado a lado
+      Tests  86 passed (86)
+ Test Files  25 passed (25)
+=== Revisão: semântica do marcador sem ARIA e itálico por token ===
+Mudanças: StatusMarker sem role/aria-roledescription, eixo em texto visualmente oculto (utilitário VisuallyHidden, só token);
+token text.counterfactual.style (fontStyle, tipo de extensão) em @chargebr/tokens; linha do guard style-literals restaurada.
+Comando: pnpm verify (cache do Vite apagado antes) — exit: 0
+Checked 76 files in 15ms. No fixes applied.
+Checked 76 files in 18ms. No fixes applied.
+ Test Files  25 passed (25)
+      Tests  87 passed (87)
+

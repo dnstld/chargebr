@@ -1,0 +1,23 @@
+{
+  "name": "@chargebr/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./palette": "./src/palette.ts",
+    "./tokens.css": "./generated/tokens.css"
+  },
+  "scripts": {
+    "build": "node --import tsx src/cli/build.ts",
+    "palette:report": "node --import tsx src/cli/palette-report.ts",
+    "contrast:report": "node --import tsx src/cli/contrast-report.ts"
+  },
+  "devDependencies": {
+    "@types/culori": "4.0.1",
+    "culori": "4.0.2",
+    "happy-dom": "20.14.5",
+    "style-dictionary": "5.5.5",
+    "tsx": "4.20.6"
+  }
+}

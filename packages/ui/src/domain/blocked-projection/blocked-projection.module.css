@@ -1,0 +1,24 @@
+/* Projeção bloqueada: o termo do bloqueio em tipografia de rótulo e as
+   razões como lista simples, sem marcador, para que nada — nem um ponto —
+   possa ser lido como valor. */
+.blocked {
+  display: grid;
+  row-gap: var(--space-gap-sm);
+}
+
+.lead {
+  margin: 0;
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-label-line-height);
+  color: var(--color-text-primary);
+}
+
+.reasons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  row-gap: var(--space-gap-sm);
+}

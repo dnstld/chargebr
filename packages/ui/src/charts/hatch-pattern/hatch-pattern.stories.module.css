@@ -1,0 +1,15 @@
+/* Duas caixas do mesmo tamanho, uma para cada implementação da hachura: a
+   comparação é da geometria desenhada, e o lado a lado é o que a torna
+   visível também para quem olha. */
+.row {
+  display: flex;
+  gap: var(--space-gap-md);
+  align-items: center;
+  color: var(--color-chart-series-1);
+}
+
+.box {
+  inline-size: var(--space-9);
+  block-size: var(--space-9);
+  display: block;
+}

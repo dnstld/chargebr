@@ -1,0 +1,10 @@
+/* Ausência declarada ocupa o lugar de um número sem parecer um: tipografia de
+   rótulo, cor secundária, e só a razão como conteúdo. Sem traço, sem zero. */
+.absence {
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  font-variant-numeric: var(--text-label-numeric);
+  color: var(--color-text-secondary);
+}

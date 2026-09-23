@@ -1,0 +1,89 @@
+schema: spec-driven
+
+context: |
+  Language: pt-BR
+  All artifacts must be written in pt-BR.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  ## Projeto
+
+  ChargeBR — plataforma de inteligência sobre mobilidade elétrica no Brasil.
+  Fase atual: criação da biblioteca de interface e do shell do back office.
+  Decisões estruturais em docs/decisao-configuracao-inicial-do-workspace.md.
+
+  ## Stack fixada
+
+  - Monorepo pnpm workspaces, apenas apps/* e packages/*
+  - Node 24.21.0, pnpm 10.34.5, ESM, TypeScript 5.9 estrito
+  - Aplicação: Next.js 16 App Router, React 19
+  - Pacotes: @chargebr/tokens (Style Dictionary, DTCG) e @chargebr/ui
+    (átomos, primitivas de domínio e gráficos por subpath)
+  - Primitivas de comportamento: React Aria Components
+  - Estilo: CSS Modules consumindo custom properties de @chargebr/tokens
+  - Gráficos: visx
+  - Verificação: Biome 2 e Vitest 5 sob `pnpm verify` na raiz
+  - Documentação viva: Storybook 10 com addon-vitest e addon-a11y
+
+  ## Fora de escopo, sem exceção
+
+  Nenhuma mudança em src/, tests/, data/, queries/ ou supabase/, nem nos
+  scripts `collect` e `test` da raiz. Nenhuma rota de negócio, nenhuma chamada
+  a banco e nenhum dado real nesta fase.
+
+  ## Restrições de domínio que a interface deve preservar
+
+  Nomes conferidos contra supabase/migrations/. Não são preferências de
+  interface: determinam quais componentes existem.
+
+  - verification_level (confirmed, corroborated, unverified), workflow_status
+    (accepted, under_review, candidate) e normalization_status (normalized,
+    not_attempted, unresolved) são eixos independentes. Nenhum componente pode
+    colapsá-los num selo único.
+  - unresolved é estado legítimo: permanece visível, nunca é agregado a valores
+    resolvidos e nunca recebe preenchimento sólido — recebe hachura.
+  - projection_status = blocked significa não exibir número algum, nem parcial.
+    Exige componente próprio.
+  - Todo número exibido carrega caminho até sua evidência. Valor sem
+    proveniência não tem componente que o exiba.
+  - source_claim e normalized_claim aparecem lado a lado; a normalização nunca
+    substitui a redação original.
+  - Conflito entre fontes é exibido e preservado, nunca resolvido pela interface.
+  - Valor principal, contrafactual e contexto são visualmente distintos.
+  - date_precision = unknown e ausência de informação nunca são exibidos como zero.
+
+  ## Convenções do repositório
+
+  - Documentação, comentário e rótulo de interface em PT-BR.
+  - Commit, branch e título de PR em inglês, uma linha, sem corpo e sem
+    assinatura: `<tipo>: <ação em imperativo>`, tipos feat, fix, docs, db, data,
+    chore. Branch em `<tipo>/<nome-em-ingles-kebab>`.
+  - Nome de componente, prop e token em inglês.
+  - Corpo de PR em PT-BR, nesta ordem: Resumo, Estado atual confirmado, Decisão
+    operacional, Escopo, Verificação.
+
+rules:
+  proposal:
+    - Diga explicitamente o que a mudança não faz
+    - Nenhuma decisão em aberto pode ser preenchida por suposição; registre a lacuna e pare
+  specs:
+    - Todo critério de aceite nomeia o teste que o prova
+    - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
+    - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
+    - "O corpo de um requisito contém só o que obriga; a razão vai em bloco próprio, aberto por **Por quê:**"
+    - "Frase que não obriga, mas sem a qual muda o que é exigido, não é razão: reescreva-a como obrigação"
+  design:
+    - Nenhum valor literal de cor, espaçamento, raio, sombra ou tipografia em código de componente; só token
+    - Componente que usa React Aria ou estado do cliente declara "use client" no próprio arquivo
+    - Componente recebe dados por propriedade; nenhum componente busca dados
+  tasks:
+    - Tarefa sem teste correspondente não é considerada pronta
+    - Toda tarefa tem critério de pronto verificável por execução
+
+operations:
+  apply:
+    guidance:
+      - Código, história no Storybook e teste entram juntos
+      - "`pnpm verify` precisa passar antes de a mudança ser dada como aplicada"
+  archive:
+    guidance:
+      - Afirmação de acessibilidade só vale com execução do axe registrada
