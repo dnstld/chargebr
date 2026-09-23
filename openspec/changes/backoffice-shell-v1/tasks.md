@@ -50,7 +50,7 @@ moldura vem antes da aplicação, porque a aplicação a consome. A camada 2 vem
 ## 5. Camada 2 — o documento emitido
 
 - [x] 5.1 Criar o projeto Vitest da aplicação, em Node, com a construção executada uma vez por execução antes das afirmações; pronto quando a raiz descobre o projeto sem edição em `vitest.config.ts` da raiz, a construção roda uma vez só e `pnpm verify` continua com quatro estágios
-- [ ] 5.2 Executar a construção e registrar no corpo do PR o caminho exato de cada documento emitido e a classificação de cada rota; pronto quando o registro nomeia o caminho do documento da rota raiz e lista tudo o mais que tiver sido emitido
+- [x] 5.2 Executar a construção e registrar no corpo do PR o caminho exato de cada documento emitido e a classificação de cada rota; pronto quando o registro nomeia o caminho do documento da rota raiz e lista tudo o mais que tiver sido emitido
 - [x] 5.3 Declarar o conjunto de rotas emitidas a partir do que 5.2 observou, e compará-lo com o emitido; pronto quando uma rota plantada sem declaração reprova nomeando-a, uma rota declarada sem página reprova nomeando-a, e os dois plantios são revertidos
 - [x] 5.4 Escrever a afirmação de existência do documento da rota raiz; pronto quando, com o artefato removido antes da execução, a verificação falha nomeando o caminho procurado e a saída não reporta nenhuma afirmação pulada
 - [x] 5.5 Plantar a rota raiz como dinâmica; pronto quando a verificação falha nomeando a rota que deixou de emitir documento, plantio revertido
@@ -62,8 +62,8 @@ moldura vem antes da aplicação, porque a aplicação a consome. A camada 2 vem
 
 ## 6. Fechamento
 
-- [ ] 6.1 Executar `pnpm verify` inteiro; pronto quando os quatro estágios passam, a lista de estágios é a mesma de antes da mudança, e o tempo do estágio de testes antes e depois está registrado no corpo do PR
+- [x] 6.1 Executar `pnpm verify` inteiro; pronto quando os quatro estágios passam, a lista de estágios é a mesma de antes da mudança, e o tempo do estágio de testes antes e depois está registrado no corpo do PR
 - [x] 6.2 Executar a verificação duas vezes seguidas sobre a mesma árvore; pronto quando o resultado de cada estágio é idêntico nas duas e `git status` sai limpo depois das duas
 - [x] 6.3 Construir a documentação viva com as histórias da moldura; pronto quando a construção conclui e a moldura aparece nela com os dois estados
-- [ ] 6.4 Registrar no corpo do PR a execução do axe sobre as histórias da moldura nos dois temas; pronto quando o registro existe — afirmação de acessibilidade sem execução registrada não vale
-- [ ] 6.5 Registrar no corpo do PR o que continua em aberto: a camada 3 não existe, e o mapeamento de rota aninhada para arquivo emitido não foi fechado porque este ciclo emite uma rota só; pronto quando as duas lacunas estão no registro, cada uma com o gatilho que a reabre
+- [x] 6.4 Registrar no corpo do PR a execução do axe sobre as histórias da moldura nos dois temas; pronto quando o registro existe — afirmação de acessibilidade sem execução registrada não vale
+- [x] 6.5 Registrar no corpo do PR o que continua em aberto: a camada 3 não existe, e o mapeamento de rota aninhada para arquivo emitido não foi fechado porque este ciclo emite uma rota só; pronto quando as duas lacunas estão no registro, cada uma com o gatilho que a reabre
