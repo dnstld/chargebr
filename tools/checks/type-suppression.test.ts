@@ -8,6 +8,10 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
 // Perímetro verificado: apps/* e packages/*, e nada mais.
 const PERIMETER = ["packages", "apps"];
+// `.next` é saída da construção, não conteúdo verificado: o framework gera lá
+// arquivos com supressão sem justificativa, e lê-los faria este guardião
+// reprovar o que a própria verificação acabou de gerar.
+const SKIPPED_DIRS = new Set(["node_modules", "storybook-static", ".next"]);
 const SOURCE_EXTENSIONS = [".ts", ".tsx", ".mts", ".cts"];
 
 // Montados por concatenação para o próprio guardião não casar consigo mesmo.
@@ -22,7 +26,7 @@ function collectSourceFiles(dir: string, found: string[]): void {
     return; // diretório do perímetro ainda não existe (ex.: apps/)
   }
   for (const entry of entries) {
-    if (entry === "node_modules") continue;
+    if (SKIPPED_DIRS.has(entry)) continue;
     const fullPath = join(dir, entry);
     if (statSync(fullPath).isDirectory()) {
       collectSourceFiles(fullPath, found);

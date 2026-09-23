@@ -1,0 +1,51 @@
+/* Moldura do shell: a superfície de fundo de tudo que vier depois, e a família
+   tipográfica declarada pela camada de tokens. Se ela não assumir as duas, cada
+   tela posterior precisa assumir por conta própria. Só token, como em qualquer
+   arquivo do pacote. */
+.frame {
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+  font-family: var(--text-body-family);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-body-weight);
+  line-height: var(--text-body-line-height);
+}
+
+/* O salto é o primeiro focalizável do documento e fica fora da vista até
+   receber foco. Ele não é escondido por `display` nem por `visibility`: as duas
+   o tirariam da ordem de foco, e um salto que não recebe foco não é salto. */
+.skip {
+  position: absolute;
+  inset-inline-start: var(--space-0);
+  inset-block-start: var(--space-0);
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  background: var(--color-surface-raised);
+  color: var(--color-action-primary);
+  border-radius: var(--radius-control);
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  line-height: var(--text-label-line-height);
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+  outline: var(--space-1) solid var(--color-focus-ring);
+  outline-offset: var(--space-1);
+}
+
+.header {
+  padding: var(--space-inset-md) var(--space-inset-lg);
+  font-family: var(--text-heading-family);
+  font-size: var(--text-heading-size);
+  font-weight: var(--text-heading-weight);
+  line-height: var(--text-heading-line-height);
+}
+
+/* O destino do salto é focalizável por `tabIndex={-1}`, e recebe foco sem
+   anel próprio: o foco chega por navegação de fragmento, não por tabulação. */
+.main {
+  padding: var(--space-inset-md) var(--space-inset-lg);
+  outline: none;
+}
