@@ -25,7 +25,6 @@ const MAX_ATTEMPTS = 3;
 const MAX_REDIRECTS = 3;
 const MAX_RETRY_AFTER_MS = 240_000;
 const RETRY_BASE_MS = [1_000, 2_000] as const;
-const ABVE_WORDPRESS_DATE_UTC_OFFSET = "-03:00";
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 const PUBLIC_LINK_QUERY_KEYS = new Set([
   "_fields",
@@ -54,7 +53,7 @@ export interface AbveEndpointContract {
       readonly context: "view";
       readonly orderby: "date";
       readonly order: "desc";
-      readonly _fields: "id,date,modified,slug,link,title,excerpt,content";
+      readonly _fields: "id,date,date_gmt,modified,slug,link,title,excerpt,content";
     };
     readonly headers: { readonly Accept: "application/json" };
   };
@@ -74,6 +73,7 @@ export interface AbveEndpointContract {
     readonly request_parameter: "before";
     readonly value_format: "rfc3339";
     readonly freeze_from: "run_started_at";
+    readonly boundary_field: "date_gmt";
   };
   readonly identity_rule: {
     readonly version: "abve-post-identity-v1";
@@ -108,7 +108,7 @@ export const ABVE_ENDPOINT_CONTRACT: AbveEndpointContract = {
       context: "view",
       orderby: "date",
       order: "desc",
-      _fields: "id,date,modified,slug,link,title,excerpt,content",
+      _fields: "id,date,date_gmt,modified,slug,link,title,excerpt,content",
     },
     headers: { Accept: "application/json" },
   },
@@ -128,6 +128,7 @@ export const ABVE_ENDPOINT_CONTRACT: AbveEndpointContract = {
     request_parameter: "before",
     value_format: "rfc3339",
     freeze_from: "run_started_at",
+    boundary_field: "date_gmt",
   },
   identity_rule: {
     version: "abve-post-identity-v1",
@@ -315,7 +316,7 @@ export async function collectAbve(
   const seen = new Set<string>();
   let firstTotal: number | null = null;
   let firstTotalPages: number | null = null;
-  let previousDate: number | null = null;
+  let previousDate: string | null = null;
   let boundaryCrossed = false;
   let validItemCount = 0;
   let hasRejected = false;
@@ -380,26 +381,7 @@ export async function collectAbve(
       }
       seen.add(identityKey);
 
-      const itemDate = abveWordPressDateToInstant(validation.post.normalized.date);
-      if (itemDate === null) {
-        hasRejected = true;
-        collected.push({
-          normalized: null,
-          manifest_item: {
-            native_identity: validation.post.identity,
-            canonical_url: validation.post.canonicalUrl,
-            content_fingerprint: null,
-            classification: "rejected",
-            diagnostic: {
-              code: "schema_mismatch",
-              message: "item date is not a supported WordPress timestamp",
-              page,
-              index,
-            },
-          },
-        });
-        continue;
-      }
+      const itemDate = validation.post.normalized.date;
       if (previousDate !== null && itemDate > previousDate) {
         return finish("partial", diagnostic("contract", "pagination_inconsistent", "WordPress items were not ordered by descending date"));
       }
@@ -420,7 +402,10 @@ export async function collectAbve(
       collected.push({ normalized: validation.post.normalized, manifest_item: manifestItem });
       validItemCount += 1;
 
-      if (input.cursor_in !== null && itemDate < Date.parse(input.cursor_in.before)) {
+      if (
+        input.cursor_in !== null &&
+        validation.post.publicationInstant < Date.parse(input.cursor_in.before)
+      ) {
         boundaryCrossed = true;
       }
     }
@@ -967,14 +952,6 @@ function retryDelay(attempt: number, random: () => number): number {
     throw new Error("random must return a value between zero and one");
   }
   return Math.floor(sample * base);
-}
-
-function abveWordPressDateToInstant(value: string): number | null {
-  const candidate = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?$/u.test(value)
-    ? `${value}${ABVE_WORDPRESS_DATE_UTC_OFFSET}`
-    : value;
-  const parsed = Date.parse(candidate);
-  return Number.isNaN(parsed) ? null : parsed;
 }
 
 function isUtcInstant(value: string): boolean {

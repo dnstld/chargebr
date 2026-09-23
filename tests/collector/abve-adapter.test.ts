@@ -30,10 +30,12 @@ interface FetchLog {
 }
 
 function wpPost(id: number | null, date: string, overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  const wordpressDate = date.replace(/Z$/u, "");
   return {
     id,
-    date,
-    modified: date,
+    date: wordpressDate,
+    date_gmt: wordpressDate,
+    modified: wordpressDate,
     slug: `post-${id ?? "fallback"}`,
     link: `https://abve.org.br/post-${id ?? "fallback"}/`,
     title: { rendered: `Title ${id ?? "fallback"}` },
@@ -175,6 +177,7 @@ test("request contract uses GET, public query, Accept, timeout, and bootstrap cl
   assert.equal(url.searchParams.get("context"), "view");
   assert.equal(url.searchParams.get("orderby"), "date");
   assert.equal(url.searchParams.get("order"), "desc");
+  assert.equal(url.searchParams.get("_fields"), "id,date,date_gmt,modified,slug,link,title,excerpt,content");
   assert.equal(url.searchParams.get("per_page"), "50");
   assert.equal(url.searchParams.get("page"), "1");
   assert.equal(url.searchParams.get("before"), RUN_STARTED_AT);
@@ -254,8 +257,8 @@ test("the cursor boundary is strictly less than the prior before value", async (
   assert.deepEqual(outcome.cursor_out, { version: "abve-time-window-v1", before: RUN_STARTED_AT });
 });
 
-test("ABVE local WordPress dates use the approved minus-three offset for cursor boundaries", async (context) => {
-  const post = wpPost(1, "2026-09-15T10:00:00");
+test("ABVE date_gmt is the UTC cursor boundary while date remains local metadata", async (context) => {
+  const post = wpPost(1, "2026-09-15T10:00:00", { date_gmt: "2026-09-15T13:00:00" });
 
   for (const [name, before, expectedStatus] of [
     ["cursor before the absolute post instant", "2026-09-15T12:00:00.000Z", "partial"],

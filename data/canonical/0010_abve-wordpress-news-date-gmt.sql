@@ -196,8 +196,7 @@ begin
         and se.robots_url is not distinct from 'https://abve.org.br/robots.txt'
         and se.access_reviewed_at is not distinct from
           new_access_reviewed_at
-        and se.updated_at is not distinct from
-          new_access_reviewed_at
+        and se.updated_at >= greatest(se.created_at, new_access_reviewed_at)
         and se.notes is not distinct from canonical_notes
         and se.request_config is not distinct from new_request_config
         and se.cursor_config is not distinct from new_cursor_config
@@ -216,7 +215,7 @@ begin
        set request_config = new_request_config,
            cursor_config = new_cursor_config,
            access_reviewed_at = new_access_reviewed_at,
-           updated_at = new_access_reviewed_at
+           updated_at = greatest(created_at, updated_at, new_access_reviewed_at)
      where id = target_endpoint_id
        and request_config is not distinct from old_request_config
        and cursor_config is not distinct from old_cursor_config
@@ -245,8 +244,7 @@ begin
        and se.cursor_config is not distinct from new_cursor_config
        and se.access_reviewed_at is not distinct from
          new_access_reviewed_at
-       and se.updated_at is not distinct from
-         new_access_reviewed_at
+       and se.updated_at >= greatest(se.created_at, new_access_reviewed_at)
   ) then
     raise exception 'Carga 0010: o endpoint ABVE não terminou no estado NEW.';
   end if;
