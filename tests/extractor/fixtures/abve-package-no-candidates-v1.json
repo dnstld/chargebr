@@ -1,0 +1,47 @@
+{
+  "envelope": {
+    "package_version": "chargebr-abve-extraction-candidates-v1",
+    "extraction_key": "23cfac0b925adadcc1a8b569d1b389d730d3d284bc4ebba4e494fa6d2d2b9c4a",
+    "run_key": "123e4567-e89b-42d3-a456-426614174000",
+    "extractor_name": "chargebr-abve-extractor",
+    "extractor_version": "0123456789abcdef0123456789abcdef01234567",
+    "contract_version": "chargebr-abve-extraction-contract-v1",
+    "result_status": "no_candidates",
+    "payload_hash": "7a488c065eb4ccfec8481882d80e815ab4187ee7fe786f87422e36ab885aaf03",
+    "started_at": "2026-09-23T20:31:00.000Z",
+    "duration_ms": 87
+  },
+  "payload": {
+    "input": {
+      "endpoint_key": "abve-news-wordpress-posts",
+      "manifest_hash": "02d00ebaff0d23b6fe3ef6a0bf959304d3fd83bd8147b234a34ddf19da246939",
+      "native_identity": {
+        "id": 19617
+      },
+      "canonical_url": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano",
+      "expected_content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "observed_content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "normalization_profile": "abve-wordpress-post-v1"
+    },
+    "content_item_candidate": {
+      "canonical_url": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano",
+      "title": "Eletrificados conquistam 21% de participação de mercado e devem atingir 450 mil em 2026",
+      "published_local": "2026-08-11T17:09:21",
+      "published_at_utc": "2026-08-11T20:09:21Z",
+      "language_code": null,
+      "section_name": null,
+      "publication_nature": "unknown",
+      "content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "retention_class": "minimum_excerpt",
+      "evidentiary_excerpt": "O ano de 2026 já pode ser considerado como um dos marcos do avanço da eletromobilidade no país.",
+      "raw_capture_reference": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano"
+    },
+    "observation_candidates": [],
+    "aggregate_counts": {
+      "items_considered": 1,
+      "content_candidates": 1,
+      "observation_candidates": 0,
+      "candidates_blocked": 0
+    }
+  }
+}

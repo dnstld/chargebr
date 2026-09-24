@@ -8,7 +8,7 @@
   },
   "scripts": {
     "collect": "node --import tsx src/collector/cli.ts",
-    "test": "node --import tsx --test tests/collector/*.test.ts",
+    "test": "node --import tsx --test tests/collector/*.test.ts tests/extractor/*.test.ts",
     "typecheck": "tsc --noEmit",
     "verify": "pnpm run verify:types && pnpm run verify:format && pnpm run verify:lint && pnpm run verify:test",
     "verify:types": "pnpm -r exec tsc --noEmit",

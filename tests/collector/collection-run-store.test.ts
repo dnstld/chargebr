@@ -85,6 +85,50 @@ test("database store maps running and complete run state", async () => {
   assert.equal((await database.findLatestCompleteRun("42"))?.cursorOut?.before, "2026-09-23T10:00:00.000Z");
 });
 
+test("database store reads one extraction run without mutation SQL", async () => {
+  const client = new FakeDatabaseClient();
+  client.queue.push({
+    rows: [{
+      run_key: "123e4567-e89b-42d3-a456-426614174000",
+      status: "succeeded",
+      handoff_status: "ready_for_extraction",
+      response_manifest_hash: "a".repeat(64),
+      response_manifest_reference:
+        "local:.chargebr/collection-runs/123e4567-e89b-42d3-a456-426614174000/manifest.v1.json",
+      collector_name: "chargebr-local-collector",
+      collector_version: "0".repeat(40),
+      contract_version: "chargebr-local-collector-contract-v1",
+      config_fingerprint: "b".repeat(64),
+    }],
+    rowCount: 1,
+  });
+  const database = store(client);
+  assert.deepEqual(
+    await database.findRunForExtraction(
+      "42",
+      "123e4567-e89b-42d3-a456-426614174000",
+    ),
+    {
+      runKey: "123e4567-e89b-42d3-a456-426614174000",
+      status: "succeeded",
+      handoffStatus: "ready_for_extraction",
+      manifestHash: "a".repeat(64),
+      manifestReference:
+        "local:.chargebr/collection-runs/123e4567-e89b-42d3-a456-426614174000/manifest.v1.json",
+      collectorName: "chargebr-local-collector",
+      collectorVersion: "0".repeat(40),
+      contractVersion: "chargebr-local-collector-contract-v1",
+      configFingerprint: "b".repeat(64),
+    },
+  );
+  assert.match(client.calls[0]?.text ?? "", /^select/iu);
+  assert.doesNotMatch(client.calls[0]?.text ?? "", /\b(insert|update|delete)\b/iu);
+  assert.deepEqual(client.calls[0]?.values, [
+    "42",
+    "123e4567-e89b-42d3-a456-426614174000",
+  ]);
+});
+
 test("database store recognizes the one-running-run uniqueness race", async () => {
   const client = new FakeDatabaseClient();
   const conflict = new Error("unique violation") as Error & { code: string };

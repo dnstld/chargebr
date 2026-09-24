@@ -26,6 +26,7 @@ test("ABVE normalization applies NFC/newlines and preserves HTML", () => {
   assert.equal(result.post.normalized.excerpt.rendered, "<p>A\nB</p>");
   assert.equal(result.post.normalized.content.rendered, "<script>x()</script>\n<p>C</p>");
   assert.equal(result.post.canonicalUrl, "https://abve.org.br/Noticia?a=1&b=2");
+  assert.equal(result.post.publicationDateGmt, "2026-01-02T13:00:00");
   assert.equal(result.post.publicationInstant, Date.parse("2026-01-02T13:00:00Z"));
 });
 

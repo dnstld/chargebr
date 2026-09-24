@@ -1,0 +1,70 @@
+{
+  "envelope": {
+    "package_version": "chargebr-abve-extraction-candidates-v1",
+    "extraction_key": "23cfac0b925adadcc1a8b569d1b389d730d3d284bc4ebba4e494fa6d2d2b9c4a",
+    "run_key": "529a3eeb-6921-417e-a750-b58bcb97899a",
+    "extractor_name": "chargebr-abve-extractor",
+    "extractor_version": "0123456789abcdef0123456789abcdef01234567",
+    "contract_version": "chargebr-abve-extraction-contract-v1",
+    "result_status": "produced",
+    "payload_hash": "6e2b18ab17e2c87d2dfdef0cbf01af11fa4b40c531bf864e051886bb8cb6fd72",
+    "started_at": "2026-09-23T20:30:00.000Z",
+    "duration_ms": 123
+  },
+  "payload": {
+    "input": {
+      "endpoint_key": "abve-news-wordpress-posts",
+      "manifest_hash": "02d00ebaff0d23b6fe3ef6a0bf959304d3fd83bd8147b234a34ddf19da246939",
+      "native_identity": {
+        "id": 19617
+      },
+      "canonical_url": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano",
+      "expected_content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "observed_content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "normalization_profile": "abve-wordpress-post-v1"
+    },
+    "content_item_candidate": {
+      "canonical_url": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano",
+      "title": "Eletrificados conquistam 21% de participação de mercado e devem atingir 450 mil em 2026",
+      "published_local": "2026-08-11T17:09:21",
+      "published_at_utc": "2026-08-11T20:09:21Z",
+      "language_code": null,
+      "section_name": null,
+      "publication_nature": "unknown",
+      "content_fingerprint": "4a5cb1dfbeebb600ad6d2df2a7fd0c5feb3d9803bf3efe687e33f28a96618e36",
+      "retention_class": "minimum_excerpt",
+      "evidentiary_excerpt": "Os BEV lideraram, com 25.782 unidades [...] os emplacamentos de veículos 100% elétricos passaram de 7.010 para 25.782 unidades.",
+      "raw_capture_reference": "https://abve.org.br/eletrificados-conquistam-21-de-participacao-de-mercado-em-julho-e-devem-passar-de-450-mil-este-ano"
+    },
+    "observation_candidates": [
+      {
+        "candidate_key": "1f94f00df039dc210871b81f8af605ccf9d5cd073208af78de5513e111659693",
+        "observation_type": "quantity",
+        "source_claim": "Os BEV lideraram, com 25.782 unidades [...] os emplacamentos de veículos 100% elétricos passaram de 7.010 para 25.782 unidades.",
+        "normalized_claim": "Brasil: 25.782 emplacamentos de veículos leves BEV em julho de 2026.",
+        "normalization_status": "normalized",
+        "normalized_value": 25782,
+        "normalized_unit": "vehicle_registration",
+        "measured_period": {
+          "start": "2026-07-01",
+          "end": "2026-07-31",
+          "granularity": "month"
+        },
+        "geography": "Brasil",
+        "extraction_method": "automated",
+        "source_term": "emplacamentos de veículos 100% elétricos",
+        "locator": "content.rendered: parágrafo iniciado por Os BEV lideraram",
+        "limitations": [
+          "Normalização remove somente o separador brasileiro de milhar.",
+          "Não inclui participação de mercado, crescimento, acumulado ou projeções."
+        ]
+      }
+    ],
+    "aggregate_counts": {
+      "items_considered": 1,
+      "content_candidates": 1,
+      "observation_candidates": 1,
+      "candidates_blocked": 0
+    }
+  }
+}

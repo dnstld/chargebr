@@ -19,6 +19,7 @@ export interface ValidatedAbvePost {
   readonly canonicalUrl: string;
   readonly normalized: NormalizedAbvePost;
   readonly fingerprint: string;
+  readonly publicationDateGmt: string;
   readonly publicationInstant: number;
 }
 
@@ -89,6 +90,7 @@ export function validateAndNormalizeAbvePost(value: unknown): AbvePostValidation
       canonicalUrl,
       normalized,
       fingerprint: sha256CanonicalJson(normalized),
+      publicationDateGmt: normalizeText(dateGmt),
       publicationInstant,
     },
   };

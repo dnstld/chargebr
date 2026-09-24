@@ -28,6 +28,18 @@ export interface CompleteCollectionRun {
   readonly manifestReference: string | null;
 }
 
+export interface ExtractionCollectionRun {
+  readonly runKey: string;
+  readonly status: string;
+  readonly handoffStatus: string;
+  readonly manifestHash: string | null;
+  readonly manifestReference: string | null;
+  readonly collectorName: string;
+  readonly collectorVersion: string;
+  readonly contractVersion: string;
+  readonly configFingerprint: string;
+}
+
 export interface StartCollectionRunInput {
   readonly endpointId: string;
   readonly runKey: string;
@@ -96,6 +108,18 @@ interface CompleteRow extends QueryResultRow {
   readonly cursor_out: unknown;
   readonly response_manifest_hash: string | null;
   readonly response_manifest_reference: string | null;
+}
+
+interface ExtractionRunRow extends QueryResultRow {
+  readonly run_key: string;
+  readonly status: string;
+  readonly handoff_status: string;
+  readonly response_manifest_hash: string | null;
+  readonly response_manifest_reference: string | null;
+  readonly collector_name: string;
+  readonly collector_version: string;
+  readonly contract_version: string;
+  readonly config_fingerprint: string;
 }
 
 export class PostgresCollectionRunStore implements CollectionRunStore {
@@ -207,6 +231,46 @@ export class PostgresCollectionRunStore implements CollectionRunStore {
       cursorOut: isAbveCursor(row.cursor_out) ? row.cursor_out : null,
       manifestHash: row.response_manifest_hash,
       manifestReference: row.response_manifest_reference,
+    };
+  }
+
+  async findRunForExtraction(
+    endpointId: string,
+    runKey: string,
+  ): Promise<ExtractionCollectionRun | null> {
+    const result = await this.client.query<ExtractionRunRow>(
+      `select
+         run_key::text,
+         status,
+         handoff_status,
+         response_manifest_hash,
+         response_manifest_reference,
+         collector_name,
+         collector_version,
+         contract_version,
+         config_fingerprint
+       from public.collection_runs
+       where source_endpoint_id = $1 and run_key = $2
+       limit 2`,
+      [endpointId, runKey],
+    );
+    if (result.rows.length !== 1) {
+      return null;
+    }
+    const row = result.rows[0];
+    if (row === undefined) {
+      return null;
+    }
+    return {
+      runKey: row.run_key,
+      status: row.status,
+      handoffStatus: row.handoff_status,
+      manifestHash: row.response_manifest_hash,
+      manifestReference: row.response_manifest_reference,
+      collectorName: row.collector_name,
+      collectorVersion: row.collector_version,
+      contractVersion: row.contract_version,
+      configFingerprint: row.config_fingerprint,
     };
   }
 
