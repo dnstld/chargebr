@@ -186,6 +186,7 @@ test("handoff proves run, manifest, item, URL, and fingerprint before exposing t
   assert.equal(store.runCalls, 1);
   assert.equal(readCalls, 1);
   assert.equal(refetchCalls, 1);
+  assert.equal(result.run_key, RUN_KEY);
   assert.equal(result.classification, "new");
   assert.deepEqual(result.extraction_input, {
     endpoint_key: "abve-news-wordpress-posts",
