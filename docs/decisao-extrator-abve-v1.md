@@ -252,6 +252,8 @@ observation_candidates[]
   source_claim
   normalized_claim
   normalization_status
+  normalized_value
+  normalized_unit
   measured_period
   geography
   extraction_method
@@ -267,6 +269,8 @@ aggregate_counts
 ```
 
 `published_local` preserva `date`; `published_at_utc` deriva exclusivamente de `date_gmt`. Esses metadados não decidem automaticamente se uma futura promoção usará `published_on`, `published_at` ou ambos.
+
+No piloto quantitativo, `normalized_value` será o inteiro `25782`, `normalized_unit` será `vehicle_registration` e `measured_period` terá a forma `{ start, end, granularity }`, com `2026-07-01`, `2026-07-31` e `month`. Esses campos tornam valor, unidade e período auditáveis sem obrigar uma etapa futura a reinterpretar texto livre. Eles continuam sendo propostas, não dados canônicos.
 
 O mapeamento do candidato de conteúdo obedecerá a estas regras:
 
@@ -284,7 +288,7 @@ O mapeamento do candidato de conteúdo obedecerá a estas regras:
 | `evidentiary_excerpt` | mesmo trecho mínimo que sustenta o candidato quantitativo |
 | `raw_capture_reference` | URL canônica externa, nunca corpo arquivado |
 
-O JSON não guardará o corpo integral. Cada `source_claim`, `evidentiary_excerpt` ou trecho de localização deverá ser o mínimo necessário para sustentar um candidato e terá limite de 320 caracteres Unicode.
+O JSON não guardará o corpo integral. Cada título, `source_claim`, `normalized_claim`, `evidentiary_excerpt`, `source_term`, `locator` ou limitação deverá ser o mínimo necessário para sustentar um candidato e terá limite de 320 caracteres Unicode. A v1 aceitará zero ou uma observação e no máximo oito limitações; ampliação desses limites exige nova revisão do contrato.
 
 `extraction_method = automated` descreve como a proposta foi produzida. Ele não dispensa revisão humana.
 
@@ -309,6 +313,8 @@ content_fingerprint
 observation_type
 source_claim
 normalized_claim
+normalized_value
+normalized_unit
 measured_period
 geography
 source_term
@@ -357,7 +363,7 @@ Para o piloto, o resultado esperado da revisão é `link_existing`, porque a car
 | Código | Estado | Significado |
 | --- | --- | --- |
 | `0` | `produced` | candidatos e pacote de revisão produzidos |
-| `0` | `no_candidates` | versão validada; JSON com lista vazia e pacote de revisão produzidos |
+| `0` | `no_candidates` | versão validada; candidato de conteúdo preservado, lista de observações vazia e pacote de revisão produzidos |
 | `4` | `blocked` | manifest, versão, acesso, formato, fingerprint ou contrato incompatível |
 | `64` | — | CLI inválida |
 | `69` | — | run, manifest ou item não disponível |
