@@ -81,6 +81,7 @@ export interface PrepareAbveHandoffInput {
 }
 
 export interface PreparedAbveHandoff {
+  readonly run_key: string;
   readonly extraction_input: ExtractionInput;
   readonly classification: Extract<ItemClassification, "new" | "changed">;
   readonly post: ValidatedAbvePost;
@@ -185,6 +186,7 @@ export async function prepareAbveExtractionHandoff(
   }
 
   return {
+    run_key: run.runKey,
     extraction_input: {
       endpoint_key: ABVE_ENDPOINT_KEY,
       manifest_hash: run.manifestHash as string,
