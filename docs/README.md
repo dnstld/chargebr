@@ -90,3 +90,8 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
 - [Decisão: critério de paleta categórica](decisao-criterio-de-paleta-categorica.md)
 - [Incidente: instabilidade da bancada em "Sob o ponteiro"](incidente-instabilidade-da-bancada.md)
+- [Decisão: como o repositório prova comportamento de aplicação](decisao-prova-de-comportamento-de-aplicacao.md)
+
+## Pontos abertos
+
+- [Pontos abertos](pontos-abertos.md) — o registro vivo do que ficou em aberto de propósito, com o gatilho de cada um. Leia antes de propor um ciclo.
