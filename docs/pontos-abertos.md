@@ -1,11 +1,10 @@
 # Pontos abertos
 
-**Atualizado em:** 25 de setembro de 2026, na aplicação do ciclo
+**Atualizado em:** 25 de setembro de 2026, no arquivamento do ciclo
 `dynamic-route-readiness`
-**Estado do repositório:** 7 capacidades vivas, 70 requisitos, 8 ciclos
-arquivados, um change ativo (`dynamic-route-readiness`, que acrescenta 2
-requisitos a `backoffice-shell` ao ser arquivado); piloto do extrator ABVE v1
-validado. 8 pontos abertos; este ciclo fechou 3 e abriu 2
+**Estado do repositório:** 7 capacidades vivas, 72 requisitos, 9 ciclos
+arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado. 8 pontos
+abertos; o ciclo `dynamic-route-readiness` fechou 3 e abriu 2
 
 ## O que este arquivo é
 
