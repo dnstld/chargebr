@@ -1,8 +1,8 @@
 # Pontos abertos
 
-**Atualizado em:** 23 de setembro de 2026, ao fim do primeiro objetivo
+**Atualizado em:** 25 de setembro de 2026, ao fim do discover do extrator ABVE v1
 **Estado do repositório:** 7 capacidades vivas, 70 requisitos, 8 ciclos
-arquivados, nenhum change ativo
+arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado
 
 ## O que este arquivo é
 
@@ -175,3 +175,42 @@ uma segunda magnitude num canal que não seja a posição.
 
 **Nota:** a classe todos-contra-todos da verificação de paleta já está coberta
 por dot e small-multiples, então não há lacuna de cobertura — só de forma.
+
+---
+
+## 8. O extrator ABVE cobre somente um caso vivo
+
+**O que é:** o extrator ABVE v1 foi validado com o item WordPress `19617`, uma
+afirmação mensal de emplacamentos BEV já representada pela carga canônica `0003`.
+Ele não demonstrou generalização para outra estrutura editorial, sujeito,
+unidade, período, geografia ou resultado de revisão.
+
+**Por que ficou aberto:** um único resultado correto prova o piloto, não uma
+gramática geral das publicações ABVE. Ampliar a regra agora transformaria
+hipóteses em contrato.
+
+**Gatilho:** uma necessidade concreta de extrair outro item ABVE. O novo ciclo
+deverá selecionar casos antes de implementar e demonstrar ao menos um resultado
+positivo e um `no_candidates` vivo, sem reduzir as garantias do piloto.
+
+**Onde está registrado:**
+`docs/decisao-pos-ensaio-extrator-abve-v1.md`.
+
+---
+
+## 9. Persistência de candidatos ainda não tem caso que a exija
+
+**O que é:** candidatos e revisão existem apenas como artefatos locais privados.
+Não há tabela para candidato, decisão humana ou histórico de correção.
+
+**Por que ficou aberto:** o único ensaio vivo terminou em `link_existing`. Nada
+novo precisava ser persistido, e os estados `accept_new`, `correct` e `reject`
+ainda não foram exercitados num caso real. Modelar agora exigiria supor autoria,
+transições, retenção, concorrência e relação com o canônico.
+
+**Gatilho:** o primeiro candidato vivo cuja decisão ou histórico não possa ser
+preservado com segurança em artefato local privado. A modelagem deverá começar
+pelo caso e separar candidato de dado canônico antes de qualquer migration.
+
+**Onde está registrado:**
+`docs/decisao-pos-ensaio-extrator-abve-v1.md`.
