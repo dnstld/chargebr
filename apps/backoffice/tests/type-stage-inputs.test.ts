@@ -1,16 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expect, test } from "vitest";
+import { expect, inject, test } from "vitest";
+import { type Listing, TYPE_STAGE_LISTINGS } from "./type-stage.setup";
 
 // Raiz do repositório, a partir da localização deste arquivo
 // (apps/backoffice/tests/).
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
-
-// O mesmo binário que `verify:types` executa: `pnpm -r exec tsc` resolve o
-// `tsc` da raiz, porque nenhum pacote do workspace instala o próprio.
-const TSC = join(ROOT, "node_modules/.bin/tsc");
 
 // A checagem de tipos não pode ler arquivo que o versionamento ignora — fora
 // das dependências instaladas —, esteja ele dentro ou fora do diretório de
@@ -21,12 +18,9 @@ const TSC = join(ROOT, "node_modules/.bin/tsc");
 //
 // Este arquivo mora no projeto que constrói porque só aqui a construção já
 // rodou: os projetos do Vitest não têm ordem entre si, e um guardião em
-// tools/checks/ olharia às vezes uma árvore sem artefato algum.
-
-// Pacote do workspace, para `verify:types`: cada diretório sob estas áreas com
-// `package.json` — o conjunto que `pnpm -r exec` alcança.
-const WORKSPACE_AREAS = ["apps", "packages"];
-const INSTALLED_DEPENDENCIES = "node_modules";
+// tools/checks/ olharia às vezes uma árvore sem artefato algum. O que a etapa
+// lê é listado no preparo, por `type-stage.setup.ts`, depois da construção;
+// as afirmações leem o que foi guardado, e são elas que reprovam.
 
 // Sem estes pacotes na enumeração, a varredura teria deixado de casar com o
 // workspace e passaria sem ter olhado nada.
@@ -40,56 +34,15 @@ const BUILD_ARTIFACTS = [
   "apps/backoffice/.next/types/routes.d.ts",
 ];
 
-interface Listing {
-  pkg: string;
-  files: string[];
-  error: string | null;
-}
-
-function workspacePackages(): string[] {
-  return WORKSPACE_AREAS.flatMap((area) => {
-    let entries: string[];
-    try {
-      entries = readdirSync(join(ROOT, area));
-    } catch {
-      return []; // área do workspace ainda não existe
-    }
-    return entries
-      .filter((entry) => existsSync(join(ROOT, area, entry, "package.json")))
-      .map((entry) => `${area}/${entry}`);
-  }).sort();
-}
-
-function listTypeStageInputs(pkg: string): Listing {
-  const result = spawnSync(
-    TSC,
-    ["--noEmit", "-p", join(pkg, "tsconfig.json"), "--listFilesOnly"],
-    { cwd: ROOT, encoding: "utf8" },
-  );
-  if (result.error !== undefined) {
-    return { pkg, files: [], error: result.error.message };
-  }
-  if (result.status !== 0) {
-    const output = `${result.stdout}${result.stderr}`.trim();
-    return {
-      pkg,
-      files: [],
-      error: `tsc saiu com ${result.status}: ${output}`,
-    };
-  }
-  const files = result.stdout
-    .split("\n")
-    .filter((line) => line.length > 0)
-    .map((file) => relative(ROOT, file))
-    .filter((file) => !file.split(sep).includes(INSTALLED_DEPENDENCIES));
-  return { pkg, files, error: null };
-}
-
-// Uma listagem por pacote e por execução, compartilhada pelas afirmações que
-// precisam dela.
-let listings: Listing[] | undefined;
+// Sem o preparo declarado no projeto, não há listagem: a ausência reprova,
+// nomeando o que faltou, em vez de a prova afirmar sobre uma lista vazia.
 function typeStageListings(): Listing[] {
-  listings ??= workspacePackages().map(listTypeStageInputs);
+  const listings = inject(TYPE_STAGE_LISTINGS);
+  if (listings === undefined) {
+    throw new Error(
+      `nenhuma listagem em "${TYPE_STAGE_LISTINGS}": tests/type-stage.setup.ts não está no globalSetup deste projeto`,
+    );
+  }
   return listings;
 }
 
