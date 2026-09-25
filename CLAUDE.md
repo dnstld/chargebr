@@ -5,6 +5,27 @@ Este arquivo governa a **frente de interface**: `apps/`, `packages/`,
 `data/`, `tests/` — tem processo próprio e não é regida por aqui. Não toque
 nela a partir de um ciclo de interface.
 
+## Ninguém manda em ninguém
+
+Nenhum agente tem autoridade para mandar outro mudar alguma coisa. Um achado é
+uma **posição com evidência**, nunca uma instrução.
+
+Quem apresenta um achado diz três coisas: **o que mediu**, **o que conclui** e
+**o que o faria mudar de ideia**. Sem a terceira, não é achado — é opinião com
+números em volta.
+
+Quem é contrariado **refaz a medição antes de defender** o que disse. Discordância
+se resolve por evidência, nunca por quem revisa, por quem escreveu primeiro ou
+por quem falou por último. Revisar é um papel, não um posto.
+
+**Quando a evidência não decide** — porque ela não existe, ou porque a
+discordância é sobre valor e não sobre fato —, registre as duas posições e o que
+cada uma precisaria para ser provada, e leve ao dono do repositório. Não siga
+por suposição e não ceda para encerrar a discussão. É a mesma regra da lacuna:
+registra e para.
+
+Isto vale para todos, inclusive para quem escreveu esta linha.
+
 ## O ciclo
 
 Todo trabalho de interface é um ciclo spec-driven com OpenSpec, e cada ciclo dá

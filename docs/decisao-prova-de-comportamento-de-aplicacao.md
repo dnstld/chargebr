@@ -145,3 +145,49 @@ componentes do shell continuam na camada 1.
 
 Nenhuma exigência do ciclo 8 pode depender da camada 3. Se alguma precisar,
 registra-se a lacuna e para-se, como foi feito aqui.
+
+## Atualização de 25 de setembro de 2026 — ciclo `dynamic-route-readiness`
+
+O texto acima fica como foi decidido. Esta seção registra o que a primeira rota
+dinâmica mostrou, e o que mudou por causa disso.
+
+### O mapeamento observado
+
+A "decisão em aberto" sobre rota aninhada foi observada numa construção com
+Next.js 16.3.6 (Turbopack), com rotas plantadas e revertidas:
+
+| Rota | Classificação | Documento emitido |
+| --- | --- | --- |
+| `/` | `○` | `server/app/index.html` |
+| `/sobre` | `○` | `server/app/sobre.html` |
+| `/sobre/equipe` | `○` | `server/app/sobre/equipe.html` |
+| `/frotas/[id]`, lista aberta, valor `alfa` | `●` | `server/app/frotas/alfa.html` |
+| `/modelos/[id]`, lista fechada, valor `beta` | `●` | `server/app/modelos/beta.html` |
+| `/veiculos/[id]`, sem lista | `ƒ` | nenhum |
+| `/icon.svg` (metadados) | `○` | nenhum — `server/app/icon.svg.body` e `.meta` |
+| `/sitemap.xml` (metadados) | `○` | nenhum — `server/app/sitemap.xml.body` e `.meta` |
+
+Os casos seguem o mesmo desenho, e mesmo assim **não viraram regra**: cada
+documento é declarado pelo caminho exato em que foi observado, e a verificação
+compara o conjunto emitido com o declarado nos dois sentidos. Quando uma rota
+entra, ou uma versão do Next move um caminho, a verificação nomeia o caminho.
+
+### R2, revisto
+
+R2 dizia que uma rota que passe a ser dinâmica deixa de emitir documento, e
+tinha como mitigação a mesma de R1: a ausência reprova. A mitigação só cobre a
+rota que **tinha** documento declarado. Uma rota que nasce resolvida por
+requisição nunca teve documento, e nenhuma ausência a denuncia — medido: com
+`/prova/[id]` plantada e sem declaração, a trava de documentos passou verde.
+
+**Mitigação nova:** a camada 2 afirma sobre a **lista de rotas** que a
+construção produz — `app-path-routes-manifest.json` e
+`server/pages-manifest.json` —, e cada rota declara sua forma de entrega,
+lida só da classificação da construção em `prerender-manifest.json`. Rota
+produzida e não declarada reprova, qualquer que seja a forma; rota cuja forma
+observada diverge da declarada reprova nomeando as duas. A ausência de
+documento continua reprovando para as rotas que o declaram.
+
+O que a camada 2 continua não provando: o conteúdo de uma rota resolvida por
+requisição. Declarar a forma é declarar essa lacuna, rota a rota; ela está no
+ponto 1 de `docs/pontos-abertos.md`.
