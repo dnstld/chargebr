@@ -1,10 +1,11 @@
 # Pontos abertos
 
-**Atualizado em:** 25 de setembro de 2026, no arquivamento do ciclo
-`dynamic-route-readiness`
+**Atualizado em:** 25 de setembro de 2026, na aplicação do ciclo
+`verification-coverage`
 **Estado do repositório:** 7 capacidades vivas, 72 requisitos, 9 ciclos
-arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado. 8 pontos
-abertos; o ciclo `dynamic-route-readiness` fechou 3 e abriu 2
+arquivados, um change ativo (`verification-coverage`, que modifica 1 requisito
+de `workspace-verification` e acrescenta 1 ao ser arquivado); piloto do extrator
+ABVE v1 validado. 8 pontos abertos; este ciclo fechou 2 e abriu 2
 
 ## O que este arquivo é
 
@@ -16,8 +17,8 @@ Um ponto sai daqui quando um ciclo o fecha, e o ciclo que o fecha cita o número
 Um ponto novo entra com gatilho — sem gatilho, não é ponto aberto, é esquecimento
 com nome bonito.
 
-Quatro deles (1, 4, 10 e 11) atingem o próximo ciclo que criar rota de negócio.
-Vale ler os quatro antes de propor esse ciclo.
+Dois deles (1 e 10) atingem o próximo ciclo que criar rota de negócio. Vale ler
+os dois antes de propor esse ciclo.
 
 Os números não são reaproveitados: um ponto fechado deixa o seu vago, e a lista
 de fechados, no fim, diz qual ciclo o fechou.
@@ -48,29 +49,6 @@ provável até a camada 3. Hoje é o caso de `/prova/[id]`, que existe só para
 exercitar essa forma; cada rota de negócio declarada assim herda a mesma lacuna.
 
 **Onde está registrado:** `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
-
----
-
-## 4. `next-env.d.ts` fica fora de `.next/`
-
-**O que é:** o requisito de `workspace-verification` fala do diretório de
-artefatos de construção. `next-env.d.ts` é gerado pela construção, importa
-`./.next/types/routes.d.ts`, e mora fora de `.next/`. A redação não o cobre
-literalmente.
-
-**O que já está feito:** o arquivo está no `.gitignore` e no `exclude` do
-`tsconfig.json` da aplicação — e o `exclude` faz trabalho real, porque o
-`include` tem `"*.ts"`, que casa com um `.d.ts`. `verify:types` passa numa árvore
-sem `.next` porque o `tsc` não lê o arquivo, não porque uma bandeira esconde o
-erro.
-
-**O que continua aberto:** a redação do requisito é mais estreita que a intenção,
-que é *o estágio de tipos não depende do que a construção gera*. Do jeito que
-está, o próximo arquivo gerado fora de `.next/` passa despercebido.
-
-**Gatilho:** o próximo arquivo gerado fora de `.next/`, ou o próximo ciclo que
-tocar `workspace-verification`. Entra como requisito MODIFICADO, com proposta —
-não como edição de spec.
 
 ---
 
@@ -177,20 +155,44 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
 
 ---
 
-## 11. O guardião de fixture não cobre `apps/`
+## 12. Dois guardiões leem `next-env.d.ts`
 
-**O que é:** `tools/checks/fixture-origin.test.ts` varre só `packages/ui/src`.
-Uma fixture criada sob `apps/` nasceria fora do guardião, sem que a falta de
-origem declarada reprovasse.
+**O que é:** `style-literals` e `type-suppression` pulam `.next` pelo nome, mas
+não um arquivo gerado fora dele. `apps/backoffice/next-env.d.ts` entra na
+varredura dos dois. Hoje ambos passam sobre ele, porque o arquivo gerado não tem
+literal de estilo nem supressão.
 
-**Por que ficou aberto:** nenhuma fixture existe sob `apps/`. A rota de prova
-`/prova/[id]` não exibe dado, e por isso não tem fixture; estender o perímetro
-sem caso a verificar seria guardião sem objeto.
+**Por que ficou aberto:** o requisito "Artefato de construção não é conteúdo
+verificado", modificado pelo ciclo `verification-coverage`, cobre as três etapas
+de verificação de conteúdo: tipos, formatação e lint. Os guardiões rodam dentro
+da etapa de testes, e essa etapa lê saída de construção de propósito — é o
+objeto da camada 2. Estendê-los mudaria dois guardiões que o ciclo não precisava
+tocar.
 
-**Gatilho:** a primeira fixture sob `apps/`. O ciclo que a criar estende o
-perímetro do guardião no mesmo PR.
+**Gatilho:** o próximo ciclo que tocar `style-literals` ou `type-suppression`,
+ou o primeiro arquivo gerado que um deles reporte.
 
-**Onde está registrado:** proposta do ciclo `dynamic-route-readiness`, em
+**Onde está registrado:** proposta do ciclo `verification-coverage`, em
+"Lacunas registradas".
+
+---
+
+## 13. A prova da etapa de tipos acompanha a construção de `apps/backoffice`
+
+**O que é:** `apps/backoffice/tests/type-stage-inputs.test.ts` lista o que a
+checagem de tipos lê em todos os pacotes do workspace, mas só garante artefato
+presente para a construção que acabou de rodar no mesmo projeto de teste, a de
+`apps/backoffice`. Os projetos do Vitest não têm ordem entre si: uma segunda
+aplicação que construa no próprio projeto de teste pode ainda não ter
+construído quando a prova roda, e aí a prova olha a leitura dela sem os
+artefatos dela.
+
+**Por que ficou aberto:** só existe uma aplicação, e não há caso para decidir
+onde a prova mora quando houver duas.
+
+**Gatilho:** a segunda aplicação sob `apps/`.
+
+**Onde está registrado:** proposta do ciclo `verification-coverage`, em
 "Lacunas registradas".
 
 ---
@@ -208,6 +210,21 @@ perímetro do guardião no mesmo PR.
   em três grupos, a travessia relativa a partir de dois níveis passou a apontar
   o apelido, e o apelido passou a ser proibido de conter `..` — o que fechou
   `@/../outra/app/z`, que passava.
+- **4. `next-env.d.ts` fica fora de `.next/`** — fechado pelo ciclo
+  `verification-coverage`. O requisito "Artefato de construção não é conteúdo
+  verificado" deixou de falar só do diretório de artefatos: as etapas de tipos,
+  de formatação e de lint não leem arquivo que o versionamento ignora, dentro
+  ou fora de `.next/`. Formatação e lint passaram a usar o ignore do
+  versionamento no Biome, e `next-env.d.ts` saiu das duas. A checagem de tipos
+  ganhou prova sobre o que lê, em `apps/backoffice/tests/type-stage-inputs.test.ts`.
+  **Correção medida:** o texto deste ponto dizia que o `exclude` "faz trabalho
+  real" e que `verify:types` passa "não porque uma bandeira esconde o erro". A
+  primeira frase vale para o que a etapa lê: sem o `exclude`, a checagem de
+  `apps/backoffice` lê `next-env.d.ts`, `.next/types/routes.d.ts` e
+  `.next/types/root-params.d.ts`. A segunda não vale para o veredito: sem o
+  `exclude`, o `tsc` passa com ou sem `.next`, porque duas configurações
+  escondem o erro — importação de efeito colateral sem
+  `noUncheckedSideEffectImports`, e `skipLibCheck`.
 - **6. Um anel de foco deve ser a cor de ação?** — fechado pelo ciclo
   `dynamic-route-readiness`, por medição e não por decisão de gosto. A objeção
   era que um anel no mesmo matiz do texto que ele cerca se distingue só pela
@@ -221,3 +238,10 @@ perímetro do guardião no mesmo PR.
   **Reabre se** `outline-offset` for removido ou passar a `--space-0` em
   qualquer uso do anel — aí texto e anel ficam adjacentes a 1,380:1 e a objeção
   volta a valer. Nenhuma checagem cobre isso hoje.
+- **11. O guardião de fixture não cobre `apps/`** — fechado pelo ciclo
+  `verification-coverage`, sem esperar a primeira fixture: o gatilho deixava a
+  cobertura dependendo de alguém lembrar de estender o guardião no PR dela.
+  `tools/checks/fixture-origin.test.ts` varre `apps/*` e `packages/*` inteiros
+  e pula `.next`, como os outros guardiões de perímetro. A regra que ele aplica
+  passou a requisito vivo: "Fixture com origem declarada em todo o perímetro",
+  em `workspace-verification`.
