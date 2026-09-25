@@ -65,6 +65,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Preflight do source endpoint ANEEL — Pautas e Atas](preflight-source-endpoint-aneel-board-meetings.md)
 - [Collector local runtime v1](collector-local-runtime-v1.md)
 - [Decisão: extrator ABVE v1](decisao-extrator-abve-v1.md)
+- [Resultado do ensaio controlado do extrator ABVE v1](resultado-ensaio-extrator-abve-v1.md)
 - [Casos do piloto](casos-do-piloto.md)
 - [Checklist de revisão do piloto](checklist-de-revisao-do-piloto.md)
 - [Pacote de revisão independente de PILOT-01](revisao-pilot-01.md)
