@@ -28,13 +28,16 @@
               "options": {
                 "patterns": [
                   {
-                    "group": [
-                      "**/apps/**",
-                      "../../**",
-                      "../../../**",
-                      "../../../../**"
-                    ],
+                    "group": ["**/apps/**"],
                     "message": "Uma aplicação não alcança arquivo de outra: o que for comum entre duas aplicações é publicado por um pacote, com mapa de exportações e verificação próprios."
+                  },
+                  {
+                    "group": ["@/../**", "@/**/../**"],
+                    "message": "O apelido @/ parte da raiz da aplicação e não atravessa para cima: escreva o caminho a partir dela, sem '..'."
+                  },
+                  {
+                    "group": ["../../**", "../../../**", "../../../../**"],
+                    "message": "A partir de dois níveis, travessia relativa não se distingue de alcançar outra aplicação: importe o interior da própria aplicação pelo apelido @/."
                   },
                   {
                     "group": ["@chargebr/*/src/**", "**/packages/**"],

@@ -1,21 +1,27 @@
 # Pontos abertos
 
-**Atualizado em:** 25 de setembro de 2026, ao fim do discover do extrator ABVE v1
+**Atualizado em:** 25 de setembro de 2026, na aplicação do ciclo
+`dynamic-route-readiness`
 **Estado do repositório:** 7 capacidades vivas, 70 requisitos, 8 ciclos
-arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado
+arquivados, um change ativo (`dynamic-route-readiness`, que acrescenta 2
+requisitos a `backoffice-shell` ao ser arquivado); piloto do extrator ABVE v1
+validado. 8 pontos abertos; este ciclo fechou 3 e abriu 2
 
 ## O que este arquivo é
 
-O registro dos pontos que os oito primeiros ciclos deixaram em aberto **de
-propósito**. Nenhum é bloqueio, nenhum foi preenchido por suposição, e cada um
-tem um gatilho: a condição que obriga a retomá-lo.
+O registro dos pontos que os ciclos deixaram em aberto **de propósito**. Nenhum
+é bloqueio, nenhum foi preenchido por suposição, e cada um tem um gatilho: a
+condição que obriga a retomá-lo.
 
 Um ponto sai daqui quando um ciclo o fecha, e o ciclo que o fecha cita o número.
 Um ponto novo entra com gatilho — sem gatilho, não é ponto aberto, é esquecimento
 com nome bonito.
 
-Quatro deles (1, 2, 3 e 4) atingem o próximo ciclo que criar rota de negócio.
+Quatro deles (1, 4, 10 e 11) atingem o próximo ciclo que criar rota de negócio.
 Vale ler os quatro antes de propor esse ciclo.
+
+Os números não são reaproveitados: um ponto fechado deixa o seu vago, e a lista
+de fechados, no fim, diz qual ciclo o fechou.
 
 ---
 
@@ -37,51 +43,12 @@ comportamento que só exista depois da hidratação.
 "antes da primeira pintura". A camada 2 prova a condição necessária — um script
 síncrono posicionado antes de `<body>` —, nunca a suficiente.
 
+E uma rota resolvida por requisição não tem documento emitido: a camada 2 prova
+que ela existe e está declarada com essa forma, e nada sobre o conteúdo dela é
+provável até a camada 3. Hoje é o caso de `/prova/[id]`, que existe só para
+exercitar essa forma; cada rota de negócio declarada assim herda a mesma lacuna.
+
 **Onde está registrado:** `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
-
----
-
-## 2. Mapeamento de rota aninhada para arquivo emitido
-
-**O que é:** a camada 2 lê o HTML que `next build` emite. O caminho desse arquivo
-para a rota raiz foi observado e registrado. Para rota aninhada, não.
-
-**Por que ficou aberto:** o ciclo 8 emitiu uma rota só. Declarar o padrão a
-partir de um caso seria supor.
-
-**Gatilho:** a primeira rota aninhada. O ciclo que a criar observa o caminho
-emitido e o registra antes de declarar qualquer coisa sobre ele.
-
-**Risco associado:** `.next/server/app/*.html` é caminho interno ao Next e pode
-mudar de versão. A mitigação já está no código: o teste **reprova** quando o
-artefato não existe, nunca pula — ver
-`apps/backoffice/tests/emitted-document.test.ts`, função `readEmitted`.
-
----
-
-## 3. Falso positivo da regra de importação, a partir de profundidade 2
-
-**O que é:** o bloco `apps/**` de `biome.json` bane o grupo
-`["**/apps/**", "../../**", "../../../**", "../../../../**"]`. Os padrões
-relativos existem porque `**/apps/**` nunca dispara de dentro de uma aplicação —
-uma irmã se escreve `../../outra/...`.
-
-O efeito colateral: um arquivo em `app/a/b/` alcança a raiz do próprio app com
-`../../`, e isso está banido. A reprovação indevida começa em **profundidade 2**.
-
-**Por que importa mais do que parece:** `app/<rota>/[id]/page.tsx` já é
-profundidade 2, e um back office é feito de páginas `[id]`. Não é a primeira
-rota aninhada que dispara — é o primeiro segmento dinâmico. E é um falso
-positivo que **bloqueia código legítimo**, o que se lê como "o lint está
-quebrado" em vez de "a regra está dizendo algo".
-
-**A saída, quando chegar:** apelido de caminho, não afrouxamento. O
-`tsconfig.json` de `apps/backoffice` não tem `paths`; acrescentar
-`"@/*": ["./*"]` faz a aplicação importar o próprio interior sem travessia
-relativa, e o falso positivo deixa de existir com a regra intacta.
-
-**Gatilho:** o primeiro segmento dinâmico ou qualquer arquivo em profundidade 2
-sob `app/`.
 
 ---
 
@@ -131,32 +98,6 @@ razões.
 **Nota:** fechar este ponto **não** cala os avisos INFO de
 `openspec validate`. Aquele aviso é heurística de comprimento; foi o sintoma que
 levou ao problema, não o problema.
-
----
-
-## 6. Um anel de foco deve ser a cor de ação?
-
-**O que é:** o ciclo 7 fixou, por requisito, que `color.focus.ring` resolve para
-o mesmo primitivo de `color.action.primary` em cada tema. A razão foi **negativa**:
-deixar o anel em `indigo.400` em volta de texto `indigo.300` produziria dois
-índigos a **1,380:1** um do outro, diferença que se lê como falha de renderização
-e não como escolha.
-
-**O que continua aberto:** isso justifica preservar o invariante; não o eleva a
-princípio. Um indicador de foco no mesmo matiz do texto que ele cerca é mais
-fraco que um que contrasta com ele — um anel `indigo.300` em volta de texto
-`indigo.300` só se distingue pela forma, nunca pela cor.
-
-**Por que não foi respondido:** responder exige um componente com foco visível
-para medir, e o ciclo 7 não criou nenhum.
-
-**O que a resposta mudaria:** trocar o requisito de invariante por um requisito
-de contraste entre anel e conteúdo. Aí o valor de `focus.ring` deixa de ser
-consequência de `action.primary` e passa a ser decisão própria — e o piso de 3:1
-de objeto gráfico, que hoje não pode reprovar sozinho, vira restrição viva.
-
-**Onde está registrado:** Open Questions em
-`openspec/changes/archive/2026-09-22-dark-action-color/design.md`.
 
 ---
 
@@ -214,3 +155,70 @@ pelo caso e separar candidato de dado canônico antes de qualquer migration.
 
 **Onde está registrado:**
 `docs/decisao-pos-ensaio-extrator-abve-v1.md`.
+
+---
+
+## 10. A forma mista é recusada, não resolvida
+
+**O que é:** uma rota com parâmetro pré-renderizada para uma lista de valores e
+resolvida por requisição para valor fora dela — lista aberta, `fallback: null`
+em `prerender-manifest.json` — reprova na camada 2, declarada ou não. Só a
+lista fechada (`dynamicParams = false`) é aceita como pré-renderizada.
+
+**Por que ficou aberto:** a parte resolvida por requisição é o mesmo ponto cego
+que o ciclo `dynamic-route-readiness` fechou, e aceitá-la exigiria uma terceira
+forma de declaração que nenhum ciclo precisou. Recusar é o que não supõe.
+
+**Gatilho:** a primeira exigência que precise de uma rota pré-renderizada para
+uma lista e resolvida por requisição fora dela. O ciclo que a trouxer propõe a
+forma de declaração, com o que a camada 2 afirma sobre cada parte.
+
+**Onde está registrado:** requisito "Rotas construídas são as declaradas" de
+`backoffice-shell`; design do ciclo `dynamic-route-readiness`.
+
+---
+
+## 11. O guardião de fixture não cobre `apps/`
+
+**O que é:** `tools/checks/fixture-origin.test.ts` varre só `packages/ui/src`.
+Uma fixture criada sob `apps/` nasceria fora do guardião, sem que a falta de
+origem declarada reprovasse.
+
+**Por que ficou aberto:** nenhuma fixture existe sob `apps/`. A rota de prova
+`/prova/[id]` não exibe dado, e por isso não tem fixture; estender o perímetro
+sem caso a verificar seria guardião sem objeto.
+
+**Gatilho:** a primeira fixture sob `apps/`. O ciclo que a criar estende o
+perímetro do guardião no mesmo PR.
+
+**Onde está registrado:** proposta do ciclo `dynamic-route-readiness`, em
+"Lacunas registradas".
+
+---
+
+## Fechados
+
+- **2. Mapeamento de rota aninhada para arquivo emitido** — fechado pelo ciclo
+  `dynamic-route-readiness`. Não virou regra: cada documento é declarado pelo
+  caminho exato em que a construção o emite, e a trava de documentos nomeia o
+  caminho quando uma rota entra ou uma versão do Next o move. O mapeamento
+  observado está em `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
+- **3. Falso positivo da regra de importação, a partir de profundidade 2** —
+  fechado pelo ciclo `dynamic-route-readiness`. `apps/backoffice` ganhou o
+  apelido `@/*` por `paths`, sem `baseUrl`; a regra de `apps/**` foi repartida
+  em três grupos, a travessia relativa a partir de dois níveis passou a apontar
+  o apelido, e o apelido passou a ser proibido de conter `..` — o que fechou
+  `@/../outra/app/z`, que passava.
+- **6. Um anel de foco deve ser a cor de ação?** — fechado pelo ciclo
+  `dynamic-route-readiness`, por medição e não por decisão de gosto. A objeção
+  era que um anel no mesmo matiz do texto que ele cerca se distingue só pela
+  forma. Ela partia de uma premissa falsa: o anel nunca é adjacente ao texto.
+  `outline-offset` vale `--space-1`, 2px, e a âncora não tem fundo próprio, de
+  modo que entre texto e anel há 2px de superfície. O anel contra a superfície —
+  sua única cor adjacente — dá 6,316:1 no tema escuro e 12,210:1 no claro,
+  contra piso de 3:1 de objeto gráfico. A separação é feita pela lacuna, não
+  pela cor do anel. A leitura foi confirmada na bancada pelo dono do
+  repositório, nos dois temas: anel e texto lêem como duas coisas.
+  **Reabre se** `outline-offset` for removido ou passar a `--space-0` em
+  qualquer uso do anel — aí texto e anel ficam adjacentes a 1,380:1 e a objeção
+  volta a valer. Nenhuma checagem cobre isso hoje.

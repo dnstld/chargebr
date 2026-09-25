@@ -7,24 +7,65 @@ import { expect, test } from "vitest";
 const APP_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const BUILD_DIR = join(APP_ROOT, ".next");
 
-// O conjunto de documentos que a construção emite. Não é suposto: é o que a
-// execução registrada na tarefa 5.2 observou, caminho a caminho. Acrescentar
-// rota passa a ser ato deliberado — sem uma linha aqui, a verificação reprova.
-//
-// Os quatro que não são a rota raiz são documentos de erro do próprio
-// framework, e entram na declaração pela mesma razão que a rota raiz: o que a
-// construção emite é o que a declaração precisa cobrir, senão a comparação
-// precisaria de um filtro, e um filtro é onde uma rota nova se esconde.
-const DECLARED_DOCUMENTS: readonly string[] = [
-  "server/app/index.html",
-  "server/app/_global-error.html",
-  "server/app/_not-found.html",
-  "server/pages/404.html",
-  "server/pages/500.html",
-];
+// Como a construção entrega uma rota. Pré-renderizada: a resposta é produzida
+// durante a construção, e a rota lista os documentos que emite — nenhum, quando
+// a resposta não é documento, como a de uma rota de metadados. Resolvida por
+// requisição: a construção não produz resposta, e a rota não tem lista de
+// documentos — a camada 2 não alcança o que ela entrega, e declarar a forma é
+// declarar essa lacuna.
+type Form = "prerendered" | "on-demand";
+type Delivery =
+  | { form: "prerendered"; documents: readonly string[] }
+  | { form: "on-demand" };
 
-// O documento da rota raiz, que é a única rota desta aplicação.
+const FORMS: readonly Form[] = ["prerendered", "on-demand"];
+const FORM_LABEL: Readonly<Record<Form, string>> = {
+  prerendered: "pré-renderizada",
+  "on-demand": "resolvida por requisição",
+};
+
+// As rotas que a construção produz pela convenção de rotas da aplicação (App
+// Router), cada uma com a forma de entrega e os documentos. Não é suposto: é o
+// que a construção registrada no ciclo dynamic-route-readiness observou, rota a
+// rota e caminho a caminho. Acrescentar rota é ato deliberado — sem uma linha
+// aqui, a verificação reprova, qualquer que seja a forma.
+//
+// `/_global-error` e `/_not-found` são gerados pelo framework, mas dentro da
+// convenção: constam da lista de rotas dela e são pré-renderizados, e entram
+// aqui pela mesma razão que as demais. Um filtro é onde uma rota nova se
+// esconde.
+const DECLARED_ROUTES: Readonly<Record<string, Delivery>> = {
+  "/": { form: "prerendered", documents: ["server/app/index.html"] },
+  "/_global-error": {
+    form: "prerendered",
+    documents: ["server/app/_global-error.html"],
+  },
+  "/_not-found": {
+    form: "prerendered",
+    documents: ["server/app/_not-found.html"],
+  },
+  // Rota de prova: exercita a forma resolvida por requisição.
+  "/prova/[id]": { form: "on-demand" },
+};
+
+// As rotas que o framework gera sozinho fora da convenção, declaradas pelo nome
+// e pelos documentos, sem forma: fora do App Router nenhuma fonte única
+// classifica a forma. Qualquer outra rota fora da convenção reprova.
+const FRAMEWORK_ROUTES: Readonly<Record<string, readonly string[]>> = {
+  "/404": ["server/pages/404.html"],
+  "/500": ["server/pages/500.html"],
+};
+
+// O documento da rota raiz, sobre o qual as afirmações da moldura são feitas.
 const ROOT_DOCUMENT = "server/app/index.html";
+
+// Os três artefatos de onde a lista de rotas e a forma são lidas. São internos
+// ao framework, como o caminho do documento: por isso a ausência reprova e o
+// formato é conferido.
+const APP_ROUTES_MANIFEST = "app-path-routes-manifest.json";
+const PAGES_MANIFEST = "server/pages-manifest.json";
+const PRERENDER_MANIFEST = "prerender-manifest.json";
+const PRERENDER_MANIFEST_VERSION = 4;
 
 // O atributo pelo qual a camada de tokens aceita um tema imposto. A aplicação
 // não o usa, e nenhum script que ela emite pode conhecê-lo.
@@ -74,6 +115,135 @@ function readEmitted(documentPath: string): string {
   return readFileSync(fullPath, "utf8");
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function unrecognized(manifestPath: string, detail: string): Error {
+  return new Error(`formato não reconhecido em ${manifestPath}: ${detail}`);
+}
+
+// Todo manifesto é lido por aqui, sobre `readEmitted`: a ausência reprova
+// nomeando o caminho, e nunca vira lista vazia. Uma lista de rotas vazia por
+// padrão passaria verde sem rota nenhuma para comparar.
+function readManifest(manifestPath: string): unknown {
+  const text = readEmitted(manifestPath);
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw unrecognized(manifestPath, "o conteúdo não é JSON");
+  }
+}
+
+// Os manifestos de rota não declaram versão: o formato conferido é a forma do
+// valor, um objeto de cadeias.
+function readStringMap(manifestPath: string): Readonly<Record<string, string>> {
+  const manifest = readManifest(manifestPath);
+  if (!isRecord(manifest)) {
+    throw unrecognized(manifestPath, "esperado um objeto de cadeias");
+  }
+  const map: Record<string, string> = {};
+  for (const [key, value] of Object.entries(manifest)) {
+    if (typeof value !== "string") {
+      throw unrecognized(
+        manifestPath,
+        `esperado um objeto de cadeias; ${key} vale ${JSON.stringify(value)}`,
+      );
+    }
+    map[key] = value;
+  }
+  return map;
+}
+
+// As rotas da convenção de rotas da aplicação, página ou não.
+function conventionRoutes(): string[] {
+  return Object.values(readStringMap(APP_ROUTES_MANIFEST));
+}
+
+// As rotas fora da convenção.
+function outsideRoutes(): string[] {
+  return Object.keys(readStringMap(PAGES_MANIFEST));
+}
+
+interface Prerendered {
+  // Rotas que a construção classificou como pré-renderizadas.
+  routes: ReadonlySet<string>;
+  // Rotas com parâmetro pré-renderizadas para uma lista, com o que a
+  // construção faz com o valor fora dela.
+  fallbacks: ReadonlyMap<string, unknown>;
+}
+
+// A classificação da construção, e a única fonte da forma. Pré-renderizada é
+// a rota que aparece como `srcRoute` de uma entrada de `routes`, ou como chave
+// de `dynamicRoutes`. Documento nunca entra neste cálculo: uma rota de
+// metadados é pré-renderizada e não emite documento.
+function readPrerendered(): Prerendered {
+  const manifest = readManifest(PRERENDER_MANIFEST);
+  if (!isRecord(manifest)) {
+    throw unrecognized(PRERENDER_MANIFEST, "esperado um objeto");
+  }
+  if (manifest.version !== PRERENDER_MANIFEST_VERSION) {
+    throw unrecognized(
+      PRERENDER_MANIFEST,
+      `versão encontrada ${JSON.stringify(manifest.version)}; reconhecida ${PRERENDER_MANIFEST_VERSION}`,
+    );
+  }
+  const { routes, dynamicRoutes } = manifest;
+  if (!isRecord(routes) || !isRecord(dynamicRoutes)) {
+    throw unrecognized(
+      PRERENDER_MANIFEST,
+      "esperados os objetos routes e dynamicRoutes",
+    );
+  }
+
+  // `srcRoute` nulo é o de uma página fora da convenção pré-renderizada por
+  // função de dados — observado; ela não tem forma a ler aqui, e a lista de
+  // rotas já a reprova.
+  const prerendered = new Set<string>();
+  for (const [path, entry] of Object.entries(routes)) {
+    if (
+      !isRecord(entry) ||
+      (typeof entry.srcRoute !== "string" && entry.srcRoute !== null)
+    ) {
+      throw unrecognized(
+        PRERENDER_MANIFEST,
+        `routes["${path}"] sem srcRoute em cadeia ou nulo`,
+      );
+    }
+    if (entry.srcRoute !== null) prerendered.add(entry.srcRoute);
+  }
+
+  const fallbacks = new Map<string, unknown>();
+  for (const [route, entry] of Object.entries(dynamicRoutes)) {
+    if (!isRecord(entry) || !("fallback" in entry)) {
+      throw unrecognized(
+        PRERENDER_MANIFEST,
+        `dynamicRoutes["${route}"] sem fallback`,
+      );
+    }
+    prerendered.add(route);
+    fallbacks.set(route, entry.fallback);
+  }
+
+  return { routes: prerendered, fallbacks };
+}
+
+function observedForm(route: string, prerendered: Prerendered): Form {
+  return prerendered.routes.has(route) ? "prerendered" : "on-demand";
+}
+
+function declaredDocuments(): string[] {
+  const fromRoutes = Object.values(DECLARED_ROUTES).flatMap((delivery) =>
+    delivery.form === "prerendered" ? delivery.documents : [],
+  );
+  return [...fromRoutes, ...Object.values(FRAMEWORK_ROUTES).flat()];
+}
+
+function difference(left: Iterable<string>, right: Iterable<string>): string[] {
+  const exclude = new Set(right);
+  return [...new Set(left)].filter((item) => !exclude.has(item)).sort();
+}
+
 function parse(html: string): Document {
   const window = new Window();
   window.document.write(html);
@@ -89,18 +259,106 @@ function describeElement(element: Element): string {
   return `<${element.tagName.toLowerCase()}${id}>`;
 }
 
-// 5.3 — o conjunto emitido e o declarado são o mesmo, nos dois sentidos.
+// Rotas construídas são as declaradas — a lista de rotas que a construção
+// produz, nos dois sentidos, dentro e fora da convenção. Uma rota fora da
+// convenção declarada com forma reprova pelos dois lados: não é produzida pela
+// convenção, e fora dela não é das geradas pelo framework.
+test("a construção produz exatamente as rotas declaradas", () => {
+  const convention = conventionRoutes();
+  const outside = outsideRoutes();
+
+  // Os dois sentidos são afirmados sem interromper um ao outro: quando os dois
+  // divergem, a falha nomeia os dois lados.
+  expect
+    .soft(
+      difference(convention, Object.keys(DECLARED_ROUTES)),
+      "rota produzida e não declarada",
+    )
+    .toEqual([]);
+  expect
+    .soft(
+      difference(Object.keys(DECLARED_ROUTES), convention),
+      "rota declarada e não produzida pela convenção de rotas da aplicação",
+    )
+    .toEqual([]);
+  expect
+    .soft(
+      difference(outside, Object.keys(FRAMEWORK_ROUTES)),
+      "rota fora da convenção de rotas da aplicação que não é das geradas pelo framework",
+    )
+    .toEqual([]);
+  expect
+    .soft(
+      difference(Object.keys(FRAMEWORK_ROUTES), outside),
+      "rota gerada pelo framework declarada e não produzida",
+    )
+    .toEqual([]);
+});
+
+// A forma observada, lida só da classificação da construção, é a declarada.
+test("cada rota é entregue na forma declarada", () => {
+  const prerendered = readPrerendered();
+  const produced = new Set(conventionRoutes());
+
+  // Rota declarada e não produzida não tem forma observada: a lista de rotas já
+  // a reprova.
+  const divergent = Object.entries(DECLARED_ROUTES)
+    .filter(([route]) => produced.has(route))
+    .map(([route, delivery]) => ({
+      route,
+      declared: delivery.form,
+      observed: observedForm(route, prerendered),
+    }))
+    .filter(({ declared, observed }) => declared !== observed)
+    .map(
+      ({ route, declared, observed }) =>
+        `${route}: declarada ${FORM_LABEL[declared]}, observada ${FORM_LABEL[observed]}`,
+    );
+  expect(divergent, "forma divergente da declarada").toEqual([]);
+});
+
+// A forma mista — pré-renderizada para uma lista de valores e resolvida por
+// requisição fora dela — reprova, declarada ou não. Observado: lista aberta dá
+// `fallback: null`; lista fechada dá `fallback: false`.
+test("nenhuma rota com parâmetro é resolvida por requisição fora da lista pré-renderizada", () => {
+  const mixed = [...readPrerendered().fallbacks]
+    .filter(([, fallback]) => fallback !== false)
+    .map(
+      ([route, fallback]) => `${route} (fallback ${JSON.stringify(fallback)})`,
+    )
+    .sort();
+  expect(
+    mixed,
+    "rota pré-renderizada para uma lista e resolvida por requisição fora dela",
+  ).toEqual([]);
+});
+
+// Documentos emitidos são os declarados — o conjunto de `.html` sob `.next/` e
+// a união das listas declaradas, nos dois sentidos, caminho a caminho.
 test("a construção emite exatamente os documentos declarados", () => {
   const found: string[] = [];
   collectFiles(BUILD_DIR, ".html", found);
-  const emitted = found.map(emittedPath).sort();
-  const declared = [...DECLARED_DOCUMENTS].sort();
+  const emitted = found.map(emittedPath);
+  const declared = declaredDocuments();
 
-  const undeclared = emitted.filter((path) => !declared.includes(path));
-  expect(undeclared, "documento emitido e não declarado").toEqual([]);
+  // Os dois sentidos são afirmados sem interromper um ao outro.
+  expect
+    .soft(difference(emitted, declared), "documento emitido e não declarado")
+    .toEqual([]);
+  expect
+    .soft(difference(declared, emitted), "documento declarado e não emitido")
+    .toEqual([]);
+});
 
-  const missing = declared.filter((path) => !emitted.includes(path));
-  expect(missing, "documento declarado e não emitido").toEqual([]);
+// Cada forma de entrega é exercitada pela árvore.
+test("cada forma de entrega tem ao menos uma rota declarada", () => {
+  const declaredForms = new Set(
+    Object.values(DECLARED_ROUTES).map((delivery) => delivery.form),
+  );
+  const unexercised = FORMS.filter((form) => !declaredForms.has(form)).map(
+    (form) => FORM_LABEL[form],
+  );
+  expect(unexercised, "forma de entrega sem rota declarada").toEqual([]);
 });
 
 // 5.4 — o documento da rota raiz existe, e a ausência reprova com o caminho.
