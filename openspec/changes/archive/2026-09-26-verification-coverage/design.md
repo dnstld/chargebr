@@ -105,9 +105,10 @@ A tabela da proposta mostra que o veredito do `tsc` passa com ou sem artefato
 presente. Por isso a prova não pode ser "a etapa reprova". Ela afirma sobre o
 **conjunto de arquivos** que a etapa lê.
 
-**Onde a prova mora.** Num arquivo novo,
-`apps/backoffice/tests/type-stage-inputs.test.ts`, no projeto de teste que já
-constrói. As alternativas:
+**Onde a prova mora.** Em dois arquivos novos, no projeto de teste que já
+constrói: as afirmações em `apps/backoffice/tests/type-stage-inputs.test.ts`,
+e a listagem no preparo dele, `apps/backoffice/tests/type-stage.setup.ts`. As
+alternativas:
 
 - **Um guardião em `tools/checks/`.** Sem ordem garantida entre projetos, ele
   rodaria às vezes antes da construção. Numa árvore limpa de CI não haveria
@@ -120,11 +121,31 @@ O projeto se chama "documento emitido" e passa a conter uma prova que não é
 sobre documento. O nome fica: o que o projeto garante é "roda depois da
 construção", e renomeá-lo não muda nenhuma afirmação.
 
-**Como a leitura é obtida.** Para cada pacote do workspace, o teste executa o
+**Como a leitura é obtida.** Para cada pacote do workspace, o preparo executa o
 mesmo binário que a etapa usa: `tsc` da raiz, com `--noEmit`, `-p` apontando o
 `tsconfig.json` do pacote e `--listFilesOnly`. Para `verify:types`, pacote do
 workspace é cada diretório sob `apps/` e `packages/` com `package.json`. É o
 conjunto que `pnpm -r exec` alcança.
+
+**Por que a listagem é preparo, e não afirmação.** Dentro de uma afirmação,
+quem a chamasse primeiro pagaria o custo dela sob o limite de 5 s por teste. No
+CI, com as histórias do Storybook no Chromium rodando ao mesmo tempo, a
+listagem dos três pacotes levou 10,8 s e reprovou. Medido:
+
+| Forma | Medido | Destino |
+| --- | --- | --- |
+| Três `tsc` em sequência, dentro do teste | 1,2 s local, 10,8 s no CI | reprovou no CI |
+| Três `tsc` em paralelo | 0,59 s local | descartado: na razão local/CI observada, cerca de 4,9 s, no limite |
+| Um `tsc -b --listFilesOnly` | `error TS5094` | não existe |
+| Listagem no `globalSetup` | afirmações em 1 ms, 0 ms e 6 ms | escolhido |
+
+O preparo é declarado no `globalSetup` depois de `build.setup.ts` e guarda, por
+`project.provide`, a listagem de cada pacote, com o erro do `tsc` no lugar da
+lista quando ele não lista. `beforeAll` também caberia, porque o projeto
+declara `hookTimeout: 180_000`. O `globalSetup` foi preferido por ser onde a
+construção já roda, e porque com ele a ordem das afirmações deixa de decidir
+quem paga. Nenhum tempo limite foi aumentado, e nenhuma repetição foi
+acrescentada.
 
 A alternativa era montar o programa pela API do TypeScript. Ela foi descartada
 porque resolveria a configuração por outro caminho, que pode divergir de
@@ -155,6 +176,10 @@ só as dependências instaladas e as bibliotecas-padrão do compilador.
    um não é vazia.
 3. **Nenhum arquivo lido é ignorado.** A mensagem nomeia o pacote e cada
    arquivo, relativo à raiz.
+
+As afirmações 2 e 3 leem o que o preparo guardou. Sem o preparo declarado no
+projeto, as duas reprovam nomeando o arquivo que falta, em vez de afirmar sobre
+uma lista vazia.
 
 A prova negativa foi medida antes de ser declarada. Sem o `exclude`, o critério
 acusa exatamente os três arquivos que o cenário da spec nomeia, e
@@ -228,8 +253,11 @@ ciclo anterior:
 - **O teste passa a depender de git.** → Se o git não estiver disponível, ou
   sair com código diferente de 0 e 1, o teste falha com a saída de erro. A CI
   já faz checkout com git, e o Biome passa a depender dele do mesmo jeito.
-- **O custo do teste é uma listagem de `tsc` por pacote.** → Medido em cerca
-  de 0,4 s para `apps/backoffice`. É pequeno perto da construção.
+- **A listagem custa uma execução de `tsc` por pacote.** → Medido em 1,2 s
+  local e 10,8 s no CI. Roda no preparo, fora do limite por teste. A ordem
+  entre construção e listagem depende de o Vitest preparar os arquivos de
+  `globalSetup` na ordem declarada. O cenário sem o `exclude` prova essa ordem
+  por execução, porque a listagem só vê `.next/types/*` depois da construção.
 - **Uma versão do Next pode gerar outro arquivo fora de `.next/`.** → Se ele
   for ignorado e lido, a prova reprova nomeando o arquivo. Se não for ignorado,
   aparece em `git status` depois da verificação. Se deixar de gerar os dois

@@ -1,11 +1,10 @@
 # Pontos abertos
 
-**Atualizado em:** 25 de setembro de 2026, na aplicação do ciclo
+**Atualizado em:** 26 de setembro de 2026, no arquivamento do ciclo
 `verification-coverage`
-**Estado do repositório:** 7 capacidades vivas, 72 requisitos, 9 ciclos
-arquivados, um change ativo (`verification-coverage`, que modifica 1 requisito
-de `workspace-verification` e acrescenta 1 ao ser arquivado); piloto do extrator
-ABVE v1 validado. 8 pontos abertos; este ciclo fechou 2 e abriu 2
+**Estado do repositório:** 7 capacidades vivas, 73 requisitos, 10 ciclos
+arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado. 9 pontos
+abertos; o ciclo `verification-coverage` fechou 2 e abriu 3
 
 ## O que este arquivo é
 
@@ -194,6 +193,31 @@ onde a prova mora quando houver duas.
 
 **Onde está registrado:** proposta do ciclo `verification-coverage`, em
 "Lacunas registradas".
+
+---
+
+## 14. O portão pode aprovar tendo rodado menos testes do que existe
+
+**O que é:** `verify:test` é `pnpm test && vitest run --passWithNoTests`, e nada
+afirma quantos testes rodaram. Hoje o Vitest roda 219 testes em 55 arquivos. Se
+um problema de cache ou de configuração fizer arquivos deixarem de ser
+coletados, em vez de dar erro, o estágio passa verde com menos.
+
+**Por que importa:** é a mesma falha que o ciclo `dynamic-route-readiness`
+fechou — aprovar tendo verificado menos do que se pensa — e a mesma regra de que
+ausência reprova e nunca pula. As duas se aplicam a tudo, menos ao próprio
+portão.
+
+**Evidência de que não é hipótese:** durante o ciclo `verification-coverage`,
+quatro arquivos de história rodaram 0 testes numa execução. Aquilo reprovou por
+causa de um `SyntaxError`, não porque alguém contasse.
+
+**Gatilho:** não espera condição. É candidato a ciclo próprio, pequeno. Antes de
+propô-lo, confira se algum projeto do Vitest depende hoje de `--passWithNoTests`
+para não reprovar. Se depender, a bandeira tem razão de existir e o conserto é
+outro.
+
+**Onde está registrado:** corpo do PR #166, em "Ocorrência não explicada".
 
 ---
 
