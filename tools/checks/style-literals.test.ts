@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "vitest";
+import { notIgnoredByVersioning } from "./versioning";
 
 // Raiz do repositório, a partir da localização deste arquivo (tools/checks/).
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
@@ -161,9 +162,13 @@ function styleLiterals(): string[] {
     collectFiles(pkg, CSS_EXTENSIONS, cssFiles);
     collectFiles(pkg, SCRIPT_EXTENSIONS, scriptFiles);
   }
+  // Arquivo que o versionamento ignora não é conteúdo verificado, esteja ele
+  // dentro do diretório de artefatos ou fora dele.
   return [
-    ...cssFiles.flatMap(cssViolations),
-    ...scriptFiles.filter((f) => !f.endsWith(".d.ts")).flatMap(scriptViolations),
+    ...notIgnoredByVersioning(ROOT, cssFiles).flatMap(cssViolations),
+    ...notIgnoredByVersioning(ROOT, scriptFiles)
+      .filter((f) => !f.endsWith(".d.ts"))
+      .flatMap(scriptViolations),
   ];
 }
 

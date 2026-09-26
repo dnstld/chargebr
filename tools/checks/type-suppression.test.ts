@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "vitest";
+import { notIgnoredByVersioning } from "./versioning";
 
 // Raiz do repositório, a partir da localização deste arquivo (tools/checks/).
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
@@ -37,10 +38,13 @@ function collectSourceFiles(dir: string, found: string[]): void {
 }
 
 function suppressionsWithoutJustification(): string[] {
-  const files: string[] = [];
+  const collected: string[] = [];
   for (const area of PERIMETER) {
-    collectSourceFiles(join(ROOT, area), files);
+    collectSourceFiles(join(ROOT, area), collected);
   }
+  // Arquivo que o versionamento ignora não é conteúdo verificado, esteja ele
+  // dentro do diretório de artefatos ou fora dele.
+  const files = notIgnoredByVersioning(ROOT, collected);
 
   const offenders: string[] = [];
   for (const file of files) {
