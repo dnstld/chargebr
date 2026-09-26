@@ -136,6 +136,81 @@ export async function expectNoInteractiveInPlot(
   }
 }
 
+// Referência do que "sem fundo próprio" significa no motor atual: o valor
+// computado de um elemento com `background-color: transparent`, obtido em
+// tempo de execução, e não uma string escrita à mão — a comparação não pode
+// depender de como o motor formata a cor.
+function noBackgroundColor(): string {
+  const probe = document.createElement("div");
+  probe.style.backgroundColor = "transparent";
+  document.body.appendChild(probe);
+  const value = getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return value;
+}
+
+// A superfície de gráfico é identificada pela cor computada que ela pinta, e
+// não pelo atributo que a marca hoje: se a forma de marcar a superfície
+// mudar sem nenhum elemento se mover, esta afirmação não pode reprovar por
+// isso.
+function chartSurfaceColor(chart: HTMLElement): string {
+  const probe = document.createElement("div");
+  probe.style.backgroundColor = "var(--color-chart-surface)";
+  chart.appendChild(probe);
+  const value = getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return value;
+}
+
+// De que superfície um elemento está pintado: sobe os ancestrais sem sair do
+// gráfico até achar o primeiro fundo próprio. A busca nunca sai de `chart` —
+// é esse limite, e não o valor da cor, que distingue "pintado pela página" de
+// "pintado pelo gráfico" mesmo quando os dois coincidem (hoje, no tema claro,
+// `color.chart.surface` e `color.surface.base` resolvem para o mesmo valor).
+function paintedColor(
+  element: Element,
+  boundary: Element,
+  noBackground: string,
+): string {
+  let node: Element | null = element;
+  while (node !== null) {
+    const background = getComputedStyle(node).backgroundColor;
+    if (background !== noBackground) return background;
+    if (node === boundary) break;
+    node = node.parentElement;
+  }
+  return noBackground;
+}
+
+// Nome do gráfico, legenda, ausências declaradas e representação em texto
+// ficam na superfície da página: nenhum deles é pintado pela cor da
+// superfície de gráfico. Roda em toda história de gráfico, e portanto nos
+// dois temas; elemento ausente (legenda de uma série só, sem ausência, sem
+// tabela num gráfico bloqueado) é ignorado, e não conta como violação.
+export async function expectTextOutsideChartSurface(
+  canvasElement: HTMLElement,
+): Promise<void> {
+  const chart = chartOf(canvasElement);
+  const noBackground = noBackgroundColor();
+  const surface = chartSurfaceColor(chart);
+  const parts: [string, Element | null][] = [
+    ["nome do gráfico", chart.querySelector(":scope > figcaption")],
+    ["legenda", chart.querySelector("[data-legend]")],
+    ["ausências declaradas", chart.querySelector("[data-absences]")],
+    ["representação em texto", chart.querySelector("[data-value-table]")],
+  ];
+  const violations = parts
+    .filter((part): part is [string, Element] => part[1] !== null)
+    .filter(
+      ([, element]) => paintedColor(element, chart, noBackground) === surface,
+    )
+    .map(([label]) => label);
+  await expect(
+    violations,
+    "elemento de texto pintado pela cor da superfície de gráfico",
+  ).toEqual([]);
+}
+
 // Projeção bloqueada substitui o gráfico. Nem eixo, nem grade, nem rótulo de
 // escala, nem tabela de valores: eixo vazio comunica intervalo e ordem de
 // grandeza, e isso é informação sobre um dado que a metodologia mandou não
@@ -166,8 +241,11 @@ export async function expectBlockedReplacesChart(
 
   // A proibição de interativo vale também no caminho em que o desenho é
   // substituído: sem superfície de gráfico, e com a primitiva que ocupou o
-  // lugar dela igualmente sem foco nem ponteiro.
+  // lugar dela igualmente sem foco nem ponteiro. O nome do gráfico segue fora
+  // da superfície de gráfico mesmo bloqueado — é o único dos quatro elementos
+  // de texto que ainda existe nesse estado.
   await expectNoInteractiveInPlot(canvasElement);
+  await expectTextOutsideChartSurface(canvasElement);
   if (blocked !== null)
     await expectNoInteractiveWithin(blocked, "projeção bloqueada");
   for (const reason of reasons) {

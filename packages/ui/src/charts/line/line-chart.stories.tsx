@@ -7,6 +7,7 @@ import {
   expectNoLegend,
   expectNoSegmentAcross,
   expectTextEquivalent,
+  expectTextOutsideChartSurface,
   expectUnresolvedHatchedAndDetached,
 } from "../chart.assert";
 import {
@@ -44,6 +45,7 @@ export const TresSeries: Story = {
   },
   play: async ({ canvasElement }) => {
     await expectNoInteractiveInPlot(canvasElement);
+    await expectTextOutsideChartSurface(canvasElement);
     await expectLegendNamesSeries(
       canvasElement,
       THREE_SERIES.map((one) => one.name),
@@ -82,6 +84,7 @@ export const UmaSerie: Story = {
   },
   play: async ({ canvasElement }) => {
     await expectNoInteractiveInPlot(canvasElement);
+    await expectTextOutsideChartSurface(canvasElement);
     await expectNoLegend(canvasElement);
     await expectTextEquivalent(canvasElement, [CURRENT_METHODOLOGY]);
   },
