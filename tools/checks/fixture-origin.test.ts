@@ -14,13 +14,19 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // a ser lida como derivada do contrato, que é exatamente o que a mudança que
 // as autorizou não pode permitir.
 //
-// Perímetro: todo arquivo sob um diretório chamado `fixtures` em
-// packages/ui/src. A declaração é lida pela árvore sintática: precisa ser
-// `export const FIXTURE_ORIGIN: FixtureOrigin = "<origem>"` com origem
-// conhecida, e `export const FIXTURE_ORIGIN_NOTE = "<texto não vazio>"`.
-const PERIMETER = join(ROOT, "packages/ui/src");
+// Perímetro: todo arquivo sob um diretório chamado `fixtures` em apps/* e
+// packages/*, e nada mais. Área nova do perímetro entra na varredura sem
+// edição aqui: a próxima fixture tende a nascer numa aplicação, alimentando uma
+// tela, e o trabalho do guardião é pegar a primeira. A declaração é lida pela
+// árvore sintática: precisa ser `export const FIXTURE_ORIGIN: FixtureOrigin =
+// "<origem>"` com origem conhecida, e `export const FIXTURE_ORIGIN_NOTE =
+// "<texto não vazio>"`.
+const PERIMETER = ["packages", "apps"];
 const FIXTURE_DIR = "fixtures";
-const SKIPPED_DIRS = new Set(["node_modules", "storybook-static"]);
+// `.next` é saída da construção, que pode reproduzir nomes da árvore de origem;
+// `node_modules` traz pacotes publicados com diretórios `fixtures` que não são
+// do repositório. Nenhum dos dois é fixture daqui.
+const SKIPPED_DIRS = new Set(["node_modules", "storybook-static", ".next"]);
 const EXTENSIONS = [".ts", ".tsx"];
 
 const ORIGIN = "FIXTURE_ORIGIN";
@@ -32,7 +38,7 @@ function collectFixtureFiles(dir: string, inFixtures: boolean, found: string[]):
   try {
     entries = readdirSync(dir);
   } catch {
-    return;
+    return; // diretório do perímetro ainda não existe (ex.: apps/)
   }
   for (const entry of entries) {
     if (SKIPPED_DIRS.has(entry)) continue;
@@ -80,7 +86,9 @@ function declarationsIn(file: string): Declarations {
 
 function fixtureFiles(): string[] {
   const found: string[] = [];
-  collectFixtureFiles(PERIMETER, false, found);
+  for (const area of PERIMETER) {
+    collectFixtureFiles(join(ROOT, area), false, found);
+  }
   return found;
 }
 
