@@ -7,6 +7,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Empresa e visão](empresa-e-visao.md)
 - [Estratégia de produto](estrategia-de-produto.md)
 - [Metodologia de pesquisa e inteligência](metodologia-de-pesquisa-e-inteligencia.md)
+- [A forma do produto, e o que ainda não foi decidido](forma-do-produto.md) — ponto de partida da fase de desenho; o que está resolvido e o que não está.
 
 ## Validação
 
