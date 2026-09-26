@@ -20,7 +20,9 @@ function benchProject(theme: Theme): TestProjectConfiguration {
     // diretório de otimização só eles escrevem e servem os mesmos arquivos ao
     // mesmo tempo: o que perde a corrida recebe bytes de um arquivo em
     // reescrita e reprova com SyntaxError em histórias sorteadas.
-    cacheDir: fileURLToPath(new URL(`./node_modules/.bench/${theme}`, import.meta.url)),
+    cacheDir: fileURLToPath(
+      new URL(`./node_modules/.bench/${theme}`, import.meta.url),
+    ),
     // Pré-empacotamento explícito, antes da execução; ver optimize-deps.ts.
     optimizeDeps: BENCH_OPTIMIZE_DEPS,
     test: {

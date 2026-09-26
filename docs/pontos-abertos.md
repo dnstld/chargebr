@@ -1,16 +1,17 @@
 # Pontos abertos
 
-**Atualizado em:** 26 de setembro de 2026, no arquivamento do ciclo
-`verification-coverage`
+**Atualizado em:** 26 de setembro de 2026, no PR que arrumou a verificação
 **Estado do repositório:** 7 capacidades vivas, 73 requisitos, 10 ciclos
-arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado. 9 pontos
-abertos; o ciclo `verification-coverage` fechou 2 e abriu 3
+arquivados, nenhum change ativo. **4 pontos abertos**
 
 ## O que este arquivo é
 
 O registro dos pontos que os ciclos deixaram em aberto **de propósito**. Nenhum
 é bloqueio, nenhum foi preenchido por suposição, e cada um tem um gatilho: a
 condição que obriga a retomá-lo.
+
+Este registro cobre **a frente de interface e nada mais**. A frente de coleta tem
+processo próprio e os pontos dela não moram aqui.
 
 Um ponto sai daqui quando um ciclo o fecha, e o ciclo que o fecha cita o número.
 Um ponto novo entra com gatilho — sem gatilho, não é ponto aberto, é esquecimento
@@ -95,45 +96,6 @@ por dot e small-multiples, então não há lacuna de cobertura — só de forma.
 
 ---
 
-## 8. O extrator ABVE cobre somente um caso vivo
-
-**O que é:** o extrator ABVE v1 foi validado com o item WordPress `19617`, uma
-afirmação mensal de emplacamentos BEV já representada pela carga canônica `0003`.
-Ele não demonstrou generalização para outra estrutura editorial, sujeito,
-unidade, período, geografia ou resultado de revisão.
-
-**Por que ficou aberto:** um único resultado correto prova o piloto, não uma
-gramática geral das publicações ABVE. Ampliar a regra agora transformaria
-hipóteses em contrato.
-
-**Gatilho:** uma necessidade concreta de extrair outro item ABVE. O novo ciclo
-deverá selecionar casos antes de implementar e demonstrar ao menos um resultado
-positivo e um `no_candidates` vivo, sem reduzir as garantias do piloto.
-
-**Onde está registrado:**
-`docs/decisao-pos-ensaio-extrator-abve-v1.md`.
-
----
-
-## 9. Persistência de candidatos ainda não tem caso que a exija
-
-**O que é:** candidatos e revisão existem apenas como artefatos locais privados.
-Não há tabela para candidato, decisão humana ou histórico de correção.
-
-**Por que ficou aberto:** o único ensaio vivo terminou em `link_existing`. Nada
-novo precisava ser persistido, e os estados `accept_new`, `correct` e `reject`
-ainda não foram exercitados num caso real. Modelar agora exigiria supor autoria,
-transições, retenção, concorrência e relação com o canônico.
-
-**Gatilho:** o primeiro candidato vivo cuja decisão ou histórico não possa ser
-preservado com segurança em artefato local privado. A modelagem deverá começar
-pelo caso e separar candidato de dado canônico antes de qualquer migration.
-
-**Onde está registrado:**
-`docs/decisao-pos-ensaio-extrator-abve-v1.md`.
-
----
-
 ## 10. A forma mista é recusada, não resolvida
 
 **O que é:** uma rota com parâmetro pré-renderizada para uma lista de valores e
@@ -154,75 +116,26 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
 
 ---
 
-## 12. Dois guardiões leem `next-env.d.ts`
-
-**O que é:** `style-literals` e `type-suppression` pulam `.next` pelo nome, mas
-não um arquivo gerado fora dele. `apps/backoffice/next-env.d.ts` entra na
-varredura dos dois. Hoje ambos passam sobre ele, porque o arquivo gerado não tem
-literal de estilo nem supressão.
-
-**Por que ficou aberto:** o requisito "Artefato de construção não é conteúdo
-verificado", modificado pelo ciclo `verification-coverage`, cobre as três etapas
-de verificação de conteúdo: tipos, formatação e lint. Os guardiões rodam dentro
-da etapa de testes, e essa etapa lê saída de construção de propósito — é o
-objeto da camada 2. Estendê-los mudaria dois guardiões que o ciclo não precisava
-tocar.
-
-**Gatilho:** o próximo ciclo que tocar `style-literals` ou `type-suppression`,
-ou o primeiro arquivo gerado que um deles reporte.
-
-**Onde está registrado:** proposta do ciclo `verification-coverage`, em
-"Lacunas registradas".
-
----
-
-## 13. A prova da etapa de tipos acompanha a construção de `apps/backoffice`
-
-**O que é:** `apps/backoffice/tests/type-stage-inputs.test.ts` lista o que a
-checagem de tipos lê em todos os pacotes do workspace, mas só garante artefato
-presente para a construção que acabou de rodar no mesmo projeto de teste, a de
-`apps/backoffice`. Os projetos do Vitest não têm ordem entre si: uma segunda
-aplicação que construa no próprio projeto de teste pode ainda não ter
-construído quando a prova roda, e aí a prova olha a leitura dela sem os
-artefatos dela.
-
-**Por que ficou aberto:** só existe uma aplicação, e não há caso para decidir
-onde a prova mora quando houver duas.
-
-**Gatilho:** a segunda aplicação sob `apps/`.
-
-**Onde está registrado:** proposta do ciclo `verification-coverage`, em
-"Lacunas registradas".
-
----
-
-## 14. O portão pode aprovar tendo rodado menos testes do que existe
-
-**O que é:** `verify:test` é `pnpm test && vitest run --passWithNoTests`, e nada
-afirma quantos testes rodaram. Hoje o Vitest roda 219 testes em 55 arquivos. Se
-um problema de cache ou de configuração fizer arquivos deixarem de ser
-coletados, em vez de dar erro, o estágio passa verde com menos.
-
-**Por que importa:** é a mesma falha que o ciclo `dynamic-route-readiness`
-fechou — aprovar tendo verificado menos do que se pensa — e a mesma regra de que
-ausência reprova e nunca pula. As duas se aplicam a tudo, menos ao próprio
-portão.
-
-**Evidência de que não é hipótese:** durante o ciclo `verification-coverage`,
-quatro arquivos de história rodaram 0 testes numa execução. Aquilo reprovou por
-causa de um `SyntaxError`, não porque alguém contasse.
-
-**Gatilho:** não espera condição. É candidato a ciclo próprio, pequeno. Antes de
-propô-lo, confira se algum projeto do Vitest depende hoje de `--passWithNoTests`
-para não reprovar. Se depender, a bandeira tem razão de existir e o conserto é
-outro.
-
-**Onde está registrado:** corpo do PR #166, em "Ocorrência não explicada".
-
----
-
 ## Fechados
 
+- **12. Dois guardiões leem `next-env.d.ts`** — fechado pelo PR que arrumou a
+  verificação. `style-literals` e `type-suppression` deixaram de pular
+  diretório de artefato pelo nome e passaram a filtrar pelo que o versionamento
+  ignora, a mesma fonte que as etapas de formatação e de lint já usavam, em
+  `tools/checks/versioning.ts`. `git check-ignore` sem responder reprova, em vez
+  de o silêncio ser lido como "nada ignorado".
+- **13. A prova da etapa de tipos acompanha a construção de `apps/backoffice`** —
+  fechado pelo mesmo PR, sem esperar a segunda aplicação, pela mesma razão que
+  fechou o ponto 11: o gatilho dependia de alguém lembrar. Os artefatos exigidos
+  passaram a ser derivados de `apps/` em vez de lista fixa, então a segunda
+  aplicação faz a prova reprovar nomeando o artefato que falta. Onde a prova
+  mora com duas aplicações continua sendo decisão do ciclo que trouxer a
+  segunda; o que não depende de memória é o aviso.
+- **14. O portão pode aprovar tendo rodado menos testes do que existe** —
+  fechado pelo mesmo PR. `--passWithNoTests` saiu de `verify:test`: nenhum
+  projeto do Vitest dependia da bandeira, e sem ela arquivo que colete zero
+  teste e projeto que colete zero arquivo reprovam. **Medição:** `pnpm verify`
+  passa inteiro sem a bandeira.
 - **2. Mapeamento de rota aninhada para arquivo emitido** — fechado pelo ciclo
   `dynamic-route-readiness`. Não virou regra: cada documento é declarado pelo
   caminho exato em que a construção o emite, e a trava de documentos nomeia o

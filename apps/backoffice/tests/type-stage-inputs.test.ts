@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, inject, test } from "vitest";
@@ -21,18 +21,41 @@ const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 // tools/checks/ olharia às vezes uma árvore sem artefato algum. O que a etapa
 // lê é listado no preparo, por `type-stage.setup.ts`, depois da construção;
 // as afirmações leem o que foi guardado, e são elas que reprovam.
+//
+// A aplicação que constrói é esta, e o dia em que houver uma segunda a prova
+// olharia a leitura dela sem os artefatos dela — sem ordem entre projetos,
+// nada garante que ela já construiu. Os artefatos exigidos são por isso
+// derivados de `apps/`, e não uma lista fixa: com uma segunda aplicação, a
+// prova reprova nomeando o artefato que falta, em vez de passar calada. O
+// ciclo que trouxer a segunda decide onde a prova mora; o que não depende de
+// ninguém lembrar é o aviso.
 
 // Sem estes pacotes na enumeração, a varredura teria deixado de casar com o
 // workspace e passaria sem ter olhado nada.
 const EXPECTED_PACKAGES = ["apps/backoffice", "packages/tokens", "packages/ui"];
 
-// O par pelo qual a dependência passaria: o arquivo que a construção gera fora
-// do diretório de artefatos e o que ele importa de dentro. Sem eles presentes,
-// a afirmação sobre o que a etapa lê seria vazia.
-const BUILD_ARTIFACTS = [
-  "apps/backoffice/next-env.d.ts",
-  "apps/backoffice/.next/types/routes.d.ts",
-];
+// O par pelo qual a dependência passaria, em cada aplicação: o arquivo que a
+// construção gera fora do diretório de artefatos e o que ele importa de dentro.
+// Sem eles presentes, a afirmação sobre o que a etapa lê seria vazia.
+const BUILD_ARTIFACT_NAMES = ["next-env.d.ts", ".next/types/routes.d.ts"];
+
+// Toda aplicação sob `apps/`, e não só a que constrói neste projeto. Aplicação
+// que não seja do mesmo framework reprova aqui, o que é a direção certa: ela
+// obriga o ciclo que a trouxer a dizer o que a etapa de tipos lê nela.
+function buildArtifacts(): string[] {
+  let entries: string[];
+  try {
+    entries = readdirSync(join(ROOT, "apps"));
+  } catch {
+    return [];
+  }
+  return entries
+    .filter((entry) => existsSync(join(ROOT, "apps", entry, "package.json")))
+    .flatMap((entry) =>
+      BUILD_ARTIFACT_NAMES.map((name) => `apps/${entry}/${name}`),
+    )
+    .sort();
+}
 
 // Sem o preparo declarado no projeto, não há listagem: a ausência reprova,
 // nomeando o que faltou, em vez de a prova afirmar sobre uma lista vazia.
@@ -69,7 +92,9 @@ function ignoredByVersioning(files: string[]): Set<string> {
 }
 
 test("a construção deixou os artefatos sobre os quais a prova afirma", () => {
-  const missing = BUILD_ARTIFACTS.filter(
+  const artifacts = buildArtifacts();
+  expect(artifacts).not.toEqual([]);
+  const missing = artifacts.filter(
     (artifact) => !existsSync(join(ROOT, artifact)),
   );
   expect(missing).toEqual([]);
