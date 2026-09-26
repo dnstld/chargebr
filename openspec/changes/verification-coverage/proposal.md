@@ -80,8 +80,9 @@ feita sobre essa leitura.
 
   A segunda obrigação, "deixar a árvore versionada inalterada", não muda.
 - A checagem de tipos ganha prova por execução. É um teste que roda depois da
-  construção, lista o que a etapa de tipos lê em cada pacote do workspace e
-  reprova se algum desses arquivos for ignorado pelo versionamento. Ele também
+  construção. O que a etapa de tipos lê em cada pacote do workspace é listado
+  no preparo do projeto de teste, e o teste reprova se algum desses arquivos
+  for ignorado pelo versionamento. Ele também
   reprova se a construção não deixou os artefatos que ele procura: sem eles, a
   afirmação seria vazia.
 - Formatação e lint passam a respeitar o que o versionamento ignora. É a mesma
@@ -116,10 +117,12 @@ Nenhuma.
   encontradas continuam as mesmas: medido, os únicos diretórios `fixtures`
   fora de `node_modules` são `packages/ui/src/charts/fixtures` e
   `packages/ui/src/domain/fixtures`.
-- **Prova da etapa de tipos:** um teste novo em `apps/backoffice/tests/`, que
-  roda depois da construção que o projeto de teste já faz. Não há construção
-  nova nem estágio novo.
-- **Configuração:** `biome.json` passa a usar o ignore do versionamento.
+- **Prova da etapa de tipos:** um teste novo e o preparo dele em
+  `apps/backoffice/tests/`, que rodam depois da construção que o projeto de
+  teste já faz. Não há construção nova nem estágio novo.
+- **Configuração:** `biome.json` passa a usar o ignore do versionamento, e
+  `apps/backoffice/vitest.config.ts` declara o preparo da prova no
+  `globalSetup`, depois da construção.
 - **Registros:** `docs/pontos-abertos.md` fecha os pontos 4 e 11 citando este
   ciclo e abre os dois pontos da seção seguinte, cada um com gatilho.
 - **Intocados:**
@@ -127,6 +130,32 @@ Nenhuma.
   - `packages/` inteiro, e o tsconfig da aplicação;
   - os guardiões `style-literals`, `type-suppression` e `component-vocabulary`;
   - a segunda obrigação do requisito do ponto 4.
+
+## Correção feita depois da reprovação no CI
+
+O primeiro run do CI de `feat/verification-coverage` reprovou a prova da etapa
+de tipos por tempo. A listagem do `tsc` era paga pela afirmação que a chamasse
+primeiro, sob o limite de 5 s por teste. Localmente levava 1,2 s; no CI, com as
+histórias do Storybook no Chromium rodando ao mesmo tempo, 10,8 s. A correção,
+em `0a3af75`, moveu a listagem para o preparo do projeto de teste. As
+afirmações não mudaram, e os cenários reprovam no mesmo lugar e nomeando o
+mesmo que antes. As medições estão no corpo do PR #166.
+
+Os artefatos foram corrigidos antes do arquivamento, porque passaram a
+descrever a estrutura anterior:
+
+- **`design.md`:**
+  - onde a prova mora: dois arquivos, e não um;
+  - quem executa o `tsc`: o preparo, e não o teste, com as alternativas
+    medidas;
+  - o que acontece sem o preparo declarado;
+  - o risco de custo, que dizia 0,4 s e "pequeno perto da construção".
+- **Esta proposta:** What Changes e Impact passam a nomear o preparo e
+  `apps/backoffice/vitest.config.ts`.
+- **`tasks.md`:** entra a tarefa 4.6, marcada no próprio texto como
+  acrescentada depois da reprovação, e não planejada.
+
+A spec não muda: nenhum texto de prova diz onde o `tsc` roda.
 
 ## Lacunas registradas, e não preenchidas
 

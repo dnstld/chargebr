@@ -29,6 +29,7 @@ checagem de tipos. Cada correção é provada contra o registro de antes.
 - [x] 4.3 Desligar a construção em `apps/backoffice/tests/build.setup.ts` e remover `apps/backoffice/.next/` e `apps/backoffice/next-env.d.ts`; pronto quando `type-stage-inputs.test.ts` falha nomeando os dois caminhos ausentes, sem nenhuma afirmação reportada como pulada, e o plantio está revertido
 - [x] 4.4 Plantar um pacote descartável `packages/probe/` com `package.json` e sem `tsconfig.json`; pronto quando `type-stage-inputs.test.ts` falha nomeando `packages/probe`, e o pacote descartável foi removido
 - [x] 4.5 Executar `type-stage-inputs.test.ts` com `GIT_DIR` apontando para um diretório inexistente; pronto quando o teste falha exibindo a saída de erro do git, e não passa nem pula
+- [x] 4.6 Acrescentada depois da reprovação no CI, e não planejada; ver "Correção feita depois da reprovação no CI" na proposta. Mover a listagem do `tsc` para `apps/backoffice/tests/type-stage.setup.ts`, declarado no `globalSetup` do projeto depois de `build.setup.ts`; pronto quando os cenários de 4.2 a 4.5 reprovam na mesma afirmação e nomeando o mesmo que antes, o preparo fora do `globalSetup` faz as afirmações 2 e 3 reprovarem nomeando o arquivo que falta, e nenhum tempo limite nem repetição foi acrescentado
 
 ## 5. Registros
 
