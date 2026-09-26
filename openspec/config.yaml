@@ -11,6 +11,14 @@ context: |
   Fase atual: criação da biblioteca de interface e do shell do back office.
   Decisões estruturais em docs/decisao-configuracao-inicial-do-workspace.md.
 
+  Leia antes de refinar ou propor qualquer coisa:
+  - docs/pontos-abertos.md — o que está aberto de propósito, com o gatilho de
+    cada ponto. Se o trabalho toca um ponto, cite o número.
+  - docs/forma-do-produto.md — o que do produto está resolvido e o que não está.
+    Muita pergunta de arquitetura é derivada de uma que está em aberto ali;
+    responder a de cima sem ver a de baixo decide a maior por acidente.
+  - docs/README.md — o índice das decisões anteriores.
+
   ## Stack fixada
 
   - Monorepo pnpm workspaces, apenas apps/* e packages/*

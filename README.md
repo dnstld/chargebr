@@ -61,13 +61,50 @@ O trabalho de interface acontece em ciclos spec-driven com OpenSpec: a decisão 
 escrita e revisada **antes** do código, e o código só é dado como pronto quando
 uma execução o prova.
 
-O passo a passo operacional — o ciclo, as convenções de branch, commit e pull
-request, e o que nunca fazer — está em **[`CLAUDE.md`](CLAUDE.md)**, na raiz.
-Está lá, e não aqui, porque agentes leem aquele arquivo sozinhos a cada sessão.
+### O fluxo
 
-Antes de propor um ciclo, leia
-**[`docs/pontos-abertos.md`](docs/pontos-abertos.md)**: é o registro do que
-ficou em aberto de propósito, com o gatilho de cada ponto.
+Uma conversa, com os papéis se revezando nela. O dono do repositório é tocado em
+três pontos, e só neles: as perguntas que só ele responde, um impasse real entre
+agentes, e o pull request.
+
+| | passo | quem |
+| --- | --- | --- |
+| 1 | **refinar** — afiar a intenção e perguntar ao dono o que só ele responde | `/opsx:explore` |
+| 2 | **levantar** — apurar o que existe. Fato, um agente só, sem debate | skill `code-analyst` |
+| 3 | **confrontar** — nas decisões caras de reverter, dois agentes independentes: um propõe o melhor caminho, outro procura onde aquilo quebra | briefing por questão |
+| 4 | **convergir** — o gerente põe os dois lado a lado; impasse que a medição não resolve sobe para o dono | gerente |
+| 5 | **propor** — o ciclo nasce do que convergiu | `/opsx:propose` |
+| 6 | **revisar** — quem revisa não escreveu o que revisa, e mede por conta própria | skill `independent-review` |
+| 7 | **pull request** — o dono revisa e mergeia | dono |
+
+Depois vêm a implementação (`/opsx:apply`), nova revisão, e o arquivamento
+(`/opsx:archive`).
+
+**Fato tem um agente. Decisão cara de reverter tem o par.** Sem esse corte, tudo
+custa o dobro sem ganhar nada.
+
+### A regra que vale acima de tudo
+
+Nenhum agente manda em outro. Um achado é **posição com evidência**, nunca
+instrução, e traz sempre três partes: o que se mediu, o que se conclui, e o que
+faria mudar de ideia. Discordância se resolve por medição; quando a medição não
+decide, registram-se as duas posições e leva-se ao dono.
+
+Está por extenso em [`CLAUDE.md`](CLAUDE.md), que é o passo a passo operacional
+— ciclo, convenções de branch, commit e pull request, e o que nunca fazer. Está
+lá, e não aqui, porque agentes leem aquele arquivo sozinhos a cada sessão.
+
+Os papéis vivem em `.claude/skills/`, versionados junto do código. Papel novo só
+existe quando aparece necessidade concreta — mesma regra que o projeto usa para
+código.
+
+### Antes de propor qualquer coisa
+
+- **[`docs/pontos-abertos.md`](docs/pontos-abertos.md)** — o que ficou em aberto
+  de propósito, com o gatilho de cada ponto.
+- **[`docs/forma-do-produto.md`](docs/forma-do-produto.md)** — o que do produto
+  está resolvido e o que não está. Muita pergunta de arquitetura é derivada de
+  uma que está em aberto ali.
 
 ## A frente de coleta
 
