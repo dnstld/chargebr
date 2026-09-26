@@ -34,9 +34,10 @@ context: |
 
   ## Fora de escopo, sem exceção
 
-  Nenhuma mudança em src/, tests/, data/, queries/ ou supabase/, nem nos
-  scripts `collect` e `test` da raiz. Nenhuma rota de negócio, nenhuma chamada
-  a banco e nenhum dado real nesta fase.
+  Nenhuma mudança fora de apps/, packages/, openspec/, tools/ e da seção
+  Interface de docs/. Na raiz, os scripts `collect`, `extract` e `test` do
+  package.json não são nossos: `verify` os consome e não os altera. Nenhuma
+  rota de negócio, nenhuma chamada a banco e nenhum dado real nesta fase.
 
   ## Restrições de domínio que a interface deve preservar
 
