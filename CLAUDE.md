@@ -1,9 +1,13 @@
 # Como trabalhar neste repositório
 
 Este arquivo governa a **frente de interface**: `apps/`, `packages/`,
-`openspec/` e `tools/`. A frente de coleta — `src/`, `queries/`, `supabase/`,
-`data/`, `tests/` — tem processo próprio e não é regida por aqui. Não toque
-nela a partir de um ciclo de interface.
+`openspec/`, `tools/` e a seção Interface de `docs/`. Fora disso não é nosso:
+não mexemos, e não escrevemos regra para lá.
+
+O território é declarado pelo que é nosso, nunca pela lista do que é dos
+outros — lista alheia envelhece sem avisar e deixa buraco. `src/images/` foi
+um: asset de marca, criado e restaurado por ciclos de interface, atrás de uma
+cerca desenhada por nome de diretório.
 
 ## Ninguém manda em ninguém
 
@@ -23,6 +27,12 @@ discordância é sobre valor e não sobre fato —, registre as duas posições 
 cada uma precisaria para ser provada, e leve ao dono do repositório. Não siga
 por suposição e não ceda para encerrar a discussão. É a mesma regra da lacuna:
 registra e para.
+
+**Não leve ao dono pergunta que o repositório responde.** Antes de perguntar,
+meça: leia o código, o histórico do git, as specs vivas e os documentos de
+decisão. Pergunta que uma leitura resolveria não é consulta, é trabalho
+empurrado para cima. Ao dono vão só as perguntas que nenhuma quantidade de
+leitura responderia.
 
 Isto vale para todos, inclusive para quem escreveu esta linha.
 
