@@ -1,11 +1,10 @@
 # Pontos abertos
 
-**Atualizado em:** 26 de setembro de 2026, na preparação do arquivamento do
-ciclo `verification-coverage`
-**Estado do repositório:** 7 capacidades vivas, 72 requisitos, 9 ciclos
-arquivados, um change ativo (`verification-coverage`, que modifica 1 requisito
-de `workspace-verification` e acrescenta 1 ao ser arquivado); piloto do extrator
-ABVE v1 validado. 9 pontos abertos; este ciclo fechou 2 e abriu 3
+**Atualizado em:** 26 de setembro de 2026, no arquivamento do ciclo
+`verification-coverage`
+**Estado do repositório:** 7 capacidades vivas, 73 requisitos, 10 ciclos
+arquivados, nenhum change ativo; piloto do extrator ABVE v1 validado. 9 pontos
+abertos; o ciclo `verification-coverage` fechou 2 e abriu 3
 
 ## O que este arquivo é
 
