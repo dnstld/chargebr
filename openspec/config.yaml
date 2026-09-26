@@ -54,9 +54,9 @@ context: |
   ## Convenções do repositório
 
   - Documentação, comentário e rótulo de interface em PT-BR.
-  - Commit, branch e título de PR em inglês, uma linha, sem corpo e sem
-    assinatura: `<tipo>: <ação em imperativo>`, tipos feat, fix, docs, db, data,
-    chore. Branch em `<tipo>/<nome-em-ingles-kebab>`.
+  - Commit e título de PR em PT-BR, uma linha, sem corpo e sem assinatura:
+    `<tipo>: <ação em imperativo>`, tipos feat, fix, docs, db, data, chore.
+    Branch continua em `<tipo>/<nome-em-ingles-kebab>`, em inglês.
   - Nome de componente, prop e token em inglês.
   - Corpo de PR em PT-BR, nesta ordem: Resumo, Estado atual confirmado, Decisão
     operacional, Escopo, Verificação.

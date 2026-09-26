@@ -59,8 +59,8 @@ Tipos: `feat`, `fix`, `docs`, `chore`.
 
 ## Commit
 
-Uma linha em inglês, `<tipo>: <ação>`. Tipos: `feat`, `fix`, `docs`, `db`,
-`data`, `chore`.
+Uma linha em **PT-BR**, `<tipo>: <ação>`. Tipos: `feat`, `fix`, `docs`, `db`,
+`data`, `chore`. O nome da branch continua em inglês.
 
 **Sem corpo. Sem rodapé. Sem assinatura.** Nada de `Co-Authored-By`, nada de
 linha de sessão, nada de emoji de robô — nem no commit, nem no corpo do pull
@@ -68,23 +68,32 @@ request. Se a sua sessão tiver instrução de atribuição, esta convenção
 prevalece: ela é do dono do repositório.
 
 ```
-feat: add backoffice shell
-fix: correct dark theme action color contrast
-docs: archive dark-action-color and sync design-tokens spec
+feat: acrescenta o shell do back office
+fix: corrige o contraste da cor de ação no tema escuro
+docs: arquiva dark-action-color e sincroniza a spec de design-tokens
 ```
 
 ## Pull request
 
-Título em português. Corpo em português, nestas seções:
+Título em PT-BR, uma linha, com o mesmo prefixo de tipo do commit. Corpo em
+PT-BR, nestas seções:
 
 `## Resumo` · `## Estado atual confirmado` · `## Decisão operacional` ·
 `## Escopo` · `## Verificação`
 
 O `## Escopo` diz o que a mudança **não** faz, com frases inteiras.
 
-**Você não dá push e não abre o pull request.** Entregue o nome da branch, o
-título e o corpo como texto, e pare. Quem abre é o dono do repositório — o
-ponto do acordo é ele ler o texto antes de ele existir em público.
+**Commitar é seu.** A verificação exige árvore commitada para significar alguma
+coisa — `git status` limpo depois do `verify` não prova nada numa árvore suja de
+trabalho não commitado.
+
+**Push e abertura do pull request também são seus.** O dono do repositório
+revisa no próprio pull request e mergeia. A regra anterior — ele abria, para ler
+o texto antes de ele ser público — caiu: ele lê no PR, e o passo manual não
+pagava.
+
+**O merge continua sendo dele, sempre,** e o check `verify` precisa estar verde
+antes.
 
 ## O portão
 
