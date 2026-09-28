@@ -94,7 +94,9 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: identidade visual e tipografia](decisao-identidade-visual.md)
 - [Decisão: critério de paleta categórica](decisao-criterio-de-paleta-categorica.md)
 - [Incidente: instabilidade da bancada em "Sob o ponteiro"](incidente-instabilidade-da-bancada.md)
+- [Incidente: corrida no cache de otimização da bancada](incidente-corrida-no-cache-da-bancada.md)
 - [Decisão: como o repositório prova comportamento de aplicação](decisao-prova-de-comportamento-de-aplicacao.md)
+- [Decisão: biblioteca de primitivas com variantes sobre tokens](decisao-biblioteca-de-componentes.md)
 
 ## Pontos abertos
 
