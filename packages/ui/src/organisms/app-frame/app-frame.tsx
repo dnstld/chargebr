@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { defineFrame, FRAME_STATES } from "../../shell/contract";
+import { defineFrame, FRAME_STATES } from "./contract";
 import styles from "./app-frame.module.css";
 
 // Destino do salto, e âncora da região de conteúdo principal. É identificador,

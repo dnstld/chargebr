@@ -87,6 +87,8 @@ packages/ui/src/
   atoms/
     text/ numeric-value/ declared-absence/ evidence-anchor/ hatch/ status-marker/
     heading/ button/ icon/ logo/ path-label/ nav-item/
+  domain/              # só contrato e índice (definePrimitive, PRIMITIVES,
+                        # BLOCK_REASONS) e fixtures — nenhum componente mora aqui
   molecules/
     domain/
       value-with-provenance/ blocked-projection/
@@ -94,25 +96,56 @@ packages/ui/src/
   organisms/
     domain/
       status-panel/
-    app-frame/ nav-panel/
-    charts/            # movido em bloco (tasks.md, 1.2); classificação fina entre
-                        # aqui e organisms/domain/charts/ segue fora de escopo —
-                        # ver a exceção nomeada de value-table.tsx, abaixo
+    app-frame/          # componente, contrato e índice juntos — um destino só
+    nav-panel/
+    charts/            # movido em bloco (tasks.md, 1.2); componente, contrato e
+                        # índice juntos — hoje um destino só, ver nota abaixo
   vocabulary/
   utilities/
 ```
 
-`charts/` e `shell/` deixam de ser pastas de primeiro nível. O movimento em
-bloco — `charts/` inteiro para `organisms/charts/`, e o componente de
-`shell/` (`app-frame.tsx` e os dois arquivos-irmãos) para
-`organisms/app-frame/`, com o contrato e o índice de `shell/` ficando no
-lugar, pela mesma razão que os de `domain/` ficaram em 1.1 — é a tarefa 1.2
-de `tasks.md`, desta mesma mudança: posição do gerente, registrada depois do
-PR #177, de que a reestruturação não está pronta enquanto duas das quatro
-pastas originais de primeiro nível seguirem fora da hierarquia de tier, e o
-dono não quer isso como ponto aberto novo.
+**Por que `domain/` continua sendo pasta de primeiro nível, e `shell/` não.**
+Isto não foi decidido assim de saída — foi medido de novo depois que o
+gerente perguntou, porque a primeira resposta não tinha um princípio único
+atrás: em 1.1, `domain/contract.ts`/`index.ts`/`block-reason.ts`/`fixtures/`
+ficaram no lugar porque o texto da tarefa só nomeava as três subpastas de
+componente, não porque uma regra dissesse para deixá-los; em 1.2, apliquei a
+mesma coisa a `shell/` por analogia de superfície, sem reconferir se a razão
+valia lá; e para `charts/`, na mesma tarefa, fiz uma terceira coisa — mover
+tudo, índice e contrato inclusos — sem justificar a diferença. Era resíduo,
+não princípio, e o diagrama acima, antes desta correção, nem mostrava
+`domain/` como pasta — o que a própria proposta desenhava já não batia com o
+que a proposta fazia.
 
-A classificação fina — cada gráfico entre `organisms/domain/charts/` e
+O princípio, agora explícito: **um barril ou contrato que agrega componentes
+espalhados por mais de um destino de tier fica fora da hierarquia, na pasta
+nomeada pelo eixo que agrega; um barril ou contrato cujos componentes
+convergem para um destino de tier só se move junto com eles.**
+`domain/index.ts` agrega `PRIMITIVES` de `value-with-provenance` e
+`blocked-projection` (`molecules/domain/`) e de `status-panel`
+(`organisms/domain/`) — dois destinos. Movê-lo para dentro de um dos dois
+faria ou uma organisma importar contrato de dentro de `molecules/` (tolerável,
+mas arbitrário), ou o índice reexportar um componente de tier menor como se
+fosse dono dele (direção invertida). Ficar fora dos dois é a mesma forma de
+`src/index.ts`, que agrega átomo, molécula e organismo e por isso mora fora
+de todos. `shell/` não tinha essa razão: um componente, um destino
+(`organisms/app-frame/`) — não havia tier para atravessar, e por isso
+`shell/contract.ts`, `contracts.typecheck.tsx` e `index.ts` foram movidos
+para dentro de `organisms/app-frame/` nesta correção, junto do componente.
+`shell/` deixou de existir. O mapa `exports` de `packages/ui/package.json`
+acompanhou: `"./shell"` aponta agora para
+`./src/organisms/app-frame/index.ts`.
+
+`charts/index.ts`/`contract.ts` moveram junto com o componente em 1.2 porque,
+hoje, todo `charts/` converge para um destino só — `organisms/charts/`, sem
+classificação fina. **Isto muda se a classificação fina algum dia separar
+`charts/` entre `organisms/charts/` e `organisms/domain/charts/`:** nesse
+momento `charts/index.ts` passa a agregar dois destinos, a mesma forma de
+`domain/index.ts` hoje, e o ciclo que fizer a classificação fina decide então
+se `charts/index.ts`/`contract.ts` saem de dentro da hierarquia — mesmo
+gatilho da classificação fina, não um ponto novo.
+
+A classificação fina em si — cada gráfico entre `organisms/domain/charts/` e
 `organisms/charts/`, dependendo de saber ou não vocabulário — continua fora
 do escopo desta proposta (ver Non-Goals) e é tarefa do ciclo que tocar
 `charts/` por razões próprias. Até lá, o movimento em bloco deixa uma
