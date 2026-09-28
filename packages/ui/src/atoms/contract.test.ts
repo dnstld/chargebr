@@ -10,9 +10,17 @@ test("cada átomo expõe seus estados como valor enumerável", () => {
     ATOMS.map((atom) => [atom.name, [...atom.states]]),
   );
 
+  const FONT_VARIANT_STATES = [
+    "weight:regular",
+    "weight:medium",
+    "weight:semibold",
+    "emphasis:normal",
+    "emphasis:italic",
+  ];
+
   expect(declared).toEqual({
-    Text: ["primary", "counterfactual", "context"],
-    NumericValue: ["primary", "counterfactual", "context"],
+    Text: FONT_VARIANT_STATES,
+    NumericValue: FONT_VARIANT_STATES,
     Hatch: [],
     StatusMarker: [
       "confirmed",

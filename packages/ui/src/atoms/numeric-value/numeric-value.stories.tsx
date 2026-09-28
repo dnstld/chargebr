@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { expectRolesDistinctWithoutColor } from "../value-role.assert";
 import { NumericValue } from "./numeric-value";
 import styles from "./numeric-value.stories.module.css";
 
@@ -13,22 +12,29 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Principal: Story = {
-  name: "Principal",
-  tags: ["state:primary"],
-  args: { value: 12345, valueRole: "primary" },
+// Peso e destaque no padrão: o número comum, sem variante aplicada.
+export const Padrao: Story = {
+  name: "Padrão",
+  tags: ["state:weight:regular", "state:emphasis:normal"],
+  args: { value: 12345 },
 };
 
-export const Contrafactual: Story = {
-  name: "Contrafactual",
-  tags: ["state:counterfactual"],
-  args: { value: 9870, valueRole: "counterfactual" },
+export const PesoMedio: Story = {
+  name: "Peso médio",
+  tags: ["state:weight:medium"],
+  args: { value: 12345, weight: "medium" },
 };
 
-export const Contexto: Story = {
-  name: "Contexto",
-  tags: ["state:context"],
-  args: { value: 2025, valueRole: "context", format: { useGrouping: false } },
+export const PesoSemibold: Story = {
+  name: "Peso semibold",
+  tags: ["state:weight:semibold"],
+  args: { value: 12345, weight: "semibold" },
+};
+
+export const Italico: Story = {
+  name: "Itálico",
+  tags: ["state:emphasis:italic"],
+  args: { value: 9870, emphasis: "italic" },
 };
 
 // Largura de cada dígito de um elemento, medida pelo navegador. Um dígito por
@@ -54,18 +60,18 @@ const STACKED = [7, 1234, 98765.4];
 // tabulares fazem cada dígito ocupar a mesma largura, e a coluna alinha.
 export const ColunaAlinhada: Story = {
   name: "Coluna alinhada",
-  tags: ["state:primary"],
-  args: { value: 0, valueRole: "primary" },
+  tags: ["state:weight:regular"],
+  args: { value: 0 },
   render: () => (
     <div className={styles.column}>
       {STACKED.map((value) => (
-        <NumericValue key={value} value={value} valueRole="primary" />
+        <NumericValue key={value} value={value} />
       ))}
     </div>
   ),
   play: async ({ canvasElement }) => {
     const numbers = [
-      ...canvasElement.querySelectorAll<HTMLElement>("[data-value-role]"),
+      ...canvasElement.querySelectorAll<HTMLElement>("[data-weight]"),
     ];
     await expect(numbers).toHaveLength(STACKED.length);
 
@@ -91,29 +97,5 @@ export const ColunaAlinhada: Story = {
         "tabular-nums",
       );
     }
-  },
-};
-
-export const PapeisDistintos: Story = {
-  name: "Papéis distintos sem cor",
-  tags: ["state:primary", "state:counterfactual", "state:context"],
-  args: { value: 0, valueRole: "primary" },
-  render: () => (
-    <p>
-      <NumericValue value={12345} valueRole="primary" />{" "}
-      <NumericValue value={9870} valueRole="counterfactual" />{" "}
-      <NumericValue
-        value={2025}
-        valueRole="context"
-        format={{ useGrouping: false }}
-      />
-    </p>
-  ),
-  play: async ({ canvas }) => {
-    await expectRolesDistinctWithoutColor({
-      primary: canvas.getByText("12.345"),
-      counterfactual: canvas.getByText("9.870"),
-      context: canvas.getByText("2025"),
-    });
   },
 };

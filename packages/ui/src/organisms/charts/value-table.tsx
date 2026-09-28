@@ -58,7 +58,7 @@ export function ChartValueTable({
                   <span className={styles.cellValue}>
                     <NumericValue
                       value={point.value}
-                      valueRole="primary"
+                      weight="semibold"
                       {...(measure.format ? { format: measure.format } : {})}
                     />
                     {point.kind === "unresolved" ? (

@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { STATUS_AXES, STATUSES } from "../atoms/status-marker/status-marker";
-import { VALUE_ROLES } from "../atoms/value-role";
 import { BLOCK_REASONS } from "../domain/block-reason";
+import { VALUE_ROLES } from "../molecules/domain/value-role";
 import { resolveTerms, VOCABULARY } from "./vocabulary";
 
 // O vocabulário cobre tudo que a biblioteca enumera: eixos, estados, papéis
