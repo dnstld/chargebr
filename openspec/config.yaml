@@ -54,7 +54,7 @@ rules:
     - Diga explicitamente o que a mudança não faz
     - Nenhuma decisão em aberto pode ser preenchida por suposição; registre a lacuna e pare
   specs:
-    - Requisito só existe se nomear o que quebra sem ele, hoje, no que está construído. Regra sobre dado que nenhuma tela exibe é anotação, não requisito
+    - "Requisito só existe se nomear o que quebra sem ele, hoje, no que está construído. Regra sobre dado que nenhuma tela exibe é anotação, não requisito. Isto vale para requisito, não para componente: o teste de um componente de biblioteca é ser genérico, nunca ter consumidor — biblioteca de UI é inventário, e componente genérico sem consumidor construído é catálogo, não lacuna"
     - Todo critério de aceite nomeia o teste que o prova
     - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
     - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
