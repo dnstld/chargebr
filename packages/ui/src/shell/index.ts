@@ -1,4 +1,4 @@
-import { AppFrameContract } from "./app-frame";
+import { AppFrameContract } from "../organisms/app-frame/app-frame";
 import type { FrameContract } from "./contract";
 
 export {
@@ -6,7 +6,7 @@ export {
   AppFrameContract,
   type AppFrameProps,
   MAIN_CONTENT_ID,
-} from "./app-frame";
+} from "../organisms/app-frame/app-frame";
 export {
   defineFrame,
   FRAME_STATES,

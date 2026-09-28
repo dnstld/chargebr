@@ -1,5 +1,5 @@
 import { expect } from "storybook/test";
-import { accessibleNameFromContent } from "../bench/accessible-name";
+import { accessibleNameFromContent } from "../../bench/accessible-name";
 import type { ChartSeries } from "./series";
 import { hasValue } from "./series";
 

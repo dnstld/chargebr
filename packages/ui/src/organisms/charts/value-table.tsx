@@ -1,8 +1,8 @@
-import { DeclaredAbsence } from "../atoms/declared-absence/declared-absence";
-import { EvidenceAnchor } from "../atoms/evidence-anchor/evidence-anchor";
-import { NumericValue } from "../atoms/numeric-value/numeric-value";
-import { StatusMarker } from "../atoms/status-marker/status-marker";
-import type { Terms } from "../vocabulary/vocabulary";
+import { DeclaredAbsence } from "../../atoms/declared-absence/declared-absence";
+import { EvidenceAnchor } from "../../atoms/evidence-anchor/evidence-anchor";
+import { NumericValue } from "../../atoms/numeric-value/numeric-value";
+import { StatusMarker } from "../../atoms/status-marker/status-marker";
+import type { Terms } from "../../vocabulary/vocabulary";
 import styles from "./chart.module.css";
 import { type ChartMeasure, type ChartSeries, hasValue } from "./series";
 import type { ChartShape } from "./shapes";

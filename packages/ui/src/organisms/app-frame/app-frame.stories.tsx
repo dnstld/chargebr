@@ -1,8 +1,8 @@
 import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
-import type { Theme } from "../../.storybook/theme";
-import { resolveColor } from "../bench/computed";
+import type { Theme } from "../../../.storybook/theme";
+import { resolveColor } from "../../bench/computed";
 import { AppFrame, MAIN_CONTENT_ID } from "./app-frame";
 
 // A moldura é a raiz da história: aninhá-la dentro de outra região faria a

@@ -32,8 +32,10 @@ cabeçalho/navegação/layout/tipografia.
 - Não constrói nenhum componente — isso é tarefa do ciclo `/opsx:apply` desta
   mudança.
 - Não liga `NavPanel` nem o slot `nav` de `AppFrame` ao `apps/backoffice` real.
-- Não toca `charts/` além de movê-la para dentro da nova hierarquia de tier;
-  não reclassifica cada gráfico individualmente.
+- Não reclassifica cada gráfico de `charts/` individualmente entre
+  `organisms/charts/` e `organisms/domain/charts/` — só o move em bloco
+  (tasks.md, 1.2), com a exceção nomeada de `value-table.tsx` registrada em
+  D1.
 - Não toca cartão de indicador, fora do escopo do inventário.
 
 ## Decisions
@@ -92,17 +94,39 @@ packages/ui/src/
   organisms/
     domain/
       status-panel/
-      charts/            # fora de escopo desta proposta — mesma hierarquia, sem reclassificação fina
     app-frame/ nav-panel/
+    charts/            # movido em bloco (tasks.md, 1.2); classificação fina entre
+                        # aqui e organisms/domain/charts/ segue fora de escopo —
+                        # ver a exceção nomeada de value-table.tsx, abaixo
   vocabulary/
   utilities/
 ```
 
-`charts/` e `shell/` deixam de ser pastas de primeiro nível. Cada gráfico
-existente entraria em `organisms/domain/charts/` ou `organisms/charts/`
-dependendo de saber ou não vocabulário — essa reclassificação fina fica fora
+`charts/` e `shell/` deixam de ser pastas de primeiro nível. O movimento em
+bloco — `charts/` inteiro para `organisms/charts/`, e o componente de
+`shell/` (`app-frame.tsx` e os dois arquivos-irmãos) para
+`organisms/app-frame/`, com o contrato e o índice de `shell/` ficando no
+lugar, pela mesma razão que os de `domain/` ficaram em 1.1 — é a tarefa 1.2
+de `tasks.md`, desta mesma mudança: posição do gerente, registrada depois do
+PR #177, de que a reestruturação não está pronta enquanto duas das quatro
+pastas originais de primeiro nível seguirem fora da hierarquia de tier, e o
+dono não quer isso como ponto aberto novo.
+
+A classificação fina — cada gráfico entre `organisms/domain/charts/` e
+`organisms/charts/`, dependendo de saber ou não vocabulário — continua fora
 do escopo desta proposta (ver Non-Goals) e é tarefa do ciclo que tocar
-`charts/` por razões próprias, com o gatilho registrado em tasks.md.
+`charts/` por razões próprias. Até lá, o movimento em bloco deixa uma
+exceção nomeada, medida antes de aceitar a tarefa: `value-table.tsx` é o
+único arquivo de `charts/` que já sabe vocabulário de domínio — usa
+`valueRole="primary"` fixo, sem expor o papel como escolha — e sua posição
+em `organisms/charts/`, sem a subpasta `domain/` que esta mudança usa para
+sinalizar isso, diz por convenção que ele é genérico, e não é. É uma
+inversão pontual, não geral: os outros nove arquivos de `charts/` ficam
+corretamente classificados pela ausência da subpasta. Não é motivo para
+recusar o movimento em bloco — a alternativa, deixar `charts/` inteiro fora
+da hierarquia de tier, é o problema maior que esta tarefa resolve —, mas fica
+registrada, e o gatilho que a fecha é o mesmo que fecha a classificação fina
+inteira: o ciclo que tocar `charts/` por razões próprias.
 
 **O que me faria mudar de ideia:** encontrar, no inventário desta proposta, um
 componente que precisasse ler vocabulário de domínio ChargeBR — não encontrei
