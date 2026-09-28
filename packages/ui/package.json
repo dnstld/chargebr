@@ -7,9 +7,7 @@
     ".": "./src/index.ts",
     "./atoms": "./src/atoms/index.ts",
     "./charts": "./src/organisms/charts/index.ts",
-    "./domain": "./src/domain/index.ts",
-    "./shell": "./src/organisms/app-frame/index.ts",
-    "./vocabulary": "./src/vocabulary/index.ts"
+    "./shell": "./src/organisms/app-frame/index.ts"
   },
   "scripts": {
     "charts:palette-report": "node --import tsx src/organisms/charts/palette-report.ts",

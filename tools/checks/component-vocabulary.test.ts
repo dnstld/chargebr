@@ -7,11 +7,10 @@ import { expect, test } from "vitest";
 // Raiz do repositório, a partir da localização deste arquivo (tools/checks/).
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
-// O texto em português que um componente exibe não é decisão dele: vem do
-// módulo de vocabulário de @chargebr/ui, no caso das primitivas de domínio, ou
-// por propriedade de quem compõe, no caso da moldura. Nos dois casos a regra é
-// a mesma — o componente não declara o rótulo no próprio arquivo —, e por isso
-// é um guardião só, e não dois que divergem no dia em que um receber caso novo.
+// O texto em português que um componente exibe não é decisão dele: vem por
+// propriedade de quem compõe. É o caso da moldura, hoje o único perímetro
+// desta lista — mas a checagem cobre qualquer perímetro nomeado aqui, não só
+// este, para que um caso novo não precise de um segundo guardião.
 //
 // Este guardião lê cada arquivo de componente pela árvore sintática — não por
 // expressão regular sobre o texto — e reprova qualquer literal de string ou
@@ -24,8 +23,6 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // história, fixture e arquivo de checagem de tipos exibem dado e prova, não
 // declaram vocabulário, e continuam fora.
 const PERIMETERS: Readonly<Record<string, string>> = {
-  "moléculas de domínio": join(ROOT, "packages/ui/src/molecules/domain"),
-  "organismos de domínio": join(ROOT, "packages/ui/src/organisms/domain"),
   moldura: join(ROOT, "packages/ui/src/organisms/app-frame"),
 };
 const COMPONENT_EXTENSION = ".tsx";
