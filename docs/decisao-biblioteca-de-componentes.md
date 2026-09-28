@@ -244,13 +244,21 @@ acessibilidade) só quando compostas. Encontrado um, ele entra aqui nomeado, com
 a combinação exata, e a regra de cobertura por variante ganha essa exceção
 nomeada — não uma exceção geral.
 
+> **Nota de 793d8e2.** O requisito vivo em que esta posição se apoiava —
+> "todo estado declarado tem história", verificado por
+> `stories-coverage.test.ts` — foi removido: a checagem lia a lista de
+> estados que o próprio componente declarava, e declarar menos fazia a prova
+> passar. A posição em si continua válida — cobertura por variante, não por
+> combinação — agora como critério de revisão, sem guardião automatizado. O
+> que caiu foi só a afirmação de que a máquina já a sustentava.
+
 ## O que o CI reprova, e o que só a revisão pega
 
 | Regra | Guardião | Situação |
 | --- | --- | --- |
 | Valor de variante não resolvido inteiro por token (literal de peso, destaque, raio, sombra) | `style-literals` | **Já cobre.** `GUARDED_PROPERTIES` já inclui `font-weight`, `font-style`, `font-size`, `border-radius`, `box-shadow`; a extensão de `valueRole` para `weight`/`emphasis` não pede guardião novo. |
-| Todo valor de propriedade declarado tem história | `stories-coverage.test.ts` (generaliza `AtomContract.states`) | **Mecanismo já suporta, sem mudança de forma.** `states` é `readonly State[]` de string opaca, comparada por tag `state:<valor>` — codificar `weight:semibold` como um desses valores não pede campo novo em `contract.ts`, só que cada primitiva declare `eixo:valor` em vez de um valor solto. Implementação é do ciclo de aplicação, não deste documento. |
-| Componente de domínio declara rótulo em português no próprio arquivo | `component-vocabulary` | **Já cobre `domain/` e `shell/`.** Não cobre `atoms/` — e não deveria: o problema em `atoms/` não é a língua do rótulo (ver seção `valueRole`), é a forma do prop, e isso um guardião de string não enxerga. |
+| Todo valor de propriedade declarado tem história | nenhum hoje | **Removido em 793d8e2.** `stories-coverage.test.ts` e `AtomContract.states` não existem mais: a checagem lia a lista de estados que o próprio componente declarava — `Hatch` declarava `[]` e passava. Cobertura por variante é critério de revisão, não de `pnpm verify`; o `addon-vitest` executa toda história que existe, nos dois temas, com `axe`, e é isso que protege. |
+| Componente de domínio declara rótulo em português no próprio arquivo | `component-vocabulary` | **Sai com o perímetro de domínio.** `shell/` deixou de ser pasta no PR #177; o guardião sai inteiro no passo seguinte, junto com o perímetro `domain/`. |
 | Primitiva genérica não importa de `domain/` | nenhum hoje | **Lacuna nova.** `biome.json` hoje separa perímetro por pacote (`packages/**` vs `apps/**`), não por pasta dentro do mesmo pacote. Nada impede hoje que um arquivo em `atoms/` importe de `domain/`. Regra proponível via `noRestrictedImports` escopado a `packages/ui/src/atoms/**`; fica para a proposta do ciclo de migração — este documento só nomeia a lacuna. |
 | Primitiva genérica não tem prop com forma de papel de domínio (`valueRole` e equivalentes futuros) | nenhum | **Só revisão.** Forma de prop não é string nem import — nenhum guardião varre "isto parece modelagem de domínio". Fica como critério de revisão de PR, não de `pnpm verify`. |
 | Nova primitiva interativa declara estado de ponteiro (`hover`/`pressed`) verificado por história | nenhum | **Só revisão**, e com precedente de recuo: ver riscos, abaixo. |
