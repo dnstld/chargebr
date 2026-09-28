@@ -250,6 +250,17 @@ Versões conferidas no registro npm em 21 de setembro de 2026.
 
 ## Restrições de domínio que a biblioteca deve preservar
 
+> **Revogado em 2026-09-28.** Estas restrições são da metodologia de coleta e
+> do modelo de dados, não da interface. Enquanto não existe backend nem dado,
+> exigir que a biblioteca de UI as exprima produziu regra de negócio em tipo
+> de componente — sete mil linhas de biblioteca para uma aplicação que
+> renderiza uma moldura. Elas voltam quando existir banco e API, na camada que
+> tiver os dados. A frase "essas restrições são a razão de a biblioteca não
+> ser genérica" está errada e é substituída por: a biblioteca de UI é
+> genérica; todo componente em átomo, molécula ou organismo é elemento de
+> visualização e não segue regra de negócio. A metodologia permanece descrita
+> nos documentos da frente de coleta, que são a sua fonte.
+
 Não são preferências de interface. Vêm da metodologia já aceita e determinam
 quais componentes existem. Os nomes foram conferidos contra
 `supabase/migrations/`.
@@ -283,7 +294,7 @@ expressáveis antes de qualquer tela existir.
 | ID | Risco | Mitigação |
 | --- | --- | --- |
 | R1 | O workspace na raiz interfere no que já existe fora dele | `pnpm-workspace.yaml` lista apenas `apps/*` e `packages/*`; scripts `collect` e `test` intocados; `pnpm verify` é script novo |
-| R2 | O design system modela estados que o modelo não produz | Fixtures derivadas de `queries/0001_abve-eletrificados-janeiro-2025.read.sql`, que já expressa as projeções do contrato de leitura |
+| R2 | O design system modela estados que o modelo não produz | Fixtures sintéticas na biblioteca de UI, sem derivação de query nem de banco |
 | R3 | Fronteira `"use client"` vaza para o consumidor | `"use client"` no arquivo do componente; regra verificada no lint |
 | R4 | A fase infla até virar produto | Nenhuma rota de negócio, nenhuma chamada a banco e nenhum dado real |
 | R5 | Gabaritos em inglês diluem o rito em PT-BR | Conteúdo escrito em PT-BR sob cabeçalhos estruturais em inglês |
