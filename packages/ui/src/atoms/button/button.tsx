@@ -3,18 +3,8 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button as AriaButton } from "react-aria-components";
-import { defineAtom } from "../contract";
 import { Icon } from "../icon/icon";
 import styles from "./button.module.css";
-
-// Estados de interação, mesma restrição de EvidenceAnchor: "hovered" e
-// "pressed" não entram como estado coberto por história — o incidente de
-// docs/incidente-instabilidade-da-bancada.md segue aberto para toda
-// primitiva nova (docs/decisao-biblioteca-de-componentes.md, R1). O atributo
-// de dado continua vindo da primitiva em tempo de execução; só a cobertura
-// por história fica de fora.
-export const BUTTON_STATES = ["idle", "focus-visible"] as const;
-export type ButtonState = (typeof BUTTON_STATES)[number];
 
 // Um botão sem rótulo visível precisa de nome acessível por propriedade — o
 // gatilho do hambúrguer é o caso real (ícone só, sem texto). O tipo recusa a
@@ -52,9 +42,3 @@ export function Button({
     </AriaButton>
   );
 }
-
-export const ButtonAtom = defineAtom({
-  name: "Button",
-  component: Button,
-  states: BUTTON_STATES,
-});

@@ -18,7 +18,6 @@ type Story = StoryObj<typeof meta>;
 // Botão com rótulo, sem ícone: a forma mais comum de ação de texto.
 export const EmRepouso: Story = {
   name: "Em repouso",
-  tags: ["state:idle"],
   args: { children: "Confirmar" },
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: "Confirmar" });
@@ -31,7 +30,6 @@ export const EmRepouso: Story = {
 // EvidenceAnchor.
 export const ComFocoPeloTeclado: Story = {
   name: "Com foco pelo teclado",
-  tags: ["state:focus-visible"],
   args: { children: "Confirmar" },
   play: async ({ canvas, globals }) => {
     const theme = globals.theme as Theme;
@@ -52,7 +50,6 @@ export const ComFocoPeloTeclado: Story = {
 // NavPanel.
 export const ComIconeERotulo: Story = {
   name: "Com ícone e rótulo",
-  tags: ["state:idle"],
   args: { children: "Sair", icon: LogOut },
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: "Sair" });
@@ -65,7 +62,6 @@ export const ComIconeERotulo: Story = {
 // nome próprio.
 export const IconeSoh: Story = {
   name: "Ícone só",
-  tags: ["state:idle"],
   args: { icon: Menu, "aria-label": "Abrir menu" },
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: "Abrir menu" });

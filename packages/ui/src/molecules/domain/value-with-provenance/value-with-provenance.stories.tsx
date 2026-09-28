@@ -48,7 +48,6 @@ const FORMAT = new Intl.NumberFormat("pt-BR");
 // e o caminho até sua evidência, sem as outras posições.
 export const MetodologiaVigente: Story = {
   name: "Metodologia vigente",
-  tags: ["state:primary"],
   play: async ({ canvas, canvasElement, args }) => {
     await expect(valueIn(slot(canvasElement, "primary")).textContent).toBe(
       FORMAT.format(args.primary.value),
@@ -71,7 +70,6 @@ export const MetodologiaVigente: Story = {
 // diferem em propriedade computada que não é cor.
 export const ComoPublicado: Story = {
   name: "Como publicado",
-  tags: ["state:primary", "state:counterfactual", "state:context"],
   args: AS_PUBLISHED,
   play: async ({ canvas, canvasElement, args, globals }) => {
     const primary = slot(canvasElement, "primary");
@@ -133,7 +131,6 @@ export const ComoPublicado: Story = {
 // evidência. Com as três posições, os três caminhos vêm na ordem dos papéis.
 export const ProvenienciaPeloTeclado: Story = {
   name: "Proveniência pelo teclado",
-  tags: ["state:primary", "state:counterfactual", "state:context"],
   args: AS_PUBLISHED,
   play: async ({ args }) => {
     const paths = [args.primary, args.counterfactual, args.context].flatMap(
@@ -161,7 +158,6 @@ export const ProvenienciaPeloTeclado: Story = {
 // aparece sem marca é só o que veio por propriedade — números e caminhos.
 export const TermosDoVocabulario: Story = {
   name: "Termos vêm do vocabulário",
-  tags: ["state:primary", "state:counterfactual", "state:context"],
   args: { ...AS_PUBLISHED, terms: markEveryTerm() },
   play: async ({ canvasElement, args }) => {
     const supplied = [args.primary, args.counterfactual, args.context].flatMap(
@@ -180,7 +176,6 @@ export const TermosDoVocabulario: Story = {
 // Termo sobrescrito por propriedade: o fornecido aparece, o padrão não.
 export const TermoSobrescrito: Story = {
   name: "Termo sobrescrito",
-  tags: ["state:primary"],
   args: {
     ...CURRENT_METHODOLOGY,
     terms: { valueRole: { primary: "Resultado principal" } },

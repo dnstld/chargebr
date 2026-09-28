@@ -11,7 +11,6 @@ import {
   type Terms,
   type VocabularyOverrides,
 } from "../../../vocabulary/vocabulary";
-import { definePrimitive } from "../../../domain/contract";
 import styles from "./status-panel.module.css";
 
 // Um valor para cada eixo, ou null quando o eixo não tem valor. As três
@@ -26,10 +25,6 @@ export interface StatusPanelProps {
   /** Sobrescrita termo a termo do vocabulário. */
   terms?: VocabularyOverrides;
 }
-
-// Os estados da primitiva: todos os eixos com valor, ou ao menos um sem.
-export const STATUS_PANEL_STATES = ["all_valued", "axis_unvalued"] as const;
-export type StatusPanelState = (typeof STATUS_PANEL_STATES)[number];
 
 const AXES = Object.keys(STATUS_AXES) as readonly StatusAxis[];
 
@@ -89,9 +84,3 @@ export function StatusPanel({ statuses, terms }: StatusPanelProps) {
     </ul>
   );
 }
-
-export const StatusPanelPrimitive = definePrimitive({
-  name: "StatusPanel",
-  component: StatusPanel,
-  states: STATUS_PANEL_STATES,
-});

@@ -14,7 +14,6 @@ type Story = StoryObj<typeof meta>;
 // Peso e destaque no padrão: o corpo de texto comum, sem variante aplicada.
 export const Padrao: Story = {
   name: "Padrão",
-  tags: ["state:weight:regular", "state:emphasis:normal"],
   args: { children: "Frota eletrificada em janeiro de 2025" },
 };
 
@@ -22,7 +21,6 @@ export const Padrao: Story = {
 // peso mais forte.
 export const PesoMedio: Story = {
   name: "Peso médio",
-  tags: ["state:weight:medium"],
   args: {
     weight: "medium",
     children: "Frota eletrificada em janeiro de 2025",
@@ -33,7 +31,6 @@ export const PesoMedio: Story = {
 // que os outros ao lado dele.
 export const PesoSemibold: Story = {
   name: "Peso semibold",
-  tags: ["state:weight:semibold"],
   args: {
     weight: "semibold",
     children: "Frota eletrificada em janeiro de 2025",
@@ -44,7 +41,6 @@ export const PesoSemibold: Story = {
 // distinguir de outro sem depender só de cor.
 export const Italico: Story = {
   name: "Itálico",
-  tags: ["state:emphasis:italic"],
   args: {
     emphasis: "italic",
     children: "Frota que existiria sem o incentivo",
@@ -56,7 +52,6 @@ export const Italico: Story = {
 // entre redação original e normalizada, se existir, é decisão de quem compõe.
 export const RedacoesLadoALado: Story = {
   name: "Redações lado a lado",
-  tags: ["state:weight:regular", "state:emphasis:normal"],
   args: { children: "" },
   render: () => (
     <p>

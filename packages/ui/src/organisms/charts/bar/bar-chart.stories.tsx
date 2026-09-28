@@ -35,11 +35,6 @@ type Story = StoryObj<typeof meta>;
 // no mesmo desenho: resolvido, não resolvido e ausente.
 export const TresSeries: Story = {
   name: "Três séries, com não resolvido e ausência",
-  tags: [
-    "state:multiple_series",
-    "state:unresolved_point",
-    "state:missing_point",
-  ],
   args: {
     title: "Fixture sintética de barras",
     measure: SYNTHETIC_UNITS,
@@ -66,7 +61,6 @@ export const TresSeries: Story = {
 // porque não há o que distinguir.
 export const UmaSerie: Story = {
   name: "Uma série, derivada do contrato",
-  tags: ["state:single_series"],
   args: {
     title: "Veículos leves eletrificados",
     measure: ELECTRIFIED_UNITS,
@@ -102,7 +96,6 @@ export const DuasSeriesDoContrato: Story = {
 
 export const Bloqueada: Story = {
   name: "Projeção bloqueada",
-  tags: ["state:blocked"],
   args: {
     title: "Veículos leves eletrificados",
     measure: ELECTRIFIED_UNITS,

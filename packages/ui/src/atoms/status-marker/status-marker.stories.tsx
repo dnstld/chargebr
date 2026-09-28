@@ -110,7 +110,6 @@ async function expectAxisInAccessibleName<Axis extends StatusAxis>(
 
 export const NivelDeVerificacao: Story = {
   name: "Nível de verificação",
-  tags: ["state:confirmed", "state:corroborated", "state:unverified"],
   args: {
     axis: "verification_level",
     status: "confirmed",
@@ -125,7 +124,6 @@ export const NivelDeVerificacao: Story = {
 
 export const EstadoDoFluxo: Story = {
   name: "Estado do fluxo",
-  tags: ["state:accepted", "state:under_review", "state:candidate"],
   args: {
     axis: "workflow_status",
     status: "accepted",
@@ -140,7 +138,6 @@ export const EstadoDoFluxo: Story = {
 
 export const Normalizacao: Story = {
   name: "Normalização",
-  tags: ["state:normalized", "state:not_attempted", "state:unresolved"],
   args: {
     axis: "normalization_status",
     status: "normalized",
@@ -163,7 +160,6 @@ function fillOf(marker: HTMLElement): HTMLElement {
 // preenchimento aplicado, não a classe: um sólido plantado no CSS reprova.
 export const NaoResolvido: Story = {
   name: "Não resolvido é hachurado",
-  tags: ["state:unresolved", "state:normalized"],
   args: {
     axis: "normalization_status",
     status: "unresolved",

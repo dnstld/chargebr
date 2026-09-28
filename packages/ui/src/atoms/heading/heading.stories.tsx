@@ -19,7 +19,6 @@ type Story = StoryObj<typeof meta>;
 // não coincidem, e a prova localiza pelo que o navegador de fato desenhou.
 export const Nivel7: Story = {
   name: "Nível 7",
-  tags: ["state:level:7"],
   args: { level: 7, children: "Frota elétrica no Brasil" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -33,7 +32,6 @@ export const Nivel7: Story = {
 
 export const Nivel6: Story = {
   name: "Nível 6",
-  tags: ["state:level:6"],
   args: { level: 6, children: "Frota elétrica no Brasil" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -49,7 +47,6 @@ export const Nivel6: Story = {
 // `text.heading.size`.
 export const Nivel5: Story = {
   name: "Nível 5",
-  tags: ["state:level:5"],
   args: { level: 5, children: "Frota elétrica no Brasil" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -63,7 +60,6 @@ export const Nivel5: Story = {
 
 export const Nivel4: Story = {
   name: "Nível 4",
-  tags: ["state:level:4"],
   args: { level: 4, children: "Frota elétrica no Brasil" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -81,7 +77,6 @@ export const Nivel4: Story = {
 // uso.
 export const Nivel3: Story = {
   name: "Nível 3",
-  tags: ["state:level:3"],
   args: { level: 3, children: "Boletim ABVE, janeiro de 2025" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -97,7 +92,6 @@ export const Nivel3: Story = {
 // distingue é só o tamanho, provado direto contra o token de cada um.
 export const Nivel2: Story = {
   name: "Nível 2",
-  tags: ["state:level:2"],
   args: { level: 2, children: "Boletim ABVE, janeiro de 2025" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
@@ -111,7 +105,6 @@ export const Nivel2: Story = {
 
 export const Nivel1: Story = {
   name: "Nível 1",
-  tags: ["state:level:1"],
   args: { level: 1, children: "Boletim ABVE, janeiro de 2025" },
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;

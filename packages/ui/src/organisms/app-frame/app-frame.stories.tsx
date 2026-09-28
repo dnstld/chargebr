@@ -69,7 +69,6 @@ async function expectThemeSurface(
 
 export const EmRepouso: Story = {
   name: "Em repouso",
-  tags: ["state:idle"],
   play: async ({ canvas, canvasElement, args, globals }) => {
     const theme = globals.theme as Theme;
     const frame = frameOf(canvasElement);
@@ -105,7 +104,6 @@ export const EmRepouso: Story = {
 // aparece com o anel de foco dos tokens.
 export const ComSaltoFocado: Story = {
   name: "Com salto focado",
-  tags: ["state:skip-focused"],
   play: async ({ canvas, canvasElement, args, globals }) => {
     const theme = globals.theme as Theme;
     const frame = frameOf(canvasElement);

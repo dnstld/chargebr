@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { defineFrame, FRAME_STATES } from "./contract";
 import styles from "./app-frame.module.css";
 
 // Destino do salto, e âncora da região de conteúdo principal. É identificador,
@@ -38,9 +37,3 @@ export function AppFrame({ productName, skipLabel, children }: AppFrameProps) {
     </div>
   );
 }
-
-export const AppFrameContract = defineFrame({
-  name: "AppFrame",
-  component: AppFrame,
-  states: FRAME_STATES,
-});

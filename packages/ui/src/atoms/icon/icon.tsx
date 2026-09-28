@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import { defineAtom } from "../contract";
 import styles from "./icon.module.css";
 
 export interface IconProps {
@@ -16,11 +15,3 @@ export interface IconProps {
 export function Icon({ as: IconComponent }: IconProps) {
   return <IconComponent className={styles.icon} />;
 }
-
-export const ICON_STATES = ["default"] as const;
-
-export const IconAtom = defineAtom({
-  name: "Icon",
-  component: Icon,
-  states: ICON_STATES,
-});

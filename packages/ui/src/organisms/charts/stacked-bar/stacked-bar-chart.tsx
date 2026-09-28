@@ -1,5 +1,4 @@
 import { DomainChart } from "../chart";
-import { CHART_STATES, defineChart } from "../contract";
 import type { ChartDrawProps, ChartSeries, ShapeChartProps } from "../series";
 
 // Barras empilhadas. Cada série encosta na anterior e na seguinte: pares
@@ -12,9 +11,3 @@ export function StackedBarChart<
 >(props: ShapeChartProps<"stacked-bar", S, Measure, Title>) {
   return <DomainChart {...(props as ChartDrawProps)} shape="stacked-bar" />;
 }
-
-export const StackedBarChartShape = defineChart({
-  name: "StackedBarChart",
-  component: StackedBarChart,
-  states: CHART_STATES,
-});

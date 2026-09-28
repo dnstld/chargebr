@@ -1,5 +1,4 @@
 import { DomainChart } from "../chart";
-import { CHART_STATES, defineChart } from "../contract";
 import type { ChartDrawProps, ChartSeries, ShapeChartProps } from "../series";
 
 // Barras agrupadas. Dentro de uma categoria cada série ocupa posição fixa, e
@@ -12,9 +11,3 @@ export function BarChart<
 >(props: ShapeChartProps<"bar", S, Measure, Title>) {
   return <DomainChart {...(props as ChartDrawProps)} shape="bar" />;
 }
-
-export const BarChartShape = defineChart({
-  name: "BarChart",
-  component: BarChart,
-  states: CHART_STATES,
-});

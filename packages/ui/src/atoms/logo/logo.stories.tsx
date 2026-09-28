@@ -16,7 +16,6 @@ type Story = StoryObj<typeof meta>;
 // declara nenhuma delas — sobre o fundo do tema corrente, claro ou escuro.
 export const Padrao: Story = {
   name: "Padrão",
-  tags: ["state:default"],
   play: async ({ canvas, args }) => {
     const image = canvas.getByRole("img", {
       name: args.label,

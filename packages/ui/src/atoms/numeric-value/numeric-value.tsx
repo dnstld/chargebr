@@ -1,10 +1,4 @@
-import { defineAtom } from "../contract";
-import {
-  FONT_EMPHASES,
-  FONT_WEIGHTS,
-  type FontEmphasis,
-  type FontWeight,
-} from "../font-variant";
+import type { FontEmphasis, FontWeight } from "../font-variant";
 import styles from "./numeric-value.module.css";
 
 export interface NumericValueProps {
@@ -41,14 +35,3 @@ export function NumericValue({
     </span>
   );
 }
-
-const NUMERIC_VALUE_STATES = [
-  ...FONT_WEIGHTS.map((weight) => `weight:${weight}` as const),
-  ...FONT_EMPHASES.map((emphasis) => `emphasis:${emphasis}` as const),
-];
-
-export const NumericValueAtom = defineAtom({
-  name: "NumericValue",
-  component: NumericValue,
-  states: NUMERIC_VALUE_STATES,
-});

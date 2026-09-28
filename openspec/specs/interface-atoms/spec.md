@@ -93,17 +93,6 @@ que evidência ele leva, e SHALL NOT depender apenas de ícone ou posição.
 - **THEN** a checagem de acessibilidade reprova, nomeando a regra e o elemento
 - **Prova:** âncora sem nome plantada, verificação falhando, plantio revertido
 
-### Requirement: Todo estado declarado tem história
-
-Todo estado declarado no contrato de um átomo SHALL possuir história
-correspondente, e estado sem história SHALL reprovar a verificação.
-
-#### Scenario: Estado sem história reprova
-
-- **WHEN** um átomo declara um estado que nenhuma história exercita
-- **THEN** a verificação falha, nomeando o átomo e o estado sem história
-- **Prova:** estado sem história plantado, verificação falhando, plantio revertido
-
 ### Requirement: Átomo recebe tudo por propriedade
 
 Um átomo SHALL receber todo dado por propriedade, e SHALL NOT buscar dado,

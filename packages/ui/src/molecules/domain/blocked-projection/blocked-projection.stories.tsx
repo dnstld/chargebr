@@ -59,7 +59,6 @@ async function expectReasonsAndNoDigits(
 
 export const ProvenienciaIncompleta: Story = {
   name: "Proveniência incompleta",
-  tags: ["state:provenance_incomplete"],
   play: async ({ canvasElement, args }) => {
     await expectReasonsAndNoDigits(canvasElement, args.reasons);
   },
@@ -67,12 +66,6 @@ export const ProvenienciaIncompleta: Story = {
 
 export const MetricaAusente: Story = {
   name: "Métrica ausente",
-  tags: [
-    "state:current_methodology_not_unique",
-    "state:metric_not_found",
-    "state:primary_value_not_unique",
-    "state:unexpected_cardinality",
-  ],
   args: BLOCKED_TRIALS.metricNotFound,
   play: async ({ canvasElement, args }) => {
     await expectReasonsAndNoDigits(canvasElement, args.reasons);
@@ -81,50 +74,24 @@ export const MetricaAusente: Story = {
 
 export const MetodologiaVigenteAmbigua: Story = {
   name: "Metodologia vigente ambígua",
-  tags: [
-    "state:components_incomplete",
-    "state:current_methodology_not_unique",
-    "state:provenance_incomplete",
-    "state:unexpected_cardinality",
-  ],
   args: BLOCKED_TRIALS.ambiguousCurrentMethodology,
   play: async ({ canvasElement, args }) => {
     await expectReasonsAndNoDigits(canvasElement, args.reasons);
   },
 };
 
-// Catálogo: toda razão que a biblioteca enumera, com seu termo. Não é
-// saída do contrato; é a enumeração, exercitada inteira para que nenhuma
-// razão fique sem história. As tags são literais porque o indexador só lê
-// literais; a prova confere que elas cobrem a enumeração inteira.
+// Catálogo: toda razão que a biblioteca enumera, com seu termo. Exercitada
+// inteira para que nenhuma razão fique sem história.
 export const TodasAsRazoes: Story = {
   name: "Todas as razões",
-  tags: [
-    "state:metric_not_found",
-    "state:scope_mismatch",
-    "state:methodology_missing",
-    "state:methodology_cycle",
-    "state:current_methodology_not_unique",
-    "state:primary_value_not_unique",
-    "state:value_method_mismatch",
-    "state:primary_outside_applicability",
-    "state:provenance_incomplete",
-    "state:unsupported_value_origin",
-    "state:components_incomplete",
-    "state:unexpected_cardinality",
-  ],
   args: { reasons: BLOCK_REASONS },
   play: async ({ canvasElement }) => {
-    await expect(TodasAsRazoes.tags).toEqual(
-      BLOCK_REASONS.map((reason) => `state:${reason}`),
-    );
     await expectReasonsAndNoDigits(canvasElement, BLOCK_REASONS);
   },
 };
 
 export const TermosDoVocabulario: Story = {
   name: "Termos vêm do vocabulário",
-  tags: ["state:provenance_incomplete"],
   args: { ...BLOCKED_TRIALS.provenanceIncomplete, terms: markEveryTerm() },
   play: async ({ canvasElement }) => {
     await expectEveryTermFromVocabulary(root(canvasElement), []);
@@ -133,7 +100,6 @@ export const TermosDoVocabulario: Story = {
 
 export const TermoSobrescrito: Story = {
   name: "Termo sobrescrito",
-  tags: ["state:provenance_incomplete"],
   args: {
     ...BLOCKED_TRIALS.provenanceIncomplete,
     terms: {

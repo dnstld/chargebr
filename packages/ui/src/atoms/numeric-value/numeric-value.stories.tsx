@@ -15,25 +15,21 @@ type Story = StoryObj<typeof meta>;
 // Peso e destaque no padrão: o número comum, sem variante aplicada.
 export const Padrao: Story = {
   name: "Padrão",
-  tags: ["state:weight:regular", "state:emphasis:normal"],
   args: { value: 12345 },
 };
 
 export const PesoMedio: Story = {
   name: "Peso médio",
-  tags: ["state:weight:medium"],
   args: { value: 12345, weight: "medium" },
 };
 
 export const PesoSemibold: Story = {
   name: "Peso semibold",
-  tags: ["state:weight:semibold"],
   args: { value: 12345, weight: "semibold" },
 };
 
 export const Italico: Story = {
   name: "Itálico",
-  tags: ["state:emphasis:italic"],
   args: { value: 9870, emphasis: "italic" },
 };
 
@@ -60,7 +56,6 @@ const STACKED = [7, 1234, 98765.4];
 // tabulares fazem cada dígito ocupar a mesma largura, e a coluna alinha.
 export const ColunaAlinhada: Story = {
   name: "Coluna alinhada",
-  tags: ["state:weight:regular"],
   args: { value: 0 },
   render: () => (
     <div className={styles.column}>

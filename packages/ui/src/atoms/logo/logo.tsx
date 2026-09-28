@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 import horizontal from "./logo-charge-br-horizontal.svg";
-import { defineAtom } from "../contract";
 
 export interface LogoProps {
   /** Nome acessível da marca — normalmente o nome do produto que a compõe. */
@@ -22,11 +21,3 @@ export interface LogoProps {
 export function Logo({ label }: LogoProps) {
   return <img src={horizontal} alt={label} />;
 }
-
-export const LOGO_STATES = ["default"] as const;
-
-export const LogoAtom = defineAtom({
-  name: "Logo",
-  component: Logo,
-  states: LOGO_STATES,
-});

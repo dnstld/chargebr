@@ -18,7 +18,6 @@ type Story = StoryObj<typeof meta>;
 // próprio ícone.
 export const Padrao: Story = {
   name: "Padrão",
-  tags: ["state:default"],
   args: { as: Menu },
 };
 
@@ -26,7 +25,6 @@ export const Padrao: Story = {
 // escolhido por string: trocar o componente troca o desenho, não um rótulo.
 export const RecebePorPropriedade: Story = {
   name: "Recebe o componente por propriedade",
-  tags: ["state:default"],
   args: { as: Check },
   render: () => (
     <div className={styles.row}>
@@ -51,7 +49,6 @@ export const RecebePorPropriedade: Story = {
 // próprio lucide-react.
 export const CorSegueOTexto: Story = {
   name: "Cor segue o texto ao redor",
-  tags: ["state:default"],
   args: { as: Check },
   render: () => (
     <span className={styles.tinted}>

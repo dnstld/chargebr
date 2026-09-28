@@ -3,8 +3,7 @@ import {
   resolveTerms,
   type VocabularyOverrides,
 } from "../../../vocabulary/vocabulary";
-import { BLOCK_REASONS, type BlockReason } from "../../../domain/block-reason";
-import { definePrimitive } from "../../../domain/contract";
+import type { BlockReason } from "../../../domain/block-reason";
 import styles from "./blocked-projection.module.css";
 
 export interface BlockedProjectionProps {
@@ -39,9 +38,3 @@ export function BlockedProjection({ reasons, terms }: BlockedProjectionProps) {
     </div>
   );
 }
-
-export const BlockedProjectionPrimitive = definePrimitive({
-  name: "BlockedProjection",
-  component: BlockedProjection,
-  states: BLOCK_REASONS,
-});

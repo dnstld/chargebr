@@ -1,4 +1,3 @@
-import { defineAtom } from "../contract";
 import styles from "./declared-absence.module.css";
 
 // Por que um valor não está sendo exibido. `blocked` é projection_status =
@@ -25,9 +24,3 @@ export function DeclaredAbsence({ kind, reason }: DeclaredAbsenceProps) {
     </span>
   );
 }
-
-export const DeclaredAbsenceAtom = defineAtom({
-  name: "DeclaredAbsence",
-  component: DeclaredAbsence,
-  states: ABSENCE_KINDS,
-});

@@ -1,11 +1,5 @@
 import type { ReactNode } from "react";
-import { defineAtom } from "../contract";
-import {
-  FONT_EMPHASES,
-  FONT_WEIGHTS,
-  type FontEmphasis,
-  type FontWeight,
-} from "../font-variant";
+import type { FontEmphasis, FontWeight } from "../font-variant";
 import styles from "./text.module.css";
 
 export interface TextProps {
@@ -34,17 +28,3 @@ export function Text({
     </span>
   );
 }
-
-// Estados declarados: cada valor de cada variante tem história própria, não
-// cada combinação (docs/decisao-biblioteca-de-componentes.md, "Cobertura:
-// quando combinação ganha história").
-const TEXT_STATES = [
-  ...FONT_WEIGHTS.map((weight) => `weight:${weight}` as const),
-  ...FONT_EMPHASES.map((emphasis) => `emphasis:${emphasis}` as const),
-];
-
-export const TextAtom = defineAtom({
-  name: "Text",
-  component: Text,
-  states: TEXT_STATES,
-});

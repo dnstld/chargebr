@@ -32,11 +32,6 @@ type Story = StoryObj<typeof meta>;
 
 export const TresSeries: Story = {
   name: "Três séries, com não resolvido e ausência",
-  tags: [
-    "state:multiple_series",
-    "state:unresolved_point",
-    "state:missing_point",
-  ],
   args: {
     title: "Fixture sintética",
     measure: SYNTHETIC_UNITS,
@@ -61,7 +56,6 @@ export const TresSeries: Story = {
 
 export const UmaSerie: Story = {
   name: "Uma série, derivada do contrato",
-  tags: ["state:single_series"],
   args: {
     title: "Veículos leves eletrificados",
     measure: ELECTRIFIED_UNITS,
@@ -77,7 +71,6 @@ export const UmaSerie: Story = {
 
 export const Bloqueada: Story = {
   name: "Projeção bloqueada",
-  tags: ["state:blocked"],
   args: {
     title: "Veículos leves eletrificados",
     measure: ELECTRIFIED_UNITS,

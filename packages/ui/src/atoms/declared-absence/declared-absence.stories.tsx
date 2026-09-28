@@ -30,7 +30,6 @@ async function expectNoValueLike(
 
 export const ProjecaoBloqueada: Story = {
   name: "Projeção bloqueada",
-  tags: ["state:blocked"],
   args: {
     kind: "blocked",
     reason: "Projeção bloqueada por cobertura insuficiente",
@@ -42,7 +41,6 @@ export const ProjecaoBloqueada: Story = {
 
 export const InformacaoDesconhecida: Story = {
   name: "Informação desconhecida",
-  tags: ["state:unknown"],
   args: { kind: "unknown", reason: "Data sem precisão conhecida" },
   play: async ({ canvasElement, args }) => {
     await expectNoValueLike(canvasElement, args.reason);

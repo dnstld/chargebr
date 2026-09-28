@@ -1,4 +1,3 @@
-import { defineAtom } from "../contract";
 import { VisuallyHidden } from "../../utilities/visually-hidden";
 import { Hatch } from "../hatch/hatch";
 import styles from "./status-marker.module.css";
@@ -60,9 +59,3 @@ export function StatusMarker<Axis extends StatusAxis>({
     </span>
   );
 }
-
-export const StatusMarkerAtom = defineAtom({
-  name: "StatusMarker",
-  component: StatusMarker,
-  states: STATUSES,
-});

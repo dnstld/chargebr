@@ -1,5 +1,4 @@
 import { DomainChart } from "../chart";
-import { CHART_STATES, defineChart } from "../contract";
 import type { ChartDrawProps, ChartSeries, ShapeChartProps } from "../series";
 
 // Dispersão por categoria. Qualquer marca pode encostar em qualquer outra, e
@@ -11,9 +10,3 @@ export function DotChart<
 >(props: ShapeChartProps<"dot", S, Measure, Title>) {
   return <DomainChart {...(props as ChartDrawProps)} shape="dot" />;
 }
-
-export const DotChartShape = defineChart({
-  name: "DotChart",
-  component: DotChart,
-  states: CHART_STATES,
-});

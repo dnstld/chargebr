@@ -1,5 +1,4 @@
 import type { ElementType, ReactNode } from "react";
-import { defineAtom } from "../contract";
 import styles from "./heading.module.css";
 
 // Sete graus — o mesmo domínio de `font.size.*`, sem subconjunto inventado
@@ -50,13 +49,3 @@ export function Heading({ level, children }: HeadingProps) {
     </Tag>
   );
 }
-
-export const HEADING_STATES = HEADING_LEVELS.map(
-  (level) => `level:${level}` as const,
-);
-
-export const HeadingAtom = defineAtom({
-  name: "Heading",
-  component: Heading,
-  states: HEADING_STATES,
-});

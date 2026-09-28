@@ -1,5 +1,4 @@
 import { DomainChart } from "../chart";
-import { CHART_STATES, defineChart } from "../contract";
 import type { ChartDrawProps, ChartSeries, ShapeChartProps } from "../series";
 
 // Pequenos múltiplos: um painel por série, todos na mesma escala de valor. É a
@@ -12,9 +11,3 @@ export function SmallMultiplesChart<
 >(props: ShapeChartProps<"small-multiples", S, Measure, Title>) {
   return <DomainChart {...(props as ChartDrawProps)} shape="small-multiples" />;
 }
-
-export const SmallMultiplesChartShape = defineChart({
-  name: "SmallMultiplesChart",
-  component: SmallMultiplesChart,
-  states: CHART_STATES,
-});

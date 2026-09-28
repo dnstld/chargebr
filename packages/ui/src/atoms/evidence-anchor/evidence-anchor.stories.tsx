@@ -20,7 +20,6 @@ type Story = StoryObj<typeof meta>;
 
 export const EmRepouso: Story = {
   name: "Em repouso",
-  tags: ["state:idle"],
   play: async ({ canvas, args }) => {
     const anchor = canvas.getByRole("link", { name: args.label });
     await expect(anchor.getAttribute("href")).toBe(args.href);
@@ -33,7 +32,6 @@ export const EmRepouso: Story = {
 // vindo do teclado aparece com o anel de foco dos tokens.
 export const ComFocoPeloTeclado: Story = {
   name: "Com foco pelo teclado",
-  tags: ["state:focus-visible"],
   play: async ({ canvas, args, globals }) => {
     const theme = globals.theme as Theme;
     const anchor = canvas.getByRole("link", { name: args.label });

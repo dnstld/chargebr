@@ -1,6 +1,5 @@
 import { HATCH } from "@chargebr/tokens";
 import { useId } from "react";
-import { defineAtom } from "../contract";
 import styles from "./hatch.module.css";
 
 // Período do padrão, em unidades do espaço do usuário do SVG: um traço e um
@@ -64,12 +63,3 @@ export function Hatch({ label }: HatchProps) {
     </svg>
   );
 }
-
-// A hachura não tem estado: é uma textura só, em qualquer tamanho a partir do
-// mínimo declarado. Variação de densidade ou de ângulo seria uma segunda
-// hachura, e é exatamente o que este átomo existe para impedir.
-export const HatchAtom = defineAtom({
-  name: "Hatch",
-  component: Hatch,
-  states: [],
-});

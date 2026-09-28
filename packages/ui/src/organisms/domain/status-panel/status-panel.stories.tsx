@@ -54,7 +54,6 @@ async function expectThreeAxes(canvasElement: HTMLElement): Promise<void> {
 
 export const TresEixosComValor: Story = {
   name: "Três eixos com valor",
-  tags: ["state:all_valued"],
   play: async ({ canvasElement, args }) => {
     await expectThreeAxes(canvasElement);
     for (const item of items(canvasElement)) {
@@ -79,7 +78,6 @@ export const TresEixosComValor: Story = {
 // seus marcadores.
 export const EixoSemValor: Story = {
   name: "Eixo sem valor",
-  tags: ["state:axis_unvalued"],
   args: { statuses: STATUSES_FROM_CONTRACT },
   play: async ({ canvasElement }) => {
     await expectThreeAxes(canvasElement);
@@ -111,7 +109,6 @@ export const EixoSemValor: Story = {
 // e o painel não a sobrescreve.
 export const NaoResolvidoNoPainel: Story = {
   name: "Não resolvido no painel",
-  tags: ["state:all_valued"],
   args: {
     statuses: { ...STATUSES_FROM_LOAD, normalization_status: "unresolved" },
   },
@@ -127,7 +124,6 @@ export const NaoResolvidoNoPainel: Story = {
 
 export const TermosDoVocabulario: Story = {
   name: "Termos vêm do vocabulário",
-  tags: ["state:all_valued", "state:axis_unvalued"],
   args: { statuses: STATUSES_FROM_CONTRACT, terms: markEveryTerm() },
   play: async ({ canvasElement }) => {
     await expectEveryTermFromVocabulary(canvasElement, []);
@@ -136,7 +132,6 @@ export const TermosDoVocabulario: Story = {
 
 export const TermoSobrescrito: Story = {
   name: "Termo sobrescrito",
-  tags: ["state:all_valued"],
   args: {
     statuses: STATUSES_FROM_LOAD,
     terms: {

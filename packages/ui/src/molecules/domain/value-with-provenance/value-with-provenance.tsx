@@ -6,8 +6,6 @@ import {
   resolveTerms,
   type VocabularyOverrides,
 } from "../../../vocabulary/vocabulary";
-import { definePrimitive } from "../../../domain/contract";
-import { VALUE_ROLES, type ValueRole } from "../value-role";
 import styles from "./value-with-provenance.module.css";
 
 // Caminho até a evidência de um valor. É a forma da biblioteca: um destino e
@@ -106,13 +104,3 @@ export function ValueWithProvenance({
     </div>
   );
 }
-
-// Os estados da primitiva são os papéis que ela pode exibir: cada um tem
-// posição própria e história própria.
-export const VALUE_WITH_PROVENANCE_STATES: readonly ValueRole[] = VALUE_ROLES;
-
-export const ValueWithProvenancePrimitive = definePrimitive({
-  name: "ValueWithProvenance",
-  component: ValueWithProvenance,
-  states: VALUE_WITH_PROVENANCE_STATES,
-});
