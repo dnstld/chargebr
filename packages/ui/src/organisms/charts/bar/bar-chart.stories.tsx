@@ -1,24 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-  expectBlockedReplacesChart,
   expectLegendNamesSeries,
-  expectMissingDeclared,
   expectNoInteractiveInPlot,
   expectNoLegend,
+  expectNoMarkForMissingValue,
   expectTextEquivalent,
   expectTextOutsideChartSurface,
-  expectUnresolvedHatchedAndDetached,
+  expectTexturedFill,
 } from "../chart.assert";
 import {
-  CURRENT_METHODOLOGY,
-  ELECTRIFIED_UNITS,
-  FROM_CONTRACT,
-} from "../fixtures/abve-eletrificados-janeiro-2025";
-import {
+  COMPLETE,
   SYNTHETIC_UNITS,
   THREE_SERIES,
   WITH_MISSING,
-  WITH_UNRESOLVED,
+  WITH_TEXTURED,
 } from "../fixtures/synthetic-series";
 import { BarChart } from "./bar-chart";
 
@@ -31,10 +26,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// Três séries — o limite que a paleta sustenta — com os três estados de ponto
-// no mesmo desenho: resolvido, não resolvido e ausente.
+// Três séries — o limite que a paleta sustenta — com preenchimento
+// texturizado e um ponto sem valor no mesmo desenho.
 export const TresSeries: Story = {
-  name: "Três séries, com não resolvido e ausência",
+  name: "Três séries, com preenchimento texturizado e ausência",
   args: {
     title: "Fixture sintética de barras",
     measure: SYNTHETIC_UNITS,
@@ -47,61 +42,28 @@ export const TresSeries: Story = {
       canvasElement,
       THREE_SERIES.map((one) => one.name),
     );
-    await expectUnresolvedHatchedAndDetached(
+    await expectTexturedFill(canvasElement, WITH_TEXTURED.name, "Março");
+    await expectNoMarkForMissingValue(
       canvasElement,
-      WITH_UNRESOLVED.name,
+      WITH_MISSING.name,
       "Março",
     );
-    await expectMissingDeclared(canvasElement, WITH_MISSING.name, "Março");
     await expectTextEquivalent(canvasElement, THREE_SERIES);
   },
 };
 
-// Uma série só, e desta vez do contrato de leitura: sem legenda obrigatória,
-// porque não há o que distinguir.
+// Uma série só: sem legenda obrigatória, porque não há o que distinguir.
 export const UmaSerie: Story = {
-  name: "Uma série, derivada do contrato",
+  name: "Uma série",
   args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    series: [CURRENT_METHODOLOGY],
+    title: "Fixture sintética de barras",
+    measure: SYNTHETIC_UNITS,
+    series: [COMPLETE],
   },
   play: async ({ canvasElement }) => {
     await expectNoInteractiveInPlot(canvasElement);
     await expectTextOutsideChartSurface(canvasElement);
     await expectNoLegend(canvasElement);
-    await expectTextEquivalent(canvasElement, [CURRENT_METHODOLOGY]);
-  },
-};
-
-// O resultado publicado e o contrafactual publicado ao lado dele, na mesma
-// escala e na mesma publicação: as duas séries que o contrato produz.
-export const DuasSeriesDoContrato: Story = {
-  name: "Metodologia vigente e critério anterior",
-  args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    series: [...FROM_CONTRACT],
-  },
-  play: async ({ canvasElement }) => {
-    await expectNoInteractiveInPlot(canvasElement);
-    await expectTextOutsideChartSurface(canvasElement);
-    await expectLegendNamesSeries(
-      canvasElement,
-      FROM_CONTRACT.map((one) => one.name),
-    );
-    await expectTextEquivalent(canvasElement, FROM_CONTRACT);
-  },
-};
-
-export const Bloqueada: Story = {
-  name: "Projeção bloqueada",
-  args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    blocked: ["provenance_incomplete"],
-  },
-  play: async ({ canvasElement }) => {
-    await expectBlockedReplacesChart(canvasElement, ["provenance_incomplete"]);
+    await expectTextEquivalent(canvasElement, [COMPLETE]);
   },
 };

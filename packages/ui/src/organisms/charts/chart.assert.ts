@@ -3,10 +3,10 @@ import { accessibleNameFromContent } from "../../bench/accessible-name";
 import type { ChartSeries } from "./series";
 import { hasValue } from "./series";
 
-// As provas das restrições de domínio no desenho, executadas em história e
-// portanto nos dois temas. Ficam aqui, e não em cada arquivo de história,
-// porque a restrição é a mesma em toda forma: o que muda é o desenho, não o
-// que ele não pode afirmar.
+// As provas de garantia de desenho, executadas em história e portanto nos
+// dois temas. Ficam aqui, e não em cada arquivo de história, porque a
+// garantia é a mesma em toda forma: o que muda é o desenho, não o que ele não
+// pode afirmar.
 
 const LOCALE = "pt-BR";
 
@@ -44,9 +44,9 @@ function segmentsTouching(
 
 // A superfície de gráfico hospeda apenas o desenho — marca, eixo e grade — e
 // nenhum texto interativo. É por isso que o piso que vale contra ela, para as
-// séries, é o de objeto gráfico e não o de texto: nome do gráfico, legenda,
-// ausências declaradas e representação em texto ficam na superfície da página.
-// Esta afirmação é o que impede que essa premissa decaia sem ser notada.
+// séries, é o de objeto gráfico e não o de texto: nome do gráfico, legenda e
+// representação em texto ficam na superfície da página. Esta afirmação é o
+// que impede que essa premissa decaia sem ser notada.
 //
 // O que é observável na árvore renderizada: elemento alcançável por foco e
 // manipulador de ponteiro escrito como atributo. Um manipulador ligado por
@@ -182,11 +182,10 @@ function paintedColor(
   return noBackground;
 }
 
-// Nome do gráfico, legenda, ausências declaradas e representação em texto
-// ficam na superfície da página: nenhum deles é pintado pela cor da
-// superfície de gráfico. Roda em toda história de gráfico, e portanto nos
-// dois temas; elemento ausente (legenda de uma série só, sem ausência, sem
-// tabela num gráfico bloqueado) é ignorado, e não conta como violação.
+// Nome do gráfico, legenda e representação em texto ficam na superfície da
+// página: nenhum deles é pintado pela cor da superfície de gráfico. Roda em
+// toda história de gráfico, e portanto nos dois temas; elemento ausente
+// (legenda de uma série só) é ignorado, e não conta como violação.
 export async function expectTextOutsideChartSurface(
   canvasElement: HTMLElement,
 ): Promise<void> {
@@ -196,7 +195,6 @@ export async function expectTextOutsideChartSurface(
   const parts: [string, Element | null][] = [
     ["nome do gráfico", chart.querySelector(":scope > figcaption")],
     ["legenda", chart.querySelector("[data-legend]")],
-    ["ausências declaradas", chart.querySelector("[data-absences]")],
     ["representação em texto", chart.querySelector("[data-value-table]")],
   ];
   const violations = parts
@@ -211,56 +209,9 @@ export async function expectTextOutsideChartSurface(
   ).toEqual([]);
 }
 
-// Projeção bloqueada substitui o gráfico. Nem eixo, nem grade, nem rótulo de
-// escala, nem tabela de valores: eixo vazio comunica intervalo e ordem de
-// grandeza, e isso é informação sobre um dado que a metodologia mandou não
-// exibir.
-export async function expectBlockedReplacesChart(
-  canvasElement: HTMLElement,
-  reasons: readonly string[],
-): Promise<void> {
-  const chart = chartOf(canvasElement);
-  await expect(chart.hasAttribute("data-blocked")).toBe(true);
-
-  for (const absent of [
-    "[data-plot]",
-    "[data-axis]",
-    "[data-grid]",
-    "[data-scale-label]",
-    "[data-value-table]",
-    "[data-legend]",
-    "[data-mark]",
-  ]) {
-    await expect(all(chart, absent), `${absent} num gráfico bloqueado`).toEqual(
-      [],
-    );
-  }
-
-  const blocked = chart.querySelector('[data-primitive="blocked-projection"]');
-  await expect(blocked).not.toBeNull();
-
-  // A proibição de interativo vale também no caminho em que o desenho é
-  // substituído: sem superfície de gráfico, e com a primitiva que ocupou o
-  // lugar dela igualmente sem foco nem ponteiro. O nome do gráfico segue fora
-  // da superfície de gráfico mesmo bloqueado — é o único dos quatro elementos
-  // de texto que ainda existe nesse estado.
-  await expectNoInteractiveInPlot(canvasElement);
-  await expectTextOutsideChartSurface(canvasElement);
-  if (blocked !== null)
-    await expectNoInteractiveWithin(blocked, "projeção bloqueada");
-  for (const reason of reasons) {
-    await expect(
-      chart.querySelector(`[data-reason="${reason}"]`),
-      `razão ${reason}`,
-    ).not.toBeNull();
-  }
-
-  // Nada que se leia como valor: nem número exibido, nem número parcial.
-  await expect(accessibleNameFromContent(chart)).not.toMatch(/\d/);
-}
-
-// Não resolvido nunca é ligado a resolvido, e sua marca sai hachurada.
-export async function expectUnresolvedHatchedAndDetached(
+// Um ponto com `fill: "textured"` recebe hachura no preenchimento, e não cor
+// sólida.
+export async function expectTexturedFill(
   canvasElement: HTMLElement,
   series: string,
   category: string,
@@ -268,23 +219,13 @@ export async function expectUnresolvedHatchedAndDetached(
   const chart = chartOf(canvasElement);
   const mark = markOf(chart, series, category);
   await expect(mark, `marca de ${series} em ${category}`).not.toBeNull();
-  await expect(mark?.getAttribute("data-kind")).toBe("unresolved");
-
-  // Preenchimento por padrão de hachura, e não por cor sólida.
+  await expect(mark?.getAttribute("data-fill")).toBe("textured");
   await expect(mark?.getAttribute("fill")).toMatch(/^url\(#/);
-
-  await expect(
-    segmentsTouching(chart, series, category).map((segment) => [
-      segment.getAttribute("data-from"),
-      segment.getAttribute("data-to"),
-    ]),
-    "segmentos ligando um ponto não resolvido",
-  ).toEqual([]);
 }
 
-// Numa forma que liga pontos, os vizinhos resolvidos de um ponto não resolvido
-// também não se ligam entre si: pular o ponto seria afirmar a continuidade que
-// a interrupção existe para negar.
+// Numa forma que liga pontos, os vizinhos com valor de um ponto sem valor
+// também não se ligam entre si: pular o ponto seria afirmar a continuidade
+// que a interrupção existe para negar.
 export async function expectNoSegmentAcross(
   canvasElement: HTMLElement,
   series: string,
@@ -302,8 +243,8 @@ export async function expectNoSegmentAcross(
   );
 }
 
-// Ausência nunca é zero: sem marca, sem segmento atravessando, e dita.
-export async function expectMissingDeclared(
+// Ponto sem valor: sem marca, sem segmento atravessando.
+export async function expectNoMarkForMissingValue(
   canvasElement: HTMLElement,
   series: string,
   category: string,
@@ -311,20 +252,12 @@ export async function expectMissingDeclared(
   const chart = chartOf(canvasElement);
   await expect(
     markOf(chart, series, category),
-    `marca desenhada num ponto ausente (${series}, ${category})`,
+    `marca desenhada num ponto sem valor (${series}, ${category})`,
   ).toBeNull();
   await expect(
     segmentsTouching(chart, series, category),
-    "segmento atravessando um ponto ausente",
+    "segmento atravessando um ponto sem valor",
   ).toEqual([]);
-
-  const declared = chart.querySelector<HTMLElement>(
-    `[data-absences] [data-series="${series}"][data-category="${category}"]`,
-  );
-  await expect(declared, "ausência declarada").not.toBeNull();
-  await expect(
-    accessibleNameFromContent(declared as Element).length,
-  ).toBeGreaterThan(0);
 }
 
 // Legenda a partir de duas séries, alcançável na leitura assistida, e com um
@@ -370,8 +303,7 @@ export async function expectNoLegend(
   await expect(chart.querySelector("[data-legend]")).toBeNull();
 }
 
-// Representação equivalente em texto: todo valor alcançável sem a visão, e o
-// caminho até a evidência de cada um junto dele.
+// Representação equivalente em texto: todo valor alcançável sem a visão.
 export async function expectTextEquivalent(
   canvasElement: HTMLElement,
   series: readonly ChartSeries[],
@@ -397,58 +329,9 @@ export async function expectTextEquivalent(
           text,
           `valor de ${one.name} em ${point.category}`,
         ).toContain(new Intl.NumberFormat(LOCALE, format).format(point.value));
-
-        // O caminho até a evidência sai ao lado do valor, não numa nota de
-        // rodapé: é a linha do valor que carrega a proveniência.
-        const anchor = (row as Element).querySelector<HTMLAnchorElement>(
-          `a[href="${point.evidence.href}"]`,
-        );
-        await expect(
-          anchor,
-          `caminho até a evidência de ${one.name}`,
-        ).not.toBeNull();
-        await expect(text).toContain(point.evidence.label);
       } else {
-        await expect(row?.getAttribute("data-kind")).toBe("missing");
         await expect(text, "ausência lida como zero").not.toMatch(/\b0\b/);
       }
     }
   }
-}
-
-// Numa forma que empilha, a marca não resolvida fica fora da pilha: acima do
-// topo dos resolvidos e separada por um vão. A altura de uma pilha é lida como
-// soma, e somar um não resolvido a resolvidos é a agregação que a restrição
-// proíbe — aqui ela apareceria como um retângulo a mais na mesma coluna.
-export async function expectUnresolvedOutsideStack(
-  canvasElement: HTMLElement,
-  category: string,
-  unresolvedSeries: string,
-): Promise<void> {
-  const chart = chartOf(canvasElement);
-  const inCategory = all(chart, `[data-mark][data-category="${category}"]`);
-  const edge = (mark: HTMLElement, attribute: string): number =>
-    Number(mark.getAttribute(attribute) ?? Number.NaN);
-
-  const resolved = inCategory.filter(
-    (mark) => mark.getAttribute("data-kind") === "resolved",
-  );
-  const unresolved = inCategory.filter(
-    (mark) =>
-      mark.getAttribute("data-kind") === "unresolved" &&
-      mark.getAttribute("data-series") === unresolvedSeries,
-  );
-  await expect(resolved.length, "resolvidos empilhados").toBeGreaterThan(0);
-  await expect(unresolved).toHaveLength(1);
-
-  // No SVG o eixo vertical cresce para baixo: o topo da pilha é o menor `y`, e
-  // a base da marca não resolvida precisa estar acima dele.
-  const stackTop = Math.min(...resolved.map((mark) => edge(mark, "y")));
-  const bottom = unresolved.map(
-    (mark) => edge(mark, "y") + edge(mark, "height"),
-  );
-  await expect(
-    bottom[0] ?? Number.NaN,
-    "marca não resolvida encostada na pilha",
-  ).toBeLessThan(stackTop);
 }

@@ -1,24 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-  expectBlockedReplacesChart,
   expectLegendNamesSeries,
-  expectMissingDeclared,
   expectNoInteractiveInPlot,
   expectNoLegend,
+  expectNoMarkForMissingValue,
   expectNoSegmentAcross,
   expectTextEquivalent,
   expectTextOutsideChartSurface,
-  expectUnresolvedHatchedAndDetached,
+  expectTexturedFill,
 } from "../chart.assert";
 import {
-  CURRENT_METHODOLOGY,
-  ELECTRIFIED_UNITS,
-} from "../fixtures/abve-eletrificados-janeiro-2025";
-import {
+  COMPLETE,
   SYNTHETIC_UNITS,
   THREE_SERIES,
   WITH_MISSING,
-  WITH_UNRESOLVED,
+  WITH_TEXTURED,
 } from "../fixtures/synthetic-series";
 import { LineChart } from "./line-chart";
 
@@ -32,7 +28,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const TresSeries: Story = {
-  name: "Três séries, com não resolvido e ausência",
+  name: "Três séries, com preenchimento texturizado e ausência",
   args: {
     title: "Fixture sintética",
     measure: SYNTHETIC_UNITS,
@@ -45,21 +41,15 @@ export const TresSeries: Story = {
       canvasElement,
       THREE_SERIES.map((one) => one.name),
     );
-    await expectUnresolvedHatchedAndDetached(
+    await expectTexturedFill(canvasElement, WITH_TEXTURED.name, "Março");
+    await expectNoMarkForMissingValue(
       canvasElement,
-      WITH_UNRESOLVED.name,
+      WITH_MISSING.name,
       "Março",
     );
-    await expectMissingDeclared(canvasElement, WITH_MISSING.name, "Março");
     await expectTextEquivalent(canvasElement, THREE_SERIES);
-    // A ligação não pula o ponto: os vizinhos resolvidos do não resolvido
-    // também não se ligam entre si.
-    await expectNoSegmentAcross(
-      canvasElement,
-      WITH_UNRESOLVED.name,
-      "Fevereiro",
-      "Abril",
-    );
+    // O ponto sem valor interrompe a ligação: os vizinhos com valor também
+    // não se ligam entre si pulando por cima dele.
     await expectNoSegmentAcross(
       canvasElement,
       WITH_MISSING.name,
@@ -70,31 +60,16 @@ export const TresSeries: Story = {
 };
 
 export const UmaSerie: Story = {
-  name: "Uma série, derivada do contrato",
+  name: "Uma série",
   args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    series: [CURRENT_METHODOLOGY],
+    title: "Fixture sintética",
+    measure: SYNTHETIC_UNITS,
+    series: [COMPLETE],
   },
   play: async ({ canvasElement }) => {
     await expectNoInteractiveInPlot(canvasElement);
     await expectTextOutsideChartSurface(canvasElement);
     await expectNoLegend(canvasElement);
-    await expectTextEquivalent(canvasElement, [CURRENT_METHODOLOGY]);
-  },
-};
-
-export const Bloqueada: Story = {
-  name: "Projeção bloqueada",
-  args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    blocked: ["metric_not_found", "provenance_incomplete"],
-  },
-  play: async ({ canvasElement }) => {
-    await expectBlockedReplacesChart(canvasElement, [
-      "metric_not_found",
-      "provenance_incomplete",
-    ]);
+    await expectTextEquivalent(canvasElement, [COMPLETE]);
   },
 };

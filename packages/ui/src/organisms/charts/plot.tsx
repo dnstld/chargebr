@@ -24,10 +24,6 @@ export const PLOT = {
   panelGap: 20,
   margin: { top: 16, right: 16, bottom: 40, left: 64 },
   markSize: 11,
-  // Vão que separa uma marca não resolvida do empilhamento dos resolvidos.
-  // É o que impede que a altura da pilha seja lida como soma que inclui o
-  // não resolvido.
-  stackGap: 7,
   strokeWidth: 2,
   tickCount: 4,
 } as const;
@@ -60,8 +56,7 @@ function pointAt(one: ChartSeries, category: string): ChartPoint | undefined {
 }
 
 // Teto da escala de valor. Nas formas que empilham, é a maior soma por
-// categoria — e a soma inclui o não resolvido só para reservar espaço, nunca
-// como total exibido: nenhum total é desenhado nem escrito.
+// categoria; nenhum total é desenhado nem escrito, só usado para escalar.
 function domainTop(
   series: readonly ChartSeries[],
   categories: readonly string[],
@@ -128,7 +123,8 @@ export function ChartPlot({
   const bandStart = (category: string): number => x(category) ?? 0;
 
   // Marca de uma série: a forma é o canal não cromático, e é a mesma na
-  // legenda. Não resolvido recebe hachura no lugar do preenchimento sólido.
+  // legenda. `fill: "textured"` recebe hachura no lugar do preenchimento
+  // sólido — escolha visual de quem compõe, sem significado de estado.
   function mark(
     one: ChartSeries,
     point: ChartPoint,
@@ -138,16 +134,16 @@ export function ChartPlot({
     if (!hasValue(point)) return null;
     const index = indexOf(one);
     const color = seriesColor(index);
-    const unresolved = point.kind === "unresolved";
+    const textured = point.fill === "textured";
     const size = PLOT.markSize;
     const half = size / 2;
     const common = {
       "data-mark": "",
-      "data-kind": point.kind,
+      "data-fill": point.fill ?? "solid",
       "data-series": one.name,
       "data-category": point.category,
       "data-symbol": seriesSymbol(index),
-      fill: unresolved ? hatchFill(`${hatchPrefix}-${index}`) : color,
+      fill: textured ? hatchFill(`${hatchPrefix}-${index}`) : color,
       stroke: color,
       strokeWidth: PLOT.strokeWidth,
     };
@@ -183,7 +179,7 @@ export function ChartPlot({
     barHeight: number,
   ): ReactNode {
     const index = indexOf(one);
-    const unresolved = point.kind === "unresolved";
+    const textured = point.fill === "textured";
     return (
       <rect
         key={`${one.name}-${point.category}`}
@@ -192,15 +188,15 @@ export function ChartPlot({
         width={width}
         height={barHeight}
         data-mark=""
-        data-kind={point.kind}
+        data-fill={point.fill ?? "solid"}
         data-series={one.name}
         data-category={point.category}
         data-symbol={seriesSymbol(index)}
         fill={
-          unresolved ? hatchFill(`${hatchPrefix}-${index}`) : seriesColor(index)
+          textured ? hatchFill(`${hatchPrefix}-${index}`) : seriesColor(index)
         }
         stroke={seriesColor(index)}
-        strokeWidth={unresolved ? PLOT.strokeWidth : 0}
+        strokeWidth={textured ? PLOT.strokeWidth : 0}
       />
     );
   }
@@ -228,9 +224,8 @@ export function ChartPlot({
     );
   }
 
-  // Barras empilhadas: os resolvidos se empilham; os não resolvidos ficam
-  // acima, separados por um vão e hachurados. A pilha nunca contém um valor
-  // não resolvido, porque a altura da pilha é lida como soma.
+  // Barras empilhadas: cada série com valor se empilha, na ordem declarada.
+  // Ponto sem valor não entra na pilha — não há o que somar.
   function stackedBars(panelSeries: readonly ChartSeries[]): ReactNode[] {
     const out: ReactNode[] = [];
     for (const category of categories) {
@@ -239,25 +234,18 @@ export function ChartPlot({
       let top = baseline;
       for (const one of panelSeries) {
         const point = pointAt(one, category);
-        if (point === undefined || point.kind !== "resolved") continue;
+        if (point === undefined || !hasValue(point)) continue;
         const barHeight = baseline - y(point.value);
         top -= barHeight;
-        out.push(bar(one, point, left, width, top, barHeight));
-      }
-      for (const one of panelSeries) {
-        const point = pointAt(one, category);
-        if (point === undefined || point.kind !== "unresolved") continue;
-        const barHeight = baseline - y(point.value);
-        top -= PLOT.stackGap + barHeight;
         out.push(bar(one, point, left, width, top, barHeight));
       }
     }
     return out;
   }
 
-  // Linhas: um segmento entre dois pontos resolvidos vizinhos, e só. Ponto não
-  // resolvido e ponto ausente interrompem a ligação, porque ligá-los afirmaria
-  // uma continuidade que o dado não sustenta.
+  // Linhas: um segmento entre dois pontos com valor vizinhos, e só. Um ponto
+  // sem valor interrompe a ligação, porque ligá-lo afirmaria uma continuidade
+  // que o dado não sustenta.
   function lines(panelSeries: readonly ChartSeries[]): ReactNode[] {
     const center = (category: string): number =>
       bandStart(category) + x.bandwidth() / 2;
@@ -271,7 +259,13 @@ export function ChartPlot({
         if (from === undefined || to === undefined) continue;
         const start = pointAt(one, from);
         const end = pointAt(one, to);
-        if (start?.kind !== "resolved" || end?.kind !== "resolved") continue;
+        if (
+          start === undefined ||
+          end === undefined ||
+          !hasValue(start) ||
+          !hasValue(end)
+        )
+          continue;
         segments.push(
           <line
             key={`${one.name}-${from}-${to}`}

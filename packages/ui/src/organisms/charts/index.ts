@@ -18,20 +18,12 @@ export {
   seriesSymbol,
 } from "./palette";
 export {
-  type ChartCommonProps,
   type ChartCoreProps,
   type ChartMeasure,
   type ChartPoint,
   type ChartSeries,
   hasValue,
-  type MissingPoint,
-  POINT_KINDS,
-  type PointKind,
-  type ResolvedPoint,
-  type SeriesLimitRule,
   type ShapeChartProps,
-  type SingleMeasureRule,
-  type UnresolvedPoint,
 } from "./series";
 export {
   CHART_SHAPE_IDS,

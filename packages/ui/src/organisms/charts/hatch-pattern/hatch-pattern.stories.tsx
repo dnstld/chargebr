@@ -27,7 +27,7 @@ export const HachuraUnica: Story = {
   render: ({ id }) => (
     <div className={styles.row}>
       <div className={styles.box} data-source="atom">
-        <Hatch label="Não resolvido, fora do gráfico" />
+        <Hatch label="Textura, fora do gráfico" />
       </div>
       <svg
         className={styles.box}

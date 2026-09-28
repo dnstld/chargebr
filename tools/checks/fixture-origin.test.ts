@@ -119,6 +119,5 @@ test("o perímetro encontra as fixtures que existem", () => {
   // Sem isto, um perímetro que deixasse de casar passaria como se não
   // houvesse fixture alguma a verificar.
   const files = fixtureFiles().map((file) => basename(file));
-  expect(files).toContain("abve-janeiro-2025.ts");
   expect(files).toContain("synthetic-series.ts");
 });
