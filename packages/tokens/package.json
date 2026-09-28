@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./palette": "./src/palette.ts",
-    "./tokens.css": "./generated/tokens.css"
+    "./tokens.css": "./generated/tokens.css",
+    "./tokens.media.css": "./generated/tokens.media.css"
   },
   "scripts": {
     "build": "node --import tsx src/cli/build.ts",
@@ -17,6 +18,7 @@
     "@types/culori": "4.0.1",
     "culori": "4.0.2",
     "happy-dom": "20.14.5",
+    "postcss": "^8.5.28",
     "style-dictionary": "5.5.5",
     "tsx": "4.20.6"
   }

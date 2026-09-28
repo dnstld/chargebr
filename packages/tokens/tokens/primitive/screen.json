@@ -1,0 +1,7 @@
+{
+  "screen": {
+    "$type": "dimension",
+    "$description": "Degrau de breakpoint. Consumido em @media via postcss-custom-media (@custom-media --screen-<nome>), nunca por var() — CSS não aceita custom property na condição de uma media query (D6 de openspec/changes/interface-atomic-structure/design.md).",
+    "md": { "$value": { "value": 768, "unit": "px" } }
+  }
+}

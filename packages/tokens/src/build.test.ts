@@ -55,6 +55,21 @@ test("alterar um token na fonte altera a saída CSS e a saída TypeScript", asyn
   );
 });
 
+// Tarefa 3.2 — o degrau de breakpoint vira `@custom-media`, nunca `var()` no
+// :root nem entrada em tokens.ts (D6: `@media` não aceita custom property na
+// condição), e fica fora de `tokens.css`, que continua CSS que qualquer
+// consumidor carrega sem passar por PostCSS primeiro (`@custom-media` não é
+// reconhecido por navegador nenhum nem por `happy-dom`).
+test("o degrau de breakpoint vira @custom-media em tokens.media.css, fora de tokens.css e de tokens.ts", async () => {
+  const { files } = await renderTokens();
+  expect(files["tokens.media.css"]).toContain(
+    "@custom-media --screen-md (min-width: 768px);",
+  );
+  expect(files["tokens.css"]).not.toContain("--screen-md");
+  expect(files["tokens.css"]).not.toContain("@custom-media");
+  expect(files["tokens.ts"]).not.toContain("screen-md");
+});
+
 // Tarefa 1.3 — duas gerações consecutivas produzem arquivos idênticos.
 test("duas gerações sobre a mesma fonte produzem arquivos com o mesmo hash", async () => {
   const first = tempDir();

@@ -414,6 +414,57 @@ buraco de sincronização entre bancada e aplicação. A decisão do dono foi B
 antes desta medição, condicionada a ela; a medição sustenta a condição, e a
 Opção A não entra.
 
+**O que foi de fato adotado, na aplicação (tasks.md, 3.3):** duas
+dependências de desenvolvimento na raiz, não uma —
+`postcss-custom-media@12.0.2` (a mesma versão desta medição) e
+`@csstools/postcss-global-data`, plugin colocado antes dele na cadeia do
+`postcss.config.mjs`. A segunda não estava prevista aqui; o motivo é o
+achado abaixo.
+
+**Achado na aplicação, não previsto por esta medição.** A sonda acima
+declarava `@custom-media` e consumia `@media` no MESMO arquivo
+(`apps/backoffice/app/global.css`; `packages/ui/src/shell/app-frame.module.css`).
+Isso prova que o `postcss.config.mjs` da raiz é lido pelos dois lados — não
+prova que uma declaração feita num arquivo (`tokens.media.css`, gerado pela
+tarefa 3.2) resolve `@media` num arquivo diferente, que é o uso real: o
+gerador declara, qualquer CSS Module da aplicação ou da bancada consome, sem
+redeclarar nada. Essa travessia quebrou na aplicação —
+`postcss-custom-media@12` removeu a opção `importFrom` que fazia exatamente
+isso — e só apareceu ao tentar o uso real, não a sonda desta medição.
+
+O que concluo: a medição não estava errada — "os dois lados leram e
+aplicaram o mesmo arquivo de configuração" continua verdadeiro. Estava
+incompleta: provou uma afirmação mais fraca do que a decisão passou a
+depender. A forma da sonda (declarar e consumir no mesmo arquivo) era mais
+fácil de resolver do que a forma do uso real (declarar num arquivo, consumir
+em outro), e a diferença entre as duas formas é exatamente o que
+`importFrom` fazia e a v12 deixou de fazer. É a mesma figura do achado de D8
+(e da varredura que ele disparou, hoje `specs/verification-bench/spec.md`
+desta mudança, "Localizador independente do que se afirma"): uma prova que
+localiza o que testa — ali, um elemento; aqui, se a configuração se aplica —
+por um sinal independente demais do comportamento que precisa provar, e por
+isso continua passando mesmo depois que o comportamento real (ali, o
+acoplamento; aqui, a travessia entre arquivos) já quebrou. Duas ocorrências
+em duas famílias diferentes de prova — afirmação de história e sonda de
+decisão de build — o bastante para não tratar como caso isolado.
+
+O que me faria mudar de ideia: se a sonda revisada, já reproduzindo a forma
+do uso real, ainda assim deixasse passar alguma regressão — aí a causa não
+seria "a sonda simplificou a forma", e o padrão abaixo estaria errado. Não é
+o caso aqui: a sonda que validou `@csstools/postcss-global-data` rodou sem
+`@custom-media` local, em `apps/backoffice/app/global.css` e em
+`packages/ui/src/bench/bench.module.css`, contra `tokens.media.css` — a
+mesma forma do uso real — e está registrada em `tasks.md` (3.3).
+
+Proposta, não decisão: se "a sonda reproduz a forma do uso real de que a
+decisão depende, nunca uma simplificação dela" merece virar regra
+registrada, o lugar mais preciso é `openspec/config.yaml`, em `rules.design`
+— que já governa o que um `design.md` precisa conter —, com um texto
+próximo de "Sonda usada para medir uma decisão reproduz a forma do uso real
+de que a decisão passa a depender; se simplificar essa forma, o `design.md`
+nomeia explicitamente o que ficou de fora." Registrado aqui como proposta
+para o gerente levar ao dono — não decidido nem aplicado nesta mudança.
+
 ### D7 — Logo não pode inlinear SVG com cor literal em `.tsx`
 
 **O que medi:** `tools/checks/style-literals.test.ts`,

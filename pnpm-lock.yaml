@@ -15,6 +15,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.5.14
         version: 2.5.14
+      '@csstools/postcss-global-data':
+        specifier: ^4.0.0
+        version: 4.0.0(postcss@8.5.28)
       '@fission-ai/openspec':
         specifier: 1.13.1
         version: 1.13.1(@types/node@24.10.1)
@@ -24,6 +27,9 @@ importers:
       '@types/pg':
         specifier: 8.23.1
         version: 8.23.1
+      postcss-custom-media:
+        specifier: 12.0.2
+        version: 12.0.2(postcss@8.5.28)
       tsx:
         specifier: 4.20.6
         version: 4.20.6
@@ -73,6 +79,9 @@ importers:
       happy-dom:
         specifier: 20.14.5
         version: 20.14.5
+      postcss:
+        specifier: ^8.5.28
+        version: 8.5.28
       style-dictionary:
         specifier: 5.5.5
         version: 5.5.5
@@ -285,6 +294,36 @@ packages:
 
   '@bundled-es-modules/memfs@4.17.0':
     resolution: {integrity: sha512-ykdrkEmQr9BV804yd37ikXfNnvxrwYfY9Z2/EtMHFEFadEjsQXJ1zL9bVZrKNLDtm91UdUOEHso6Aweg93K6xQ==}
+
+  '@csstools/cascade-layer-name-parser@3.0.1':
+    resolution: {integrity: sha512-EqmSJE8CcNoGXcgpiOD12PPMeuJZwiGMX69HPoam+GzltcjZjr6THQ0S+8a0NtQuefJtILzoDyQj+fp7+Qiorg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-parser-algorithms': ^4.0.1
+      '@csstools/css-tokenizer': ^4.0.2
+
+  '@csstools/css-parser-algorithms@4.0.1':
+    resolution: {integrity: sha512-ShL8BqPfbKJrJiKFH0xBbN0i7Nrh9HXYRuF+pzyj93R/BL2YAsUxJeqANErzqM+0JGl7vjHp+3OIgd/DL69YIA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-tokenizer': ^4.0.2
+
+  '@csstools/css-tokenizer@4.0.2':
+    resolution: {integrity: sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw==}
+    engines: {node: '>=20.19.0'}
+
+  '@csstools/media-query-list-parser@5.0.1':
+    resolution: {integrity: sha512-DR5NpEOOxDOhmMWPJlhYAV9gTmV4XpfYjtE+aXSCurkxS65KzNogI4wqzRIoujieQcmFkeRtK1nRIF8ImUZTDg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-parser-algorithms': ^4.0.1
+      '@csstools/css-tokenizer': ^4.0.2
+
+  '@csstools/postcss-global-data@4.0.0':
+    resolution: {integrity: sha512-mPKrL3Tzt8k1V+hTkU8XTH6JKRekB97oKHv/MekC9nfmRa+gMf1swlHRt8YK722sYN4xOipl17FZst99jsScLA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
 
   '@emnapi/core@1.11.0':
     resolution: {integrity: sha512-l9Oo58x0HOP5znGzVhYW9U3e5wVuA4LAZU2AGezTmkhO1CgQRFDhDg4nneHsu/t3WniXg9QrG2nIXL/ZS8ln8Q==}
@@ -2513,6 +2552,12 @@ packages:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
 
+  postcss-custom-media@12.0.2:
+    resolution: {integrity: sha512-qn+su6Ux/TVzBSPYlRxC3Kq5DZNWBZt7y1wj38mnHT+whYnM21IxuYVKJ2E9qahBo0KGvcv/1rAB/F5iY1UiIA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
   postcss@8.5.23:
     resolution: {integrity: sha512-g50586zr4bZmwFiTlflMu8E0bDTb5I5gertgwAKmsdUlTQIhZtunzUlD1WSzwcVWPoAVpsrA6vlfCD7oXvRwgg==}
     engines: {node: ^10 || ^12 || >=14}
@@ -3196,6 +3241,26 @@ snapshots:
       path: 0.12.7
       stream: 0.0.3
       util: 0.12.5
+
+  '@csstools/cascade-layer-name-parser@3.0.1(@csstools/css-parser-algorithms@4.0.1(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)':
+    dependencies:
+      '@csstools/css-parser-algorithms': 4.0.1(@csstools/css-tokenizer@4.0.2)
+      '@csstools/css-tokenizer': 4.0.2
+
+  '@csstools/css-parser-algorithms@4.0.1(@csstools/css-tokenizer@4.0.2)':
+    dependencies:
+      '@csstools/css-tokenizer': 4.0.2
+
+  '@csstools/css-tokenizer@4.0.2': {}
+
+  '@csstools/media-query-list-parser@5.0.1(@csstools/css-parser-algorithms@4.0.1(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)':
+    dependencies:
+      '@csstools/css-parser-algorithms': 4.0.1(@csstools/css-tokenizer@4.0.2)
+      '@csstools/css-tokenizer': 4.0.2
+
+  '@csstools/postcss-global-data@4.0.0(postcss@8.5.28)':
+    dependencies:
+      postcss: 8.5.28
 
   '@emnapi/core@1.11.0':
     dependencies:
@@ -5155,6 +5220,14 @@ snapshots:
   pngjs@7.0.0: {}
 
   possible-typed-array-names@1.1.0: {}
+
+  postcss-custom-media@12.0.2(postcss@8.5.28):
+    dependencies:
+      '@csstools/cascade-layer-name-parser': 3.0.1(@csstools/css-parser-algorithms@4.0.1(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)
+      '@csstools/css-parser-algorithms': 4.0.1(@csstools/css-tokenizer@4.0.2)
+      '@csstools/css-tokenizer': 4.0.2
+      '@csstools/media-query-list-parser': 5.0.1(@csstools/css-parser-algorithms@4.0.1(@csstools/css-tokenizer@4.0.2))(@csstools/css-tokenizer@4.0.2)
+      postcss: 8.5.28
 
   postcss@8.5.23:
     dependencies:
