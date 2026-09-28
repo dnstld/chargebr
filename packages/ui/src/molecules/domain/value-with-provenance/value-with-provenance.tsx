@@ -1,13 +1,13 @@
-import { EvidenceAnchor } from "../../atoms/evidence-anchor/evidence-anchor";
-import { NumericValue } from "../../atoms/numeric-value/numeric-value";
-import { Text } from "../../atoms/text/text";
-import { VALUE_ROLES, type ValueRole } from "../../atoms/value-role";
-import { VisuallyHidden } from "../../utilities/visually-hidden";
+import { EvidenceAnchor } from "../../../atoms/evidence-anchor/evidence-anchor";
+import { NumericValue } from "../../../atoms/numeric-value/numeric-value";
+import { Text } from "../../../atoms/text/text";
+import { VALUE_ROLES, type ValueRole } from "../../../atoms/value-role";
+import { VisuallyHidden } from "../../../utilities/visually-hidden";
 import {
   resolveTerms,
   type VocabularyOverrides,
-} from "../../vocabulary/vocabulary";
-import { definePrimitive } from "../contract";
+} from "../../../vocabulary/vocabulary";
+import { definePrimitive } from "../../../domain/contract";
 import styles from "./value-with-provenance.module.css";
 
 // Caminho até a evidência de um valor. É a forma da biblioteca: um destino e

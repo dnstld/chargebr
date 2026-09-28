@@ -2,9 +2,9 @@
 // dos átomos: não é executado, entra em `verify:types`, e cada supressão só
 // compila enquanto o erro que ela anuncia existir. Se a proveniência ou a
 // razão virarem opcionais, a supressão sobra e a verificação reprova.
-import { BlockedProjection } from "./blocked-projection/blocked-projection";
-import { StatusPanel } from "./status-panel/status-panel";
-import { ValueWithProvenance } from "./value-with-provenance/value-with-provenance";
+import { BlockedProjection } from "../molecules/domain/blocked-projection/blocked-projection";
+import { ValueWithProvenance } from "../molecules/domain/value-with-provenance/value-with-provenance";
+import { StatusPanel } from "../organisms/domain/status-panel/status-panel";
 
 export const valueWithoutProvenance = (
   // @ts-expect-error a proveniência é obrigatória no tipo: número sem caminho até a evidência não compila

@@ -3,17 +3,17 @@ import { expect } from "storybook/test";
 import {
   STATUS_AXES,
   type StatusAxis,
-} from "../../atoms/status-marker/status-marker";
-import { accessibleNameFromContent } from "../../bench/accessible-name";
-import { VOCABULARY } from "../../vocabulary/vocabulary";
+} from "../../../atoms/status-marker/status-marker";
+import { accessibleNameFromContent } from "../../../bench/accessible-name";
+import { VOCABULARY } from "../../../vocabulary/vocabulary";
 import {
   expectEveryTermFromVocabulary,
   markEveryTerm,
-} from "../../vocabulary/vocabulary.assert";
+} from "../../../vocabulary/vocabulary.assert";
 import {
   STATUSES_FROM_CONTRACT,
   STATUSES_FROM_LOAD,
-} from "../fixtures/abve-janeiro-2025";
+} from "../../../domain/fixtures/abve-janeiro-2025";
 import { StatusPanel } from "./status-panel";
 
 const meta = {

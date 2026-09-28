@@ -1,4 +1,4 @@
-import type { FixtureOrigin } from "../../fixture-origin";
+import type { FixtureOrigin } from "../../../fixture-origin";
 import type { ChartMeasure, ChartPoint, ChartSeries } from "../series";
 
 // FIXTURE SINTÉTICA. Nada aqui vem do contrato de leitura, de carga canônica

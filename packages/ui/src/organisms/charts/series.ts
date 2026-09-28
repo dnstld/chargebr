@@ -1,6 +1,6 @@
-import type { BlockReason } from "../domain/block-reason";
-import type { EvidencePath } from "../domain/value-with-provenance/value-with-provenance";
-import type { VocabularyOverrides } from "../vocabulary/vocabulary";
+import type { BlockReason } from "../../domain/block-reason";
+import type { EvidencePath } from "../../molecules/domain/value-with-provenance/value-with-provenance";
+import type { VocabularyOverrides } from "../../vocabulary/vocabulary";
 import type { SeriesLimit } from "./palette";
 import type { ChartShape } from "./shapes";
 

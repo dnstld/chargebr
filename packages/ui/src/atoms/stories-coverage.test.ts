@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 import { expect, test } from "vitest";
-import { CHARTS } from "../charts/index";
+import { CHARTS } from "../organisms/charts/index";
 import { PRIMITIVES } from "../domain/index";
-import { FRAMES } from "../shell/index";
+import { FRAMES } from "../organisms/app-frame/index";
 import { type AtomContract, STATE_TAG_PREFIX } from "./contract";
 import { ATOMS } from "./index";
 

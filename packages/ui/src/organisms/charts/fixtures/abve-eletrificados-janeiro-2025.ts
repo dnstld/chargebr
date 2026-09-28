@@ -1,4 +1,4 @@
-import type { FixtureOrigin } from "../../fixture-origin";
+import type { FixtureOrigin } from "../../../fixture-origin";
 import type { ChartMeasure, ChartSeries } from "../series";
 
 // Fixture derivada da saída real do contrato de leitura

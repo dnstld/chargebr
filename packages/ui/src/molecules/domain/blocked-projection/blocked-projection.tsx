@@ -1,10 +1,10 @@
-import { DeclaredAbsence } from "../../atoms/declared-absence/declared-absence";
+import { DeclaredAbsence } from "../../../atoms/declared-absence/declared-absence";
 import {
   resolveTerms,
   type VocabularyOverrides,
-} from "../../vocabulary/vocabulary";
-import { BLOCK_REASONS, type BlockReason } from "../block-reason";
-import { definePrimitive } from "../contract";
+} from "../../../vocabulary/vocabulary";
+import { BLOCK_REASONS, type BlockReason } from "../../../domain/block-reason";
+import { definePrimitive } from "../../../domain/contract";
 import styles from "./blocked-projection.module.css";
 
 export interface BlockedProjectionProps {

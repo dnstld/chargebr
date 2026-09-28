@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { type AtomContract, defineContract } from "../atoms/contract";
+import { type AtomContract, defineContract } from "../../atoms/contract";
 
 // Contrato da moldura: a mesma forma do contrato dos átomos, das primitivas e
 // das formas de gráfico, para que a cobertura de histórias leia as quatro

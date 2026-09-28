@@ -1,17 +1,17 @@
-import { DeclaredAbsence } from "../../atoms/declared-absence/declared-absence";
+import { DeclaredAbsence } from "../../../atoms/declared-absence/declared-absence";
 import {
   STATUS_AXES,
   type Status,
   type StatusAxis,
   StatusMarker,
-} from "../../atoms/status-marker/status-marker";
-import { VisuallyHidden } from "../../utilities/visually-hidden";
+} from "../../../atoms/status-marker/status-marker";
+import { VisuallyHidden } from "../../../utilities/visually-hidden";
 import {
   resolveTerms,
   type Terms,
   type VocabularyOverrides,
-} from "../../vocabulary/vocabulary";
-import { definePrimitive } from "../contract";
+} from "../../../vocabulary/vocabulary";
+import { definePrimitive } from "../../../domain/contract";
 import styles from "./status-panel.module.css";
 
 // Um valor para cada eixo, ou null quando o eixo não tem valor. As três

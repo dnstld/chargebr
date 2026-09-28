@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { type AtomContract, defineContract } from "../atoms/contract";
+import { type AtomContract, defineContract } from "../../atoms/contract";
 
 // Contrato de uma forma de gráfico: a mesma forma do contrato dos átomos e
 // das primitivas, para que a cobertura de histórias leia as três camadas com

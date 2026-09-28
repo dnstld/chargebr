@@ -1,4 +1,4 @@
-import type { Terms } from "../vocabulary/vocabulary";
+import type { Terms } from "../../vocabulary/vocabulary";
 import { seriesColor, seriesSymbol } from "./palette";
 import type { ChartSeries } from "./series";
 import styles from "./chart.module.css";

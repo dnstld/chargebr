@@ -6,13 +6,13 @@
   "exports": {
     ".": "./src/index.ts",
     "./atoms": "./src/atoms/index.ts",
-    "./charts": "./src/charts/index.ts",
+    "./charts": "./src/organisms/charts/index.ts",
     "./domain": "./src/domain/index.ts",
-    "./shell": "./src/shell/index.ts",
+    "./shell": "./src/organisms/app-frame/index.ts",
     "./vocabulary": "./src/vocabulary/index.ts"
   },
   "scripts": {
-    "charts:palette-report": "node --import tsx src/charts/palette-report.ts",
+    "charts:palette-report": "node --import tsx src/organisms/charts/palette-report.ts",
     "storybook": "storybook dev --port 6006 --no-open",
     "build-storybook": "storybook build"
   },

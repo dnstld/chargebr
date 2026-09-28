@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { Hatch } from "../../atoms/hatch/hatch";
+import { Hatch } from "../../../atoms/hatch/hatch";
 import { readDrawnHatch } from "./geometry";
 import { ChartHatchPattern, hatchFill } from "./hatch-pattern";
 import styles from "./hatch-pattern.stories.module.css";

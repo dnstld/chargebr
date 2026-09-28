@@ -24,8 +24,9 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // história, fixture e arquivo de checagem de tipos exibem dado e prova, não
 // declaram vocabulário, e continuam fora.
 const PERIMETERS: Readonly<Record<string, string>> = {
-  "primitivas de domínio": join(ROOT, "packages/ui/src/domain"),
-  moldura: join(ROOT, "packages/ui/src/shell"),
+  "moléculas de domínio": join(ROOT, "packages/ui/src/molecules/domain"),
+  "organismos de domínio": join(ROOT, "packages/ui/src/organisms/domain"),
+  moldura: join(ROOT, "packages/ui/src/organisms/app-frame"),
 };
 const COMPONENT_EXTENSION = ".tsx";
 const EXCLUDED_SUFFIXES = [".stories.tsx", ".typecheck.tsx", ".test.tsx"];
