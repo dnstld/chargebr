@@ -13,17 +13,16 @@ cujo efeito de estilo, é exatamente o que a afirmação lê.
 **Por quê:** um localizador reaproveitado como prova não reprova quando o
 comportamento que ele deveria provar quebra — a busca continua encontrando
 o elemento pelo mesmo sinal, e a afirmação compara esse sinal contra si
-mesmo ou contra um valor que coincide com o estado quebrado. Medido em
-`docs/decisao-biblioteca-de-componentes.md`-derived `design.md` (D8,
-`interface-atomic-structure`): uma composição que estilizava por seletor um
-elemento de átomo, usando o atributo `data-weight` como gancho, tinha sua
-única prova localizando por esse mesmo atributo — a afirmação passava
-mesmo com o acoplamento quebrado, porque o localizador nunca deixava de
-achar o elemento. A mesma varredura encontrou mais dois casos, sem relação
-com aquele: uma afirmação de estilo computado cujo valor esperado coincidia
-com o padrão do navegador (independente de qualquer classe aplicar), e uma
-afirmação que comparava um rótulo `data-*` contra si mesmo em vez de
-comparar a forma de fato desenhada.
+mesmo ou contra um valor que coincide com o estado quebrado. Medido no
+design do ciclo `interface-atomic-structure` (D8): uma composição que
+estilizava por seletor um elemento de átomo, usando o atributo `data-weight`
+como gancho, tinha sua única prova localizando por esse mesmo atributo — a
+afirmação passava mesmo com o acoplamento quebrado, porque o localizador
+nunca deixava de achar o elemento. A mesma varredura encontrou mais dois
+casos, sem relação com aquele: uma afirmação de estilo computado cujo valor
+esperado coincidia com o padrão do navegador (independente de qualquer
+classe aplicar), e uma afirmação que comparava um rótulo `data-*` contra si
+mesmo em vez de comparar a forma de fato desenhada.
 
 #### Scenario: Acoplamento sem prova independente é encontrado por medição
 
