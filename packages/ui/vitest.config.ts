@@ -16,17 +16,26 @@ const configDir = fileURLToPath(new URL("./.storybook", import.meta.url));
 function benchProject(theme: Theme): TestProjectConfiguration {
   return {
     plugins: [storybookTest({ configDir })],
-    // Cache próprio por tema. Os dois projetos rodam em paralelo, e com um
-    // diretório de otimização só eles escrevem e servem os mesmos arquivos ao
-    // mesmo tempo: o que perde a corrida recebe bytes de um arquivo em
-    // reescrita e reprova com SyntaxError em histórias sorteadas.
-    cacheDir: fileURLToPath(
-      new URL(`./node_modules/.bench/${theme}`, import.meta.url),
-    ),
     // Pré-empacotamento explícito, antes da execução; ver optimize-deps.ts.
     optimizeDeps: BENCH_OPTIMIZE_DEPS,
     test: {
       name: THEME_LABEL[theme].toLowerCase(),
+      // Os dois projetos de tema não rodam ao mesmo tempo.
+      //
+      // Eles compartilham o cache de otimização que o complemento do Storybook
+      // mantém em `node_modules/.cache/storybook/`, e em paralelo os dois
+      // servidores escrevem e servem os mesmos arquivos: o que perde a corrida
+      // recebe bytes de um arquivo em reescrita e reprova com `SyntaxError` em
+      // histórias sorteadas. Medido, inclusive com `offscreenSubtreeIsHidden`
+      // chegando sem o `o` inicial — conteúdo truncado, não erro de sintaxe.
+      // Limpar o cache piora, porque alarga a janela de escrita.
+      //
+      // `cacheDir` do Vitest não resolve: foi tentado e o complemento o ignora,
+      // mantendo o cache no caminho próprio dele. Grupo é o que resolve —
+      // projetos do mesmo grupo rodam juntos, e os grupos rodam do menor para o
+      // maior. Todo o resto da verificação fica no grupo padrão e continua em
+      // paralelo; só os dois temas se revezam.
+      sequence: { groupOrder: theme === "light" ? 1 : 2 },
       setupFiles: [`${configDir}/vitest.setup.${theme}.ts`],
       browser: {
         enabled: true,
