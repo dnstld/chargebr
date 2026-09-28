@@ -84,6 +84,7 @@ rules:
     - Nenhum valor literal de cor, espaçamento, raio, sombra ou tipografia em código de componente; só token
     - Componente que usa React Aria ou estado do cliente declara "use client" no próprio arquivo
     - Componente recebe dados por propriedade; nenhum componente busca dados
+    - "A sonda que sustenta uma decisão reproduz a forma do uso real de que a decisão depende. Onde simplificar, o design diz o que simplificou e por que a simplificação não altera o que está sendo decidido"
   tasks:
     - Tarefa sem teste correspondente não é considerada pronta
     - Toda tarefa tem critério de pronto verificável por execução
