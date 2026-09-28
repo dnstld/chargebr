@@ -2,10 +2,10 @@
 
 ## Context
 
-Ver `proposal.md` para a motivação. Este documento registra as quatro
-decisões do dono citadas lá, a medição por trás de cada uma, e uma quinta
-constatação — a dissolução de "Uma escala por gráfico" — que não é decisão do
-dono, é consequência mecânica da forma de série que ele decidiu.
+Ver `proposal.md` para a motivação. Este documento registra as cinco decisões
+do dono citadas lá (D1, D2, D3, D4, D6), a medição por trás de cada uma, e uma
+constatação — a dissolução de "Uma escala por gráfico" (D5) — que não é
+decisão do dono, é consequência mecânica da forma de série que ele decidiu.
 
 `packages/ui/src/organisms/charts/series.ts` (hoje) declara `ChartPoint` como
 união de três formas (`resolved`/`unresolved`/`missing`, cada uma com
@@ -19,7 +19,7 @@ menos a checagem de tipo redundante em cima dele.
 ## Goals / Non-Goals
 
 **Goals:**
-- Registrar, com a medição, as quatro decisões do dono citadas em
+- Registrar, com a medição, as cinco decisões do dono citadas em
   `proposal.md`.
 - Mostrar por que "Uma escala por gráfico" deixa de ter o que provar, sem
   decidir a pergunta do ponto aberto 7 (canal de tamanho).
@@ -27,9 +27,6 @@ menos a checagem de tipo redundante em cima dele.
   (guardião, mapa de exportações) para o `tasks.md` desta mudança.
 
 **Non-Goals:**
-- Não decide o destino de `DeclaredAbsence` e `EvidenceAnchor` — registrado
-  em `proposal.md`, "Decisões em aberto", porque mudaria a lista de tarefas
-  conforme a resposta, e por isso não pode ficar aqui como pergunta adiável.
 - Não constrói nenhuma variante de átomo (`variant`, `size`, `disabled`,
   `loading`) — fora de escopo desde `docs/decisao-biblioteca-de-componentes.md`.
 - Não decide se "escala" abrange o canal de tamanho (ponto aberto 7) — só
@@ -77,22 +74,34 @@ precisa mais do parâmetro de tipo `Title` só para compor a mensagem de erro
 — mas isso é detalhe de implementação da tarefa que remover o arquivo, não
 uma decisão de design.
 
-### D3 — Hachura: desconectada dos gráficos, capacidade desligada de propósito
+### D3 — Teste de componente, e por que `Hatch`/`ChartHatchPattern` ficam
 
-**Decisão do dono.** `Hatch` continua exportada, com sua própria história.
-Os gráficos deixam de desenhá-la para pontos não resolvidos ou ausentes.
-Gatilho de reativação: o primeiro consumidor real que precisar dela — mesma
-forma de decisão já usada para a variante vertical de `Logo`
-(`docs/decisao-biblioteca-de-componentes.md` não a menciona, mas o padrão é
-o mesmo de "não invento sem consumidor").
+**Decisão do dono, tomada depois da primeira versão desta proposta.** A
+primeira versão media a sobrevivência de `Hatch` pelo mesmo teste de
+`rules.specs` que decide requisito — "o que quebra sem ele, hoje, no que está
+construído" — e concluía que, sem consumidor, `Hatch` devia ficar
+desconectada, capacidade desligada de propósito. O dono corrigiu o teste, não
+só a conclusão: **o teste de um componente de biblioteca é ser genérico,
+nunca ter consumidor.** Biblioteca de UI é inventário — componente genérico
+sem consumidor construído é catálogo, não lacuna. A distinção entrou em
+`rules.specs` de `openspec/config.yaml` nesta mesma data (ver proposal.md), e
+o registro completo, com a razão de cada átomo afetado, está em
+`docs/decisao-biblioteca-de-componentes.md`.
 
-**O que muda em código, fora desta proposta:** `organisms/charts/hatch-pattern/`
-(o padrão SVG que `plot.tsx` usa para desenhar hachura dentro do gráfico) sai
-— era usado só para o estado "não resolvido", que não existe mais na nova
-forma de ponto. O átomo `Hatch` (`atoms/hatch/`), sua história e o requisito
-"A hachura é uma só" (que garantia que as duas definições não divergiam) —
-esse requisito sai porque não há mais duas definições para divergir, não
-porque a hachura em si perdeu garantia.
+**Decisão, aplicada aos gráficos.** `Hatch` (`atoms/hatch/`) e
+`ChartHatchPattern` (`organisms/charts/hatch-pattern/`) ficam — a primeira já
+passava no teste corrigido por ser puramente genérica; a segunda ganha um
+motivo direto para ficar: o ponto do gráfico passa a aceitar uma opção
+genérica de preenchimento, `fill?: "solid" | "textured"`, padrão `"solid"` —
+escolha visual de quem compõe, sem estado nem significado de negócio
+atribuído a ela. Com as duas definições de hachura em uso de novo, o
+requisito "A hachura é uma só" continua tendo o que provar: migra para
+`interface-charts`, em vez de sair com o resto de `domain-charts`.
+
+**O que muda em código, fora desta proposta:** `plot.tsx` passa a ler
+`fill` do ponto (quando presente) para escolher entre preenchimento sólido e
+o padrão de `ChartHatchPattern`, sem nenhuma referência a "não resolvido" ou
+a qualquer outro nome de estado — o campo é só visual.
 
 ### D4 — `NumericValue` dissolvido; formatação em hook; figura tabular como variante de texto
 
@@ -143,6 +152,33 @@ caso; `ChartMeasure` sempre foi singular no nível do componente, e `measure`
 por série nunca teve mais de um valor distinto usado dentro do mesmo gráfico
 em nenhuma história existente.
 
+### D6 — `DeclaredAbsence` sai; `EvidenceAnchor` vira `Link`
+
+**Decisão do dono, tomada depois da primeira versão desta proposta** —
+registrada com a razão completa em
+`docs/decisao-biblioteca-de-componentes.md` ("Decisão de 2026-09-28...") e em
+`proposal.md`; aqui só a diferença que o teste de componente (D3) faz entre
+os dois átomos, porque à primeira vista os dois pareciam estar na mesma
+situação de `Hatch` — sem consumidor construído depois que
+`BlockedProjection`, `StatusPanel` e a coluna de evidência de
+`ChartValueTable` saem.
+
+**O que concluo:** o teste de componente (D3) não é "sem consumidor, então
+fica" incondicional — é "genérico, então fica". `Hatch` é textura pura, sem
+vocabulário nenhum: qualquer consumidor futuro, de qualquer domínio, pode
+usá-la sem mudar o átomo. `DeclaredAbsence` e `EvidenceAnchor` não estavam na
+mesma forma:
+
+- `DeclaredAbsence.kind` vale `"blocked"` ou `"unknown"` — os dois nomes são
+  vocabulário de domínio (`projection_status = blocked`,
+  `date_precision = unknown`), não uma variante genérica que sobra depois de
+  tirar o domínio. Sai.
+- `EvidenceAnchor` já era, na prática, um link com nome acessível
+  obrigatório — nada na sua forma (`href`, nome acessível, sem depender só de
+  ícone ou posição) nomeia evidência. O nome e o vocabulário ao redor dele é
+  que eram de domínio. Generaliza para `Link` (`href` + conteúdo), sem perder
+  garantia nenhuma.
+
 ## Risks / Trade-offs
 
 - **[Risco] Remover `molecules/domain/` e `organisms/domain/` inteiras é diff
@@ -155,11 +191,12 @@ em nenhuma história existente.
   quebra `pnpm verify` no meio da mudança.** → Mitigação: `tasks.md` remove a
   entrada do guardião na mesma tarefa que esvazia a pasta correspondente,
   nunca em tarefas separadas.
-- **[Trade-off] `DeclaredAbsence` e `EvidenceAnchor` ficam bloqueados até o
-  dono decidir o destino (proposal.md).** Isso significa que a árvore, depois
-  desta mudança aplicada até esse ponto, ainda referencia os dois átomos sem
-  consumidor — aceitável porque nenhuma outra tarefa depende da resposta, e
-  os dois continuam funcionando (só sem quem os use).
+- **[Risco] `fill: "textured"` no ponto do gráfico divergir da definição de
+  `Hatch` se as duas formas do SVG forem mantidas por implementações
+  separadas.** → Mitigação: o requisito "A hachura é uma só", migrado para
+  `interface-charts`, prova isso diretamente — `ChartHatchPattern` deriva da
+  mesma definição de `Hatch` (mesmo período, mesmo ângulo,
+  `@chargebr/tokens`), não duas constantes copiadas.
 
 ## Migration Plan
 

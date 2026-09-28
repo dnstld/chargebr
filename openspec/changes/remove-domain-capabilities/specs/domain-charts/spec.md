@@ -54,13 +54,15 @@ do gráfico, e divergência entre as duas SHALL reprovar a verificação.
 - **THEN** a verificação falha, nomeando as duas definições
 - **Prova:** divergência plantada, verificação falhando, plantio revertido
 
-**Reason**: decisão do dono (ver design.md) — os gráficos deixam de usar a
-hachura para desenhar pontos não resolvidos ou ausentes. Sem uso da hachura
-em gráfico, não há duas definições para divergir.
+**Reason**: garantia de desenho, sem vocabulário de domínio — o gráfico deixa
+de usar a hachura para marcar "não resolvido" (estado de metodologia), mas
+ganha uma opção genérica de preenchimento texturizado por ponto (decisão do
+dono, ver design.md), sem significado de estado. As duas definições de
+hachura — o átomo `Hatch` e o padrão do gráfico — continuam existindo, então
+o requisito continua tendo o que provar.
 
-**Migration**: não há. A hachura continua exportada, com história própria,
-fora de `interface-charts` — capacidade desligada de propósito, reativa no
-primeiro consumidor real.
+**Migration**: ver "A hachura é uma só" em `specs/interface-charts/spec.md`
+desta mudança — mesmo texto, nova capacidade.
 
 ### Requirement: Paleta validada na forma de pares da própria forma
 

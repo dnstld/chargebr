@@ -34,23 +34,42 @@ de desenho — e retira o que não sobrevive.
 - Retira a capacidade `domain-charts` inteira e a substitui por
   `interface-charts`, mais estreita: o que sobra de `domain-charts` depois de
   tirar bloqueio de projeção, proveniência e o estado "não resolvido" é
-  garantia de desenho — paleta, legenda, uma escala, ponto sem valor —, não
-  garantia de domínio. `ChartPoint` deixa de ter três estados
-  (`resolved`/`unresolved`/`missing`, cada um com proveniência obrigatória)
-  e passa a ter um só formato, `{ category, value }`, em que `value: null` é
-  a única lacuna. **BREAKING** para a forma de entrada de todo gráfico.
-- Quatro decisões do dono, registradas aqui como decisão e não como escolha
-  desta proposta (ver design.md para a medição por trás de cada uma):
+  garantia de desenho — paleta, legenda, uma escala, ponto sem valor, a
+  hachura não divergir —, não garantia de domínio. `ChartPoint` deixa de ter
+  três estados (`resolved`/`unresolved`/`missing`, cada um com proveniência
+  obrigatória) e passa a ter um só formato, `{ category, value, fill? }`, em
+  que `value: null` é a única lacuna e `fill` (`"solid"` | `"textured"`,
+  padrão `"solid"`) é escolha visual genérica de quem compõe, sem
+  significado de estado. **BREAKING** para a forma de entrada de todo
+  gráfico.
+- Acrescenta a `rules.specs` de `openspec/config.yaml` a distinção entre
+  requisito e componente: o teste de sobrevivência de `bdde87e` ("nomear o
+  que quebra sem ele, hoje, no que está construído") vale para requisito, não
+  para componente — biblioteca de UI é inventário, e componente genérico sem
+  consumidor construído é catálogo, não lacuna. Sem essa distinção, a regra
+  vira licença para esvaziar a biblioteca componente por componente. Decisão
+  do dono, registrada com data e razão em
+  `docs/decisao-biblioteca-de-componentes.md`.
+- Cinco decisões do dono, registradas aqui como decisão e não como escolha
+  desta proposta (ver design.md para a medição por trás de cada uma, e
+  `docs/decisao-biblioteca-de-componentes.md` para o registro no repositório):
   1. Formatação de valor numérico é função recebida por propriedade, padrão
      `String(value)`. Nenhum locale cravado no componente.
   2. O limite de séries da paleta deixa de reprovar em `verify:types` e passa
      a reprovar em execução.
-  3. A hachura continua exportada, com história — os gráficos deixam de
-     desenhá-la. Capacidade desligada de propósito; reativa no primeiro
-     consumidor real.
+  3. `Hatch` e `ChartHatchPattern` ficam — passam no teste de componente
+     acima, e o gráfico ganha a opção genérica de preenchimento texturizado
+     descrita no bullet anterior. As duas definições de hachura continuam
+     existindo, e com elas o requisito que garante que não divergem.
   4. `NumericValue` é dissolvido; a exibição de número tabular vira variante
      do átomo de texto genérico. Formatação de número vira hook. Nenhuma
      outra variante nova entra nesta mudança.
+  5. `DeclaredAbsence` sai — não por falta de consumidor, por não ser
+     primitiva: `kind` vale `"blocked"` ou `"unknown"`, vocabulário de
+     domínio. `EvidenceAnchor` vira `Link`, genérico (`href` e conteúdo) —
+     passa no teste de componente mesmo sem consumidor imediato, e ganha um
+     em breve: `NavItem`, do grupo 6 de `interface-atomic-structure`, é um
+     link.
 - Fecha o ponto aberto 7 de `docs/pontos-abertos.md` ("'Uma escala por
   gráfico' abrange o canal de tamanho?") — não por decisão sobre o canal de
   tamanho, mas porque o requisito em que o ponto se apoiava deixa de existir:
@@ -65,34 +84,30 @@ Não toca variante de átomo (`variant`, `size`, `disabled`, `loading` em
 `docs/decisao-biblioteca-de-componentes.md`. Não cria pacote novo. Não toca
 `apps/backoffice`. Não decide o canal de tamanho de uma futura forma "bolha"
 — só fecha o ponto aberto que dependia do requisito retirado, sem responder
-a pergunta original. Não resolve sozinha o que fazer com `DeclaredAbsence` e
-`EvidenceAnchor` (ver "Decisões em aberto"). Não aplica código nenhum: esta é
-só a proposta.
+a pergunta original. Não aplica código nenhum: esta é só a proposta.
 
-## Decisões em aberto
+## Decisão de 2026-09-28: `DeclaredAbsence` e `EvidenceAnchor`
 
-**`DeclaredAbsence` e `EvidenceAnchor` ficam sem consumidor construído, e o
-dono não se pronunciou sobre os dois.** Medido: depois de `BlockedProjection`,
-`StatusPanel` e a coluna de evidência de `ChartValueTable` saírem,
-`DeclaredAbsence` (usada só por esses três) e `EvidenceAnchor` (usada só por
-`ValueWithProvenance` e pela mesma coluna) não têm mais nenhum lugar
-construído que as renderize. `Hatch` está na mesma situação — sem consumidor
-depois da decisão 3 — mas para `Hatch` o dono já decidiu: fica exportada, com
-história, capacidade desligada de propósito. Para estes dois átomos, não há
-decisão equivalente registrada. Duas posições, sem escolher entre elas:
+**Decidido pelo dono**, depois desta proposta ter sido escrita com este ponto
+em aberto — o registro completo, com a razão de cada átomo, está em
+`docs/decisao-biblioteca-de-componentes.md` ("Decisão de 2026-09-28: teste de
+componente, e o destino de Hatch, DeclaredAbsence e EvidenceAnchor"); aqui só
+o resultado, para a tarefa 3.4 de `tasks.md`.
 
-- **(a) Mesmo tratamento de `Hatch`.** Ficam exportadas, com história,
-  desligadas de propósito, com o mesmo gatilho de reativação — o primeiro
-  consumidor real. Consistente por analogia direta.
-- **(b) Saem agora.** Diferente de `Hatch` — que é textura pura, sem
-  vocabulário nenhum —, um "átomo de ausência" e uma "âncora de evidência"
-  só fazem sentido nomeados assim porque existia algo para declarar ausente
-  ou para dar evidência de. Sem esse algo, manter os dois exportados é manter
-  nome que promete um conceito que não existe mais no pacote.
+`DeclaredAbsence` sai do pacote: não por falta de consumidor construído — o
+teste de componente de biblioteca (`docs/decisao-biblioteca-de-componentes.md`,
+mesma data) não reprova componente sem consumidor —, mas por não ser
+primitiva genérica. `kind` vale `"blocked"` ou `"unknown"`, vocabulário de
+domínio; sem esse vocabulário, o que sobra é texto sem propriedade própria
+que o distinga de `Text`.
 
-**O que me faria decidir uma posição:** nenhuma das duas — é escolha do dono,
-não fato que uma medição resolve. Registrado aqui, não escolhido; a
-implementação para no primeiro destes dois átomos até a decisão existir.
+`EvidenceAnchor` vira `Link`, genérico: `href` e conteúdo, nome acessível
+obrigatório, sem depender só de ícone ou posição — a mesma garantia de hoje,
+sem o nome "evidência" e o vocabulário que vinha junto. Passa o teste de
+componente mesmo sem consumidor imediato, e ganha um em breve — `NavItem`,
+do grupo 6 de `interface-atomic-structure`, é um link.
+
+Isto desbloqueia a tarefa 3.4 de `tasks.md`.
 
 ## Capabilities
 
@@ -101,15 +116,19 @@ implementação para no primeiro destes dois átomos até a decisão existir.
 - `interface-charts`: comportamento observável de desenho de gráfico que não
   depende de vocabulário de negócio — paleta e sua validação por forma,
   limite de séries em execução, legenda a partir de duas séries, ponto sem
-  valor, e acesso aos valores por meio não visual.
+  valor, a hachura de preenchimento texturizado não divergir da hachura fora
+  do gráfico, e acesso aos valores por meio não visual.
 
 ### Modified Capabilities
 
 - `interface-atoms`: retira `StatusMarker` e os requisitos "Marcador de
   estado nomeia seu eixo" e "Estado não resolvido é hachurado"; retira
-  "Distinção não depende só de cor"; modifica "Número alinha em coluna" para
-  descrever a variante tabular do átomo de texto, não um átomo de número
-  próprio.
+  "Distinção não depende só de cor"; retira "Ausência nunca é zero"
+  (`DeclaredAbsence` sai — decisão de 2026-09-28, acima); modifica "Número
+  alinha em coluna" para descrever a variante tabular do átomo de texto, não
+  um átomo de número próprio; modifica "Âncora de evidência tem nome
+  acessível" para descrever o átomo `Link`, genérico, no lugar da âncora de
+  evidência.
 
 ### Removed Capabilities
 
@@ -118,7 +137,9 @@ implementação para no primeiro destes dois átomos até a decisão existir.
   três componentes continua existindo.
 - `domain-charts`: os requisitos que dependiam de bloqueio de projeção,
   proveniência ou do estado "não resolvido" saem sem substituto; os que
-  descreviam garantia de desenho pura migram para `interface-charts`.
+  descreviam garantia de desenho pura — paleta, limite de séries, legenda,
+  ponto sem valor, acesso não visual, e "a hachura é uma só" — migram para
+  `interface-charts`.
 
 ## Impact
 
@@ -126,10 +147,13 @@ implementação para no primeiro destes dois átomos até a decisão existir.
   e `packages/ui/src/organisms/domain/` ficam vazias e saem; `domain/`
   (contrato, índice, `block-reason.ts`, fixture derivada do contrato) sai
   inteira; `vocabulary/` sai inteira (seu único consumidor era o que está
-  saindo); `atoms/status-marker/` sai; `organisms/charts/` perde
-  `blocked`/`BlockReason`, os três `PointKind`, a coluna de evidência e a
-  marca de "não resolvido" de `ChartValueTable`, e o uso de `Hatch` em
-  `hatch-pattern.tsx`/`plot.tsx`. A fixture derivada do contrato de leitura
+  saindo); `atoms/status-marker/` sai; `atoms/declared-absence/` sai;
+  `atoms/evidence-anchor/` vira `atoms/link/`, genérico. `organisms/charts/`
+  perde `blocked`/`BlockReason`, os três `PointKind`, a coluna de evidência e
+  a marca de "não resolvido" de `ChartValueTable`, mas mantém `hatch-pattern`
+  e `Hatch` — agora como opção genérica de preenchimento por ponto
+  (`fill?: "solid" | "textured"`), não como marca de estado. A fixture
+  derivada do contrato de leitura
   (`organisms/charts/fixtures/abve-eletrificados-janeiro-2025.ts`) sai; a
   varredura de `packages/ui/src` fica só com fixture sintética, fechando a
   mitigação de risco R2 já registrada em
@@ -161,6 +185,9 @@ implementação para no primeiro destes dois átomos até a decisão existir.
   primeiro, seu `MODIFIED` em `domain-primitives` deve ser retirado antes,
   porque não há capacidade para modificar; se esta mudança arquivar primeiro,
   o `REMOVED`/`MODIFIED` de `interface-atomic-structure` fica sem alvo e deve
-  ser reduzido a nada (a remoção de `interface-atoms` já aconteceu aqui).
+  ser reduzido a nada (a remoção de `interface-atoms` já aconteceu aqui). Em
+  sentido contrário, esta mudança entrega um consumidor a `Link` antes do
+  esperado: o grupo 6 daquela mudança constrói `NavItem`, que é um link, e
+  pode compor `Link` direto em vez de duplicar a garantia de nome acessível.
 - **O que esta proposta não aplica:** nenhum arquivo de código muda nesta
   etapa — só os artefatos de proposta, especificação e plano.
