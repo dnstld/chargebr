@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { DeclaredAbsence } from "../atoms/declared-absence/declared-absence";
-import { BlockedProjection } from "../domain/blocked-projection/blocked-projection";
+import { BlockedProjection } from "../molecules/domain/blocked-projection/blocked-projection";
 import { resolveTerms } from "../vocabulary/vocabulary";
 import styles from "./chart.module.css";
 import { ChartLegend } from "./legend";

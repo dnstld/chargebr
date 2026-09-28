@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent } from "storybook/test";
-import { expectRolesDistinctWithoutColor } from "../../atoms/value-role.assert";
-import { accessibleNameFromContent } from "../../bench/accessible-name";
-import { VOCABULARY } from "../../vocabulary/vocabulary";
+import { expectRolesDistinctWithoutColor } from "../../../atoms/value-role.assert";
+import { accessibleNameFromContent } from "../../../bench/accessible-name";
+import { VOCABULARY } from "../../../vocabulary/vocabulary";
 import {
   expectEveryTermFromVocabulary,
   markEveryTerm,
-} from "../../vocabulary/vocabulary.assert";
+} from "../../../vocabulary/vocabulary.assert";
 import {
   AS_PUBLISHED,
   CURRENT_METHODOLOGY,
-} from "../fixtures/abve-janeiro-2025";
+} from "../../../domain/fixtures/abve-janeiro-2025";
 import { ValueWithProvenance } from "./value-with-provenance";
 
 const meta = {

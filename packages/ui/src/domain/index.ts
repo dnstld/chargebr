@@ -1,14 +1,14 @@
-import { BlockedProjectionPrimitive } from "./blocked-projection/blocked-projection";
+import { BlockedProjectionPrimitive } from "../molecules/domain/blocked-projection/blocked-projection";
+import { ValueWithProvenancePrimitive } from "../molecules/domain/value-with-provenance/value-with-provenance";
+import { StatusPanelPrimitive } from "../organisms/domain/status-panel/status-panel";
 import type { PrimitiveContract } from "./contract";
-import { StatusPanelPrimitive } from "./status-panel/status-panel";
-import { ValueWithProvenancePrimitive } from "./value-with-provenance/value-with-provenance";
 
 export { BLOCK_REASONS, type BlockReason } from "./block-reason";
 export {
   BlockedProjection,
   BlockedProjectionPrimitive,
   type BlockedProjectionProps,
-} from "./blocked-projection/blocked-projection";
+} from "../molecules/domain/blocked-projection/blocked-projection";
 export { definePrimitive, type PrimitiveContract } from "./contract";
 export {
   type AxisStatuses,
@@ -17,7 +17,7 @@ export {
   StatusPanelPrimitive,
   type StatusPanelProps,
   type StatusPanelState,
-} from "./status-panel/status-panel";
+} from "../organisms/domain/status-panel/status-panel";
 export {
   type EvidencePath,
   type ProvenancedNumber,
@@ -26,7 +26,7 @@ export {
   ValueWithProvenance,
   ValueWithProvenancePrimitive,
   type ValueWithProvenanceProps,
-} from "./value-with-provenance/value-with-provenance";
+} from "../molecules/domain/value-with-provenance/value-with-provenance";
 
 // Todas as primitivas publicadas, na ordem das restrições que as exigem. A
 // verificação de cobertura de histórias lê esta lista junto com ATOMS.

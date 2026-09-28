@@ -1,10 +1,10 @@
 import type { FixtureOrigin } from "../../fixture-origin";
-import type { AxisStatuses } from "../status-panel/status-panel";
 import type {
   EvidencePath,
   ValueWithProvenanceProps,
-} from "../value-with-provenance/value-with-provenance";
-import type { BlockedProjectionProps } from "../blocked-projection/blocked-projection";
+} from "../../molecules/domain/value-with-provenance/value-with-provenance";
+import type { BlockedProjectionProps } from "../../molecules/domain/blocked-projection/blocked-projection";
+import type { AxisStatuses } from "../../organisms/domain/status-panel/status-panel";
 
 // Fixtures das histórias das primitivas, derivadas da saída real do contrato
 // de leitura `chargebr-methodology-reading-v1` para a carga canônica 0007

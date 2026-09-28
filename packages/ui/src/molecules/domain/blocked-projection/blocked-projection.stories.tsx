@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { accessibleNameFromContent } from "../../bench/accessible-name";
-import { VOCABULARY } from "../../vocabulary/vocabulary";
+import { accessibleNameFromContent } from "../../../bench/accessible-name";
+import { VOCABULARY } from "../../../vocabulary/vocabulary";
 import {
   expectEveryTermFromVocabulary,
   markEveryTerm,
-} from "../../vocabulary/vocabulary.assert";
-import { BLOCK_REASONS } from "../block-reason";
-import { BLOCKED_TRIALS } from "../fixtures/abve-janeiro-2025";
+} from "../../../vocabulary/vocabulary.assert";
+import { BLOCK_REASONS } from "../../../domain/block-reason";
+import { BLOCKED_TRIALS } from "../../../domain/fixtures/abve-janeiro-2025";
 import { BlockedProjection } from "./blocked-projection";
 
 const meta = {
