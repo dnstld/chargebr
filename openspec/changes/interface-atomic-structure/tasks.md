@@ -10,9 +10,9 @@
 
 ## 2. Token de breakpoint
 
-- [ ] 2.1 Resolver a Open Question de `design.md` (D6): Opção A (exceção + teste de contrato) ou Opção B (`postcss-custom-media`) — decisão do dono, registrada antes de prosseguir
-- [ ] 2.2 Criar `packages/tokens/tokens/primitive/screen.json` com `screen.md = 768px` — verificar com `pnpm --filter @chargebr/tokens build` gerando `screen-md` em `tokens.css` e `tokens.ts`
-- [ ] 2.3 Implementar o mecanismo escolhido em 2.1 — verificar com o teste de contrato correspondente (delta em `specs/workspace-verification/spec.md` para a Opção A) passando
+- [x] 2.1 Decidido pelo dono (`design.md`, D6): Opção B, `postcss-custom-media`, com medição real confirmando configuração única compartilhada entre `packages/ui` (Vite/Storybook) e `apps/backoffice` (Next/Turbopack) — nada a fazer aqui, registro mantido para rastreio
+- [ ] 2.2 Criar `packages/tokens/tokens/primitive/screen.json` com `screen.md = 768px`, e estender o gerador (`packages/tokens/src/build.ts`) para emitir `@custom-media --screen-md (min-width: 768px)` junto de `tokens.css` — verificar com `pnpm --filter @chargebr/tokens build` gerando a declaração e com o teste de determinismo já vigente (duas gerações idênticas) continuando a passar
+- [ ] 2.3 Acrescentar `postcss-custom-media` como `devDependency` na raiz do workspace e criar `postcss.config.mjs` na raiz do monorepo com esse plugin — verificar com `next build` em `apps/backoffice` e `storybook build` em `packages/ui` ambos resolvendo `@media (--screen-md)` para `min-width: 768px` no CSS emitido, sem `postcss.config` próprio em nenhum dos dois pacotes
 
 ## 3. lucide-react
 
@@ -24,7 +24,7 @@
 - [ ] 4.1 Construir `Icon` (recebe o componente do ícone por propriedade, cor por `currentColor`) — verificar com as histórias do requisito "Ícone recebe o componente por propriedade" de `specs/shell-components/spec.md`
 - [ ] 4.2 Construir `Logo` (referencia `src/images/logo-charge-br-{vertical,horizontal}.svg` como recurso externo, sem literal de cor no `.tsx`) — verificar com `tools/checks/style-literals.test.ts` não reportando o arquivo e com a história nos dois temas
 - [ ] 4.3 Construir `Button` (ícone opcional via `Icon`) — verificar com história cobrindo cada variante declarada e checagem de acessibilidade nos dois temas
-- [ ] 4.4 Resolver a Open Question de `design.md` (D3): forma do "subtítulo" de `Heading` — decisão do dono, registrada antes de construir
+- [x] 4.4 Decidido pelo dono (`design.md`, D3): `Heading` é `Text` especializado com variante `level`, sem prop de subtítulo — "subtítulo sendo nível menor" é padrão de uso, não parte do componente; nível de título é decisão da página, não do componente
 - [ ] 4.5 Construir `Heading` conforme a decisão de 4.4 — verificar com história por nível e checagem de acessibilidade nos dois temas
 
 ## 5. Navegação
@@ -32,7 +32,7 @@
 - [ ] 5.1 Construir `PathLabel` (texto, sem papel de navegação, sem foco) — verificar com o teste do requisito "Rótulo de caminho não é região de navegação" de `specs/shell-components/spec.md`
 - [ ] 5.2 Construir `NavItem` (estado corrente com superfície preenchida além do peso) — verificar com o teste do requisito "Item de navegação corrente é marcado por mais de um sinal"
 - [ ] 5.3 Construir `NavSection` (rótulo não clicável, exige ao menos uma folha) — verificar com o teste de tipos que planta seção sem folha e confere `verify:types` falhando
-- [ ] 5.4 Resolver a Open Question de `design.md` (D5): posição (a) ou (b) sobre a tensão com o requisito de navegação de `backoffice-shell` — decisão do dono, registrada antes de construir `NavPanel`
+- [x] 5.4 Decidido pelo dono (`design.md`, D5): posição (a) — `NavPanel` só na bancada, sem ligar ao `AppFrame` real; o requisito de `backoffice-shell` permanece como está
 - [ ] 5.5 Construir `NavPanel` (organismo, modo persistente e modo sobreposto, foco preso só no modo sobreposto) só na bancada, com fixture de folhas de exemplo com origem declarada — verificar com os dois cenários do requisito "Foco preso só no modo sobreposto"
 
 ## 6. AppFrame
@@ -43,5 +43,5 @@
 
 ## 7. Fechamento
 
-- [ ] 7.1 `pnpm verify` passando sobre a árvore inteira, com as cinco spec deltas desta mudança — verificar com a execução completa registrada
-- [ ] 7.2 Registrar em `docs/pontos-abertos.md` o ponto novo, se D5 resolver como posição (a): "NavPanel construído, sem rota de negócio para religar" — verificar com a entrada citando o número e o gatilho (primeira rota de negócio real)
+- [ ] 7.1 `pnpm verify` passando sobre a árvore inteira, com as quatro spec deltas desta mudança (`shell-components`, `interface-atoms`, `domain-primitives`, `backoffice-shell`) — verificar com a execução completa registrada
+- [ ] 7.2 Registrar em `docs/pontos-abertos.md` o ponto novo, conforme a posição (a) decidida em D5: "NavPanel construído, sem rota de negócio para religar" — verificar com a entrada citando o número e o gatilho (primeira rota de negócio real)

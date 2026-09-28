@@ -33,12 +33,14 @@ evita que o primeiro componente novo já nasça no lugar errado.
 - Acrescenta `lucide-react` como dependência de execução de `@chargebr/ui` e a
   linha correspondente em `BENCH_OPTIMIZE_DEPS`.
 - Propõe um token de breakpoint (`screen.md`, 768px) — a única largura que
-  `NavPanel` precisa — e a forma de ele ser consumido em `@media`, já que
-  `var()` não funciona dentro de condição de media query e o pipeline não tem
-  `postcss-custom-media`.
-- Registra, sem decidir sozinha, a tensão entre o inventário de navegação
-  pedido e o requisito vivo de `backoffice-shell` que proíbe região de
-  navegação no documento entregue enquanto não existir rota de negócio.
+  `NavPanel` precisa — consumido em `@media` via `postcss-custom-media`,
+  decisão do dono do repositório registrada em design.md (D6), com medição
+  real confirmando que a bancada (Vite/Storybook) e `apps/backoffice`
+  (Next/Turbopack) compartilham uma única configuração de PostCSS.
+- Registra a tensão entre o inventário de navegação pedido e o requisito
+  vivo de `backoffice-shell` que proíbe região de navegação no documento
+  entregue enquanto não existir rota de negócio; o dono decidiu manter o
+  requisito como está e construir a navegação só na bancada (design.md, D5).
 
 ## Capabilities
 
@@ -66,14 +68,13 @@ evita que o primeiro componente novo já nasça no lugar errado.
   texto visível; com `Logo` (imagem vetorial) substituindo o texto puro do
   nome do produto no cabeçalho, a prova muda de leitura de texto visível para
   leitura de nome acessível. O requisito "SHALL NOT conter região de
-  navegação" **não muda** nesta proposta — ver Impact, e a lacuna registrada em
-  design.md.
-- `workspace-verification`: o requisito que reprova valor literal de cor,
-  espaço, raio, sombra ou tipografia fora da camada primitiva de tokens ganha
-  uma exceção nomeada para o valor de `min-width`/`max-width` dentro de
-  `@media`, porque breakpoint não pode ser consumido por `var()` na condição
-  de uma media query — a exceção é condicionada a um teste de contrato que
-  compara o literal ao token primitivo de origem.
+  navegação" **não muda** nesta proposta — decisão do dono, design.md (D5).
+
+`workspace-verification` **não é** capacidade modificada: a decisão do dono
+em D6 (Opção B, `postcss-custom-media`) resolve o breakpoint sem literal
+nenhum em CSS Module, então o guardião de literal de estilo não precisa de
+exceção — versão anterior desta proposta chegou a escrever essa exceção como
+delta (Opção A) antes da decisão; foi removida.
 
 ## Impact
 
@@ -85,23 +86,26 @@ evita que o primeiro componente novo já nasça no lugar errado.
   ou de import. Dez arquivos de componente novos ou alterados no inventário do
   shell.
 - **Dependências:** `lucide-react` entra como dependência de execução de
-  `@chargebr/ui`; nenhuma dependência de build nova é decidida aqui — a escolha
-  entre exceção no guardião e `postcss-custom-media` fica registrada como
-  aberta em design.md.
-- **Tokens:** novo arquivo `packages/tokens/tokens/primitive/screen.json`.
-- **Verificação:** `tools/checks/style-literals.test.ts` ganha a exceção
-  nomeada acima; `packages/ui/.storybook/optimize-deps.ts` ganha a linha
-  `"lucide-react"`.
+  `@chargebr/ui`; `postcss-custom-media` entra como dependência de
+  desenvolvimento, com um `postcss.config.mjs` novo na raiz do monorepo,
+  compartilhado pela bancada (`packages/ui`) e por `apps/backoffice` — medido
+  com uma tentativa real (design.md, D6).
+- **Tokens:** novo arquivo `packages/tokens/tokens/primitive/screen.json`,
+  emitindo `@custom-media --screen-md (min-width: 768px)` junto das custom
+  properties já geradas.
+- **Verificação:** `packages/ui/.storybook/optimize-deps.ts` ganha a linha
+  `"lucide-react"`. Nenhuma mudança em `tools/checks/style-literals.test.ts`
+  — ver `workspace-verification` acima.
 - **Aplicação:** nenhuma. `apps/backoffice/app/layout.tsx` **não** é tocado por
   esta proposta — o slot `nav` de `AppFrame` fica sem consumidor real até o
-  ciclo que trouxer a primeira rota de negócio (ver design.md, tensão com
-  `backoffice-shell`).
+  ciclo que trouxer a primeira rota de negócio (decisão do dono, design.md,
+  D5).
 - **O que esta mudança explicitamente não faz:** não constrói nenhum
   componente (é proposta, não aplicação); não cria rota; não liga `NavPanel`
-  ao `apps/backoffice` real; não decide a forma final do prop de "subtítulo"
-  de `Heading` entre as duas leituras registradas (fica lacuna em design.md);
-  não decide entre as duas opções de mecanismo de breakpoint em `@media`
-  (fica lacuna em design.md, com recomendação registrada e não fechada); não
-  toca `charts/` além de movê-la para dentro da nova hierarquia de tier —
-  reclassificação fina de cada gráfico fica para o ciclo que tocar `charts/`
-  por razões próprias.
+  ao `apps/backoffice` real; não toca `charts/` além de movê-la para dentro
+  da nova hierarquia de tier — reclassificação fina de cada gráfico fica
+  para o ciclo que tocar `charts/` por razões próprias. As três perguntas
+  em aberto da versão anterior desta proposta — forma do "subtítulo" de
+  `Heading`, posição sobre a tensão com `backoffice-shell`, mecanismo de
+  consumo do breakpoint — foram decididas pelo dono e registradas em
+  design.md.

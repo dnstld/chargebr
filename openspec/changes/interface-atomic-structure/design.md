@@ -32,8 +32,6 @@ cabeçalho/navegação/layout/tipografia.
 - Não constrói nenhum componente — isso é tarefa do ciclo `/opsx:apply` desta
   mudança.
 - Não liga `NavPanel` nem o slot `nav` de `AppFrame` ao `apps/backoffice` real.
-- Não decide a forma final do "subtítulo" de `Heading` nem o mecanismo final
-  de consumo do token de breakpoint — ambos ficam em Open Questions.
 - Não toca `charts/` além de movê-la para dentro da nova hierarquia de tier;
   não reclassifica cada gráfico individualmente.
 - Não toca cartão de indicador, fora do escopo do inventário.
@@ -161,17 +159,22 @@ de `packages/ui/src/` e as regras de composição de D1.
 
 **Classificações que exigiram decisão, não só medição:**
 
-- **`Heading` é átomo, não molécula.** "Subtítulo sendo nível menor" tem duas
-  leituras possíveis: (a) `Heading` é `Text` especializado — adiciona tag/role
-  de heading e uma variante `level` mapeada a `font.size.*` — e "subtítulo" é
-  um PADRÃO DE USO (duas chamadas de `Heading`, a segunda com `level` menor),
-  não um prop novo; ou (b) `Heading` aceita um children/prop de subtítulo e
-  renderiza dois textos internamente, o que o tornaria molécula (compõe dois
-  `Text`). Adoto (a): mantém `Heading` indivisível, não inventa um conceito de
-  "subtítulo" que os tokens não nomeiam, e é a leitura mais barata de
-  reverter se estiver errada — trocar de átomo para molécula é aditivo, o
-  inverso não é. **Registrado como Open Question, não decidido por
-  suposição**, porque muda a forma do componente: ver Open Questions.
+- **`Heading` é átomo, não molécula — decisão do dono.** "Subtítulo sendo
+  nível menor" tinha duas leituras possíveis: (a) `Heading` é `Text`
+  especializado — adiciona tag/role de heading e uma variante `level`
+  mapeada a `font.size.*` — e "subtítulo" é um PADRÃO DE USO (duas chamadas
+  de `Heading`, a segunda com `level` menor), não um prop novo; ou (b)
+  `Heading` aceita um children/prop de subtítulo e renderiza dois textos
+  internamente, o que o tornaria molécula (compõe dois `Text`). **Decidido:
+  (a).** A razão registrada pelo dono não é custo de reversão — é correção:
+  nível de título é decisão da PÁGINA, não do componente. Na opção (b), o
+  componente emitiria dois níveis de heading por conta própria e passaria a
+  decidir a estrutura do documento no lugar de quem compõe, e estrutura de
+  heading errada é uma das coisas que mais atrapalham leitura assistida —
+  quem navega por landmark de heading confia que o nível reflete a hierarquia
+  real da página, não uma hierarquia interna de um componente que ele não vê.
+  `Heading` permanece indivisível, sem conceito de "subtítulo" que os tokens
+  não nomeiam.
 - **`Button` com ícone continua átomo.** A molécula de Brad Frost combina
   peças independentemente endereçáveis com um papel próprio (etiqueta + campo
   + botão de busca). Um botão com um ícone de decoração não tem essa
@@ -186,11 +189,6 @@ de `packages/ui/src/` e as regras de composição de D1.
   `NavPanel`.** Mantém "componente recebe tudo por propriedade" (regra de
   `openspec/config.yaml`, `rules.design`) e não acopla a moldura à forma
   interna da navegação.
-
-**O que me faria mudar de ideia:** o dono confirmar a leitura (b) para
-`Heading` — nesse caso a classificação muda para molécula e o prop de
-subtítulo precisa de forma própria, decidida em ciclo de aplicação com
-proposta e revisão próprias, não aqui.
 
 ### D4 — lucide-react: currentColor confirmado, dependência e bancada
 
@@ -242,23 +240,26 @@ qualquer forma.
 
 **Isto é uma regra que atrapalha o inventário tal como pedido** — "menu de
 dois níveis... toda seção com ao menos uma folha, até dez folhas" pressupõe
-destinos reais, que não existem nesta fase. Cito a regra, cito a razão escrita
-nela, e registro que o dono decide entre duas posições, sem escolher por
-suposição:
+destinos reais, que não existem nesta fase. Citei a regra, citei a razão
+escrita nela, e registrei duas posições para o dono decidir, sem escolher por
+suposição.
 
-- **(a)** — **minha recomendação** — o ciclo de aplicação constrói e testa
-  `NavPanel` só na bancada, sem ligar ao `AppFrame` real do app; o requisito
-  de `backoffice-shell` permanece como está até o ciclo que trouxer a
-  primeira rota de negócio, que aí sim revisa esse requisito, citando esta
-  proposta.
-- **(b)** — o dono decide antecipar a mudança do requisito agora, com
-  placeholders explícitos de destino.
+**Decidido pelo dono: posição (a).** `NavPanel`, `NavSection` e `NavItem` são
+construídos e exercitados só na bancada — com história no Storybook e
+fixture de folhas de exemplo com origem declarada — e nada é ligado ao
+`AppFrame` real de `apps/backoffice`. O requisito "O documento emitido SHALL
+NOT conter região de navegação" permanece como está; ele é revisado pelo
+ciclo que trouxer a primeira rota de negócio real, citando esta proposta. A
+razão registrada pelo dono: a posição (b) exigiria destinos de mentira no
+app, que é exatamente o defeito que aquele requisito foi escrito para
+impedir — antecipar a mudança do requisito com placeholders reproduziria o
+problema em vez de evitá-lo.
 
-**O que me faria mudar de ideia:** o dono confirmar que este ciclo também
-traz a primeira rota de negócio real — não é o que a tarefa descreve
-("nenhuma rota" está explicitamente fora de escopo).
+A tarefa 7.2 de `tasks.md` vale: o ponto novo entra em
+`docs/pontos-abertos.md` — "`NavPanel` construído, sem rota de negócio para
+religar" — com gatilho na primeira rota de negócio real.
 
-### D6 — Token de breakpoint: escala nomeada, mecanismo de consumo em aberto
+### D6 — Token de breakpoint: escala nomeada, consumo por postcss-custom-media
 
 **O que medi:** `packages/tokens/tokens/primitive/` tem `color.json`,
 `radius.json`, `shadow.json`, `space.json`, `typography.json` — nenhum
@@ -282,19 +283,79 @@ precisa (persistente ≥768px, sobreposta <768px) — não invento degraus extra
 sem consumidor, mesma disciplina que `docs/decisao-biblioteca-de-componentes.md`
 já usou para recusar nomear `size`/`space` sem caso de uso.
 
-**Duas opções de mecanismo, nenhuma decidida aqui — ver Open Questions:**
+**Duas opções de mecanismo:**
 
 | Opção | O que é | Custo |
 | --- | --- | --- |
-| **A — exceção no guardião + teste de contrato** | `style-literals` ganha exceção nomeada para `min-width`/`max-width` em `@media`, verificada por teste que compara o literal ao token na fonte DTCG (delta já escrito em `specs/workspace-verification/spec.md`) | Sem dependência nova; exceção mais uma regra para manter |
-| **B — `postcss-custom-media`** | Pipeline gera `@custom-media --md (min-width: 768px)`; consumo vira `@media (--md)`, sem literal nenhum no CSS Module | Sem exceção no guardião; dependência de build nova, não verificada aqui se já é indireta do Vite/Storybook |
+| **A — exceção no guardião + teste de contrato** | `style-literals` ganha exceção nomeada para `min-width`/`max-width` em `@media`, verificada por teste que compara o literal ao token na fonte DTCG | Sem dependência nova; exceção mais uma regra para manter |
+| **B — `postcss-custom-media`** | Pipeline gera `@custom-media --md (min-width: 768px)`; consumo vira `@media (--md)`, sem literal nenhum no CSS Module | Sem exceção no guardião; dependência de build nova |
 
-**Recomendação registrada, não fechada:** Opção A, custo menor, sem
-dependência nova.
+**Decidido pelo dono: Opção B, condicionada a uma medição.** A razão
+registrada para não ficar na A: exceção nomeada num guardião abre um segundo
+teste para manter em sincronia com ela, e este repositório já foi mordido por
+isso — o ponto 12 de `docs/pontos-abertos.md` (fechado) existiu porque
+`style-literals` e `type-suppression` pulavam `.next` pelo nome e não
+alcançavam `next-env.d.ts`, gerado e fora do diretório de artefatos. Exceção
+nomeada em guardião é como guardião morre. A B não deixa esse buraco: o
+literal não existe no CSS Module, não há nada para a exceção ter que
+enxergar.
 
-**O que me faria mudar de ideia:** medir que `postcss-custom-media` já é
-dependência indireta do Vite/Storybook — não medi isso; fica como verificação
-pendente do ciclo de aplicação.
+**O que já estava medido antes da decisão, sem repetir a medição:**
+`postcss-custom-media` não está instalado; `postcss` está, em duas versões
+(8.5.23 e 8.5.28), ambas indiretas — de `next` e de `vite` respectivamente;
+não existe `postcss.config` nenhum no repositório. O custo da B, medido, é
+uma dependência de desenvolvimento e um arquivo de configuração — não duas
+dependências transitivas incompatíveis.
+
+**O que faltava medir, e que decidiria entre B e voltar para A:** se o Vite
+da bancada (`packages/ui`, via Storybook) e o Next de `apps/backoffice`
+conseguem compartilhar UMA configuração de PostCSS só, ou se cada um
+precisaria da sua — nesse segundo caso a B deixaria de ser "sem buraco" e
+viraria "duas configurações para manter sincronizadas", a mesma classe de
+problema da A, e a A ganharia por ser mais barata.
+
+**Medição feita com uma tentativa real, não com leitura de documentação:**
+instalado `postcss-custom-media@12.0.2` como `devDependency` na raiz do
+workspace (temporário, revertido ao final) e criado um único
+`postcss.config.mjs` na raiz do monorepo, fora de `apps/backoffice` e de
+`packages/ui`, com `postcss-custom-media` como único plugin declarado.
+
+- **Lado Next/Turbopack:** `@custom-media --probe-md (min-width: 768px)` e
+  `@media (--probe-md) { .postcss-custom-media-probe { color: red; } }`
+  plantados em `apps/backoffice/app/global.css`. `next build` (Next 16.3.6,
+  Turbopack) consumiu o `postcss.config.mjs` da raiz sem nenhuma configuração
+  adicional em `apps/backoffice/`, e o CSS emitido em
+  `.next/static/chunks/*.css` trouxe
+  `@media (min-width:768px){.postcss-custom-media-probe{color:red}}` — a
+  media query customizada foi resolvida. Testado também se a construção
+  continua aplicando seus próprios plugins por padrão apesar do
+  `postcss.config.mjs` customizado só declarar `postcss-custom-media`:
+  `.postcss-autoprefixer-probe { user-select: none; }` plantado no mesmo
+  arquivo saiu como `-webkit-user-select:none;user-select:none` no CSS
+  emitido — o prefixo de fornecedor continuou saindo, então o
+  `postcss.config.mjs` customizado não substituiu o processamento padrão do
+  Next nesta versão.
+- **Lado Vite/Storybook:** a mesma sonda de `@custom-media`/`@media` plantada
+  em `packages/ui/src/shell/app-frame.module.css`. `storybook build` (Vite,
+  sem nenhum `postcss.config` dentro de `packages/ui/`) consumiu o MESMO
+  `postcss.config.mjs` da raiz — sem configuração adicional em
+  `packages/ui/` — e o CSS emitido em `storybook-static/assets/*.css` trouxe
+  `@media (width>=768px){._postcssCustomMediaProbe_..._58{color:red}}`: a
+  media query foi resolvida para `min-width:768px` pelo
+  `postcss-custom-media` e depois reescrita para a sintaxe de intervalo pelo
+  minificador do build — mesma resolução, forma equivalente.
+
+Os dois lados leram e aplicaram o mesmo arquivo de configuração, na raiz,
+sem exceção nem configuração duplicada. Todo o material da medição foi
+revertido depois: os dois arquivos-fonte voltaram ao estado original por
+`git checkout`, `postcss.config.mjs` foi apagado,
+`postcss-custom-media` foi removido do workspace, e `pnpm-lock.yaml` foi
+restaurado ao original e confirmado com `pnpm install --frozen-lockfile`.
+
+**O que isso decide:** o resultado confirma a B — uma configuração só, sem
+buraco de sincronização entre bancada e aplicação. A decisão do dono foi B
+antes desta medição, condicionada a ela; a medição sustenta a condição, e a
+Opção A não entra.
 
 ### D7 — Logo não pode inlinear SVG com cor literal em `.tsx`
 
@@ -319,8 +380,10 @@ próprio código").
 **O que me faria mudar de ideia:** se o pipeline de build de `@chargebr/ui`
 não suportar import de `.svg` como asset (não medido — Vite suporta por
 padrão; Storybook usa Vite aqui) — nesse caso a alternativa seria uma exceção
-de marca no guardião, e essa exceção precisaria de proposta e revisão
-próprias, pela mesma razão que a exceção de breakpoint (D6) precisa.
+de marca no guardião de literal de estilo, e essa exceção precisaria de
+proposta e revisão próprias, pela mesma razão que a Opção A recusada em D6
+precisaria — exceção nomeada em guardião é o padrão que este repositório já
+decidiu evitar.
 
 ## Risks / Trade-offs
 
@@ -354,17 +417,8 @@ commit único, e `pnpm verify` valida cada etapa antes da próxima.
 
 ## Open Questions
 
-- **Forma do "subtítulo" de `Heading`.** Duas leituras registradas em D3:
-  padrão de uso (duas chamadas de `Heading`, átomo) ou prop/children interno
-  (molécula). Adotei a primeira; muda a classificação de tier e a forma do
-  componente se a segunda for a intenção. **Resolve antes da tarefa de
-  `Heading` em `tasks.md`** — não é uma decisão que a aplicação pode tomar
-  sozinha sem reabrir este design.
-- **Mecanismo de consumo do token de breakpoint.** D6, Opção A (exceção +
-  teste de contrato) versus Opção B (`postcss-custom-media`). Recomendação
-  registrada (A), não fechada. **Resolve antes da tarefa do token
-  `screen.md`** em `tasks.md`.
-- **Posição (a) versus (b) da tensão com `backoffice-shell`.** D5.
-  Recomendação registrada (a), não fechada. **Resolve antes da tarefa de
-  `NavPanel`** em `tasks.md` — a resposta decide se `NavPanel` fica só na
-  bancada ou se o requisito de `backoffice-shell` muda junto.
+Nenhuma. As três perguntas em aberto desta mudança — forma do "subtítulo" de
+`Heading` (D3), posição sobre a tensão com `backoffice-shell` (D5) e
+mecanismo de consumo do token de breakpoint (D6) — foram decididas pelo dono
+do repositório e registradas nas seções correspondentes acima, cada uma com
+a razão.
