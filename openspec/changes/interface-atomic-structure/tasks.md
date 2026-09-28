@@ -52,3 +52,39 @@
 
 - [ ] 8.1 `pnpm verify` passando sobre a árvore inteira, com as quatro spec deltas desta mudança (`shell-components`, `interface-atoms`, `domain-primitives`, `backoffice-shell`) — verificar com a execução completa registrada
 - [ ] 8.2 Registrar em `docs/pontos-abertos.md` o ponto novo, conforme a posição (a) decidida em D5: "NavPanel construído, sem rota de negócio para religar" — verificar com a entrada citando o número e o gatilho (primeira rota de negócio real)
+
+## Nota de 2026-09-28, sem alterar o log acima
+
+Acrescentada pela proposta `remove-domain-capabilities`, sem reescrever
+nenhuma tarefa já executada acima — só apontando o que muda para quem ler
+este log depois.
+
+As tarefas 1.1 e 1.2, já executadas, criaram `molecules/domain/` e
+`organisms/domain/` e moveram `value-with-provenance`, `blocked-projection` e
+`status-panel` para dentro delas; o princípio de D1 de `design.md` (por que
+`domain/` continua pasta de primeiro nível) foi escrito para justificar isso.
+A proposta `remove-domain-capabilities` esvazia e remove as duas pastas por
+inteiro — `domain-primitives` (a capacidade inteira) retira, sem substituto,
+porque não existe backend nem dado hoje e a metodologia que essas primitivas
+expressavam não é regra de interface. Quando essa proposta for aplicada, o
+raciocínio de D1 sobre `domain/` deixa de ter objeto: não sobra primitiva
+nenhuma para o barril agregar.
+
+A spec delta desta mudança em `specs/interface-atoms/spec.md` (`REMOVED
+"Distinção não depende só de cor"`) e em `specs/domain-primitives/spec.md`
+(`MODIFIED "Papéis não são intercambiáveis"`, absorvendo o conteúdo da
+primeira) ainda não foi sincronizada às specs vivas — a tarefa 2.4 já registra
+que a sincronização é o grupo 3 (arquivamento), fora do escopo de aplicação.
+`remove-domain-capabilities` chega à mesma remoção de "Distinção não depende
+só de cor" por conta própria, mas sem migrar o conteúdo para lugar nenhum,
+porque `domain-primitives` — o destino que esta mudança propunha — deixa de
+existir. Quem arquivar as duas mudanças decide a ordem: se esta
+(`interface-atomic-structure`) arquivar primeiro, o `MODIFIED` acima em
+`domain-primitives` deve ser retirado antes de sincronizar, porque não há
+capacidade para modificar; se `remove-domain-capabilities` arquivar primeiro,
+o `REMOVED`/`MODIFIED` desta mudança fica sem alvo e se reduz a nada — a
+remoção de `interface-atoms` já terá acontecido pela outra.
+
+Os grupos 6, 7 e 8 acima (Navegação, `AppFrame`, Fechamento) não tocam
+domínio e continuam válidos como estão — nenhuma tarefa deles depende de
+`molecules/domain/`, `organisms/domain/` ou de `domain-primitives`.
