@@ -1,13 +1,13 @@
 import { EvidenceAnchor } from "../../../atoms/evidence-anchor/evidence-anchor";
 import { NumericValue } from "../../../atoms/numeric-value/numeric-value";
 import { Text } from "../../../atoms/text/text";
-import { VALUE_ROLES, type ValueRole } from "../../../atoms/value-role";
 import { VisuallyHidden } from "../../../utilities/visually-hidden";
 import {
   resolveTerms,
   type VocabularyOverrides,
 } from "../../../vocabulary/vocabulary";
 import { definePrimitive } from "../../../domain/contract";
+import { VALUE_ROLES, type ValueRole } from "../value-role";
 import styles from "./value-with-provenance.module.css";
 
 // Caminho até a evidência de um valor. É a forma da biblioteca: um destino e
@@ -67,7 +67,7 @@ export function ValueWithProvenance({
         <VisuallyHidden>{vocabulary.valueRole.primary}: </VisuallyHidden>
         <NumericValue
           value={primary.value}
-          valueRole="primary"
+          weight="semibold"
           {...(primary.format ? { format: primary.format } : {})}
         />
         <EvidenceAnchor
@@ -82,7 +82,7 @@ export function ValueWithProvenance({
           </VisuallyHidden>
           <NumericValue
             value={counterfactual.value}
-            valueRole="counterfactual"
+            emphasis="italic"
             {...(counterfactual.format
               ? { format: counterfactual.format }
               : {})}
@@ -96,7 +96,7 @@ export function ValueWithProvenance({
       {context ? (
         <div className={styles.context} data-slot="context">
           <VisuallyHidden>{vocabulary.valueRole.context}: </VisuallyHidden>
-          <Text valueRole="context">{context.text}</Text>
+          <Text>{context.text}</Text>
           <EvidenceAnchor
             href={context.evidence.href}
             label={context.evidence.label}

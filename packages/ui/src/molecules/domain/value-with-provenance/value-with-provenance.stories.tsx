@@ -1,7 +1,10 @@
+import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent } from "storybook/test";
-import { expectRolesDistinctWithoutColor } from "../../../atoms/value-role.assert";
+import { expectRolesDistinctWithoutColor } from "../value-role.assert";
+import type { Theme } from "../../../../.storybook/theme";
 import { accessibleNameFromContent } from "../../../bench/accessible-name";
+import { resolveColor } from "../../../bench/computed";
 import { VOCABULARY } from "../../../vocabulary/vocabulary";
 import {
   expectEveryTermFromVocabulary,
@@ -34,7 +37,7 @@ function slot(canvasElement: HTMLElement, name: string): HTMLElement {
 }
 
 function valueIn(slotElement: HTMLElement): HTMLElement {
-  const found = slotElement.querySelector<HTMLElement>("[data-value-role]");
+  const found = slotElement.querySelector<HTMLElement>("[data-weight]");
   if (found === null) throw new Error("posição sem valor renderizado");
   return found;
 }
@@ -70,7 +73,7 @@ export const ComoPublicado: Story = {
   name: "Como publicado",
   tags: ["state:primary", "state:counterfactual", "state:context"],
   args: AS_PUBLISHED,
-  play: async ({ canvasElement }) => {
+  play: async ({ canvas, canvasElement, args, globals }) => {
     const primary = slot(canvasElement, "primary");
     const counterfactual = slot(canvasElement, "counterfactual");
     const context = slot(canvasElement, "context");
@@ -90,6 +93,27 @@ export const ComoPublicado: Story = {
       counterfactual: valueIn(counterfactual),
       context: valueIn(context),
     });
+
+    // A comparação acima prova que os três papéis diferem entre si, mas não
+    // prova, sozinha, que o contexto usa os tokens certos — Texto e Número
+    // têm tamanhos de base diferentes por razão alheia ao papel, e isso
+    // bastaria para a comparação passar mesmo que o acoplamento abaixo
+    // quebrasse. Prova direta e independente: tamanho e cor do texto de
+    // contexto vêm de `.context [data-weight]`
+    // (value-with-provenance.module.css) — um seletor que alcança dentro do
+    // átomo Texto para um eixo que ele ainda não expõe como variante
+    // (R3/R6 de docs/decisao-biblioteca-de-componentes.md; ver design.md,
+    // D8). Localizado pelo conteúdo, não por atributo do átomo, para que
+    // esta prova não dependa do mesmo gancho que ela verifica.
+    if (!args.context) throw new Error("fixture sem contexto");
+    const theme = globals.theme as Theme;
+    const contextValue = canvas.getByText(args.context.text);
+    await expect(getComputedStyle(contextValue).fontSize).toBe(
+      tokens["text-label-size"][theme],
+    );
+    await expect(getComputedStyle(contextValue).color).toBe(
+      resolveColor(tokens["color-text-secondary"][theme]),
+    );
 
     // O papel entra no nome acessível de cada posição, antes do valor.
     await expect(accessibleNameFromContent(primary)).toMatch(

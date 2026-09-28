@@ -1,6 +1,6 @@
-/* Texto: um papel por classe. A distinção entre papéis não pode depender só
-   de cor (ver spec interface-atoms): principal pesa mais, contrafactual é
-   itálico, contexto é menor. A cor acompanha, mas nunca sozinha. */
+/* Texto genérico: peso e destaque são variantes independentes, cada uma
+   resolvida inteiro por token primitivo. O que cada combinação significa é
+   decisão de quem compõe, não deste átomo. */
 .text {
   font-family: var(--text-body-family);
   font-size: var(--text-body-size);
@@ -10,15 +10,22 @@
   color: var(--color-text-primary);
 }
 
-.primary {
+.regular {
+  font-weight: var(--font-weight-regular);
+}
+
+.medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.semibold {
   font-weight: var(--font-weight-semibold);
 }
 
-.counterfactual {
-  font-style: var(--text-counterfactual-style);
+.normal {
+  font-style: var(--font-style-normal);
 }
 
-.context {
-  font-size: var(--text-label-size);
-  color: var(--color-text-secondary);
+.italic {
+  font-style: var(--font-style-italic);
 }

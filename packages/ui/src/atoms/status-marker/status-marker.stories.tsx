@@ -189,16 +189,18 @@ export const NaoResolvido: Story = {
   play: async ({ canvasElement, globals }) => {
     const theme = globals.theme as Theme;
     const solidColor = resolveColor(tokens["color-text-secondary"][theme]);
-    const transparent = resolveColor("transparent");
 
     const unresolved = fillOf(
       markerNamed(canvasElement, "Normalização: Não resolvido"),
     );
     await expect(unresolved.getAttribute("data-fill")).toBe("hatch");
-    await expect(getComputedStyle(unresolved).backgroundColor).toBe(
-      transparent,
-    );
-    await expect(getComputedStyle(unresolved).backgroundImage).toBe("none");
+    // Achado da varredura de localizador por data-* (design.md, D8): o único
+    // CSS de `.hatched` (background: transparent) reescreve o padrão do
+    // navegador — sem estilo nenhum, o fundo já é transparente. Comparar o
+    // computado a "transparent" não reprova se a classe se perder mantendo
+    // data-fill="hatch" (medido plantando essa perda). A hachura em si —
+    // `svg[data-hatch]`, abaixo — é a prova independente: ela só existe
+    // porque o componente decidiu renderizá-la, não é o padrão de nada.
     await expect(unresolved.querySelector("svg[data-hatch]")).not.toBeNull();
     await expect(
       unresolved.getBoundingClientRect().width,

@@ -1,6 +1,6 @@
 import type { Status, StatusAxis } from "../atoms/status-marker/status-marker";
-import type { ValueRole } from "../atoms/value-role";
 import type { BlockReason } from "../domain/block-reason";
+import type { ValueRole } from "../molecules/domain/value-role";
 
 // Vocabulário: o único lugar do pacote onde os termos da metodologia viram
 // texto de tela. As primitivas de domínio leem daqui por padrão; nenhuma

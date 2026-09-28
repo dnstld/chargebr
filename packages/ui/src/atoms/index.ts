@@ -49,7 +49,12 @@ export {
   UNRESOLVED,
 } from "./status-marker/status-marker";
 export { Text, TextAtom, type TextProps } from "./text/text";
-export { VALUE_ROLES, type ValueRole } from "./value-role";
+export {
+  FONT_EMPHASES,
+  FONT_WEIGHTS,
+  type FontEmphasis,
+  type FontWeight,
+} from "./font-variant";
 
 // Todos os átomos publicados, na ordem em que foram derivados das restrições
 // de domínio. A verificação de cobertura de histórias parte desta lista.
