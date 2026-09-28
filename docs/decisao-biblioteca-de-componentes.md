@@ -381,3 +381,50 @@ Catorze dos dezesseis requisitos atravessam a migração sem mudança de texto.
 Os dois que mudam — um em cada spec — são o mesmo requisito visto de dois
 lugares, e o ciclo de migração decide onde ele mora, com proposta e revisão
 próprias: não é decisão deste documento.
+
+## Decisão de 2026-09-28: teste de componente, e o destino de Hatch, DeclaredAbsence e EvidenceAnchor
+
+**Decidido pelo dono, em conversa que acompanhou a escrita de
+`openspec/changes/remove-domain-capabilities/`.** Registrado aqui porque
+decisão que existe só em conversa é invisível para todo agente que ler o
+repositório depois — foi assim que aquela proposta nasceu com um item em
+aberto que já estava decidido.
+
+**O teste de um componente de biblioteca não é o mesmo teste de um
+requisito.** `rules.specs` de `openspec/config.yaml` (desde `bdde87e`) exige
+que todo requisito nomeie o que quebra sem ele, hoje, no que está
+construído — e isso vale para requisito, não para componente. Biblioteca de
+UI é inventário: um componente genérico, sem consumidor construído, é
+catálogo à espera de uso, não lacuna a fechar. A regra ganhou essa
+distinção, explícita, em `openspec/config.yaml`, na mesma data — sem ela, a
+regra do requisito vira licença para esvaziar a biblioteca componente por
+componente.
+
+**`Hatch` e `ChartHatchPattern` ficam — as duas definições de hachura
+continuam existindo, e com elas o requisito que garante que não divergem.**
+Pelo teste acima, `Hatch` já ficaria: é genérico. O gráfico também ganha uma
+opção de preenchimento por ponto, genérica — cheio ou texturizado —, escolha
+visual de quem compõe, sem estado nem significado de negócio atribuído a
+ela. Com as duas definições de hachura em uso outra vez, o requisito "A
+hachura é uma só" continua tendo o que provar — migra para a capacidade de
+gráfico, em vez de sair com o resto da metodologia.
+
+**`DeclaredAbsence` sai — não por falta de consumidor, por não ser
+primitiva.** `kind` vale `"blocked"` ou `"unknown"`: são nomes de vocabulário
+de domínio (`projection_status = blocked`, `date_precision = unknown`), não
+uma variante genérica. Nas palavras do dono: "na minha visão isso é só um
+texto" — sem o vocabulário de domínio por trás do `kind`, o que sobra é texto
+sem propriedade própria que o distinga de `Text`. Diferente de `Hatch`: o
+átomo nasceu para nomear dois estados de domínio, e não há generalização que
+sobre sem eles.
+
+**`EvidenceAnchor` vira `Link`, genérico.** `href` e conteúdo, nome acessível
+obrigatório, sem depender só de ícone ou posição — a mesma garantia que o
+átomo já tinha, menos o nome "evidência" e o vocabulário que vinha junto.
+Passa o teste de componente de biblioteca mesmo sem consumidor imediato —
+link é primitiva legítima de qualquer biblioteca de UI — e ganha consumidor
+real em breve: o grupo 6 de `interface-atomic-structure` constrói `NavItem`,
+que é um link.
+
+**Onde isto está aplicado:** `openspec/config.yaml` (`rules.specs`) e
+`openspec/changes/remove-domain-capabilities/` (proposta, design e specs).
