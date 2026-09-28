@@ -1,0 +1,7 @@
+/* `width`/`height` não são propriedade guardada (tools/checks/style-literals.test.ts):
+   o átomo não tem token de tamanho de ícone hoje, e 1em segue o texto ao
+   redor em vez do padrão fixo de 24px do próprio lucide-react. */
+.icon {
+  width: 1em;
+  height: 1em;
+}

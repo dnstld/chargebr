@@ -1,7 +1,11 @@
 import type { AtomContract } from "./contract";
+import { ButtonAtom } from "./button/button";
 import { DeclaredAbsenceAtom } from "./declared-absence/declared-absence";
 import { EvidenceAnchorAtom } from "./evidence-anchor/evidence-anchor";
 import { HatchAtom } from "./hatch/hatch";
+import { HeadingAtom } from "./heading/heading";
+import { IconAtom } from "./icon/icon";
+import { LogoAtom } from "./logo/logo";
 import { NumericValueAtom } from "./numeric-value/numeric-value";
 import { StatusMarkerAtom } from "./status-marker/status-marker";
 import { TextAtom } from "./text/text";
@@ -12,6 +16,13 @@ export {
   STATE_TAG_PREFIX,
   stateTag,
 } from "./contract";
+export {
+  BUTTON_STATES,
+  Button,
+  ButtonAtom,
+  type ButtonProps,
+  type ButtonState,
+} from "./button/button";
 export {
   ABSENCE_KINDS,
   type AbsenceKind,
@@ -33,6 +44,15 @@ export {
   HatchAtom,
   type HatchProps,
 } from "./hatch/hatch";
+export {
+  HEADING_LEVELS,
+  Heading,
+  HeadingAtom,
+  type HeadingLevel,
+  type HeadingProps,
+} from "./heading/heading";
+export { ICON_STATES, Icon, IconAtom, type IconProps } from "./icon/icon";
+export { LOGO_STATES, Logo, LogoAtom, type LogoProps } from "./logo/logo";
 export {
   NumericValue,
   NumericValueAtom,
@@ -65,4 +85,8 @@ export const ATOMS: readonly AtomContract[] = [
   StatusMarkerAtom,
   DeclaredAbsenceAtom,
   EvidenceAnchorAtom,
+  IconAtom,
+  LogoAtom,
+  ButtonAtom,
+  HeadingAtom,
 ];

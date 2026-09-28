@@ -23,6 +23,7 @@
     "@visx/group": "4.0.0",
     "@visx/scale": "4.0.0",
     "@visx/shape": "4.0.0",
+    "lucide-react": "1.48.0",
     "react-aria-components": "1.21.1"
   },
   "peerDependencies": {

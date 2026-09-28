@@ -1,0 +1,9 @@
+/* Só layout e a cor de teste da história "Cor segue o texto ao redor". */
+.row {
+  display: flex;
+  gap: var(--space-gap-md);
+}
+
+.tinted {
+  color: var(--color-action-primary);
+}

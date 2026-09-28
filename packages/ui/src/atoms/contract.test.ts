@@ -35,6 +35,18 @@ test("cada átomo expõe seus estados como valor enumerável", () => {
     ],
     DeclaredAbsence: ["blocked", "unknown"],
     EvidenceAnchor: ["idle", "focus-visible"],
+    Icon: ["default"],
+    Logo: ["default"],
+    Button: ["idle", "focus-visible"],
+    Heading: [
+      "level:1",
+      "level:2",
+      "level:3",
+      "level:4",
+      "level:5",
+      "level:6",
+      "level:7",
+    ],
   });
 });
 
