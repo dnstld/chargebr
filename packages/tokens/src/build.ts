@@ -19,7 +19,11 @@ import {
 // transforma valores; a composição dos arquivos é deste módulo, para que a
 // ordem seja fixa e a saída determinística.
 
-export const GENERATED_FILES = ["tokens.css", "tokens.ts"] as const;
+export const GENERATED_FILES = [
+  "tokens.css",
+  "tokens.ts",
+  "tokens.media.css",
+] as const;
 
 // Transforms explícitos, sem grupo pronto, para que nenhuma conversão implícita
 // (px→rem, por exemplo) entre sem decisão.
@@ -50,6 +54,22 @@ function layerOf(token: TransformedToken, sourceDir: string): Layer {
 
 function isThemed(token: TransformedToken, theme: Theme): boolean {
   return token.filePath.endsWith(`${theme}.json`);
+}
+
+// Breakpoint é o único eixo que `@media` não pode consumir por `var()` — CSS
+// não aceita custom property na condição de uma media query (D6). Por isso
+// não vira `--screen-md: 768px` no :root nem entrada em tokens.ts; vira só a
+// declaração `@custom-media` que `postcss-custom-media` resolve.
+function isScreenToken(token: TransformedToken): boolean {
+  return token.path[0] === "screen";
+}
+
+function customMediaDeclarations(dictionary: Dictionary): string {
+  return dictionary.allTokens
+    .filter(isScreenToken)
+    .sort((a, b) => a.name.localeCompare(b.name, "en"))
+    .map((t) => `@custom-media --${t.name} (min-width: ${t.$value});`)
+    .join("\n");
 }
 
 function compareByLayerThenPath(sourceDir: string) {
@@ -104,7 +124,7 @@ function renderCss(themes: ThemeDictionary[], sourceDir: string): string {
   const rootLines: string[] = [];
   for (const layer of LAYERS) {
     const tokens = light.dictionary.allTokens.filter(
-      (t) => layerOf(t, sourceDir) === layer,
+      (t) => layerOf(t, sourceDir) === layer && !isScreenToken(t),
     );
     if (tokens.length === 0) continue;
     rootLines.push(
@@ -128,6 +148,17 @@ function renderCss(themes: ThemeDictionary[], sourceDir: string): string {
   return `${blocks.join("\n\n")}\n`;
 }
 
+// `@custom-media` não é CSS padrão — nenhum navegador nem `happy-dom` (usado
+// pelos testes que carregam `tokens.css` cru num `<style>`) o reconhece; só
+// `postcss-custom-media`, em build, sabe resolvê-lo. Por isso vive num
+// arquivo próprio, nunca dentro de `tokens.css`, que continua CSS que
+// qualquer consumidor pode carregar sem passar por PostCSS.
+function renderMediaCss(themes: ThemeDictionary[]): string {
+  const [light] = themes;
+  if (!light) throw new Error("o tema claro é obrigatório");
+  return `/* ${HEADER} */\n\n${customMediaDeclarations(light.dictionary)}\n`;
+}
+
 function indent(text: string): string {
   return text
     .split("\n")
@@ -142,6 +173,7 @@ function renderTs(themes: ThemeDictionary[]): string {
   const darkByName = new Map(dark.dictionary.allTokens.map((t) => [t.name, t]));
   const lines: string[] = [`// ${HEADER}`, "", "export const tokens = {"];
   for (const token of light.dictionary.allTokens) {
+    if (isScreenToken(token)) continue;
     const darkToken = darkByName.get(token.name);
     if (!darkToken)
       throw new Error(
@@ -187,6 +219,7 @@ export async function renderTokens(
     files: {
       "tokens.css": renderCss(themes, sourceDir),
       "tokens.ts": renderTs(themes),
+      "tokens.media.css": renderMediaCss(themes),
     },
   };
 }
