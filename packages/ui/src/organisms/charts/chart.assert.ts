@@ -346,14 +346,21 @@ export async function expectLegendNamesSeries(
   }
 
   // A amostra de cada série carrega uma forma própria: duas séries nunca são
-  // distinguíveis só por cor.
-  const symbols = all(legend as Element, "[data-symbol]").map((swatch) =>
-    swatch.getAttribute("data-symbol"),
-  );
+  // distinguíveis só por cor. Achado da varredura de localizador por data-*
+  // (design.md, D8): comparar só o valor de `data-symbol` não prova a forma
+  // desenhada — o rótulo (`ChartLegend`) e o elemento SVG (`Swatch`) vêm de
+  // duas chamadas independentes a `seriesSymbol(index)`, e uma pode divergir
+  // da outra sem que a comparação de rótulos perceba (medido plantando a
+  // divergência: as três amostras desenhando o mesmo círculo passavam com o
+  // rótulo ainda dizendo "circle"/"square"/"triangle"). A prova é o elemento
+  // que o SVG de fato desenhou, não o nome que a amostra carrega dele.
+  const symbols = all(legend as Element, "[data-symbol]");
   await expect(symbols).toHaveLength(names.length);
-  await expect(new Set(symbols).size, "formas repetidas entre séries").toBe(
-    names.length,
-  );
+  const shapes = symbols.map((swatch) => swatch.firstElementChild?.tagName);
+  await expect(
+    new Set(shapes).size,
+    "formas desenhadas repetidas entre séries",
+  ).toBe(names.length);
 }
 
 export async function expectNoLegend(

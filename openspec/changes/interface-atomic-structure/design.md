@@ -523,6 +523,77 @@ composto) — nesse caso a alternativa seria mesmo declarar o atributo como
 contrato do átomo, aceitando que ela cobre só uma das duas causas de
 regressão.
 
+**Varredura pedida pelo gerente antes do merge, sobre se o caso do
+`data-weight` era isolado.** Localizador por `data-*` em toda história e
+todo arquivo de asserção do pacote — 11 arquivos, ~84 ocorrências de
+`data-` — classificado em duas colunas: localiza por X e afirma sobre Y
+(independente, correto) versus localiza por X e afirma sobre X ou sobre o
+efeito de estilo do mesmo X (a mesma forma do defeito do `data-weight`).
+Todo uso de `getComputedStyle` do pacote foi cruzado com o localizador que
+produziu o elemento medido, e todo `getAttribute("data-*")` foi conferido
+contra se o valor lido vem de fonte externa (real) ou é o mesmo atributo do
+seletor (circular).
+
+**Dois casos encontrados, os dois fora do escopo desta proposta** (um é
+`status-marker`, ciclo 4; o outro é a legenda de gráfico, ciclo 6) — **e os
+dois consertados, plantando a quebra e mostrando a afirmação nova reprovando
+sozinha, antes de reverter a planta:**
+
+1. `atoms/status-marker/status-marker.stories.tsx`, história "Não resolvido
+   é hachurado": `getComputedStyle(unresolved).backgroundColor` comparado a
+   `transparent` e `.backgroundImage` comparado a `"none"`. Plantada a perda
+   da classe `.hatched`/`.solid` em `status-marker.tsx` (mantendo
+   `data-fill="hatch"` intacto): as duas afirmações passaram mesmo assim,
+   porque `.hatched` só declara `background: transparent` — o mesmo valor
+   que um elemento sem estilo nenhum já tem por padrão do navegador; não há
+   `getComputedStyle` capaz de distinguir "a classe aplicou e reafirmou o
+   padrão" de "a classe não aplicou". A afirmação irmã sobre `resolved`
+   (`backgroundColor` comparado a `solidColor`, um valor que não é o padrão)
+   reprovou corretamente na mesma planta — prova de que ela já estava certa
+   e não precisava de conserto. Consertado removendo as duas afirmações sem
+   poder de reprovar; a prova real já existia duas linhas abaixo —
+   `unresolved.querySelector("svg[data-hatch]")).not.toBeNull()`, a hachura
+   de fato desenhada, que não é o padrão de nada.
+2. `organisms/charts/chart.assert.ts`, `expectLegendNamesSeries`: localiza
+   por `[data-symbol]` e comparava os valores do próprio `data-symbol` entre
+   si por unicidade. `data-symbol` (em `ChartLegend`) e a forma SVG
+   desenhada (em `Swatch`, no mesmo arquivo `legend.tsx`) vêm de duas
+   chamadas independentes a `seriesSymbol(index)` — podem divergir sem que a
+   comparação de rótulos perceba. Plantada a divergência (`Swatch` sempre
+   desenhando `<circle>`, `data-symbol` continuando a variar): as 141
+   histórias do pacote, incluindo as de gráfico com legenda de três séries,
+   passaram — nenhuma delas notou que a legenda inteira desenhava o mesmo
+   círculo três vezes. Consertado trocando o valor comparado: agora é
+   `swatch.firstElementChild?.tagName` — o elemento que o SVG de fato
+   desenhou —, não o rótulo que a amostra carrega dele. Replantada a mesma
+   divergência: a afirmação nova reprova sozinha, nomeando a contagem de
+   formas distintas.
+
+**O que concluo.** O caso do `data-weight` não era isolado — é a mesma
+figura (localizador reaproveitado como prova) em duas famílias diferentes de
+arquivo (história de átomo, asserção de gráfico), nenhuma delas relacionada
+a `Text`/`NumericValue` ou a esta proposta por conteúdo. Isso desloca a
+segunda metade do D8 — localizador independente do que se afirma — de regra
+de travessia (só quando composição alcança dentro de um átomo por eixo
+fechado) para regra de bancada: vale para qualquer afirmação sobre o
+resultado renderizado de qualquer história, travessia ou não. A primeira
+metade do D8 — quando é permitido alcançar dentro de um átomo — continua
+sendo regra de travessia, ligada a R3/R6; não generaliza, porque só faz
+sentido onde há travessia para limitar.
+
+**Decisão.** A regra de localizador independente sai do D8 sozinho e vira
+requisito de `specs/verification-bench/spec.md` (delta desta mudança,
+`specs/verification-bench/spec.md`), a spec que já define o que a bancada
+exige de toda história do pacote — é o candidato óbvio, e nenhum outro lugar
+descreve disciplina de asserção hoje. `proposal.md` passa a listar
+`verification-bench` como capacidade modificada.
+
+**O que me faria mudar de ideia:** a varredura ter voltado vazia — nesse
+caso o `data-weight` seria evidência de um caso único, e a regra ficaria só
+no D8, como regra de travessia. Não foi o caso: dois achados, em duas
+famílias de arquivo sem relação com esta proposta, bastam para tratar como
+padrão do repositório, não coincidência de uma composição.
+
 ## Risks / Trade-offs
 
 - **[Risco] Reestruturação de pastas é um diff grande em arquivos que a

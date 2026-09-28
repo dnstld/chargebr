@@ -69,6 +69,13 @@ evita que o primeiro componente novo já nasça no lugar errado.
   nome do produto no cabeçalho, a prova muda de leitura de texto visível para
   leitura de nome acessível. O requisito "SHALL NOT conter região de
   navegação" **não muda** nesta proposta — decisão do dono, design.md (D5).
+- `verification-bench`: acrescenta "Localizador independente do que se
+  afirma" — achado da migração de `valueRole` (design.md, D8) e da varredura
+  que o seguiu: uma afirmação não pode ser a única prova de um comportamento
+  quando localiza o elemento pelo mesmo atributo `data-*` (ou pelo efeito de
+  estilo dele) que está verificando. Não é específico de `Text`/`NumericValue`
+  — a varredura encontrou mais dois casos sem relação com esta proposta
+  (`status-marker`, ciclo 4; legenda de gráfico, ciclo 6), corrigidos junto.
 
 `workspace-verification` **não é** capacidade modificada: a decisão do dono
 em D6 (Opção B, `postcss-custom-media`) resolve o breakpoint sem literal
@@ -95,7 +102,12 @@ delta (Opção A) antes da decisão; foi removida.
   properties já geradas.
 - **Verificação:** `packages/ui/.storybook/optimize-deps.ts` ganha a linha
   `"lucide-react"`. Nenhuma mudança em `tools/checks/style-literals.test.ts`
-  — ver `workspace-verification` acima.
+  — ver `workspace-verification` acima. A varredura de D8 corrige, fora do
+  inventário desta proposta,
+  `atoms/status-marker/status-marker.stories.tsx` (duas afirmações sem poder
+  de reprovar, removidas) e `organisms/charts/chart.assert.ts` (a prova de
+  forma da legenda, trocada de rótulo para elemento desenhado) — ver
+  `verification-bench` acima.
 - **Aplicação:** nenhuma. `apps/backoffice/app/layout.tsx` **não** é tocado por
   esta proposta — o slot `nav` de `AppFrame` fica sem consumidor real até o
   ciclo que trouxer a primeira rota de negócio (decisão do dono, design.md,
