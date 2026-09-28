@@ -442,6 +442,87 @@ proposta e revisão próprias, pela mesma razão que a Opção A recusada em D6
 precisaria — exceção nomeada em guardião é o padrão que este repositório já
 decidiu evitar.
 
+### D8 — Composição alcançando dentro do átomo: limite e prova exigida
+
+**O que medi.** Achado do gerente, revisão pré-merge de 2.1–2.3: o papel
+`context` de `ValueWithProvenance` (D1 desta proposta não previa o caso, R3 e
+R6 de `docs/decisao-biblioteca-de-componentes.md` seguiam fechados) precisa
+de `font-size` e `color` que `Text` não expõe como variante — só `weight` e
+`emphasis`. A composição resolveu isso com um seletor CSS que alcança dentro
+do átomo pelo atributo que ele já emite para o próprio peso —
+`.context [data-weight] { font-size: var(--text-label-size); color:
+var(--color-text-secondary); }`, em `value-with-provenance.module.css` — sem
+abrir eixo novo no átomo. É padrão novo neste repositório: nenhuma outra
+molécula ou organismo estiliza por seletor um elemento de dentro de um átomo
+usando um atributo que não é contrato declarado.
+
+Plantada a remoção de `data-weight` de `Text` e rodada a bancada: a história
+"Como publicado" (`value-with-provenance.stories.tsx`) reprovou — mas pelo
+localizador (`valueIn`, que também usa `[data-weight]` para achar "o valor"
+dentro da posição), não pela comparação de papéis
+(`expectRolesDistinctWithoutColor`). Decoplado o localizador do mesmo
+atributo (planta de posição, `children[1]`) e repetida a medição: a
+comparação de papéis PASSOU MESMO COM O ACOPLAMENTO QUEBRADO — `Text` (corpo,
+`--text-body-size` = 14px) e `NumericValue` (dado, `--text-data-size` = 13px)
+já têm tamanhos de base diferentes por razão alheia ao papel de contexto, e
+essa diferença incidental bastava para a comparação "distintos sem cor"
+passar mesmo com o contexto exibido no tamanho e na cor errados. A prova
+existente não provava o acoplamento; provava outra coisa que coincidia com
+ele.
+
+**O que concluo.** Duas coisas separadas, e as duas precisavam de registro:
+
+1. **Quando é permitido.** Alcançar dentro de um átomo por seletor é aceitável
+   só como travessia temporária para um eixo que o átomo ainda não expõe como
+   variante — nunca para substituir uma variante que já existe, e nunca para
+   uma diferença permanente entre camadas. Limite proposto pelo gerente,
+   medido e aceito sem alteração: a composição só alcança dentro do átomo
+   para eixo que o átomo ainda não expõe, e volta a ser variante genuína no
+   ciclo em que o eixo existir — mesmo gatilho de R3 (tamanho) e R6 (cor).
+   Verificado contra este caso específico: `.context [data-weight]` cobre
+   exatamente `font-size` e `color`, os dois eixos ainda fechados; não cobre
+   `font-weight` nem `font-style`, que já são variante (`weight`/`emphasis`)
+   e continuam expressos por propriedade, não por seletor.
+2. **Como se prova, enquanto vale.** Um seletor que alcança dentro de um
+   átomo por um atributo que não é contrato (`data-weight` é reflexo de uma
+   prop real, mas nada garante a nenhum leitor externo que vai continuar
+   existindo) é invisível ao contrato do átomo e a qualquer teste do átomo
+   — só uma afirmação direta, sobre o resultado observável da composição,
+   pega a regressão. Comparação indireta (papéis diferem entre si) não
+   basta quando os papéis já diferem por outro motivo, coincidente.
+
+**Decisão.** 1) O limite acima fica registrado como a regra para este padrão
+neste repositório: travessia só para eixo ainda fechado, convertida em
+variante no ciclo que abrir o eixo (mesmo gatilho de R3/R6) — não uma
+licença geral para estilizar por seletor o interior de um átomo.
+2) Toda composição que alcançar dentro de um átomo desta forma carrega sua
+própria afirmação direta do resultado — valor computado comparado ao valor
+resolvido do token esperado, localizada de forma independente do mesmo
+gancho que ela verifica (por conteúdo ou por posição estrutural, nunca pelo
+mesmo atributo que a comparação está provando) — e não pode depender só de
+uma comparação indireta entre papéis para provar que o acoplamento em si
+funciona. Aplicado: `value-with-provenance.stories.tsx`, história "Como
+publicado", nova asserção que lê `getComputedStyle` do texto de contexto
+(localizado por `canvas.getByText`, não por `data-weight`) contra
+`tokens["text-label-size"][theme]` e `resolveColor(tokens["color-text-secondary"][theme])`
+— medido plantando a mesma remoção de `data-weight` com o localizador já
+decoplado: a nova asserção reprova sozinha (`expected '14px' to be '13px'`),
+a antiga não reprovava nenhuma vez que o localizador foi decoplado do mesmo
+gancho.
+Não tornei `data-weight`/`data-emphasis` contrato declarado do átomo (opção
+que o gerente também ofereceu): protegeria só a metade do problema — o átomo
+parar de emitir o atributo —, não a outra metade, igualmente provável —
+a molécula referenciar o seletor errado, perder a regra numa reorganização de
+CSS, ou a especificidade mudar. A afirmação direta sobre o resultado
+observável cobre as duas causas por igual, sem exigir forma nova de
+contrato.
+
+**O que me faria mudar de ideia:** um caso em que a afirmação direta não
+seja possível de escrever (token sem forma computável estável, ex.: `shadow`
+composto) — nesse caso a alternativa seria mesmo declarar o atributo como
+contrato do átomo, aceitando que ela cobre só uma das duas causas de
+regressão.
+
 ## Risks / Trade-offs
 
 - **[Risco] Reestruturação de pastas é um diff grande em arquivos que a
