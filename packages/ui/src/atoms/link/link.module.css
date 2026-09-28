@@ -1,7 +1,7 @@
-/* Âncora de evidência: um link, com foco visível pelo anel de foco dos tokens.
-   Os estados vêm dos atributos de dado da primitiva de comportamento, nunca de
+/* Link genérico, com foco visível pelo anel de foco dos tokens. Os estados
+   vêm dos atributos de dado da primitiva de comportamento, nunca de
    pseudo-classe própria, para que teclado e ponteiro produzam o mesmo estado. */
-.anchor {
+.link {
   font-family: var(--text-label-family);
   font-size: var(--text-label-size);
   font-weight: var(--text-label-weight);
@@ -16,11 +16,11 @@
    falta de história verde que o sustentasse (ver
    docs/incidente-instabilidade-da-bancada.md), e o atributo segue vindo da
    primitiva em tempo de execução. */
-.anchor[data-hovered] {
+.link[data-hovered] {
   text-decoration: none;
 }
 
-.anchor[data-focus-visible] {
+.link[data-focus-visible] {
   outline: var(--space-1) solid var(--color-focus-ring);
   outline-offset: var(--space-1);
 }

@@ -1,7 +1,7 @@
 /* Botão genérico: um só par de cor hoje (component/button.json, "Mínimo da
-   camada de componente"). Foco visível segue o mesmo anel de token de
-   EvidenceAnchor; ponteiro (hover) é estilo, não estado declarado — mesma
-   razão de evidence-anchor.module.css. */
+   camada de componente"). Foco visível segue o mesmo anel de token de Link;
+   ponteiro (hover) é estilo, não estado declarado — mesma razão de
+   link.module.css. */
 .button {
   display: inline-flex;
   align-items: center;

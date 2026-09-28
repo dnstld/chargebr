@@ -3,16 +3,16 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
 import { resolveColor } from "../../bench/computed";
-import { EvidenceAnchor } from "./evidence-anchor";
+import { Link } from "./link";
 
 const meta = {
-  title: "Átomos/Âncora de evidência",
-  component: EvidenceAnchor,
+  title: "Átomos/Link",
+  component: Link,
   args: {
-    href: "#evidencia-abve-2025-01",
-    label: "Evidência: boletim ABVE de janeiro de 2025",
+    href: "#destino",
+    children: "Ver mais",
   },
-} satisfies Meta<typeof EvidenceAnchor>;
+} satisfies Meta<typeof Link>;
 
 export default meta;
 
@@ -21,31 +21,31 @@ type Story = StoryObj<typeof meta>;
 export const EmRepouso: Story = {
   name: "Em repouso",
   play: async ({ canvas, args }) => {
-    const anchor = canvas.getByRole("link", { name: args.label });
-    await expect(anchor.getAttribute("href")).toBe(args.href);
-    await expect(anchor.hasAttribute("data-hovered")).toBe(false);
-    await expect(anchor.hasAttribute("data-focus-visible")).toBe(false);
+    const link = canvas.getByRole("link", { name: args.children as string });
+    await expect(link.getAttribute("href")).toBe(args.href);
+    await expect(link.hasAttribute("data-hovered")).toBe(false);
+    await expect(link.hasAttribute("data-focus-visible")).toBe(false);
   },
 };
 
-// Alcançável por teclado: um Tab a partir da página chega à âncora, e o foco
+// Alcançável por teclado: um Tab a partir da página chega ao link, e o foco
 // vindo do teclado aparece com o anel de foco dos tokens.
 export const ComFocoPeloTeclado: Story = {
   name: "Com foco pelo teclado",
   play: async ({ canvas, args, globals }) => {
     const theme = globals.theme as Theme;
-    const anchor = canvas.getByRole("link", { name: args.label });
+    const link = canvas.getByRole("link", { name: args.children as string });
     await userEvent.tab();
-    await expect(document.activeElement).toBe(anchor);
+    await expect(document.activeElement).toBe(link);
     // O atributo e o estilo dele derivado só aparecem depois que o React
     // confirma o render que a interação disparou: a leitura é repetida até o
     // estado chegar, em vez de feita uma vez logo após o evento.
     await waitFor(() => {
-      expect(anchor.hasAttribute("data-focus-visible")).toBe(true);
-      expect(getComputedStyle(anchor).outlineColor).toBe(
+      expect(link.hasAttribute("data-focus-visible")).toBe(true);
+      expect(getComputedStyle(link).outlineColor).toBe(
         resolveColor(tokens["color-focus-ring"][theme]),
       );
-      expect(getComputedStyle(anchor).outlineStyle).toBe("solid");
+      expect(getComputedStyle(link).outlineStyle).toBe("solid");
     });
   },
 };
