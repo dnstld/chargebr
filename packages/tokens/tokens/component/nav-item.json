@@ -1,0 +1,13 @@
+{
+  "nav-item": {
+    "$description": "Camada de componente do item de navegação, componente de família de Link (atoms/nav/link/): preenchimento e raio valem nos dois estados — são o que dá forma de pílula ao item e fazem a área clicável coincidir com a área pintada, redefinindo os dois eixos que Link deixa sem valor em repouso. Fundo, cor e peso do estado corrente redefinem os nomes que Link já declara — as duas referências (`color.action.primary`/`color.text.on-action`) já são o par de contraste que `component/button.json` usa para o mesmo papel (fundo de ação, texto sobre ação); nenhuma cor própria entra, então a checagem de contraste que já cobre semântico segue cobrindo este componente.",
+    "padding-inline": { "$type": "dimension", "$value": "{space.inset.sm}" },
+    "padding-block": { "$type": "dimension", "$value": "{space.gap.sm}" },
+    "radius": { "$type": "dimension", "$value": "{radius.pill}" },
+    "current": {
+      "background": { "$type": "color", "$value": "{color.action.primary}" },
+      "color": { "$type": "color", "$value": "{color.text.on-action}" },
+      "weight": { "$type": "fontWeight", "$value": "{text.heading.weight}" }
+    }
+  }
+}

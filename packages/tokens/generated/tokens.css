@@ -143,6 +143,12 @@
   --link-radius: var(--radius-control);
   --link-size: var(--text-label-size);
   --link-weight: var(--text-label-weight);
+  --nav-item-current-background: var(--color-action-primary);
+  --nav-item-current-color: var(--color-text-on-action);
+  --nav-item-current-weight: var(--text-heading-weight);
+  --nav-item-padding-block: var(--space-gap-sm);
+  --nav-item-padding-inline: var(--space-inset-sm);
+  --nav-item-radius: var(--radius-pill);
   --spinner-color: var(--color-action-primary);
   --spinner-size-lg: var(--text-control-lg);
   --spinner-size-md: var(--text-control-md);

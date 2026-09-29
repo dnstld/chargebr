@@ -696,6 +696,36 @@ export const tokens = {
     light: "500",
     dark: "500",
   },
+  "nav-item-current-background": {
+    css: "var(--nav-item-current-background)",
+    light: "#302681",
+    dark: "#8788fe",
+  },
+  "nav-item-current-color": {
+    css: "var(--nav-item-current-color)",
+    light: "#ffffff",
+    dark: "#101013",
+  },
+  "nav-item-current-weight": {
+    css: "var(--nav-item-current-weight)",
+    light: "600",
+    dark: "600",
+  },
+  "nav-item-padding-block": {
+    css: "var(--nav-item-padding-block)",
+    light: "4px",
+    dark: "4px",
+  },
+  "nav-item-padding-inline": {
+    css: "var(--nav-item-padding-inline)",
+    light: "8px",
+    dark: "8px",
+  },
+  "nav-item-radius": {
+    css: "var(--nav-item-radius)",
+    light: "9999px",
+    dark: "9999px",
+  },
   "spinner-color": {
     css: "var(--spinner-color)",
     light: "#302681",
