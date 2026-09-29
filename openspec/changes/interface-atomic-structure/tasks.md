@@ -177,8 +177,8 @@ src/atoms/nav src/atoms/link src/molecules/nav src/organisms/nav` (22/22),
 
 ## 8. Fechamento
 
-- [ ] 8.1 `pnpm verify` passando sobre a árvore inteira, com as quatro spec deltas desta mudança (`shell-components`, `interface-atoms`, `domain-primitives`, `backoffice-shell`) — verificar com a execução completa registrada
-- [ ] 8.2 Registrar em `docs/pontos-abertos.md` o ponto novo, conforme a posição (a) decidida em D5: "NavPanel construído, sem rota de negócio para religar" — verificar com a entrada citando o número e o gatilho (primeira rota de negócio real)
+- [x] 8.1 **Texto emendado antes de executar.** A tarefa citava "as quatro spec deltas desta mudança (`shell-components`, `interface-atoms`, `domain-primitives`, `backoffice-shell`)" — desatualizado desde a correção de 2026-09-29 registrada em `proposal.md`: `interface-atoms` e `domain-primitives` saíram inteiras desta mudança, porque `remove-domain-capabilities` arquivou primeiro e chegou à mesma remoção por conta própria. Hoje são três: `shell-components`, `backoffice-shell`, `verification-bench`. `pnpm verify` passando sobre a árvore inteira — tipos, formatação, lint, teste (bancada nos dois temas, `apps/backoffice` incluso) — verificado com a execução completa: `pnpm verify`, exit 0, 56 arquivos de teste / 222 testes na frente de coleta e interface juntas, mais o build de produção de `apps/backoffice`
+- [x] 8.2 Registrado em `docs/pontos-abertos.md` o ponto 18, "`NavPanel` construído, sem rota de negócio para religar", conforme a posição (a) decidida em D5, citando o gatilho (primeira rota de negócio real). Acrescentado também o ponto 19, não previsto pela tarefa original: o harness de viewport da bancada não redimensiona de verdade dentro de uma história (achado da tarefa 7.3, medido por execução, três tentativas — ver o texto de 7.3, acima) — gatilho: par de `@storybook/addon-vitest`/`vitest` alinhado, ou outro mecanismo provado por execução
 
 ## Nota de 2026-09-28, sem alterar o log acima
 

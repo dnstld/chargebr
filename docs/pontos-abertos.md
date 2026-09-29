@@ -1,9 +1,10 @@
 # Pontos abertos
 
-**Atualizado em:** 29 de setembro de 2026, na aplicação de `button-variants`
+**Atualizado em:** 29 de setembro de 2026, no fechamento de
+`interface-atomic-structure` (grupos 7–8)
 **Estado do repositório:** 6 capacidades vivas, 56 requisitos, 12 ciclos
-arquivados, um change ativo (`interface-atomic-structure`, grupos 6–8
-pendentes). **5 pontos abertos**
+arquivados, um change ativo (`interface-atomic-structure`, aplicação
+completa, arquivamento pendente). **7 pontos abertos**
 
 ## O que este arquivo é
 
@@ -199,6 +200,76 @@ lugar nenhum.
 artefatos de planejamento ausentes na checagem de validade, ou a primeira
 vez que essa lacuna causar um problema real (uma mudança revisada ou
 aplicada como se completa por engano, apoiada só em `validate` verde).
+
+---
+
+## 18. `NavPanel` construído, sem rota de negócio para religar
+
+**O que é:** `NavPanel`, `NavSection` e `NavItem` existem como componentes de
+`@chargebr/ui`, exercitados na bancada (Storybook), e `AppFrame` ganhou um
+slot de navegação (`nav`, `navToggleLabel`, `navOpen`, `onNavToggle`) e o
+gatilho do hambúrguer que o abre e fecha — mas nenhum dos dois está ligado a
+`apps/backoffice`. O requisito "Regiões da moldura no documento entregue"
+(`backoffice-shell`) continua proibindo região de navegação no documento
+emitido, porque não existe rota de negócio real para listar (decisão do
+dono, `design.md` D5 de `interface-atomic-structure`).
+
+**Por que ficou aberto:** popular `nav` com destinos de mentira reproduziria
+exatamente o defeito que aquele requisito foi escrito para impedir — uma
+região de navegação vazia (ou fictícia) anuncia um destino que não existe.
+
+**Gatilho:** a primeira rota de negócio real — o ciclo que a trouxer decide
+a forma final de `nav` em `apps/backoffice` e revisa o requisito "Regiões da
+moldura no documento entregue" em conjunto.
+
+---
+
+## 19. O harness de viewport da bancada não redimensiona de verdade
+
+**O que é:** nenhuma forma testada de controlar a largura real da janela
+dentro de uma história (`play`) tem efeito em `packages/ui`, sob
+`@storybook/addon-vitest@10.6.0` + `vitest@5.0.1`. Medido, três tentativas:
+
+1. `parameters.viewport.defaultViewport` / `globals.viewport.value` — a
+   largura real medida (`window.innerWidth`) ficou em 414×896
+   independentemente do valor declarado.
+2. `page.viewport(width, height)` de `@vitest/browser/context`, importado
+   estático no topo do arquivo de história — lança
+   `vitest/browser can be imported only inside the Browser Mode. Your test
+   is running in browser pool.`
+3. O mesmo import, dinâmico, dentro do `play` — o mesmo erro, no mesmo lugar.
+
+O próprio código-fonte de `@vitest/browser/context` (versão instalada)
+confirma: fora do modo nativo de navegador do Vitest, o pacote serve um
+arquivo de _stub_ que sempre lança — "Vitest resolves 'vitest/browser' as a
+virtual module instead". `@storybook/addon-vitest` roda sob um pool próprio
+("browser pool", via `storybookTest()`), não sob `test.browser.enabled` do
+próprio Vitest, e por isso nunca aciona a substituição do módulo virtual. O
+código-fonte do complemento confirma o mesmo efeito por dentro: sua função
+`setViewport` importa `@vitest/browser/context` dentro de um `try/catch` que
+vira no-op silencioso quando a importação lança — a mesma causa, sem erro
+visível para quem só lê o resultado do parâmetro.
+
+**Por que ficou aberto:** bate com um par de peer dependency já registrado e
+aceito neste repositório — `@storybook/addon-vitest@10.6.0` declara par com
+`vitest@"^3.0.0 || ^4.0.0"` e `@vitest/browser-playwright@^4.0.0`; este
+repositório roda `vitest@5.0.1` de propósito (D4, `lucide-react`). Consertar
+isso é mudar a versão de uma dependência de teste em todo o pacote, risco
+maior que o de uma tarefa que só precisava de uma história a mais — não é
+decisão para um ciclo que só precisa mostrar um gatilho atrás de um
+breakpoint.
+
+**Consequência medida:** `interface-atomic-structure`, tarefa 7.3, prova o
+gatilho do hambúrguer por comportamento verificável sem largura real —
+`aria-controls`, `aria-expanded` alternando pelo clique, `nav` aparecendo e
+sumindo da árvore de acessibilidade — mas não prova visibilidade do gatilho
+nos dois lados do breakpoint em janela real. A regra CSS
+(`app-frame.module.css`, `@media (--screen-md)`) continua escrita.
+
+**Gatilho:** o par de `@storybook/addon-vitest` e `vitest` alinhado (para
+cima ou para baixo), ou outro mecanismo de redimensionamento real de
+viewport dentro de uma história provado por execução — não por leitura de
+documentação —, o que vier primeiro.
 
 ---
 
