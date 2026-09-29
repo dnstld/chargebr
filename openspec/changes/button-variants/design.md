@@ -303,6 +303,12 @@ movimento — como R3/R6, hoje nenhum precisa.
   um repõe quando o próprio ciclo tocar o componente — o risco real é alguém
   tratar o silêncio como "resolvido para o pacote todo", por isso fica
   registrado aqui e não só implícito no código.
+- [Conflito, resolvido na aplicação] `tasks.md` (tarefa 5.3) pede verificação
+  de cobertura de história por `stories-coverage.test.ts`, que D6 decide não
+  repor → [Resolução] apresentado ao dono do repositório; decisão: manter D6
+  (mais recente e mais específica) e não criar o mecanismo — confirmado à mão
+  que todo estado declarado tem história própria, sem combinar eixos, sem
+  prova automatizada de que isso continua valendo depois desta mudança.
 - [Risco, medido na aplicação] a bancada não emula `prefers-reduced-motion`
   no navegador: `@vitest/browser/context` (`commands`), a ponte que
   permitiria acionar `page.emulateMedia` do Playwright a partir de uma
