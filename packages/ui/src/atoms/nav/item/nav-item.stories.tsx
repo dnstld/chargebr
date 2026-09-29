@@ -36,6 +36,7 @@ export const Corrente: Story = {
   play: async ({ canvas, args, globals }) => {
     const theme = globals.theme as Theme;
     const link = canvas.getByRole("link", { name: args.children as string });
+    await expect(link.getAttribute("aria-current")).toBe("page");
     await expect(getComputedStyle(link).backgroundColor).toBe(
       resolveColor(tokens["nav-item-current-background"][theme]),
     );

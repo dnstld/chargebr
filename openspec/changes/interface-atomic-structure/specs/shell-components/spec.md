@@ -68,17 +68,28 @@ de estilo.
 
 Um `NavItem` no estado corrente SHALL diferir de um `NavItem` em repouso por
 superfície preenchida, além de peso, e SHALL NOT depender só de cor para
-marcar o estado corrente.
+marcar o estado corrente. Um `NavItem` no estado corrente SHALL anunciar esse
+estado a tecnologia assistiva.
 
 **Por quê:** mesma lógica do requisito "Papéis não são intercambiáveis" de
 `domain-primitives` — um sinal só de cor não sustenta a distinção para quem
-não a percebe.
+não a percebe. O anúncio a tecnologia assistiva é um terceiro canal, não uma
+variação dos outros dois: superfície preenchida e peso são sinais visuais —
+não alcançam quem não vê a tela —, e sem `aria-current` o estado corrente
+existiria só visualmente, o mesmo defeito de fundo (um canal só) atrás de
+outro canal.
 
 #### Scenario: Item corrente difere do item em repouso em mais de uma propriedade
 
 - **WHEN** um `NavItem` corrente e um `NavItem` em repouso são renderizados lado a lado
 - **THEN** eles diferem em superfície preenchida e em peso, não só em cor
 - **Prova:** teste que renderiza os dois e compara as propriedades computadas não cromáticas
+
+#### Scenario: Item corrente é anunciado a tecnologia assistiva
+
+- **WHEN** um `NavItem` é renderizado com o estado corrente
+- **THEN** o elemento expõe `aria-current="page"`
+- **Prova:** história do estado corrente localiza o item por papel e nome acessível e afirma o atributo
 
 ### Requirement: Seção de navegação não é clicável e tem ao menos uma folha
 

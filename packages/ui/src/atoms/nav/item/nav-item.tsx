@@ -30,7 +30,7 @@ export function NavItem({
       className={styles.navItem ?? ""}
       {...(isCurrent ? { "data-current": "" } : {})}
     >
-      <Link href={href}>
+      <Link href={href} {...(isCurrent ? { "aria-current": "page" } : {})}>
         {IconComponent ? <Icon as={IconComponent} /> : null}
         {children}
       </Link>

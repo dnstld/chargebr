@@ -145,6 +145,30 @@ Verificado depois da movimentação: `pnpm exec tsc --noEmit`,
 src/atoms/nav src/molecules/nav src/organisms/nav` (18/18), guardiões e
 `pnpm exec biome lint` sem apontamento.
 
+**Achado depois de 6.5 dado como pronto, sobre 6.2.** `NavItem` corrente
+diferia de repouso por dois sinais visuais (superfície, peso) e nenhum
+sinal para tecnologia assistiva — quem usa leitor de tela não recebia
+anúncio nenhum de qual item é a página atual. Medido: `aria-current` não
+aparecia em nenhum arquivo do pacote antes desta correção; `LinkProps`
+aceitava só `href`/`children`. Estendido `LinkProps` com `"aria-current"?:
+"page"`, repassado para `AriaLink` por `...rest` — mesmo caminho de `Button`
+para `aria-expanded`/`aria-controls`: a primitiva de baixo já repassa, o
+tipo é que fechava a porta. `NavItem` passa `aria-current="page"` só quando
+`isCurrent`. Prova plantada antes da correção — a história "Corrente"
+localizada por papel e nome acessível (nunca por `data-current`, atributo
+do outro sinal — mesmo padrão que o ponto 16 de `docs/pontos-abertos.md`
+nomeia) reprovou (`expected null to be 'page'`) antes da mudança, passou
+depois. Requisito "Item de navegação corrente é marcado por mais de um
+sinal" (`specs/shell-components/spec.md`) ganhou o terceiro sinal e um
+cenário novo — decidido que sim, é delta desta mudança: o componente já
+construído, hoje, na bancada, fica sem anúncio nenhum sem isso, o mesmo
+teste que `rules.specs` já exige ("nomear o que quebra sem ele, hoje, no
+que está construído"). Verificado: `pnpm exec tsc --noEmit`,
+`pnpm --filter @chargebr/ui exec vitest run --project claro|escuro
+src/atoms/nav src/atoms/link src/molecules/nav src/organisms/nav` (22/22),
+`openspec validate interface-atomic-structure --strict`, guardiões e
+`biome lint` sem apontamento.
+
 ## 7. AppFrame
 
 - [ ] 7.1 Compor `Logo` e `PathLabel` no cabeçalho de `AppFrame`, no lugar do texto puro do nome do produto — verificar com o cenário atualizado "A moldura renderizada expõe as duas regiões" de `specs/backoffice-shell/spec.md`
