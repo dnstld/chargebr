@@ -3,7 +3,7 @@ import { expect, userEvent } from "storybook/test";
 import { NavSection } from "./nav-section";
 
 const meta = {
-  title: "Moléculas/Seção de navegação",
+  title: "Moléculas/Navegação/Seção",
   component: NavSection,
   args: {
     label: "Fontes",

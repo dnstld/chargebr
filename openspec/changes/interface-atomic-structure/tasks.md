@@ -90,6 +90,35 @@ semântico".- [x] 6.1 Construído `PathLabel` (`atoms/path-label/path-label.tsx`
 - [x] 6.4 Decidido pelo dono (`design.md`, D5): posição (a) — `NavPanel` só na bancada, sem ligar ao `AppFrame` real; o requisito de `backoffice-shell` permanece como está
 - [x] 6.5 Construído `NavPanel` (`organisms/nav-panel/nav-panel.tsx`) — organismo raiz, sem família (não especializa nenhum organismo genérico existente), sem token de componente próprio (só semântico direto, mesmo padrão de `organisms/app-frame/app-frame.module.css`). Compõe `NavSection` e um `footer?: ReactNode` genérico — não sabe o que é "Deslogar"; quem compõe a história decide (`<Button icon={LogOut}>Sair</Button>`), mantendo `NavPanel` sem vocabulário de negócio, mesma razão de `AppFrame` não conhecer a forma de `NavPanel` (design.md, D3). Fixture `organisms/nav-panel/fixtures/example-sections.ts`, origem `synthetic` declarada (`tools/checks/fixture-origin.test.ts` verde). **Bloqueio real na execução, registrado aqui:** `react-aria-components@1.21.1` não exporta `FocusScope` — só `Dialog`/`Modal`/`ModalOverlay`, com semântica de diálogo (portal para `document.body`, ESC-para-fechar) que este painel não quer. Medido antes de decidir: `FocusScope` existe em `react-aria@3.52.1`, exatamente a versão que `react-aria-components@1.21.1` já resolve por dentro (`node_modules/.pnpm/react-aria@3.52.1_...`) — mas `packages/ui` não conseguia `require("react-aria")` sem declará-lo como dependência própria (isolamento estrito do pnpm). Decidido pelo dono: acrescentar `react-aria@3.52.1` (fixado na mesma versão já resolvida, para não duplicar instância) a `dependencies` de `packages/ui/package.json`, mesmo processo de D4 para `lucide-react` — `dependencies`, não `devDependencies` (uso em runtime), mais a linha em `BENCH_OPTIMIZE_DEPS.include`, mesmo grupo de `react-aria-components`. `FocusScope` de `react-aria` tem exatamente `contain`, sem a semântica de diálogo que `Dialog`/`Modal` trariam. Duas histórias, uma por cenário do requisito — "Foco não escapa do painel sobreposto" (foca o último elemento à mão, um Tab volta ao primeiro — prova direta de `contain`, sem contar tabulações) e "Foco atravessa o painel persistente livremente" (mesmo Tab, de um `render` com um botão sentinela depois do painel, sai para ele). Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/organisms/nav-panel` (4/4, os dois temas), `pnpm --filter @chargebr/ui exec vitest run --project contratos` (`optimize-deps.test.ts` confirma `react-aria` pré-empacotado, nenhuma dependência não declarada), guardiões (`style-literals`, `component-vocabulary`, `fixture-origin`) e `biome lint` sem apontamento — verificar com os dois cenários do requisito "Foco preso só no modo sobreposto"
 
+## Nota de 2026-09-29, sem alterar o log acima
+
+Decidido pelo dono, depois de 6.5 dado como pronto: a família é pasta em
+todo componente do grupo, não só em `NavItem` — `atoms/nav/item/`,
+`molecules/nav/section/`, `organisms/nav/panel/`, uniforme nas três camadas.
+6.2, 6.3 e 6.5 acima descrevem `atoms/nav/link/nav-item.tsx`,
+`molecules/nav-section/nav-section.tsx` e `organisms/nav-panel/nav-panel.tsx`
+— os caminhos certos no momento em que cada tarefa foi dada como pronta, e o
+texto delas não é reescrito por isso. Movidos por `git mv`, com imports,
+barris (`atoms/index.ts`, `molecules/index.ts`, `src/index.ts`) e título de
+história ajustados: `Átomos/Navegação/Item` (já estava certo), `Moléculas/
+Navegação/Seção` (era "Moléculas/Seção de navegação"), `Organismos/
+Navegação/Painel` (era "Organismos/Painel de navegação").
+
+`atoms/nav/link/` também saiu de nome: a pasta de família nomeia o
+contexto que o componente serve — `nav` —, nunca a primitiva que ele compõe
+por dentro. `NavItem` compõe `Link`; isso vive no código
+(`atoms/nav/item/nav-item.tsx`, `import { Link } from "../../link/link"`) e
+no comentário do componente, não no caminho. `atoms/nav/item/` é o nome
+correto porque "item" é o que o componente É para quem usa (uma folha de
+navegação), não o que ele reaproveita por dentro. Exemplo real acrescentado
+a `docs/decisao-biblioteca-de-componentes.md` (seção de 29/09), com esta
+mesma distinção.
+
+Verificado depois da movimentação: `pnpm exec tsc --noEmit`,
+`pnpm --filter @chargebr/ui exec vitest run --project claro|escuro|contratos
+src/atoms/nav src/molecules/nav src/organisms/nav` (18/18), guardiões e
+`pnpm exec biome lint` sem apontamento.
+
 ## 7. AppFrame
 
 - [ ] 7.1 Compor `Logo` e `PathLabel` no cabeçalho de `AppFrame`, no lugar do texto puro do nome do produto — verificar com o cenário atualizado "A moldura renderizada expõe as duas regiões" de `specs/backoffice-shell/spec.md`

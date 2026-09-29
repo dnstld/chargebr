@@ -2,4 +2,4 @@ export {
   NavSection,
   type NavSectionItem,
   type NavSectionProps,
-} from "./nav-section/nav-section";
+} from "./nav/section/nav-section";

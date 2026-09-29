@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LogOut } from "lucide-react";
 import { expect, userEvent } from "storybook/test";
-import { Button } from "../../atoms/button/button";
+import { Button } from "../../../atoms/button/button";
 import { EXAMPLE_SECTIONS } from "./fixtures/example-sections";
 import { NavPanel } from "./nav-panel";
 
 const meta = {
-  title: "Organismos/Painel de navegação",
+  title: "Organismos/Navegação/Painel",
   component: NavPanel,
   args: {
     label: "Navegação principal",

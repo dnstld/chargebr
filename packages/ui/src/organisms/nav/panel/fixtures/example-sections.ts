@@ -1,5 +1,5 @@
-import type { FixtureOrigin } from "../../../fixture-origin";
-import type { NavSectionProps } from "../../../molecules/nav-section/nav-section";
+import type { FixtureOrigin } from "../../../../fixture-origin";
+import type { NavSectionProps } from "../../../../molecules/nav/section/nav-section";
 
 // FIXTURE SINTÉTICA. Nada aqui vem de rota real: design.md (D5) decide que
 // NavPanel só existe na bancada nesta mudança, sem ligar a apps/backoffice

@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { NavItem } from "../../atoms/nav/link/nav-item";
-import { Text } from "../../atoms/text/text";
+import { NavItem } from "../../../atoms/nav/item/nav-item";
+import { Text } from "../../../atoms/text/text";
 import styles from "./nav-section.module.css";
 
 export interface NavSectionItem {

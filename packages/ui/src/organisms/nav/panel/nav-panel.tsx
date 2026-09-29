@@ -10,7 +10,7 @@ import { FocusScope } from "react-aria";
 import {
   NavSection,
   type NavSectionProps,
-} from "../../molecules/nav-section/nav-section";
+} from "../../../molecules/nav/section/nav-section";
 import styles from "./nav-panel.module.css";
 
 export const NAV_PANEL_MODES = ["persistent", "overlay"] as const;
