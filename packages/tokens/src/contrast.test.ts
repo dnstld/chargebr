@@ -41,6 +41,7 @@ function darkInput(over: Partial<ContrastInput> = {}): ContrastInput {
     hover: { name: "color.action.primary-hover", value: "#a8aefe" },
     onAction: { name: "color.text.on-action", value: "#101013" },
     focusRing: undefined,
+    extraActions: [],
     ...over,
   };
   // O anel de foco segue a cor de ação a menos que o teste o descole de
@@ -70,6 +71,7 @@ function lightInput(over: Partial<ContrastInput> = {}): ContrastInput {
     hover: { name: "color.action.primary-hover", value: "#4640a7" },
     onAction: { name: "color.text.on-action", value: "#ffffff" },
     focusRing: undefined,
+    extraActions: [],
     ...over,
   };
   return merged.focusRing === undefined && merged.action !== undefined
@@ -305,6 +307,50 @@ test("superfície neutra sem consumidor de ação é varrida ao piso de texto", 
   expect(report.violations).toContain(
     "[dark] cor de ação contra superfície neutra: color.action.primary × color.surface.scrim = 1.389:1 < piso 4.5:1",
   );
+});
+
+// Tarefa 2.4 de button-variants — o conjunto de ação e estado é enumerado a
+// partir da fonte, nunca fixo (design-tokens spec, "Conjunto de ação e
+// estado é enumerado, nunca fixo").
+test("par de ação novo entra na checagem sem editar este arquivo", () => {
+  const planted: Resolved = {
+    ...current(),
+    "color-action-tertiary": { light: "#302681", dark: "#8788fe" },
+  };
+  const report = checkContrast(inputsFrom(planted));
+  expect(
+    report.byTheme.dark.pairs.some(
+      (pair) => pair.pair[0] === "color.action.tertiary",
+    ),
+  ).toBe(true);
+});
+
+test("remover um par de ação da fonte o remove da checagem", () => {
+  const report = checkContrast(inputsFrom(current()));
+  expect(
+    report.byTheme.dark.pairs.some(
+      (pair) => pair.pair[0] === "color.action.tertiary",
+    ),
+  ).toBe(false);
+});
+
+// Requisito modificado "Cor de ação legível contra toda superfície neutra do
+// tema" — o par desabilitado é relatado, não reprovado, e a isenção é
+// nomeada por WCAG 1.4.3 (D2 de design.md).
+test("par desabilitado é relatado, não reprovado, e a isenção é nomeada por WCAG 1.4.3", () => {
+  const report = checkContrast({
+    light: lightInput(),
+    dark: darkInput({
+      // #3e3e47 (color.gray.700) contra as superfícies escuras plantadas:
+      // abaixo de 4,5:1 — reprovaria se disabled fosse tratado como par ativo.
+      extraActions: [{ name: "color.action.disabled", value: "#3e3e47" }],
+    }),
+  });
+  expect(report.passed).toBe(true);
+  expect(report.violations).toEqual([]);
+  const isencao = report.notes.join("\n");
+  expect(isencao).toContain("color.action.disabled");
+  expect(isencao).toContain("WCAG 1.4.3");
 });
 
 // Tarefa 5.1 — a superfície de gráfico é uma das superfícies neutras do tema.

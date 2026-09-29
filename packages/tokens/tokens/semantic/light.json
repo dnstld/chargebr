@@ -18,7 +18,8 @@
     },
     "action": {
       "primary": { "$value": "{color.indigo.700}" },
-      "primary-hover": { "$value": "{color.indigo.600}" }
+      "primary-hover": { "$value": "{color.indigo.600}" },
+      "disabled": { "$value": "{color.gray.300}" }
     },
     "focus": {
       "ring": { "$value": "{color.indigo.700}" }

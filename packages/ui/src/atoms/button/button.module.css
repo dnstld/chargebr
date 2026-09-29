@@ -44,3 +44,8 @@
   outline: var(--space-1) solid var(--color-focus-ring);
   outline-offset: var(--space-1);
 }
+
+.button[data-disabled] {
+  background-color: var(--button-disabled-background);
+  color: var(--button-disabled-text);
+}

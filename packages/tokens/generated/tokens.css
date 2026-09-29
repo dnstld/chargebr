@@ -61,6 +61,7 @@
   --space-8: 48px;
   --space-9: 64px;
   /* Camada semantic */
+  --color-action-disabled: var(--color-gray-300);
   --color-action-primary: var(--color-indigo-700);
   --color-action-primary-hover: var(--color-indigo-600);
   --color-border-default: var(--color-gray-200);
@@ -117,6 +118,8 @@
   --text-label-size: var(--font-size-2);
   --text-label-weight: var(--font-weight-medium);
   /* Camada component */
+  --button-disabled-background: var(--color-action-disabled);
+  --button-disabled-text: var(--color-text-muted);
   --button-font-weight: var(--text-label-weight);
   --button-lg-font-size: var(--text-control-lg);
   --button-lg-gap: var(--space-gap-lg);
@@ -138,6 +141,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --color-action-disabled: var(--color-gray-700);
     --color-action-primary: var(--color-indigo-300);
     --color-action-primary-hover: var(--color-indigo-200);
     --color-border-default: var(--color-gray-800);
@@ -160,6 +164,7 @@
 }
 
 :root[data-theme="dark"] {
+  --color-action-disabled: var(--color-gray-700);
   --color-action-primary: var(--color-indigo-300);
   --color-action-primary-hover: var(--color-indigo-200);
   --color-border-default: var(--color-gray-800);

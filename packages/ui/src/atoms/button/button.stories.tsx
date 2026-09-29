@@ -120,3 +120,30 @@ export const TamanhoNaoEspecificado: Story = {
     );
   },
 };
+
+// Desabilitado: nem clique nem teclado disparam `onPress`, o estado é exposto
+// a tecnologia assistiva pelo atributo nativo, e a aparência resolve pelos
+// tokens de `disabled` nos dois temas.
+export const Desabilitado: Story = {
+  name: "Desabilitado",
+  args: {
+    children: "Confirmar",
+    isDisabled: true,
+    onPress: () => {
+      throw new Error("onPress não deveria disparar com o botão desabilitado");
+    },
+  },
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await expect(button.hasAttribute("data-disabled")).toBe(true);
+    await userEvent.click(button);
+    await userEvent.keyboard("{Enter}");
+    await expect(getComputedStyle(button).backgroundColor).toBe(
+      resolveColor(tokens["button-disabled-background"][theme]),
+    );
+    await expect(getComputedStyle(button).color).toBe(
+      resolveColor(tokens["button-disabled-text"][theme]),
+    );
+  },
+};

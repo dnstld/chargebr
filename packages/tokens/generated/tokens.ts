@@ -291,6 +291,11 @@ export const tokens = {
     light: "64px",
     dark: "64px",
   },
+  "color-action-disabled": {
+    css: "var(--color-action-disabled)",
+    light: "#c6c6ce",
+    dark: "#3e3e47",
+  },
   "color-action-primary": {
     css: "var(--color-action-primary)",
     light: "#302681",
@@ -565,6 +570,16 @@ export const tokens = {
     css: "var(--text-label-weight)",
     light: "500",
     dark: "500",
+  },
+  "button-disabled-background": {
+    css: "var(--button-disabled-background)",
+    light: "#c6c6ce",
+    dark: "#3e3e47",
+  },
+  "button-disabled-text": {
+    css: "var(--button-disabled-text)",
+    light: "#73737f",
+    dark: "#9c9ca8",
   },
   "button-font-weight": {
     css: "var(--button-font-weight)",

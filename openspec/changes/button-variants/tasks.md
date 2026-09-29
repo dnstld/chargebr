@@ -9,10 +9,10 @@
 
 ## 2. Estado desabilitado: token e estado juntos
 
-- [ ] 2.1 Acrescentar `color.action.disabled` a `semantic/light.json` e `semantic/dark.json` (`{color.gray.300}` claro / `{color.gray.700}` escuro) — verificar com `checkThemeCompleteness` (os dois temas têm o token) e com a leitura visual dos dois valores
-- [ ] 2.2 Estender `component/button.json` com `disabled.background` (→ `color.action.disabled`) e `disabled.text` (→ `color.text.muted`) — verificar com `checkReferences` (referência só à camada semântica) passando sem edição
-- [ ] 2.3 `Button` aceita `isDisabled?: boolean`, repassado a `AriaButton`, com `[data-disabled]` no CSS Module resolvendo os dois tokens novos — verificar com história que confere `onPress` não disparado e `[data-disabled]` presente, nos dois temas, sob `addon-a11y`
-- [ ] 2.4 `contrast.ts`: generalizar `ContrastInput` para enumerar pares de ação/estado a partir da fonte (D5 de design.md), com `disabled` isento do piso de 4,5:1 e nomeado como tal no relatório — verificar com os cenários "Par de ação novo entra sem editar o arquivo de checagem", "Remover um par de ação o remove da checagem" e "Par desabilitado é relatado, não reprovado" de `specs/design-tokens/spec.md`, todos como testes novos em `contrast.test.ts`
+- [x] 2.1 Acrescentar `color.action.disabled` a `semantic/light.json` e `semantic/dark.json` (`{color.gray.300}` claro / `{color.gray.700}` escuro) — verificar com `checkThemeCompleteness` (os dois temas têm o token) e com a leitura visual dos dois valores
+- [x] 2.2 Estender `component/button.json` com `disabled.background` (→ `color.action.disabled`) e `disabled.text` (→ `color.text.muted`) — verificar com `checkReferences` (referência só à camada semântica) passando sem edição
+- [x] 2.3 `Button` aceita `isDisabled?: boolean`, repassado a `AriaButton`, com `[data-disabled]` no CSS Module resolvendo os dois tokens novos — verificar com história que confere `onPress` não disparado e `[data-disabled]` presente, nos dois temas, sob `addon-a11y`
+- [x] 2.4 `contrast.ts`: generalizar `ContrastInput` para enumerar pares de ação/estado a partir da fonte (D5 de design.md), com `disabled` isento do piso de 4,5:1 e nomeado como tal no relatório — verificar com os cenários "Par de ação novo entra sem editar o arquivo de checagem", "Remover um par de ação o remove da checagem" e "Par desabilitado é relatado, não reprovado" de `specs/design-tokens/spec.md`, todos como testes novos em `contrast.test.ts`
 
 ## 3. Estado de pendência: o átomo Spinner e o token dele
 

@@ -24,6 +24,8 @@ export type ButtonProps = ButtonContent & {
   icon?: LucideIcon;
   /** Variante de tamanho. Resolve tipografia e espaço juntos, por token de componente. */
   size?: ButtonSize;
+  /** Estado desabilitado: não dispara `onPress`, aparência por token próprio. */
+  isDisabled?: boolean;
   /** Ação ao ativar o botão. */
   onPress?: () => void;
 };
