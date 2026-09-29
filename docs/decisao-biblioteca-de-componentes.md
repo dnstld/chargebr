@@ -524,11 +524,21 @@ gatilho. **Gatilho:** o primeiro componente de família com cor própria — que
 será `atoms/nav/button` ou `atoms/nav/link`, no grupo 6 de
 `interface-atomic-structure`.
 
-*Fechado por `button-variants` (adenda de 29 de setembro de 2026, abaixo) —
-não pelo gatilho literal (não é componente de família), mas pela mesma causa:
-o primeiro conjunto de token co-nascido com um componente que a checagem
-hardcoded de `color-action-primary`/`color-action-primary-hover`/
-`color-text-on-action` não alcança.*
+*Correção de 29 de setembro de 2026, na aplicação de `button-variants`:
+esta lacuna **não** fechou naquele ciclo — a nota anterior aqui afirmava que
+sim, "pela mesma causa", e a afirmação era imprecisa. `button-variants`
+generaliza `contrast.ts` para descobrir todo `color-action-<estado>` da
+camada **semântica** a partir da fonte (requisito "Conjunto de ação e estado
+é enumerado, nunca fixo", `design-tokens`) — fecha a leitura fixa por nome
+de chave (`color-action-primary`/`color-action-primary-hover`/
+`color-text-on-action`), que é uma lacuna real, mas outra: nenhuma checagem
+de contraste olha para token de **componente** com cor própria, e
+`component/spinner.json` (novo, no mesmo ciclo) não é o caso — seu campo
+`color` só referencia `{color.action.primary}`, um semântico que a varredura
+já cobre, sem introduzir cor própria nenhuma. O gatilho permanece: o
+primeiro componente cujo token de cor não seja referência a um semântico já
+coberto — que ainda será `atoms/nav/button` ou `atoms/nav/link`, no grupo 6
+de `interface-atomic-structure`.*
 
 ## Adenda, 29 de setembro de 2026: token nasce com o componente que o consome
 

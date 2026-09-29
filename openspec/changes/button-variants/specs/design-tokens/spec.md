@@ -96,11 +96,22 @@ novo SHALL entrar na checagem sem edição do arquivo de checagem.
 nome de chave (`color-action-primary`, `color-action-primary-hover`,
 `color-text-on-action`) — um par novo, como o de desabilitado que este
 change introduz, não seria alcançado sem editar o arquivo de checagem à mão.
-`docs/decisao-biblioteca-de-componentes.md` já registrava esta lacuna
-("Decisão de 2026-09-29", "Lacuna registrada, não resolvida"), com gatilho no
-primeiro componente de família com cor própria; este requisito a fecha por
-uma causa equivalente — o primeiro conjunto de token de ação co-nascido com
-um componente, que a leitura fixa por nome não alcançaria.
+
+**Correção medida durante a aplicação:** uma versão anterior deste texto
+afirmava que este requisito fechava a lacuna que
+`docs/decisao-biblioteca-de-componentes.md` registra ("Decisão de
+2026-09-29", "Lacuna registrada, não resolvida", gatilho no primeiro
+componente de família com cor própria) "por uma causa equivalente". Não
+fecha: aquela lacuna é sobre token de **componente** com cor própria — algo
+que `contrast.ts` nunca olhou nem passa a olhar —, e este requisito enumera
+só a camada **semântica** (`color-action-<estado>`). São duas lacunas
+diferentes que soam parecidas. A confusão nasceu porque `component/
+spinner.json`, novo no mesmo ciclo, também é "um conjunto de token nascido
+com um componente" — mas seu campo `color` só referencia
+`{color.action.primary}`, um semântico que a varredura já cobre, sem cor
+própria nenhuma. A lacuna de `docs/decisao-biblioteca-de-componentes.md`
+segue aberta, com o gatilho corrigido lá: o primeiro componente cujo token
+de cor não seja referência a um semântico já coberto.
 
 #### Scenario: Par de ação novo entra na checagem sem editar o arquivo de checagem
 
