@@ -1,0 +1,11 @@
+{
+  "spinner": {
+    "$description": "Indicador de progresso indeterminado. Cor de marca — a mesma da ação em repouso, para que o spinner composto num Button primary leia como a mesma ação, ainda em curso — e tamanho por degrau, alinhado à escala de tamanho de Button.",
+    "color": { "$type": "color", "$value": "{color.action.primary}" },
+    "size": {
+      "sm": { "$type": "dimension", "$value": "{text.control.sm}" },
+      "md": { "$type": "dimension", "$value": "{text.control.md}" },
+      "lg": { "$type": "dimension", "$value": "{text.control.lg}" }
+    }
+  }
+}

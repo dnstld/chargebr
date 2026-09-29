@@ -1,10 +1,9 @@
 # Pontos abertos
 
-**Atualizado em:** 29 de setembro de 2026, no arquivamento de
-`remove-domain-capabilities`
+**Atualizado em:** 29 de setembro de 2026, na aplicação de `button-variants`
 **Estado do repositório:** 6 capacidades vivas, 56 requisitos, 12 ciclos
 arquivados, um change ativo (`interface-atomic-structure`, grupos 6–8
-pendentes). **3 pontos abertos**
+pendentes). **5 pontos abertos**
 
 ## O que este arquivo é
 
@@ -100,6 +99,109 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
 
 ---
 
+## 16. Histórias que provam garantia com asserção tautológica
+
+**O que é:** medido em `button-variants` — cinco histórias/testes que
+provam uma garantia escolheram argumentos (valores de prop, estado de
+ambiente, ou o elemento consultado) sob os quais a asserção é verdadeira
+**independentemente** de o comportamento provado existir ou estar correto.
+Nenhuma tem erro de sintaxe nem falta asserção; cada uma roda, passa, e
+aparenta provar a garantia nomeada — só não prova.
+
+As cinco, nomeadas:
+
+1. `button.stories.tsx`, história `Pendente` (versão original). Args:
+   `icon={Menu}` + `aria-label`. A asserção de nome acessível passa tanto se
+   `Button` preserva o conteúdo durante a pendência quanto se o substitui
+   inteiramente — `aria-label` é atributo do elemento, independente do que
+   `children` renderiza. Este era um bug real, medido ao vivo (a história
+   corrigida, com `children` de texto, reprovou contra o componente antes da
+   correção) e já corrigido no mesmo ciclo.
+2. `spinner.stories.tsx`, história `SemMovimentoReduzido`. Roda sob o padrão
+   do Chromium headless, que não declara `prefers-reduced-motion`. A
+   asserção "animação presente" é verdadeira tanto se `spinner.module.css`
+   tiver a regra que desliga a animação sob a preferência quanto se nunca a
+   tivesse tido — o ramo que a regra desliga nunca é exercitado por este
+   estado de ambiente.
+3. `contrast.test.ts`, teste "remover um par de ação da fonte o remove da
+   checagem". Usa os tokens correntes reais, que nunca tiveram o par
+   plantado. A asserção de ausência é verdadeira tanto se a enumeração
+   funciona corretamente (e por isso não encontra o que não existe) quanto
+   se estivesse inteiramente quebrada (sempre vazia, sem nunca enumerar
+   nada). Só o teste irmão, que planta o par e confere presença, prova a
+   enumeração.
+4. `button.stories.tsx`, história `Desabilitado`, as asserções de clique e
+   teclado. O navegador bloqueia o clique no nível **nativo** (atributo
+   `disabled`), independente de qualquer lógica de `Button` acima dele — a
+   asserção passa mesmo que a ligação de `isDisabled` a outros efeitos
+   estivesse desconexa da que desliga o clique.
+5. `button.stories.tsx`, história `AtributosDeControle`. Testa só
+   `aria-expanded={true}` — um booleano, só um dos dois valores possíveis. A
+   asserção passa tanto se `Button` repassa o valor recebido quanto se
+   tivesse `"true"` fixo embutido por engano.
+
+**Confiança:** as três primeiras são inequívocas — a mutação que cada uma
+deixa passar é concreta, e a primeira foi medida ao vivo. As duas últimas
+seguem o mesmo formato, com severidade menor; ficam para quem retomar este
+ponto confirmar se contam como a mesma classe de defeito.
+
+**Por que ficou aberto:** o requisito correspondente pertence à capacidade
+`verification-bench`, que já existe e já é viva (`openspec/specs/
+verification-bench/spec.md`) — mudar uma spec viva é ciclo próprio, com
+proposta, design e tarefas, não uma linha solta encaixada em outro change. Um
+rascunho de proposta chegou a ser aberto em `openspec/changes/
+verification-bench-non-tautological-assertion/` durante a aplicação de
+`button-variants` e foi removido de lá por decisão do dono: o achado fica
+registrado aqui, não meio-proposto num PR de código.
+
+**Nota:** este requisito, quando escrito, não terá prova automatizável no
+formato que os demais requisitos de `verification-bench` usam (plantio de
+defeito, execução, reprovação nomeada) — é uma propriedade do desenho do
+teste, não do comportamento renderizado, verificável por revisão, no mesmo
+formato que `openspec/config.yaml` (`rules.specs`) já usa para "todo critério
+de aceite nomeia o teste que o prova". Como mecanizar isso, se for possível,
+é decisão do ciclo que escrever o requisito.
+
+**Gatilho:** o próximo ciclo que tocar `verification-bench` por suas
+próprias razões — é lá que a proposta se escreve inteira, com design e
+tarefas.
+
+---
+
+## 17. `openspec validate --strict` aprova mudança sem `design.md` nem `tasks.md`
+
+**O que é:** o schema `spec-driven` declara `design` e `tasks` como
+artefatos de planejamento exigidos antes de aplicar (`applyRequires:
+["tasks"]`), mas `openspec validate` não os exige para considerar a mudança
+válida. **Medido nesta branch** (`button-variants`), sobre um change com só
+`proposal.md` e uma spec delta, sem `design.md` nem `tasks.md`:
+
+```
+$ npx openspec validate <nome> --strict --json
+{
+  "items": [{ "id": "<nome>", "type": "change", "valid": true, "issues": [] }],
+  "summary": { "totals": { "items": 1, "passed": 1, "failed": 0 } }
+}
+```
+
+`--strict` não muda o resultado. `valid: true`, zero `issues`, para uma
+mudança que ninguém poderia aplicar como está (falta o "como" e o "em que
+passos").
+
+**Por que ficou aberto:** `openspec` (`@fission-ai/openspec`) é ferramenta de
+terceiro, não deste repositório — não é nosso lugar consertar o
+comportamento do `validate`. O registro existe para que "`validate` passou"
+nunca seja lido como "mudança completa" por quem revisar um proposal daqui
+em diante; os dois fatos já divergiram uma vez sem estarem escritos em
+lugar nenhum.
+
+**Gatilho:** uma versão de `@fission-ai/openspec` que passe a considerar
+artefatos de planejamento ausentes na checagem de validade, ou a primeira
+vez que essa lacuna causar um problema real (uma mudança revisada ou
+aplicada como se completa por engano, apoiada só em `validate` verde).
+
+---
+
 ## Fechados
 
 - **12. Dois guardiões leem `next-env.d.ts`** — fechado pelo PR que arrumou a
@@ -176,3 +278,17 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
   qualquer capacidade. Se uma forma "bolha" um dia precisar de uma segunda
   magnitude codificada em tamanho, a pergunta volta, presa a um requisito
   novo e específico daquela forma — não a este, que não existe mais.
+- **15. A bancada não emula `prefers-reduced-motion` no navegador** —
+  fechado por decisão do dono, na aplicação de `button-variants`. **Recusado,
+  não adiado: sem gatilho de reabertura.** O requisito "Spinner respeita
+  preferência de movimento reduzido" foi removido do delta de
+  `interface-atoms` — a bancada não prova o caso "com a preferência" (ver a
+  medição que motivou o registro original deste ponto, abaixo), e o dono
+  decidiu não perseguir a prova, não adiá-la para um gatilho. A regra CSS
+  (`@media (prefers-reduced-motion: reduce)` em `spinner.module.css`)
+  **permanece** — é comportamento correto, e a ausência de requisito que a
+  cubra não é indício de código órfão. **Medição que motivou o registro
+  original:** importar `@vitest/browser/context` dentro de `play`, nesta
+  bancada, reprova com "vitest/browser can be imported only inside the
+  Browser Mode" — `@storybook/addon-vitest@10.6.0` declara peer
+  `vitest@^3.0.0 || ^4.0.0`, e o repositório fixa `vitest@5.0.1`.

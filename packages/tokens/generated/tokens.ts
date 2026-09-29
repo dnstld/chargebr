@@ -291,6 +291,11 @@ export const tokens = {
     light: "64px",
     dark: "64px",
   },
+  "color-action-disabled": {
+    css: "var(--color-action-disabled)",
+    light: "#c6c6ce",
+    dark: "#3e3e47",
+  },
   "color-action-primary": {
     css: "var(--color-action-primary)",
     light: "#302681",
@@ -471,6 +476,21 @@ export const tokens = {
     light: "400",
     dark: "400",
   },
+  "text-control-lg": {
+    css: "var(--text-control-lg)",
+    light: "14px",
+    dark: "14px",
+  },
+  "text-control-md": {
+    css: "var(--text-control-md)",
+    light: "13px",
+    dark: "13px",
+  },
+  "text-control-sm": {
+    css: "var(--text-control-sm)",
+    light: "12px",
+    dark: "12px",
+  },
   "text-counterfactual-style": {
     css: "var(--text-counterfactual-style)",
     light: "italic",
@@ -551,23 +571,58 @@ export const tokens = {
     light: "500",
     dark: "500",
   },
-  "button-font-size": {
-    css: "var(--button-font-size)",
-    light: "13px",
-    dark: "13px",
+  "button-disabled-background": {
+    css: "var(--button-disabled-background)",
+    light: "#c6c6ce",
+    dark: "#3e3e47",
+  },
+  "button-disabled-text": {
+    css: "var(--button-disabled-text)",
+    light: "#73737f",
+    dark: "#9c9ca8",
   },
   "button-font-weight": {
     css: "var(--button-font-weight)",
     light: "500",
     dark: "500",
   },
-  "button-padding-block": {
-    css: "var(--button-padding-block)",
+  "button-lg-font-size": {
+    css: "var(--button-lg-font-size)",
+    light: "14px",
+    dark: "14px",
+  },
+  "button-lg-gap": {
+    css: "var(--button-lg-gap)",
+    light: "16px",
+    dark: "16px",
+  },
+  "button-lg-padding-block": {
+    css: "var(--button-lg-padding-block)",
+    light: "12px",
+    dark: "12px",
+  },
+  "button-lg-padding-inline": {
+    css: "var(--button-lg-padding-inline)",
+    light: "24px",
+    dark: "24px",
+  },
+  "button-md-font-size": {
+    css: "var(--button-md-font-size)",
+    light: "13px",
+    dark: "13px",
+  },
+  "button-md-gap": {
+    css: "var(--button-md-gap)",
     light: "8px",
     dark: "8px",
   },
-  "button-padding-inline": {
-    css: "var(--button-padding-inline)",
+  "button-md-padding-block": {
+    css: "var(--button-md-padding-block)",
+    light: "8px",
+    dark: "8px",
+  },
+  "button-md-padding-inline": {
+    css: "var(--button-md-padding-inline)",
     light: "12px",
     dark: "12px",
   },
@@ -590,6 +645,46 @@ export const tokens = {
     css: "var(--button-radius)",
     light: "4px",
     dark: "4px",
+  },
+  "button-sm-font-size": {
+    css: "var(--button-sm-font-size)",
+    light: "12px",
+    dark: "12px",
+  },
+  "button-sm-gap": {
+    css: "var(--button-sm-gap)",
+    light: "4px",
+    dark: "4px",
+  },
+  "button-sm-padding-block": {
+    css: "var(--button-sm-padding-block)",
+    light: "8px",
+    dark: "8px",
+  },
+  "button-sm-padding-inline": {
+    css: "var(--button-sm-padding-inline)",
+    light: "8px",
+    dark: "8px",
+  },
+  "spinner-color": {
+    css: "var(--spinner-color)",
+    light: "#302681",
+    dark: "#8788fe",
+  },
+  "spinner-size-lg": {
+    css: "var(--spinner-size-lg)",
+    light: "14px",
+    dark: "14px",
+  },
+  "spinner-size-md": {
+    css: "var(--spinner-size-md)",
+    light: "13px",
+    dark: "13px",
+  },
+  "spinner-size-sm": {
+    css: "var(--spinner-size-sm)",
+    light: "12px",
+    dark: "12px",
   },
 } as const;
 

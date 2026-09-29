@@ -49,6 +49,13 @@ export interface ContrastInput {
   hover: ContrastToken | undefined;
   onAction: ContrastToken | undefined;
   focusRing: ContrastToken | undefined;
+  /**
+   * Estados de ação além de repouso e hover — `disabled`, e qualquer outro
+   * que a fonte declarar —, descobertos por nome e não por uma lista escrita
+   * aqui. Cada um é varrido contra as superfícies neutras como `action` já é;
+   * só é isento do piso quando `ACTION_STATE_EXEMPTIONS` o nomeia.
+   */
+  extraActions: ContrastToken[];
 }
 
 export interface MeasuredPair {
@@ -57,6 +64,24 @@ export interface MeasuredPair {
   floor: number;
   /** Distância acima do piso; negativa quando o par reprova. */
   margin: number;
+  /** Presente quando o par é de um estado isento do piso; nomeia o estado e a razão. */
+  exemption?: { state: string; reason: string };
+}
+
+// Estados de ação isentos do piso de contraste de texto, e a razão nomeada no
+// relatório. Um estado extra fora desta lista reprova ao piso padrão — a
+// isenção não é porta aberta para um par escapar da checagem sem
+// justificativa registrada (D5 de design.md, "Enumeração de pares de ação/
+// estado em contrast.ts").
+export const ACTION_STATE_EXEMPTIONS: Record<string, string> = {
+  disabled: "WCAG 1.4.3, componente de interface inativo",
+};
+
+// O último segmento do caminho DTCG é o nome do estado: `color.action.disabled`
+// → `disabled`, `color.action.primary-hover` → `primary-hover`.
+function actionState(name: string): string {
+  const segments = name.split(".");
+  return segments.at(-1) ?? name;
 }
 
 export interface ThemeMeasurement {
@@ -160,13 +185,33 @@ export function measureTheme(input: ContrastInput): ThemeMeasurement {
       pairs.push(measurePair(input.focusRing, surface, graphicObjectFloor));
   }
 
+  // Estados de ação extras — descobertos na fonte, não escritos aqui —, cada
+  // um varrido contra as superfícies como `action` já é. Um estado isento
+  // (D5 de design.md) carrega a isenção no próprio par medido, para que o
+  // relatório o nomeie mesmo quando ele fica abaixo do piso.
+  for (const extra of input.extraActions) {
+    const state = actionState(extra.name);
+    const reason = ACTION_STATE_EXEMPTIONS[state];
+    for (const surface of surfaces) {
+      const measured = measurePair(extra, surface, textFloor);
+      pairs.push(
+        reason === undefined
+          ? measured
+          : { ...measured, exemption: { state, reason } },
+      );
+    }
+  }
+
   const step =
     input.action && input.hover
       ? lightness(input.hover.value) - lightness(input.action.value)
       : null;
 
+  // Um par isento nunca é o "pior par" registrado: ele não é o que limita a
+  // checagem, e apontá-lo como tal esconderia o par que de fato limita.
   let worst: MeasuredPair | null = null;
   for (const pair of pairs) {
+    if (pair.exemption) continue;
     if (worst === null || pair.margin < worst.margin) worst = pair;
   }
 
@@ -205,6 +250,24 @@ export function themeViolations(input: ContrastInput): Violation[] {
         violations.push({
           tokens: [input.action.name, surface.name],
           message: `[${theme}] ${CHECKS.surface}: ${input.action.name} × ${surface.name} = ${measured.ratio.toFixed(3)}:1 < piso ${textFloor}:1`,
+        });
+      }
+    }
+  }
+
+  // Estados de ação extras, contra cada superfície varrida, ao piso de texto.
+  // Só reprova quando o estado não está nomeado como isento — a isenção em si
+  // nunca produz violação, só nota (ver `checkContrast`, que lê `exemption`
+  // nos pares medidos e nunca a partir daqui).
+  for (const extra of input.extraActions) {
+    const state = actionState(extra.name);
+    if (ACTION_STATE_EXEMPTIONS[state] !== undefined) continue;
+    for (const surface of sweptSurfaces(input)) {
+      const measured = measurePair(extra, surface, textFloor);
+      if (measured.margin < 0) {
+        violations.push({
+          tokens: [extra.name, surface.name],
+          message: `[${theme}] ${CHECKS.surface}: ${extra.name} × ${surface.name} = ${measured.ratio.toFixed(3)}:1 < piso ${textFloor}:1`,
         });
       }
     }
@@ -341,6 +404,22 @@ export function checkContrast(
     }
   }
 
+  // Par de estado isento: sempre relatado, nunca ausência silenciosa de
+  // medição — nomeia o estado, a razão da isenção e se ele reprovaria ao piso
+  // padrão (D2 de design.md).
+  for (const theme of THEMES) {
+    for (const pair of measured[theme].pairs) {
+      if (!pair.exemption) continue;
+      const status =
+        pair.margin < 0
+          ? `${pair.ratio.toFixed(3)}:1 < piso ${pair.floor}:1`
+          : `${pair.ratio.toFixed(3)}:1`;
+      notes.push(
+        `[${theme}] estado "${pair.exemption.state}" isento do piso de contraste de texto: ${pair.pair.join(" × ")} = ${status} — isento por ${pair.exemption.reason}`,
+      );
+    }
+  }
+
   return {
     passed: violations.length === 0,
     violations: violations.map((violation) => violation.message),
@@ -354,6 +433,12 @@ export function checkContrast(
 const keyOf = (path: string): string => path.replaceAll(".", "-");
 
 const SURFACE = /^color-surface-[a-z0-9-]+$/;
+
+// Todo token de ação, no mesmo padrão de `SURFACE`. Repouso e hover já têm
+// campo próprio em `ContrastInput` (`action`/`hover`), por causa dos
+// diagnósticos que só valem para os dois — por isso saem daqui abaixo.
+const ACTION = /^color-action-[a-z0-9-]+$/;
+const SPECIAL_ACTION_STATES = new Set(["primary", "primary-hover"]);
 
 // Caminho DTCG e primitivo referenciado de cada token visível num tema, lidos
 // da fonte. O caminho não é derivável do nome gerado — `color-text-on-action`
@@ -414,6 +499,15 @@ export function contrastInput(
     .map(at)
     .filter((token): token is ContrastToken => token !== undefined);
 
+  const extraActions = Object.keys(resolved)
+    .filter((key) => ACTION.test(key))
+    .filter(
+      (key) => !SPECIAL_ACTION_STATES.has(key.replace(/^color-action-/, "")),
+    )
+    .sort()
+    .map(at)
+    .filter((token): token is ContrastToken => token !== undefined);
+
   return {
     theme,
     surfaces,
@@ -422,5 +516,6 @@ export function contrastInput(
     hover: at("color-action-primary-hover"),
     onAction: at("color-text-on-action"),
     focusRing: at("color-focus-ring"),
+    extraActions,
   };
 }

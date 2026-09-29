@@ -142,14 +142,26 @@ ganho de acessibilidade real — o piso estrito existe para estado que
 comunica informação por cor; desabilitado comunica por semântica (atributo
 nativo), não por contraste.
 
-### D3 — Pendência: `Button` repassa `isPending` à primitiva; `Spinner` é átomo à parte
+### D3 — Pendência: `Button` repassa `isPending` à primitiva; `Spinner` entra ao lado do conteúdo, nunca no lugar dele
 
 `AriaButton` já implementa `isPending` nativamente — desliga press/hover,
 mantém o elemento focalizável, e expõe `isPending` como render-prop de
-`children`. `Button` só aceita e repassa a prop; o conteúdo trocado por
-`Spinner` usa o mesmo padrão de `children` como função que
-`react-aria-components` já expõe para render props de estado — não é
-mecanismo novo, é o que a primitiva já oferece.
+`children`. `Button` só aceita e repassa a prop.
+
+**Correção medida durante a aplicação:** a primeira versão desta decisão
+trocava o conteúdo normal por `<Spinner>` via a função de `children`. Medido
+contra a fonte de `react-aria-components`
+(`dist/private/Button.mjs`): a primitiva **nunca troca `children` sozinha** —
+ela sempre renderiza o que o consumidor passa, e `isPending` chega como
+render-prop para o consumidor decidir o que fazer, nada mais. Trocar o
+conteúdo era decisão só do wrapper, e ela apagava o nome acessível de um botão
+rotulado por texto (sem `aria-label`) assim que a pendência começava — a
+checagem de acessibilidade não pegou porque as duas histórias de pendência
+originais só cobriam o caso `aria-label` (ícone só), onde o nome sobrevive por
+vir de um atributo, não do conteúdo. Decisão corrigida: `children` (e o ícone,
+quando houver) permanecem renderizados o tempo todo; `<Spinner>` aparece **ao
+lado**, quando `isPending`. O nome acessível de um botão de texto continua
+vindo do próprio texto, pendente ou não.
 
 `Spinner`: SVG com anel parcial em rotação, `stroke` = `color.action.primary`
 (mesma cor de marca da ação — para que o spinner dentro de um `Button`
@@ -158,6 +170,21 @@ tamanho referenciando o degrau de `text.control` correspondente ao `size` do
 `Button` que o compõe. `component/spinner.json` nasce com esse componente,
 na mesma mudança — é o segundo caso da regra nova (`rules.design`),
 depois do próprio `component/button.json` estendido.
+
+**Correção medida na aplicação:** `color.action.primary` é a cor certa para
+um `Spinner` solto sobre superfície neutra, mas o `Spinner` composto dentro
+de `Button` pousa sobre o **fundo do botão** — que também é
+`color.action.primary` —, e ficava invisível; token de componente que vai
+ser composto dentro de outro se escolhe contra a superfície em que ele
+pousa, não só pelo papel semântico, e foi isso que faltou aqui. Corrigido em
+`button.module.css`: `.button` redefine `--spinner-color: var(--button-
+primary-text)` (a cor do rótulo ao lado, não a de fundo) —
+`component/spinner.json` não muda, o valor genérico continua certo para o
+caso solto; o que muda é o que `.button`/`.button[data-disabled]`
+redefinem, o mesmo padrão de sobrescrita no próprio seletor que a adenda de
+29/09 de `docs/decisao-biblioteca-de-componentes.md` já registra. Sem par de
+contraste novo: `color.text.on-action` × `color.action.primary` já é
+varrido por `contrast.ts`.
 
 **Alternativa considerada:** prop de estilo dentro de `Button` (padrão
 `loadingIndicator` do Material UI). Descartada pela regra já registrada em
@@ -250,6 +277,18 @@ O toggle em si é estrutural, não um valor: `spinner.module.css` aplica
 `@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }`
 — uma media query, não um literal de design.
 
+**Correção do dono, na aplicação:** o requisito "Spinner respeita
+preferência de movimento reduzido" (`specs/interface-atoms/spec.md`) foi
+removido do delta — decisão do dono, recusada, não adiada, sem gatilho de
+reabertura (ver `docs/pontos-abertos.md`, ponto 15 fechado como recusado). A
+regra CSS acima **permanece** em `spinner.module.css`: é comportamento
+correto, é a leitura padrão de `prefers-reduced-motion` que qualquer
+elemento animado deveria ter, e não depende de requisito nenhum para
+justificar sua existência. **A ausência de requisito não é indício de código
+órfão** — não a apague por achar que sobrou de uma tarefa desfeita; ela nunca
+teve uma tarefa que a desfizesse, só deixou de ter uma prova formal cobrindo
+o caso "com a preferência".
+
 A duração e a curva da animação, quando ela roda, são outra história:
 `packages/tokens` não declara hoje nenhum eixo de movimento — nenhum
 arquivo em `primitive/`, `semantic/` ou `component/` tem `$type` de
@@ -275,6 +314,51 @@ consumidor.
 (candidato a token compartilhado), ou que precise de uma duração diferente
 por contexto (candidato a variante), é o que forçaria medir um eixo de
 movimento — como R3/R6, hoje nenhum precisa.
+
+### D8 — Spinner é decorativo (`aria-hidden`), não uma região viva própria
+
+**Correção medida durante a aplicação.** A versão original desta decisão
+dava a `Spinner` `role="status"` — uma região viva do ARIA —, supondo que
+precisava anunciar o próprio progresso a tecnologia assistiva. Medido contra
+a fonte de `react-aria-components` (`dist/private/Button.mjs`, versão
+1.21.1): `Button` com `isPending` já observa a própria transição de
+pendência com um `useEffect` que chama o anunciador ao vivo da biblioteca
+(`announce(message, 'assertive')`) quando o botão está focado no momento da
+mudança — a mensagem é `aria-labelledby` apontando para o próprio nome do
+botão (mais um `id` reservado para um indicador de progresso composto, via
+`ProgressBarContext`, que `Spinner` não consome). O anúncio já existe, vem
+da primitiva, e não depende de nada em `Spinner`.
+
+Uma região viva sem conteúdo de texto, por outro lado, não anuncia nada —
+`role="status"` sem filho textual é um live region vazio: não há o que ler
+quando ele aparece, e a inserção inicial de um live region normalmente nem é
+lida pela maioria dos leitores de tela. O `role="status"` anterior não
+preenchia a lacuna que motivou D3 original; só parecia preenchê-la.
+
+**Decisão:** `Spinner` é puramente decorativo — `aria-hidden="true"`, sem
+papel ARIA. O anúncio da pendência é responsabilidade inteira de
+`Button`/`react-aria-components`, que já o faz. `data-spinner` substitui
+`role="status"` como gancho de consulta em teste, no mesmo padrão de
+`data-hatch` em `Hatch`.
+
+**O que isso muda no requisito de `Spinner`:** a versão original do
+requisito "Spinner comunica progresso indeterminado" (`specs/interface-
+atoms/spec.md`) afirmava que `Spinner` "SHALL expor esse estado a tecnologia
+assistiva" por conta própria — falso, pela medição acima. O requisito foi
+corrigido para descrever o que de fato acontece: `Spinner` é decorativo, e a
+comunicação do estado de pendência a tecnologia assistiva é responsabilidade
+de `Button`, que a primitiva já cumpre.
+
+**Alternativa considerada:** dar a `Spinner` um texto visualmente oculto
+("Carregando", ou semelhante) dentro do `role="status"`, para que a região
+viva tivesse algo a anunciar por conta própria, redundante com o anúncio que
+`Button` já faz. Descartada: duplicaria o anúncio para quem usa `Spinner`
+só dentro de `Button` — o único consumidor real hoje — sem medir um caso em
+que o anúncio da primitiva não bastasse.
+
+**Gatilho:** um consumidor de `Spinner` fora de um `Button` com `isPending`
+— algo que precise de progresso indeterminado sem o anúncio que a primitiva
+já dá — é o que reabriria esta decisão.
 
 ## Risks / Trade-offs
 
@@ -303,6 +387,25 @@ movimento — como R3/R6, hoje nenhum precisa.
   um repõe quando o próprio ciclo tocar o componente — o risco real é alguém
   tratar o silêncio como "resolvido para o pacote todo", por isso fica
   registrado aqui e não só implícito no código.
+- [Conflito, resolvido na aplicação] `tasks.md` (tarefa 5.3) pede verificação
+  de cobertura de história por `stories-coverage.test.ts`, que D6 decide não
+  repor → [Resolução] apresentado ao dono do repositório; decisão: manter D6
+  (mais recente e mais específica) e não criar o mecanismo — confirmado à mão
+  que todo estado declarado tem história própria, sem combinar eixos, sem
+  prova automatizada de que isso continua valendo depois desta mudança.
+- [Risco, medido na aplicação, recusado pelo dono] a bancada não emula
+  `prefers-reduced-motion` no navegador: `@vitest/browser/context`
+  (`commands`), a ponte que permitiria acionar `page.emulateMedia` do
+  Playwright a partir de uma história, lança em runtime sob a combinação de
+  versões que este repositório fixa (`@storybook/addon-vitest@10.6.0`
+  declara peer `vitest@^3||^4`; o repositório fixa `vitest@5.0.1`) →
+  [Decisão do dono] o requisito "Spinner respeita preferência de movimento
+  reduzido" foi removido do delta — recusado, não adiado, sem gatilho (ponto
+  15 de `docs/pontos-abertos.md`, fechado como recusado). A regra CSS
+  permanece em `spinner.module.css` (D7) como comportamento correto sem
+  requisito que a cubra; a história "Sem movimento reduzido" continua
+  existindo como documentação viva, sem pretender provar a preferência
+  ativa.
 
 ## Migration Plan
 

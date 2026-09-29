@@ -1,6 +1,6 @@
 {
   "button": {
-    "$description": "Mínimo da camada de componente: prova a regra de referência antes de existir componente.",
+    "$description": "Camada de componente do botão: cor por estado e as três variantes de tamanho, cada uma resolvendo tipografia e espaço junto.",
     "primary": {
       "background": { "$type": "color", "$value": "{color.action.primary}" },
       "background-hover": {
@@ -9,10 +9,47 @@
       },
       "text": { "$type": "color", "$value": "{color.text.on-action}" }
     },
+    "disabled": {
+      "background": { "$type": "color", "$value": "{color.action.disabled}" },
+      "text": { "$type": "color", "$value": "{color.text.muted}" }
+    },
     "radius": { "$type": "dimension", "$value": "{radius.control}" },
-    "padding-inline": { "$type": "dimension", "$value": "{space.inset.md}" },
-    "padding-block": { "$type": "dimension", "$value": "{space.inset.sm}" },
-    "font-size": { "$type": "dimension", "$value": "{text.label.size}" },
-    "font-weight": { "$type": "fontWeight", "$value": "{text.label.weight}" }
+    "font-weight": { "$type": "fontWeight", "$value": "{text.label.weight}" },
+    "sm": {
+      "font-size": { "$type": "dimension", "$value": "{text.control.sm}" },
+      "padding-inline": {
+        "$type": "dimension",
+        "$value": "{space.inset.sm}"
+      },
+      "padding-block": {
+        "$type": "dimension",
+        "$value": "{space.inset.sm}"
+      },
+      "gap": { "$type": "dimension", "$value": "{space.gap.sm}" }
+    },
+    "md": {
+      "font-size": { "$type": "dimension", "$value": "{text.control.md}" },
+      "padding-inline": {
+        "$type": "dimension",
+        "$value": "{space.inset.md}"
+      },
+      "padding-block": {
+        "$type": "dimension",
+        "$value": "{space.inset.sm}"
+      },
+      "gap": { "$type": "dimension", "$value": "{space.gap.md}" }
+    },
+    "lg": {
+      "font-size": { "$type": "dimension", "$value": "{text.control.lg}" },
+      "padding-inline": {
+        "$type": "dimension",
+        "$value": "{space.inset.lg}"
+      },
+      "padding-block": {
+        "$type": "dimension",
+        "$value": "{space.inset.md}"
+      },
+      "gap": { "$type": "dimension", "$value": "{space.gap.lg}" }
+    }
   }
 }

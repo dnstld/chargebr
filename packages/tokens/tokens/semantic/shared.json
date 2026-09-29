@@ -87,6 +87,12 @@
     "counterfactual": {
       "$description": "Papel contrafactual de um valor: o que seria, e não o que é. Inclinado, para que a distinção não dependa só de cor.",
       "style": { "$type": "fontStyle", "$value": "{font.style.italic}" }
+    },
+    "control": {
+      "$description": "Escala de tamanho de fonte por degrau (pequeno/médio/grande), para qualquer controle que declare `size` — nomeia um degrau de escala, não um papel; distinta de `text.label`, que nomeia papel de rótulo de UI.",
+      "sm": { "$type": "dimension", "$value": "{font.size.1}" },
+      "md": { "$type": "dimension", "$value": "{font.size.2}" },
+      "lg": { "$type": "dimension", "$value": "{font.size.3}" }
     }
   }
 }

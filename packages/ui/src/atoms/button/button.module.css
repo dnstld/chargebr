@@ -1,22 +1,45 @@
-/* Botão genérico: um só par de cor hoje (component/button.json, "Mínimo da
-   camada de componente"). Foco visível segue o mesmo anel de token de Link;
-   ponteiro (hover) é estilo, não estado declarado — mesma razão de
-   link.module.css. */
+/* Botão genérico. Foco visível segue o mesmo anel de token de Link; ponteiro
+   (hover) é estilo, não estado declarado — mesma razão de link.module.css.
+   Tamanho, espaço e tipografia vêm inteiros da variante de `size` (default
+   `md`) — nenhum literal, nenhum valor fora das três classes abaixo. */
 .button {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-gap-sm);
   border: none;
   border-radius: var(--button-radius);
-  padding-inline: var(--button-padding-inline);
-  padding-block: var(--button-padding-block);
   font-family: var(--text-label-family);
-  font-size: var(--button-font-size);
   font-weight: var(--button-font-weight);
   line-height: var(--text-label-line-height);
   background-color: var(--button-primary-background);
   color: var(--button-primary-text);
   outline: none;
+  /* `Spinner` pousa sobre o fundo do botão, não sobre uma superfície neutra —
+     a cor de ação que component/spinner.json declara para esse caso combina
+     com o próprio fundo aqui. Quem compõe redefine para a cor do rótulo ao
+     lado (rules.design; docs/decisao-biblioteca-de-componentes.md, adenda de
+     29/09: token de componente é API de tema, redefinível por quem compõe). */
+  --spinner-color: var(--button-primary-text);
+}
+
+.button.sm {
+  gap: var(--button-sm-gap);
+  padding-inline: var(--button-sm-padding-inline);
+  padding-block: var(--button-sm-padding-block);
+  font-size: var(--button-sm-font-size);
+}
+
+.button.md {
+  gap: var(--button-md-gap);
+  padding-inline: var(--button-md-padding-inline);
+  padding-block: var(--button-md-padding-block);
+  font-size: var(--button-md-font-size);
+}
+
+.button.lg {
+  gap: var(--button-lg-gap);
+  padding-inline: var(--button-lg-padding-inline);
+  padding-block: var(--button-lg-padding-block);
+  font-size: var(--button-lg-font-size);
 }
 
 .button[data-hovered] {
@@ -26,4 +49,10 @@
 .button[data-focus-visible] {
   outline: var(--space-1) solid var(--color-focus-ring);
   outline-offset: var(--space-1);
+}
+
+.button[data-disabled] {
+  background-color: var(--button-disabled-background);
+  color: var(--button-disabled-text);
+  --spinner-color: var(--button-disabled-text);
 }

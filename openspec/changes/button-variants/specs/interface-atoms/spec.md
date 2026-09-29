@@ -31,7 +31,7 @@ formulário ou confirmação precisa expressar, não caso hipotético.
 O átomo de botão SHALL aceitar um estado de pendência. Nesse estado, o botão
 SHALL permanecer alcançável por foco e SHALL NOT disparar `onPress` em
 resposta a ponteiro ou teclado, e SHALL exibir o átomo `Spinner` como
-indicador visual.
+indicador visual ao lado do conteúdo normal, que SHALL permanecer renderizado.
 
 **Por quê:** convergência medida em Material UI (`loading`), gluestack
 (`ButtonSpinner`) e react-aria-components (`isPending`) — ação assíncrona
@@ -51,11 +51,11 @@ próprio (`rules.design`).
 - **THEN** o botão recebe foco normalmente
 - **Prova:** história com botão pendente, `play` que tabula até o botão e confere `document.activeElement`
 
-#### Scenario: Botão pendente exibe o indicador visual
+#### Scenario: Botão pendente exibe o indicador visual ao lado do conteúdo normal
 
 - **WHEN** um botão entra em pendência
-- **THEN** o átomo `Spinner` aparece no lugar do conteúdo normal do botão
-- **Prova:** história com botão pendente, `play` que localiza o `Spinner` renderizado
+- **THEN** o átomo `Spinner` aparece ao lado do conteúdo normal do botão, que permanece renderizado — nunca no lugar dele, para que o nome acessível de um botão rotulado por texto não se perca
+- **Prova:** história com botão pendente rotulado por texto, `play` que confere o texto do rótulo ainda presente e o `Spinner` renderizado
 
 ### Requirement: Botão aceita variante de tamanho
 
@@ -107,52 +107,30 @@ navegação que ele abre e fecha — não é especulativo.
 - **THEN** o manipulador de `onPress` recebe um objeto de evento com o tipo de ativação
 - **Prova:** história com `play` que ativa o botão e confere as propriedades do evento recebido pelo manipulador
 
-### Requirement: Spinner comunica progresso indeterminado
+### Requirement: Spinner é decorativo para tecnologia assistiva
 
 O átomo `Spinner` SHALL comunicar visualmente um estado de progresso
-indeterminado e SHALL expor esse estado a tecnologia assistiva sem exigir
-nome acessível próprio quando composto dentro de um controle já rotulado
-(como `Button` em pendência).
+indeterminado e SHALL ser decorativo para tecnologia assistiva
+(`aria-hidden`), nunca uma região viva própria.
 
-**Por quê:** é o único consumidor deste átomo no momento — `Button` em
-pendência —, e o teste de componente de biblioteca é ser genérico, não ter
-consumidor extra: um indicador de progresso indeterminado é primitiva
-legítima de qualquer biblioteca de UI (`docs/decisao-biblioteca-de-componentes.md`,
-"Decisão de 2026-09-28").
+**Por quê:** correção medida durante a aplicação deste ciclo, contra a fonte
+de `react-aria-components` (design.md, D8) — `Button.isPending` já anuncia a
+própria transição de pendência a tecnologia assistiva (um anúncio ao vivo
+que repete o nome do botão quando ele está focado no momento da mudança);
+uma região viva sem texto não anuncia nada, e uma versão anterior deste
+requisito, que dava a `Spinner` `role="status"`, dava a falsa impressão de
+que o estado estava coberto quando não estava. `Spinner` comunica o estado
+só visualmente; comunicá-lo a tecnologia assistiva é responsabilidade de
+quem o compõe — hoje, só `Button`, que a primitiva já cumpre.
 
-#### Scenario: Spinner expõe papel de progresso
+#### Scenario: Spinner não é exposto na árvore de acessibilidade
 
 - **WHEN** o `Spinner` é renderizado
-- **THEN** a checagem de acessibilidade da bancada confirma que ele é identificável como indicador de progresso
-- **Prova:** história do `Spinner`, nos dois temas, sob `addon-a11y`
+- **THEN** ele está marcado como decorativo (`aria-hidden`) e não aparece na árvore de acessibilidade
+- **Prova:** história do `Spinner`, nos dois temas, sob `addon-a11y`, conferindo `aria-hidden` presente
 
-#### Scenario: Spinner dentro de um controle rotulado não duplica o nome acessível
+#### Scenario: Spinner dentro de um botão rotulado por texto não apaga o nome acessível
 
-- **WHEN** o `Spinner` é renderizado dentro do `Button` em pendência, que já tem nome acessível próprio
-- **THEN** a checagem de acessibilidade não relata nome acessível duplicado ou ausente na árvore
-- **Prova:** história de `Button` pendente com `Spinner` composto, sob `addon-a11y`, nos dois temas
-
-### Requirement: Spinner respeita preferência de movimento reduzido
-
-O átomo `Spinner` SHALL permanecer visível sem depender de animação de
-rotação contínua quando o sistema declarar preferência por movimento
-reduzido, e SHALL animar continuamente quando não declarar.
-
-**Por quê:** `Spinner` é o primeiro componente do pacote cujo estado depende
-de movimento contínuo — nenhum outro átomo até aqui usava animação para
-comunicar algo. A checagem de acessibilidade por execução (`addon-a11y`,
-baseada em axe) não cobre preferência de movimento: axe não tem regra que
-detecte animação forçada contra `prefers-reduced-motion`. Sem prova própria,
-por história, essa garantia nasceria sem verificação nenhuma.
-
-#### Scenario: Movimento reduzido remove a rotação, não o indicador
-
-- **WHEN** o `Spinner` é renderizado com `prefers-reduced-motion: reduce` declarado
-- **THEN** ele permanece visível, sem animação de rotação computada
-- **Prova:** história com a preferência simulada, conferindo ausência de animação computada e presença do elemento
-
-#### Scenario: Sem a preferência, a rotação contínua está presente
-
-- **WHEN** o `Spinner` é renderizado sem `prefers-reduced-motion` declarado
-- **THEN** a animação de rotação contínua está presente
-- **Prova:** história padrão conferindo a animação computada presente
+- **WHEN** o `Spinner` é renderizado dentro do `Button` em pendência, rotulado por texto (sem `aria-label`)
+- **THEN** o nome acessível do botão continua vindo do texto, sem nome duplicado nem ausente na árvore
+- **Prova:** história de `Button` pendente com rótulo de texto, sob `addon-a11y`, nos dois temas, conferindo o nome acessível presente
