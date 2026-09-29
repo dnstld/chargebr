@@ -9,6 +9,11 @@ export {
   type HatchProps,
 } from "./hatch/hatch";
 export {
+  HatchPattern,
+  type HatchPatternProps,
+  hatchFill,
+} from "./hatch/hatch-pattern";
+export {
   HEADING_LEVELS,
   Heading,
   type HeadingLevel,

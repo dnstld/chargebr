@@ -74,7 +74,7 @@ precisa mais do parâmetro de tipo `Title` só para compor a mensagem de erro
 — mas isso é detalhe de implementação da tarefa que remover o arquivo, não
 uma decisão de design.
 
-### D3 — Teste de componente, e por que `Hatch`/`ChartHatchPattern` ficam
+### D3 — Teste de componente, e por que `Hatch` fica
 
 **Decisão do dono, tomada depois da primeira versão desta proposta.** A
 primeira versão media a sobrevivência de `Hatch` pelo mesmo teste de
@@ -88,20 +88,38 @@ sem consumidor construído é catálogo, não lacuna. A distinção entrou em
 o registro completo, com a razão de cada átomo afetado, está em
 `docs/decisao-biblioteca-de-componentes.md`.
 
-**Decisão, aplicada aos gráficos.** `Hatch` (`atoms/hatch/`) e
-`ChartHatchPattern` (`organisms/charts/hatch-pattern/`) ficam — a primeira já
-passava no teste corrigido por ser puramente genérica; a segunda ganha um
-motivo direto para ficar: o ponto do gráfico passa a aceitar uma opção
-genérica de preenchimento, `fill?: "solid" | "textured"`, padrão `"solid"` —
-escolha visual de quem compõe, sem estado nem significado de negócio
-atribuído a ela. Com as duas definições de hachura em uso de novo, o
-requisito "A hachura é uma só" continua tendo o que provar: migra para
-`interface-charts`, em vez de sair com o resto de `domain-charts`.
+**Decisão, aplicada aos gráficos.** `Hatch` (`atoms/hatch/`) fica — já
+passava no teste corrigido por ser puramente genérica. O ponto do gráfico
+passa a aceitar uma opção genérica de preenchimento, `fill?: "solid" |
+"textured"`, padrão `"solid"` — escolha visual de quem compõe, sem estado
+nem significado de negócio atribuído a ela.
 
-**O que muda em código, fora desta proposta:** `plot.tsx` passa a ler
-`fill` do ponto (quando presente) para escolher entre preenchimento sólido e
-o padrão de `ChartHatchPattern`, sem nenhuma referência a "não resolvido" ou
-a qualquer outro nome de estado — o campo é só visual.
+**Correção de 2026-09-29, sobre a versão anterior deste documento.** Aquela
+versão manteve `ChartHatchPattern` como segunda definição, em
+`organisms/charts/hatch-pattern/`, porque a versão do código em que ela foi
+escrita já tinha as duas — `Hatch` desenhando seu próprio `<pattern>` inline,
+`ChartHatchPattern` desenhando outro, os dois lendo os mesmos três números de
+`HATCH`. **O que medi:** os dois arquivos produziam o mesmo elemento
+`<pattern>`, atributo por atributo — não por coincidência de leitura da mesma
+constante, mas porque não havia razão nenhuma para as marcações divergirem.
+Duas implementações que só podem ser iguais não são duas implementações,
+são uma cópia. **O que concluo:** o `<pattern>` vira componente único em
+`atoms/hatch/hatch-pattern.tsx` (com `hatchFill` e `readDrawnHatch`, este
+último vindo de `organisms/charts/hatch-pattern/geometry.ts`); `Hatch` o
+consome em seus próprios `defs`; `plot.tsx` o importa de `atoms/hatch/` —
+organismo consumindo átomo, direção correta, nunca o inverso. Com uma
+implementação só, não há o que divergir: o requisito "A hachura é uma só"
+sai também de `interface-charts` — ver "Removed Capabilities" de
+`proposal.md`.
+
+**O que muda em código:** `organisms/charts/hatch-pattern/` sai inteiro.
+`plot.tsx` passa a ler `fill` do ponto (quando presente) para escolher entre
+preenchimento sólido e o padrão importado de `atoms/hatch/hatch-pattern`, sem
+nenhuma referência a "não resolvido" ou a qualquer outro nome de estado — o
+campo é só visual. A história que comparava as duas geometrias desenhadas
+(`hatch-pattern.stories.tsx`) vira uma história em `atoms/hatch/` que afirma
+que o `<pattern>` desenhado carrega os valores de `HATCH` — a prova continua
+tendo dente, agora sobre uma implementação só, não duas.
 
 ### D4 — `NumericValue` dissolvido; formatação em hook; figura tabular como variante de texto
 
@@ -191,12 +209,13 @@ mesma forma:
   quebra `pnpm verify` no meio da mudança.** → Mitigação: `tasks.md` remove a
   entrada do guardião na mesma tarefa que esvazia a pasta correspondente,
   nunca em tarefas separadas.
-- **[Risco] `fill: "textured"` no ponto do gráfico divergir da definição de
-  `Hatch` se as duas formas do SVG forem mantidas por implementações
-  separadas.** → Mitigação: o requisito "A hachura é uma só", migrado para
-  `interface-charts`, prova isso diretamente — `ChartHatchPattern` deriva da
-  mesma definição de `Hatch` (mesmo período, mesmo ângulo,
-  `@chargebr/tokens`), não duas constantes copiadas.
+- **[Risco, fechado em 2026-09-29] `fill: "textured"` no ponto do gráfico
+  divergir da definição de `Hatch`.** → Mitigação original: duas
+  implementações lendo a mesma constante, com um requisito provando que não
+  divergem. Mitigação real, medida depois: as duas implementações só podiam
+  ser iguais — não havia razão de design para divergirem —, então a cópia em
+  si era o risco. Unificadas num componente só em `atoms/hatch/` (D3), o
+  risco deixa de existir por construção, não por prova.
 
 ## Migration Plan
 

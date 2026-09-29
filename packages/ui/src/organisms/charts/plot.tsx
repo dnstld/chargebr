@@ -4,7 +4,7 @@ import { GridRows } from "@visx/grid";
 import { Group } from "@visx/group";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import type { ReactNode } from "react";
-import { ChartHatchPattern, hatchFill } from "./hatch-pattern/hatch-pattern";
+import { HatchPattern, hatchFill } from "../../atoms/hatch/hatch-pattern";
 import { seriesColor, seriesDash, seriesSymbol } from "./palette";
 import {
   type ChartMeasure,
@@ -354,7 +354,7 @@ export function ChartPlot({
           // em que o padrão está declarado, e não pela cor da marca que o
           // referencia: a cor da série entra aqui.
           <g key={one.name} style={{ color: seriesColor(index) }}>
-            <ChartHatchPattern id={`${hatchPrefix}-${index}`} />
+            <HatchPattern id={`${hatchPrefix}-${index}`} />
           </g>
         ))}
       </defs>

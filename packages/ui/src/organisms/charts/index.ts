@@ -1,11 +1,6 @@
 export { BarChart } from "./bar/bar-chart";
 export { DomainChart } from "./chart";
 export { DotChart } from "./dot/dot-chart";
-export {
-  ChartHatchPattern,
-  type ChartHatchPatternProps,
-  hatchFill,
-} from "./hatch-pattern/hatch-pattern";
 export { LineChart } from "./line/line-chart";
 export {
   CHART_SERIES_LIMIT,

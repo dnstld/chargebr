@@ -26,8 +26,7 @@ export const EmRepouso: Story = {
 };
 
 // Alcançável por teclado: um Tab a partir da página chega ao botão, e o foco
-// vindo do teclado aparece com o anel de foco dos tokens — mesma prova de
-// EvidenceAnchor.
+// vindo do teclado aparece com o anel de foco dos tokens.
 export const ComFocoPeloTeclado: Story = {
   name: "Com foco pelo teclado",
   args: { children: "Confirmar" },

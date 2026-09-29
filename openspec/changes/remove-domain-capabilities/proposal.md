@@ -34,8 +34,8 @@ de desenho — e retira o que não sobrevive.
 - Retira a capacidade `domain-charts` inteira e a substitui por
   `interface-charts`, mais estreita: o que sobra de `domain-charts` depois de
   tirar bloqueio de projeção, proveniência e o estado "não resolvido" é
-  garantia de desenho — paleta, legenda, uma escala, ponto sem valor, a
-  hachura não divergir —, não garantia de domínio. `ChartPoint` deixa de ter
+  garantia de desenho — paleta, legenda, uma escala, ponto sem valor —, não
+  garantia de domínio. `ChartPoint` deixa de ter
   três estados (`resolved`/`unresolved`/`missing`, cada um com proveniência
   obrigatória) e passa a ter um só formato, `{ category, value, fill? }`, em
   que `value: null` é a única lacuna e `fill` (`"solid"` | `"textured"`,
@@ -57,10 +57,14 @@ de desenho — e retira o que não sobrevive.
      `String(value)`. Nenhum locale cravado no componente.
   2. O limite de séries da paleta deixa de reprovar em `verify:types` e passa
      a reprovar em execução.
-  3. `Hatch` e `ChartHatchPattern` ficam — passam no teste de componente
-     acima, e o gráfico ganha a opção genérica de preenchimento texturizado
-     descrita no bullet anterior. As duas definições de hachura continuam
-     existindo, e com elas o requisito que garante que não divergem.
+  3. `Hatch` fica — passa no teste de componente acima —, e o gráfico ganha a
+     opção genérica de preenchimento texturizado descrita no bullet anterior,
+     consumindo o mesmo `<pattern>` que `Hatch` desenha em seus próprios
+     `defs`: uma implementação só, em `atoms/hatch/`, não duas que
+     poderiam divergir. Correção de 2026-09-29 sobre a versão anterior desta
+     proposta, que mantinha `ChartHatchPattern` como segunda definição em
+     `organisms/charts/hatch-pattern/` — ver "Removed Capabilities", abaixo,
+     sobre o que isso muda em `domain-charts`.
   4. `NumericValue` é dissolvido; a exibição de número tabular vira variante
      do átomo de texto genérico. Formatação de número vira hook. Nenhuma
      outra variante nova entra nesta mudança.
@@ -116,8 +120,7 @@ Isto desbloqueia a tarefa 3.4 de `tasks.md`.
 - `interface-charts`: comportamento observável de desenho de gráfico que não
   depende de vocabulário de negócio — paleta e sua validação por forma,
   limite de séries em execução, legenda a partir de duas séries, ponto sem
-  valor, a hachura de preenchimento texturizado não divergir da hachura fora
-  do gráfico, e acesso aos valores por meio não visual.
+  valor, e acesso aos valores por meio não visual.
 
 ### Modified Capabilities
 
@@ -138,8 +141,10 @@ Isto desbloqueia a tarefa 3.4 de `tasks.md`.
 - `domain-charts`: os requisitos que dependiam de bloqueio de projeção,
   proveniência ou do estado "não resolvido" saem sem substituto; os que
   descreviam garantia de desenho pura — paleta, limite de séries, legenda,
-  ponto sem valor, acesso não visual, e "a hachura é uma só" — migram para
-  `interface-charts`.
+  ponto sem valor, acesso não visual — migram para `interface-charts`. "A
+  hachura é uma só" sai sem migrar: com uma implementação só do `<pattern>`
+  (correção de 2026-09-29, ver "What Changes"), não há duas definições para
+  divergir, e o requisito deixa de ter o que provar em qualquer capacidade.
 
 ## Impact
 
@@ -150,9 +155,12 @@ Isto desbloqueia a tarefa 3.4 de `tasks.md`.
   saindo); `atoms/status-marker/` sai; `atoms/declared-absence/` sai;
   `atoms/evidence-anchor/` vira `atoms/link/`, genérico. `organisms/charts/`
   perde `blocked`/`BlockReason`, os três `PointKind`, a coluna de evidência e
-  a marca de "não resolvido" de `ChartValueTable`, mas mantém `hatch-pattern`
-  e `Hatch` — agora como opção genérica de preenchimento por ponto
-  (`fill?: "solid" | "textured"`), não como marca de estado. A fixture
+  a marca de "não resolvido" de `ChartValueTable`; `organisms/charts/hatch-pattern/`
+  sai inteiro, e o `<pattern>` que ele desenhava passa a viver em
+  `atoms/hatch/` — um componente só, que `Hatch` consome em seus próprios
+  `defs` e que `plot.tsx` importa de `atoms/` para o preenchimento genérico
+  do ponto (`fill?: "solid" | "textured"`), organismo consumindo átomo. A
+  fixture
   derivada do contrato de leitura
   (`organisms/charts/fixtures/abve-eletrificados-janeiro-2025.ts`) sai; a
   varredura de `packages/ui/src` fica só com fixture sintética, fechando a

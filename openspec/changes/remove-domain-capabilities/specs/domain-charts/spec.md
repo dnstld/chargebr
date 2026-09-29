@@ -54,15 +54,23 @@ do gráfico, e divergência entre as duas SHALL reprovar a verificação.
 - **THEN** a verificação falha, nomeando as duas definições
 - **Prova:** divergência plantada, verificação falhando, plantio revertido
 
-**Reason**: garantia de desenho, sem vocabulário de domínio — o gráfico deixa
-de usar a hachura para marcar "não resolvido" (estado de metodologia), mas
-ganha uma opção genérica de preenchimento texturizado por ponto (decisão do
-dono, ver design.md), sem significado de estado. As duas definições de
-hachura — o átomo `Hatch` e o padrão do gráfico — continuam existindo, então
-o requisito continua tendo o que provar.
+**Reason**: o gráfico deixa de usar a hachura para marcar "não resolvido"
+(estado de metodologia) e ganha uma opção genérica de preenchimento
+texturizado por ponto (decisão do dono, ver design.md), sem significado de
+estado. Correção de 2026-09-29 sobre a versão anterior deste delta: aquela
+versão media que "as duas definições de hachura continuam existindo, então o
+requisito continua tendo o que provar" e migrava o requisito para
+`interface-charts`. Medido de novo: o átomo `Hatch` e o padrão de hachura do
+gráfico desenhavam o mesmo `<pattern>`, atributo por atributo, porque não
+havia razão de design para divergirem — duas implementações que só podem ser
+iguais são uma cópia, não duas definições. O `<pattern>` virou componente
+único em `atoms/hatch/`, consumido por `Hatch` e por `plot.tsx`: com uma
+implementação só, não há o que divergir.
 
-**Migration**: ver "A hachura é uma só" em `specs/interface-charts/spec.md`
-desta mudança — mesmo texto, nova capacidade.
+**Migration**: nenhuma. Diferente dos outros requisitos desta capacidade, "A
+hachura é uma só" não sai por falta de vocabulário de domínio — sai porque a
+unificação da implementação torna a garantia impossível de violar, em
+qualquer capacidade.
 
 ### Requirement: Paleta validada na forma de pares da própria forma
 

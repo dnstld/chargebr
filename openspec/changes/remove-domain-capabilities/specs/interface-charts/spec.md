@@ -3,11 +3,10 @@
 ## Purpose
 
 Define o comportamento observável de desenho de gráfico que não depende de
-vocabulário de negócio: paleta, legenda, ponto sem valor, a hachura de
-preenchimento texturizado não divergir da hachura fora do gráfico, e acesso
-não visual aos valores. Sucede `domain-charts` nas garantias que sobrevivem
-sem metodologia; bloqueio de projeção, proveniência e o estado "não
-resolvido" não migram para cá.
+vocabulário de negócio: paleta, legenda, ponto sem valor, e acesso não visual
+aos valores. Sucede `domain-charts` nas garantias que sobrevivem sem
+metodologia; bloqueio de projeção, proveniência e o estado "não resolvido"
+não migram para cá.
 
 ## ADDED Requirements
 
@@ -76,27 +75,6 @@ marca); não há um terceiro estado a declarar.
 - **WHEN** uma forma que liga pontos contém um ponto sem valor entre dois pontos com valor
 - **THEN** não existe segmento ligando o ponto sem valor aos vizinhos
 - **Prova:** teste que renderiza a série e inspeciona os segmentos desenhados
-
-### Requirement: A hachura é uma só
-
-Um ponto declarado com `fill: "textured"` SHALL usar a mesma definição de
-hachura do átomo `Hatch`, e divergência entre as duas SHALL reprovar a
-verificação. O ponto declara `fill` como `"solid"` ou `"textured"`; sem
-declaração, o padrão é `"solid"`. A escolha é visual, feita por quem compõe,
-sem significado de estado ou de negócio atribuído a ela.
-
-**Por quê:** herdado de "A hachura é uma só", de `domain-charts` — decisão do
-dono (`docs/decisao-biblioteca-de-componentes.md`, "Decisão de
-2026-09-28..."): `Hatch` e o padrão de hachura do gráfico ficam, passando no
-teste de componente de biblioteca (genérico, mesmo sem consumidor
-obrigatório), e o gráfico ganha `fill` como opção genérica em vez de reservar
-a textura para um estado de domínio.
-
-#### Scenario: Hachuras divergentes reprovam
-
-- **WHEN** a definição de hachura do gráfico difere da definição do átomo `Hatch`
-- **THEN** a verificação falha, nomeando as duas definições
-- **Prova:** divergência plantada, verificação falhando, plantio revertido
 
 ### Requirement: Valores alcançáveis sem a visão
 

@@ -22,8 +22,7 @@ export type ButtonProps = ButtonContent & {
 
 // Botão genérico: cor de ação, com ícone opcional por composição — sempre
 // via Icon, nunca um ícone importado direto aqui. Foco, teclado e ponteiro
-// vêm de react-aria-components, a mesma primitiva de comportamento de
-// EvidenceAnchor.
+// vêm de react-aria-components.
 export function Button({
   icon: IconComponent,
   onPress,

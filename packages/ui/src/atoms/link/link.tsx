@@ -12,8 +12,8 @@ export interface LinkProps {
 }
 
 // Link genérico: o caminho de um clique até outro lugar. Comportamento de
-// react-aria-components, mesma primitiva de EvidenceAnchor antes dele — foco,
-// teclado e ponteiro vêm dela, não de atributo à mão.
+// react-aria-components — foco, teclado e ponteiro vêm dela, não de atributo
+// à mão.
 export function Link({ href, children }: LinkProps) {
   // Com noUncheckedIndexedAccess a classe é string | undefined; a primitiva
   // exige string.

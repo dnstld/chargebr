@@ -1,0 +1,7 @@
+/* Caixa que recebe o padrão, colorida para que a textura fique visível. */
+.box {
+  inline-size: var(--space-9);
+  block-size: var(--space-9);
+  display: block;
+  color: var(--color-chart-series-1);
+}
