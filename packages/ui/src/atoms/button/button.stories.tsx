@@ -68,3 +68,55 @@ export const IconeSoh: Story = {
     await expect(button.textContent?.trim()).toBe("");
   },
 };
+
+// Cada tamanho resolve para o `font-size` do seu próprio degrau
+// (`component/button.json`) — nunca um valor fora dos três tokens.
+export const TamanhoPequeno: Story = {
+  name: "Tamanho pequeno",
+  args: { children: "Confirmar", size: "sm" },
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await expect(getComputedStyle(button).fontSize).toBe(
+      tokens["button-sm-font-size"][theme],
+    );
+  },
+};
+
+export const TamanhoMedio: Story = {
+  name: "Tamanho médio",
+  args: { children: "Confirmar", size: "md" },
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await expect(getComputedStyle(button).fontSize).toBe(
+      tokens["button-md-font-size"][theme],
+    );
+  },
+};
+
+export const TamanhoGrande: Story = {
+  name: "Tamanho grande",
+  args: { children: "Confirmar", size: "lg" },
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await expect(getComputedStyle(button).fontSize).toBe(
+      tokens["button-lg-font-size"][theme],
+    );
+  },
+};
+
+// Sem `size`, o botão resolve para o mesmo `font-size` do degrau médio — a
+// aparência de antes desta variante existir não muda.
+export const TamanhoNaoEspecificado: Story = {
+  name: "Tamanho não especificado usa o médio",
+  args: { children: "Confirmar" },
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await expect(getComputedStyle(button).fontSize).toBe(
+      tokens["button-md-font-size"][theme],
+    );
+  },
+};

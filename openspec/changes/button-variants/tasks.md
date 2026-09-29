@@ -2,10 +2,10 @@
 
 ## 1. Escala de tamanho: token e variante juntos
 
-- [ ] 1.1 Acrescentar `text.control.sm/md/lg` a `semantic/shared.json`, referenciando `font.size.1/2/3` — verificar com teste que lê os três tokens gerados e confere o `px` de cada um contra o primitivo
-- [ ] 1.2 Estender `component/button.json` com os três conjuntos de tamanho (`sm`/`md`/`lg`: `font-size` → `text.control.<size>`, `padding-inline` → `space.inset.<size>`, `padding-block` conforme D1, `gap` → `space.gap.<size>`) — verificar com `verify:test` (checagem de camadas e de literal de `design-tokens` passa sem edição, por já ser genérica) e com leitura visual dos três valores gerados
-- [ ] 1.3 `Button` aceita `size?: "sm" | "md" | "lg"` (padrão `"md"`), aplicando a classe correspondente do CSS Module — verificar com `contracts.typecheck.tsx` (plantio confere que `size` aceita só os três valores)
-- [ ] 1.4 Três histórias novas, uma por tamanho, cada uma conferindo `font-size` computado contra o token do degrau, nos dois temas — mais uma história padrão (sem `size`) conferindo que ela resolve para o mesmo `font-size` do degrau médio — verificar com `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/button`
+- [x] 1.1 Acrescentar `text.control.sm/md/lg` a `semantic/shared.json`, referenciando `font.size.1/2/3` — verificar com teste que lê os três tokens gerados e confere o `px` de cada um contra o primitivo
+- [x] 1.2 Estender `component/button.json` com os três conjuntos de tamanho (`sm`/`md`/`lg`: `font-size` → `text.control.<size>`, `padding-inline` → `space.inset.<size>`, `padding-block` conforme D1, `gap` → `space.gap.<size>`) — verificar com `verify:test` (checagem de camadas e de literal de `design-tokens` passa sem edição, por já ser genérica) e com leitura visual dos três valores gerados
+- [x] 1.3 `Button` aceita `size?: "sm" | "md" | "lg"` (padrão `"md"`), aplicando a classe correspondente do CSS Module — verificar com `contracts.typecheck.tsx` (plantio confere que `size` aceita só os três valores)
+- [x] 1.4 Três histórias novas, uma por tamanho, cada uma conferindo `font-size` computado contra o token do degrau, nos dois temas — mais uma história padrão (sem `size`) conferindo que ela resolve para o mesmo `font-size` do degrau médio — verificar com `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/button`
 
 ## 2. Estado desabilitado: token e estado juntos
 

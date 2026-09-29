@@ -13,9 +13,17 @@ type ButtonContent =
   | { children: ReactNode; "aria-label"?: never }
   | { children?: never; "aria-label": string };
 
+// Três degraus, o mesmo número de `space.inset`/`space.gap` — `size="md"`
+// alinha às duas escalas no mesmo passo (design.md, D1). `md` é o padrão: o
+// mesmo tamanho que o botão já usava sem variante.
+export const BUTTON_SIZES = ["sm", "md", "lg"] as const;
+export type ButtonSize = (typeof BUTTON_SIZES)[number];
+
 export type ButtonProps = ButtonContent & {
   /** Ícone opcional, de `lucide-react` — decoração ao lado do rótulo, ou o único conteúdo do botão ícone-only. */
   icon?: LucideIcon;
+  /** Variante de tamanho. Resolve tipografia e espaço juntos, por token de componente. */
+  size?: ButtonSize;
   /** Ação ao ativar o botão. */
   onPress?: () => void;
 };
@@ -25,14 +33,16 @@ export type ButtonProps = ButtonContent & {
 // vêm de react-aria-components.
 export function Button({
   icon: IconComponent,
+  size = "md",
   onPress,
   children,
   ...rest
 }: ButtonProps) {
+  const sizeClass = styles[size] ?? "";
   return (
     <AriaButton
       type="button"
-      className={styles.button ?? ""}
+      className={`${styles.button ?? ""} ${sizeClass}`}
       {...(onPress ? { onPress } : {})}
       {...rest}
     >

@@ -471,6 +471,21 @@ export const tokens = {
     light: "400",
     dark: "400",
   },
+  "text-control-lg": {
+    css: "var(--text-control-lg)",
+    light: "14px",
+    dark: "14px",
+  },
+  "text-control-md": {
+    css: "var(--text-control-md)",
+    light: "13px",
+    dark: "13px",
+  },
+  "text-control-sm": {
+    css: "var(--text-control-sm)",
+    light: "12px",
+    dark: "12px",
+  },
   "text-counterfactual-style": {
     css: "var(--text-counterfactual-style)",
     light: "italic",
@@ -551,23 +566,48 @@ export const tokens = {
     light: "500",
     dark: "500",
   },
-  "button-font-size": {
-    css: "var(--button-font-size)",
-    light: "13px",
-    dark: "13px",
-  },
   "button-font-weight": {
     css: "var(--button-font-weight)",
     light: "500",
     dark: "500",
   },
-  "button-padding-block": {
-    css: "var(--button-padding-block)",
+  "button-lg-font-size": {
+    css: "var(--button-lg-font-size)",
+    light: "14px",
+    dark: "14px",
+  },
+  "button-lg-gap": {
+    css: "var(--button-lg-gap)",
+    light: "16px",
+    dark: "16px",
+  },
+  "button-lg-padding-block": {
+    css: "var(--button-lg-padding-block)",
+    light: "12px",
+    dark: "12px",
+  },
+  "button-lg-padding-inline": {
+    css: "var(--button-lg-padding-inline)",
+    light: "24px",
+    dark: "24px",
+  },
+  "button-md-font-size": {
+    css: "var(--button-md-font-size)",
+    light: "13px",
+    dark: "13px",
+  },
+  "button-md-gap": {
+    css: "var(--button-md-gap)",
     light: "8px",
     dark: "8px",
   },
-  "button-padding-inline": {
-    css: "var(--button-padding-inline)",
+  "button-md-padding-block": {
+    css: "var(--button-md-padding-block)",
+    light: "8px",
+    dark: "8px",
+  },
+  "button-md-padding-inline": {
+    css: "var(--button-md-padding-inline)",
     light: "12px",
     dark: "12px",
   },
@@ -590,6 +630,26 @@ export const tokens = {
     css: "var(--button-radius)",
     light: "4px",
     dark: "4px",
+  },
+  "button-sm-font-size": {
+    css: "var(--button-sm-font-size)",
+    light: "12px",
+    dark: "12px",
+  },
+  "button-sm-gap": {
+    css: "var(--button-sm-gap)",
+    light: "4px",
+    dark: "4px",
+  },
+  "button-sm-padding-block": {
+    css: "var(--button-sm-padding-block)",
+    light: "8px",
+    dark: "8px",
+  },
+  "button-sm-padding-inline": {
+    css: "var(--button-sm-padding-inline)",
+    light: "8px",
+    dark: "8px",
   },
 } as const;
 

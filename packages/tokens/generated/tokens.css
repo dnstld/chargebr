@@ -97,6 +97,9 @@
   --text-body-numeric: var(--font-numeric-text);
   --text-body-size: var(--font-size-3);
   --text-body-weight: var(--font-weight-regular);
+  --text-control-lg: var(--font-size-3);
+  --text-control-md: var(--font-size-2);
+  --text-control-sm: var(--font-size-1);
   --text-counterfactual-style: var(--font-style-italic);
   --text-data-family: var(--font-family-sans);
   --text-data-line-height: var(--font-line-height-snug);
@@ -114,14 +117,23 @@
   --text-label-size: var(--font-size-2);
   --text-label-weight: var(--font-weight-medium);
   /* Camada component */
-  --button-font-size: var(--text-label-size);
   --button-font-weight: var(--text-label-weight);
-  --button-padding-block: var(--space-inset-sm);
-  --button-padding-inline: var(--space-inset-md);
+  --button-lg-font-size: var(--text-control-lg);
+  --button-lg-gap: var(--space-gap-lg);
+  --button-lg-padding-block: var(--space-inset-md);
+  --button-lg-padding-inline: var(--space-inset-lg);
+  --button-md-font-size: var(--text-control-md);
+  --button-md-gap: var(--space-gap-md);
+  --button-md-padding-block: var(--space-inset-sm);
+  --button-md-padding-inline: var(--space-inset-md);
   --button-primary-background: var(--color-action-primary);
   --button-primary-background-hover: var(--color-action-primary-hover);
   --button-primary-text: var(--color-text-on-action);
   --button-radius: var(--radius-control);
+  --button-sm-font-size: var(--text-control-sm);
+  --button-sm-gap: var(--space-gap-sm);
+  --button-sm-padding-block: var(--space-inset-sm);
+  --button-sm-padding-inline: var(--space-inset-sm);
 }
 
 @media (prefers-color-scheme: dark) {

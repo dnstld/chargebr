@@ -30,3 +30,19 @@ test("o papel contrafactual tem inclinação por token", () => {
   expect(tokens["text-counterfactual-style"].dark).toBe("italic");
   expect(tokens["font-style-normal"].light).toBe("normal");
 });
+
+// Tarefa 1.1 de button-variants — a escala de tamanho de controle
+// (`text.control.sm/md/lg`) referencia os três primeiros degraus primitivos,
+// na mesma ordem, nos dois temas (a escala não varia por tema).
+test("a escala de tamanho de controle referencia os degraus primitivos 1/2/3", () => {
+  const pairs = [
+    ["text-control-sm", "font-size-1"],
+    ["text-control-md", "font-size-2"],
+    ["text-control-lg", "font-size-3"],
+  ] as const;
+  for (const [control, primitive] of pairs) {
+    for (const theme of ["light", "dark"] as const) {
+      expect(tokens[control][theme]).toBe(tokens[primitive][theme]);
+    }
+  }
+});
