@@ -3,6 +3,25 @@
 // compila enquanto o erro que ela anuncia continuar existindo.
 import { AppFrame } from "./app-frame";
 
+// `productName`/`skipLabel` são obrigatórios — requisito vivo
+// (specs/backoffice-shell/spec.md, "Moldura sem o texto exigido não
+// compila"), sem prova em código até este arquivo existir: a máquina de
+// contrato central que a teria (removida em 793d8e2) nunca migrou este
+// caso para um arquivo por componente.
+export const appFrameWithoutProductName = (
+  // @ts-expect-error productName é obrigatório
+  <AppFrame skipLabel="Ir para o conteúdo">
+    <p>Conteúdo</p>
+  </AppFrame>
+);
+
+export const appFrameWithoutSkipLabel = (
+  // @ts-expect-error skipLabel é obrigatório
+  <AppFrame productName="ChargeBR">
+    <p>Conteúdo</p>
+  </AppFrame>
+);
+
 // `nav` é opcional por inteiro — compila sem o slot preenchido. É o caso
 // real de `apps/backoffice` hoje.
 export const appFrameWithoutNav = (
