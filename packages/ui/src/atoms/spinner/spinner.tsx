@@ -11,16 +11,21 @@ export interface SpinnerProps {
 }
 
 // Indicador de progresso indeterminado: anel parcial em rotação contínua, cor
-// de marca. `role="status"` o identifica como indicador de progresso sem
-// exigir nome acessível próprio — não é um papel que o ARIA obriga a nomear,
-// e por isso não conflita nem duplica o nome de um controle que já o tem
-// (`Button` em pendência, design.md D3).
+// de marca. Puramente decorativo (`aria-hidden`) — medido contra
+// `react-aria-components` (design.md, D8): `Button.isPending` já anuncia a
+// transição de pendência a tecnologia assistiva por conta própria (um
+// `aria-live="assertive"` que repete o nome do botão quando ele está
+// focado), e uma região viva sem texto (o `role="status"` anterior) não
+// anunciava nada — não preenchia a lacuna, só parecia preenchê-la.
+// `data-spinner` é o gancho de consulta, no mesmo padrão de `data-hatch` em
+// `Hatch` para um SVG decorativo.
 export function Spinner({ size = "md" }: SpinnerProps) {
   const sizeClass = styles[size] ?? "";
   return (
     <svg
       className={`${styles.spinner ?? ""} ${sizeClass}`}
-      role="status"
+      data-spinner=""
+      aria-hidden="true"
       viewBox="0 0 24 24"
       fill="none"
     >

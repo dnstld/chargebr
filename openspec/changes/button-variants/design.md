@@ -288,6 +288,51 @@ consumidor.
 por contexto (candidato a variante), é o que forçaria medir um eixo de
 movimento — como R3/R6, hoje nenhum precisa.
 
+### D8 — Spinner é decorativo (`aria-hidden`), não uma região viva própria
+
+**Correção medida durante a aplicação.** A versão original desta decisão
+dava a `Spinner` `role="status"` — uma região viva do ARIA —, supondo que
+precisava anunciar o próprio progresso a tecnologia assistiva. Medido contra
+a fonte de `react-aria-components` (`dist/private/Button.mjs`, versão
+1.21.1): `Button` com `isPending` já observa a própria transição de
+pendência com um `useEffect` que chama o anunciador ao vivo da biblioteca
+(`announce(message, 'assertive')`) quando o botão está focado no momento da
+mudança — a mensagem é `aria-labelledby` apontando para o próprio nome do
+botão (mais um `id` reservado para um indicador de progresso composto, via
+`ProgressBarContext`, que `Spinner` não consome). O anúncio já existe, vem
+da primitiva, e não depende de nada em `Spinner`.
+
+Uma região viva sem conteúdo de texto, por outro lado, não anuncia nada —
+`role="status"` sem filho textual é um live region vazio: não há o que ler
+quando ele aparece, e a inserção inicial de um live region normalmente nem é
+lida pela maioria dos leitores de tela. O `role="status"` anterior não
+preenchia a lacuna que motivou D3 original; só parecia preenchê-la.
+
+**Decisão:** `Spinner` é puramente decorativo — `aria-hidden="true"`, sem
+papel ARIA. O anúncio da pendência é responsabilidade inteira de
+`Button`/`react-aria-components`, que já o faz. `data-spinner` substitui
+`role="status"` como gancho de consulta em teste, no mesmo padrão de
+`data-hatch` em `Hatch`.
+
+**O que isso muda no requisito de `Spinner`:** a versão original do
+requisito "Spinner comunica progresso indeterminado" (`specs/interface-
+atoms/spec.md`) afirmava que `Spinner` "SHALL expor esse estado a tecnologia
+assistiva" por conta própria — falso, pela medição acima. O requisito foi
+corrigido para descrever o que de fato acontece: `Spinner` é decorativo, e a
+comunicação do estado de pendência a tecnologia assistiva é responsabilidade
+de `Button`, que a primitiva já cumpre.
+
+**Alternativa considerada:** dar a `Spinner` um texto visualmente oculto
+("Carregando", ou semelhante) dentro do `role="status"`, para que a região
+viva tivesse algo a anunciar por conta própria, redundante com o anúncio que
+`Button` já faz. Descartada: duplicaria o anúncio para quem usa `Spinner`
+só dentro de `Button` — o único consumidor real hoje — sem medir um caso em
+que o anúncio da primitiva não bastasse.
+
+**Gatilho:** um consumidor de `Spinner` fora de um `Button` com `isPending`
+— algo que precise de progresso indeterminado sem o anúncio que a primitiva
+já dá — é o que reabriria esta decisão.
+
 ## Risks / Trade-offs
 
 - [Risco] A isenção de contraste do par `disabled`, lida rápido, pode passar

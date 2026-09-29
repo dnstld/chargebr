@@ -11,14 +11,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// Identificável como indicador de progresso pelo papel `status`, sem exigir
-// nome acessível próprio — `getByRole("status")` acha o elemento sem passar
-// `name`, e a checagem de acessibilidade da bancada não reprova a ausência.
+// Decorativo para tecnologia assistiva — `aria-hidden`, sem papel próprio
+// (design.md, D8: `Button.isPending` já anuncia a pendência por conta
+// própria; uma região viva sem texto não anunciaria nada). `data-spinner` é
+// o gancho de consulta, já que o elemento não aparece na árvore de
+// acessibilidade para `getByRole` encontrar.
 export const Padrao: Story = {
   name: "Padrão",
-  play: async ({ canvas }) => {
-    const spinner = canvas.getByRole("status");
-    await expect(spinner).toBeVisible();
+  play: async ({ canvasElement }) => {
+    const spinner = canvasElement.querySelector("[data-spinner]");
+    await expect(spinner).not.toBeNull();
+    await expect(spinner).toHaveAttribute("aria-hidden", "true");
   },
 };
 
@@ -33,8 +36,10 @@ export const Padrao: Story = {
 // gatilho que reabre esta história.
 export const SemMovimentoReduzido: Story = {
   name: "Sem movimento reduzido",
-  play: async ({ canvas }) => {
-    const spinner = canvas.getByRole("status");
+  play: async ({ canvasElement }) => {
+    const spinner = canvasElement.querySelector("[data-spinner]");
+    await expect(spinner).not.toBeNull();
+    if (spinner === null) return;
     await expect(getComputedStyle(spinner).animationName).not.toBe("none");
   },
 };

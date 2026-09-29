@@ -198,6 +198,7 @@ export const Pendente: Story = {
     await userEvent.tab();
     await expect(document.activeElement).toBe(button);
     await expect(button.textContent).toContain("Confirmar");
+    await expect(button.querySelector("[data-spinner]")).not.toBeNull();
     await userEvent.click(button);
     await userEvent.keyboard("{Enter}");
   },
@@ -219,6 +220,7 @@ export const PendenteIconeSoh: Story = {
     const button = canvas.getByRole("button", { name: "Abrir menu" });
     await userEvent.tab();
     await expect(document.activeElement).toBe(button);
+    await expect(button.querySelector("[data-spinner]")).not.toBeNull();
     await userEvent.click(button);
     await userEvent.keyboard("{Enter}");
   },
