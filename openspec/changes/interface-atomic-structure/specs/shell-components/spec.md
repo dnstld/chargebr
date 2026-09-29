@@ -4,11 +4,11 @@
 
 Define o comportamento observável, no nível de componente de `@chargebr/ui`,
 do inventário de cabeçalho, navegação e tipografia do shell do back office —
-o que `Icon`, `Logo`, `NavItem`, `NavSection`, `NavPanel` e `PathLabel`
-garantem sobre token, sinal não-cor de estado corrente, foco em modo
-sobreposto e cobertura de história. Não descreve o documento emitido pela
-aplicação — isso continua em `backoffice-shell` — nem liga nenhum destes
-componentes a uma rota real.
+o que `Icon`, `Logo`, `NavItem`, `NavSection` e `NavPanel` garantem sobre
+token, sinal não-cor de estado corrente, anúncio a tecnologia assistiva e
+foco em modo sobreposto. Não descreve o documento emitido pela aplicação —
+isso continua em `backoffice-shell` — nem liga nenhum destes componentes a
+uma rota real.
 
 ## ADDED Requirements
 
@@ -46,7 +46,10 @@ valor de cor no próprio arquivo `.tsx` — nem literal, nem token.
 **Por quê:** `docs/decisao-identidade-visual.md` já fixa que nenhum componente
 referencia cor de marca diretamente, e que a marca não tem variante
 monocromática nesta fase. A cor do logo é fixa nos arquivos SVG existentes
-(`src/images/logo-charge-br-vertical.svg`, `src/images/logo-charge-br-horizontal.svg`);
+(`packages/ui/src/atoms/logo/logo-charge-br-vertical.svg`,
+`packages/ui/src/atoms/logo/logo-charge-br-horizontal.svg` — dentro do
+pacote, ao lado do componente que os usa, não em `src/images/` na raiz do
+monorepo; ver `tasks.md`, tarefa 5.2, para a correção medida);
 `Logo` referencia esses arquivos como recurso externo, em vez de reescrever o
 desenho como marcação dentro do componente — é o que mantém o componente sem
 nenhum literal de cor no próprio código, sem precisar de isenção no guardião
@@ -130,24 +133,6 @@ requisito de salto de `backoffice-shell`, agora do lado da navegação.
 - **WHEN** `NavPanel` é apresentado em modo persistente e o foco é tabulado até o último elemento focalizável dentro dele
 - **THEN** a próxima tabulação sai do painel para o próximo elemento focalizável do documento
 - **Prova:** história do modo persistente que tabula até o fim e confere que o foco sai do painel
-
-### Requirement: Rótulo de caminho não é região de navegação
-
-`PathLabel` SHALL apresentar os segmentos do caminho recebidos por
-propriedade como texto, e SHALL NOT ser um link, SHALL NOT ser focalizável e
-SHALL NOT ser identificável como região de navegação.
-
-**Por quê:** um marco de navegação sem destino repete o defeito que
-`backoffice-shell` já recusa no requisito "Regiões da moldura no documento
-entregue" — ver a mudança proposta para aquele requisito nesta mesma mudança.
-`PathLabel` existe para os casos em que o caminho não tem tela própria, como
-"Fontes / ABEV".
-
-#### Scenario: PathLabel não é alcançável como landmark nem por teclado
-
-- **WHEN** `PathLabel` é renderizado
-- **THEN** ele não é identificável como região de navegação, e a navegação por teclado não para nele
-- **Prova:** teste que procura papel de navegação e elemento focalizável dentro do resultado renderizado de `PathLabel`
 
 ### Requirement: Todo estado declarado tem história
 
