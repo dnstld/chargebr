@@ -99,7 +99,7 @@ arquivamento.
 - [x] 4.3 Rodar `pnpm verify` inteiro. Pronto quando os quatro estágios
       passam, o projeto `viewport` aparece na saída do estágio de testes,
       e o tempo desse projeto está registrado no corpo do PR.
-- [ ] 4.4 Rodar a verificação em CI (push da branch, sem merge). Pronto
+- [x] 4.4 Rodar a verificação em CI (push da branch, sem merge). Pronto
       quando o corpo do PR registra o resultado do estágio de testes em
       CI para o projeto `viewport` — se divergir do medido localmente
       (tarefa 4.2), esta tarefa para aqui, o design é corrigido com a
@@ -134,9 +134,15 @@ arquivamento.
 
 ## 6. Registros (no arquivamento — `docs/archive-close-open-points`)
 
-- [ ] 6.1 Mover o ponto 5 para "Fechados" em `docs/pontos-abertos.md`,
+- [x] 6.1 Mover o ponto 5 para "Fechados" em `docs/pontos-abertos.md`,
       citando `tokens-obligation-form` como o ciclo que fez o trabalho e
       este ciclo como o que corrigiu o registro — conforme o design.
+      **Antecipada para a aplicação** (PR #193), não feita aqui: o
+      guardião novo lê este arquivo contra as mudanças arquivadas, e
+      deixar o ponto 5 aberto até o arquivamento mantinha `pnpm verify`
+      vermelho em `main` entre os dois PRs — o trabalho que fecha o
+      ponto 5 já estava pronto (por `tokens-obligation-form`), então
+      corrigir o registro não dependia de nada deste arquivamento.
 - [ ] 6.2 Mover os pontos 16, 17, 19 e 20 para "Fechados", cada um citando
       `close-open-points` e o que especificamente fechou (o requisito de
       revisão; o guardião; o cenário de viewport, condicional à tarefa
