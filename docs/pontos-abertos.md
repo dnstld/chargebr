@@ -1,10 +1,9 @@
 # Pontos abertos
 
-**Atualizado em:** 29 de setembro de 2026, no fechamento de
-`interface-atomic-structure` (grupos 7–8)
-**Estado do repositório:** 6 capacidades vivas, 56 requisitos, 12 ciclos
-arquivados, um change ativo (`interface-atomic-structure`, aplicação
-completa, arquivamento pendente). **7 pontos abertos**
+**Atualizado em:** 29 de setembro de 2026, no arquivamento de
+`button-variants`
+**Estado do repositório:** 7 capacidades vivas, 14 ciclos arquivados,
+nenhum change ativo. **8 pontos abertos**
 
 ## O que este arquivo é
 
@@ -270,6 +269,32 @@ nos dois lados do breakpoint em janela real. A regra CSS
 cima ou para baixo), ou outro mecanismo de redimensionamento real de
 viewport dentro de uma história provado por execução — não por leitura de
 documentação —, o que vier primeiro.
+
+---
+
+## 20. Ciclo aplicado sem arquivamento não é pego por nada hoje
+
+**O que é:** medido em `button-variants` — 22/22 tarefas feitas e código
+mergeado (PR #184), e a mudança continuou em `openspec/changes/` como ativa,
+sem ser arquivada, até este ciclo (`docs/archive-button-variants`) a
+fechar. Os dois spec deltas (`interface-atoms`, `design-tokens`) nunca
+chegaram às specs vivas nesse intervalo: `interface-atoms` viva tinha três
+requisitos, nenhum sobre desabilitado, tamanho, pendência ou `Spinner`;
+`design-tokens` viva não mencionava `text.control` nem
+`color.action.disabled` — apesar do código já usar os dois há dias.
+
+**Por que ficou aberto:** `openspec validate` e `openspec list` não
+reclamam de uma mudança com todas as tarefas concluídas parada em
+`changes/`. Não há verificação, em `pnpm verify` ou no próprio `openspec`,
+que note a divergência entre "tarefas 100% feitas" e "specs vivas
+desatualizadas" — a lacuna só apareceu porque alguém foi procurar; sem
+isso, código e documentação viva divergem em silêncio por tempo
+indefinido.
+
+**Gatilho:** o próximo ciclo, qualquer um, como item de fechamento
+obrigatório — antes de propor uma mudança nova, confirmar que a anterior
+com tarefas completas já foi arquivada; se não foi, arquivar antes de
+propor.
 
 ---
 

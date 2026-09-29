@@ -32,6 +32,8 @@ O átomo de botão SHALL aceitar um estado de pendência. Nesse estado, o botão
 SHALL permanecer alcançável por foco e SHALL NOT disparar `onPress` em
 resposta a ponteiro ou teclado, e SHALL exibir o átomo `Spinner` como
 indicador visual ao lado do conteúdo normal, que SHALL permanecer renderizado.
+O `Spinner` exibido SHALL resolver sua cor para a mesma cor do rótulo do
+botão, não para a cor de ação padrão que o átomo `Spinner` declara sozinho.
 
 **Por quê:** convergência medida em Material UI (`loading`), gluestack
 (`ButtonSpinner`) e react-aria-components (`isPending`) — ação assíncrona
@@ -56,6 +58,12 @@ próprio (`rules.design`).
 - **WHEN** um botão entra em pendência
 - **THEN** o átomo `Spinner` aparece ao lado do conteúdo normal do botão, que permanece renderizado — nunca no lugar dele, para que o nome acessível de um botão rotulado por texto não se perca
 - **Prova:** história com botão pendente rotulado por texto, `play` que confere o texto do rótulo ainda presente e o `Spinner` renderizado
+
+#### Scenario: Spinner segue a cor do rótulo do botão, não a cor padrão do átomo
+
+- **WHEN** um botão rotulado por texto entra em pendência
+- **THEN** a cor computada do `Spinner` é igual à cor de texto do botão, não a cor de ação que `Spinner` declara como padrão para o caso solto
+- **Prova:** história do botão pendente que compara a cor computada do `Spinner` com o token de texto do botão
 
 ### Requirement: Botão aceita variante de tamanho
 

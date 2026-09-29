@@ -92,8 +92,12 @@ que `color.action.primary`.
 
 A verificação SHALL conferir a cor de ação nos estados de **repouso** e de
 **foco**; o estado de **hover** é conferido no requisito seguinte. Ela SHALL
-NOT conferir **pressionado** nem **desabilitado** enquanto não existir token
-para nenhum dos dois.
+NOT conferir **pressionado**, por não existir token para esse estado.
+
+Um par de token correspondente a um estado **desabilitado** SHALL ser
+enumerado e relatado pela checagem, e SHALL NOT ser exigido a sustentar o
+piso de 4,5:1 — isenção nomeada pela checagem (WCAG 1.4.3, componente de
+interface inativo), nunca ausência silenciosa de medição.
 
 **Por quê:** o conjunto de superfícies é lido da fonte, e não de uma lista
 escrita à parte, exatamente para que uma superfície nova entre na checagem sem
@@ -104,9 +108,12 @@ voltar sem ser medido, e o custo de mantê-la dentro é nenhum: ela já é uma d
 superfícies neutras do tema. O requisito "Superfícies de gráfico declaradas
 por tema" detalha essa recusa de isenção para o caso do gráfico. O anel de
 foco repete o valor primitivo da cor de ação porque o anel de foco é a cor de
-ação, e não um segundo valor parecido com ela. Pressionado e desabilitado,
-quando existirem, entram nesta mesma checagem, e o teste que a executa não é
-o lugar onde essa decisão se toma.
+ação, e não um segundo valor parecido com ela. WCAG 1.4.3 isenta
+explicitamente componente de interface inativo do piso de contraste de
+texto — tratar o par desabilitado pelo mesmo piso de 4,5:1 dos estados
+ativos reprovaria um par que a própria norma de acessibilidade não exige; a
+isenção é nomeada na checagem para que não vire ausência de medição por
+omissão.
 
 #### Scenario: Par abaixo do piso reprova nomeando o par e o tema
 
@@ -137,6 +144,42 @@ o lugar onde essa decisão se toma.
 - **WHEN** `color.focus.ring` de um tema referencia um primitivo diferente do de `color.action.primary` do mesmo tema
 - **THEN** a verificação falha, nomeando o tema e os dois primitivos
 - **Prova:** referência divergente plantada, verificação falhando, plantio revertido
+
+#### Scenario: Par desabilitado é relatado, não reprovado, e a isenção é nomeada
+
+- **WHEN** a checagem é executada sobre um tema em que `color.action.disabled` existe e fica abaixo de 4,5:1 contra alguma superfície neutra
+- **THEN** a verificação passa, e o relatório nomeia o par como isento por WCAG 1.4.3, em vez de omiti-lo ou reprová-lo
+- **Prova:** teste que confere o par desabilitado no relatório com a isenção nomeada, para um valor que reprovaria se fosse tratado como par ativo
+
+### Requirement: Conjunto de ação e estado é enumerado, nunca fixo
+
+A checagem de contraste SHALL descobrir todo par de token de ação e estado
+(repouso, hover, desabilitado e qualquer outro que a fonte declarar) a partir
+dos nomes presentes na fonte de tokens resolvida, pelo mesmo mecanismo que já
+descobre superfícies neutras e séries de paleta. Um par de ação ou estado
+novo SHALL entrar na checagem sem edição do arquivo de checagem.
+
+**Por quê:** antes deste requisito, a checagem lia um único par fixo por
+nome de chave (`color-action-primary`, `color-action-primary-hover`,
+`color-text-on-action`) — um par novo, como o de desabilitado, não seria
+alcançado sem editar o arquivo de checagem à mão. Este requisito enumera só
+a camada **semântica** (`color-action-<estado>`); token de **componente**
+com cor própria é lacuna diferente, registrada em
+`docs/decisao-biblioteca-de-componentes.md` ("Lacuna registrada, não
+resolvida"), com gatilho próprio — o primeiro componente cujo token de cor
+não seja referência a um semântico já coberto.
+
+#### Scenario: Par de ação novo entra na checagem sem editar o arquivo de checagem
+
+- **WHEN** um novo par de token de ação (por exemplo, `color.action.disabled`) é acrescentado à fonte, num tema
+- **THEN** a checagem passa a relatar esse par sem nenhuma alteração no arquivo `contrast.ts` ou no seu teste
+- **Prova:** par plantado na fonte, execução da checagem relatando o par novo, sem alteração no arquivo de checagem, plantio revertido
+
+#### Scenario: Remover um par de ação da fonte o remove da checagem
+
+- **WHEN** um par de token de ação existente é removido da fonte, num tema
+- **THEN** a checagem deixa de relatar esse par, sem alteração no arquivo de checagem
+- **Prova:** par removido por plantio, execução da checagem sem o par removido, plantio revertido
 
 ### Requirement: Estado de interação com legibilidade provada
 
