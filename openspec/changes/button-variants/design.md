@@ -142,14 +142,26 @@ ganho de acessibilidade real — o piso estrito existe para estado que
 comunica informação por cor; desabilitado comunica por semântica (atributo
 nativo), não por contraste.
 
-### D3 — Pendência: `Button` repassa `isPending` à primitiva; `Spinner` é átomo à parte
+### D3 — Pendência: `Button` repassa `isPending` à primitiva; `Spinner` entra ao lado do conteúdo, nunca no lugar dele
 
 `AriaButton` já implementa `isPending` nativamente — desliga press/hover,
 mantém o elemento focalizável, e expõe `isPending` como render-prop de
-`children`. `Button` só aceita e repassa a prop; o conteúdo trocado por
-`Spinner` usa o mesmo padrão de `children` como função que
-`react-aria-components` já expõe para render props de estado — não é
-mecanismo novo, é o que a primitiva já oferece.
+`children`. `Button` só aceita e repassa a prop.
+
+**Correção medida durante a aplicação:** a primeira versão desta decisão
+trocava o conteúdo normal por `<Spinner>` via a função de `children`. Medido
+contra a fonte de `react-aria-components`
+(`dist/private/Button.mjs`): a primitiva **nunca troca `children` sozinha** —
+ela sempre renderiza o que o consumidor passa, e `isPending` chega como
+render-prop para o consumidor decidir o que fazer, nada mais. Trocar o
+conteúdo era decisão só do wrapper, e ela apagava o nome acessível de um botão
+rotulado por texto (sem `aria-label`) assim que a pendência começava — a
+checagem de acessibilidade não pegou porque as duas histórias de pendência
+originais só cobriam o caso `aria-label` (ícone só), onde o nome sobrevive por
+vir de um atributo, não do conteúdo. Decisão corrigida: `children` (e o ícone,
+quando houver) permanecem renderizados o tempo todo; `<Spinner>` aparece **ao
+lado**, quando `isPending`. O nome acessível de um botão de texto continua
+vindo do próprio texto, pendente ou não.
 
 `Spinner`: SVG com anel parcial em rotação, `stroke` = `color.action.primary`
 (mesma cor de marca da ação — para que o spinner dentro de um `Button`

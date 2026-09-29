@@ -29,7 +29,9 @@ export type ButtonProps = ButtonContent & {
   isDisabled?: boolean;
   /**
    * Estado de pendência: `react-aria-components` desliga press/hover mantendo
-   * o elemento focalizável, e o conteúdo normal cede lugar ao átomo `Spinner`.
+   * o elemento focalizável. O conteúdo normal permanece — react-aria-components
+   * nunca o troca sozinho — e o átomo `Spinner` aparece ao lado dele, nunca no
+   * lugar, para que o nome acessível de um botão rotulado por texto não se perca.
    */
   isPending?: boolean;
   /** Identifica, para tecnologia assistiva, o painel que este botão expande ou recolhe. */
@@ -62,16 +64,13 @@ export function Button({
       {...(onPress ? { onPress } : {})}
       {...rest}
     >
-      {(renderProps) =>
-        renderProps.isPending ? (
-          <Spinner size={size} />
-        ) : (
-          <>
-            {IconComponent ? <Icon as={IconComponent} /> : null}
-            {children}
-          </>
-        )
-      }
+      {(renderProps) => (
+        <>
+          {IconComponent ? <Icon as={IconComponent} /> : null}
+          {children}
+          {renderProps.isPending ? <Spinner size={size} /> : null}
+        </>
+      )}
     </AriaButton>
   );
 }

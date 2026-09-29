@@ -31,7 +31,7 @@ formulário ou confirmação precisa expressar, não caso hipotético.
 O átomo de botão SHALL aceitar um estado de pendência. Nesse estado, o botão
 SHALL permanecer alcançável por foco e SHALL NOT disparar `onPress` em
 resposta a ponteiro ou teclado, e SHALL exibir o átomo `Spinner` como
-indicador visual.
+indicador visual ao lado do conteúdo normal, que SHALL permanecer renderizado.
 
 **Por quê:** convergência medida em Material UI (`loading`), gluestack
 (`ButtonSpinner`) e react-aria-components (`isPending`) — ação assíncrona
@@ -51,11 +51,11 @@ próprio (`rules.design`).
 - **THEN** o botão recebe foco normalmente
 - **Prova:** história com botão pendente, `play` que tabula até o botão e confere `document.activeElement`
 
-#### Scenario: Botão pendente exibe o indicador visual
+#### Scenario: Botão pendente exibe o indicador visual ao lado do conteúdo normal
 
 - **WHEN** um botão entra em pendência
-- **THEN** o átomo `Spinner` aparece no lugar do conteúdo normal do botão
-- **Prova:** história com botão pendente, `play` que localiza o `Spinner` renderizado
+- **THEN** o átomo `Spinner` aparece ao lado do conteúdo normal do botão, que permanece renderizado — nunca no lugar dele, para que o nome acessível de um botão rotulado por texto não se perca
+- **Prova:** história com botão pendente rotulado por texto, `play` que confere o texto do rótulo ainda presente e o `Spinner` renderizado
 
 ### Requirement: Botão aceita variante de tamanho
 

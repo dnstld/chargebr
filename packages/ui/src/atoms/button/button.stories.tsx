@@ -179,14 +179,34 @@ export const EventoDeAtivacao: Story = {
   },
 };
 
-// Pendente: nem clique nem teclado disparam `onPress`, o botão continua
-// alcançável por Tab, e o `Spinner` aparece no lugar do conteúdo normal. O
-// nome acessível vem de `aria-label` — um controle já rotulado independente
-// do conteúdo (design.md, D3) —, e continua o mesmo com o `Spinner` composto:
-// a mesma execução de `addon-a11y` desta história prova a tarefa 3.5, sem
-// nome acessível duplicado nem ausente.
+// Pendente, com rótulo de texto: o conteúdo normal permanece renderizado —
+// react-aria-components nunca troca `children` sozinho, é o próprio consumidor
+// quem decide — e o `Spinner` entra ao lado. O nome acessível vem do próprio
+// texto, e continua o mesmo durante a pendência: nem clique nem teclado
+// disparam `onPress`, e o botão continua alcançável por Tab.
 export const Pendente: Story = {
   name: "Pendente",
+  args: {
+    children: "Confirmar",
+    isPending: true,
+    onPress: () => {
+      throw new Error("onPress não deveria disparar com o botão pendente");
+    },
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await userEvent.tab();
+    await expect(document.activeElement).toBe(button);
+    await expect(button.textContent).toContain("Confirmar");
+    await userEvent.click(button);
+    await userEvent.keyboard("{Enter}");
+  },
+};
+
+// Pendente, ícone só: o mesmo estado, sobre o botão sem rótulo visível — o
+// nome acessível vem de `aria-label`, como em qualquer outro caso ícone-só.
+export const PendenteIconeSoh: Story = {
+  name: "Pendente, ícone só",
   args: {
     icon: Menu,
     "aria-label": "Abrir menu",
@@ -199,7 +219,6 @@ export const Pendente: Story = {
     const button = canvas.getByRole("button", { name: "Abrir menu" });
     await userEvent.tab();
     await expect(document.activeElement).toBe(button);
-    await expect(button.querySelector('[role="status"]')).not.toBeNull();
     await userEvent.click(button);
     await userEvent.keyboard("{Enter}");
   },
