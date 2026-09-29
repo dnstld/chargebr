@@ -36,11 +36,43 @@
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-gap-md);
   padding: var(--space-inset-md) var(--space-inset-lg);
   font-family: var(--text-heading-family);
   font-size: var(--text-heading-size);
   font-weight: var(--text-heading-weight);
   line-height: var(--text-heading-line-height);
+}
+
+/* O gatilho só existe abaixo do breakpoint em que `nav` deixa de ser
+   persistente — acima dele, `nav` fica sempre visível (regra de `.nav`,
+   abaixo), e não há o que abrir ou fechar. */
+@media (--screen-md) {
+  .hamburger {
+    display: none;
+  }
+}
+
+/* Invólucro do slot de navegação: escondido por padrão abaixo do
+   breakpoint (só aparece com o gatilho aberto, `[data-open]`), persistente
+   acima dele — a regra de mídia vem por último e tem a mesma especificidade
+   de `[data-open]` só na largura em que se aplica, então nunca perde para
+   ela ali. */
+.nav {
+  display: none;
+}
+
+.nav[data-open] {
+  display: block;
+}
+
+@media (--screen-md) {
+  .nav {
+    display: block;
+  }
 }
 
 /* O destino do salto é focalizável por `tabIndex={-1}`, e recebe foco sem

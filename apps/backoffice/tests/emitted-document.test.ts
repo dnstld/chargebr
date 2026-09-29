@@ -428,7 +428,13 @@ test("o documento emitido contém as duas regiões e nenhuma navegação", () =>
 
   const banner = document.querySelector(BANNER_ROLE_TAG);
   expect(banner, "região de cabeçalho").not.toBeNull();
-  expect(banner?.textContent).toContain("ChargeBR");
+  // O nome do produto é o nome acessível de `Logo` (alt da imagem), não mais
+  // texto puro no cabeçalho — mesma mudança de specs/backoffice-shell/spec.md,
+  // "A moldura renderizada expõe as duas regiões": "nome acessível" cobre as
+  // duas formas sem prescrever qual a implementação usa.
+  const logo = banner?.querySelector("img");
+  expect(logo, "imagem de marca no cabeçalho").not.toBeNull();
+  expect(logo?.getAttribute("alt")).toBe("ChargeBR");
 
   const main = document.querySelector(MAIN_ROLE_TAG);
   expect(main, "região de conteúdo principal").not.toBeNull();

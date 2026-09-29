@@ -1,9 +1,12 @@
 import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
 import { resolveColor } from "../../bench/computed";
-import { AppFrame, MAIN_CONTENT_ID } from "./app-frame";
+import { EXAMPLE_SECTIONS } from "../nav/panel/fixtures/example-sections";
+import { NavPanel } from "../nav/panel/nav-panel";
+import { AppFrame, MAIN_CONTENT_ID, NAV_CONTENT_ID } from "./app-frame";
 
 // A moldura é a raiz da história: aninhá-la dentro de outra região faria a
 // checagem de acessibilidade medir uma estrutura que a aplicação não entrega.
@@ -73,11 +76,13 @@ export const EmRepouso: Story = {
     const theme = globals.theme as Theme;
     const frame = frameOf(canvasElement);
 
-    // As duas regiões são alcançáveis pelo papel, e o nome do produto está
-    // dentro do cabeçalho — não em qualquer lugar do documento.
+    // As duas regiões são alcançáveis pelo papel. O nome do produto agora é
+    // o nome acessível de `Logo` (alt da imagem), não mais texto puro —
+    // "nome acessível" é a prova que specs/backoffice-shell/spec.md pede,
+    // porque cobre as duas formas sem prescrever qual a implementação usa.
     const banner = canvas.getByRole("banner");
     await expect(
-      within(banner).getByText(args.productName),
+      within(banner).getByRole("img", { name: args.productName }),
     ).toBeInTheDocument();
     const main = canvas.getByRole("main");
     await expect(main.id).toBe(MAIN_CONTENT_ID);
@@ -85,6 +90,11 @@ export const EmRepouso: Story = {
     // A moldura não declara região de navegação: não existe rota de negócio
     // para listar, e região vazia anuncia destino que não existe.
     await expect(canvas.queryByRole("navigation")).toBeNull();
+    // `nav` está ausente destes args — o gatilho do hambúrguer não renderiza
+    // sem ele. É o caso real de `apps/backoffice`, que nunca passa `nav`.
+    await expect(
+      canvasElement.querySelector(`[aria-controls="${NAV_CONTENT_ID}"]`),
+    ).toBeNull();
 
     // O salto está presente, aponta para a região de conteúdo e não tem foco.
     const skip = canvas.getByRole("link", { name: args.skipLabel });
@@ -150,6 +160,71 @@ export const SaltoLevaAoConteudo: Story = {
     window.location.hash = `#${MAIN_CONTENT_ID}`;
     await waitFor(() => {
       expect(document.activeElement).toBe(main);
+    });
+  },
+};
+
+// O gatilho do hambúrguer só existe quando `nav` está presente (ver
+// `EmRepouso`, acima, para o caso ausente — o caso real de
+// `apps/backoffice`). Esta história prova o que é comportamento verificável
+// sem depender de largura real de janela: `aria-controls`/`aria-expanded`
+// e o efeito do clique em mostrar/esconder `nav`. O que ela NÃO prova —
+// visibilidade do gatilho nos dois lados do breakpoint por CSS — fica
+// registrado como ponto aberto (docs/pontos-abertos.md, ponto 19): medido
+// que nem `parameters.viewport` do Storybook nem `page.viewport()` de
+// `@vitest/browser/context` (estático ou importado dentro do `play`) têm
+// efeito neste harness — o complemento roda num pool próprio
+// ("browser pool"), e o módulo de contexto do Vitest só resolve de verdade
+// sob o modo nativo de navegador do próprio Vitest, lançando nos dois casos
+// (`vitest/browser can be imported only inside the Browser Mode`). A regra
+// CSS (`app-frame.module.css`, `@media (--screen-md)`) continua escrita e
+// é o design correto; só não tem prova automatizada de efeito aqui.
+function AppFrameComGatilhoDeNavegacao() {
+  const [navOpen, setNavOpen] = useState(false);
+  return (
+    <AppFrame
+      productName="ChargeBR"
+      skipLabel="Ir para o conteúdo"
+      nav={
+        <NavPanel
+          label="Navegação principal"
+          mode="overlay"
+          sections={EXAMPLE_SECTIONS}
+        />
+      }
+      navToggleLabel="Abrir menu"
+      navOpen={navOpen}
+      onNavToggle={() => setNavOpen((open) => !open)}
+    >
+      <p>Conteúdo da rota</p>
+    </AppFrame>
+  );
+}
+
+export const ComGatilhoDeNavegacao: Story = {
+  name: "Com gatilho de navegação",
+  render: () => <AppFrameComGatilhoDeNavegacao />,
+  play: async ({ canvas }) => {
+    const hamburguer = canvas.getByRole("button", { name: "Abrir menu" });
+    await expect(hamburguer).toBeInTheDocument();
+    await expect(hamburguer.getAttribute("aria-controls")).toBe(NAV_CONTENT_ID);
+    await expect(hamburguer.getAttribute("aria-expanded")).toBe("false");
+
+    // Fechado: a região de navegação não está na árvore de acessibilidade.
+    await expect(canvas.queryByRole("link", { name: "ABEV" })).toBeNull();
+
+    await userEvent.click(hamburguer);
+    await waitFor(() => {
+      expect(hamburguer.getAttribute("aria-expanded")).toBe("true");
+    });
+    await expect(
+      canvas.getByRole("link", { name: "ABEV" }),
+    ).toBeInTheDocument();
+
+    // Fecha de novo — prova que o clique alterna nos dois sentidos, não só abre.
+    await userEvent.click(hamburguer);
+    await waitFor(() => {
+      expect(hamburguer.getAttribute("aria-expanded")).toBe("false");
     });
   },
 };
