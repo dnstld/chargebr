@@ -66,6 +66,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Preflight do source endpoint ANEEL — Pautas e Atas](preflight-source-endpoint-aneel-board-meetings.md)
 - [Decisão: substituição do endpoint inicial da ANEEL](decisao-substituicao-endpoint-aneel.md)
 - [Revisão da carga canônica 0011 — endpoint ANEEL](revisao-carga-canonica-0011.md)
+- [Resultado da carga canônica 0011 — endpoint ANEEL](resultado-carga-canonica-0011.md)
 - [Collector local runtime v1](collector-local-runtime-v1.md)
 - [Decisão: extrator ABVE v1](decisao-extrator-abve-v1.md)
 - [Resultado do ensaio controlado do extrator ABVE v1](resultado-ensaio-extrator-abve-v1.md)
