@@ -3,7 +3,7 @@
 **Atualizado em:** 29 de setembro de 2026, na aplicação de `button-variants`
 **Estado do repositório:** 6 capacidades vivas, 56 requisitos, 12 ciclos
 arquivados, um change ativo (`interface-atomic-structure`, grupos 6–8
-pendentes). **4 pontos abertos**
+pendentes). **3 pontos abertos**
 
 ## O que este arquivo é
 
@@ -99,44 +99,6 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
 
 ---
 
-## 15. A bancada não emula `prefers-reduced-motion` no navegador
-
-**O que é:** `Spinner` (`button-variants`) é o primeiro componente cujo
-comportamento depende de `prefers-reduced-motion`. A prova do caso "sem a
-preferência" é real — o Chromium headless da bancada não a declara por
-padrão. A prova do caso "com a preferência" exigiria emular a media query no
-navegador (Playwright `page.emulateMedia`), e a ponte que o Vitest expõe para
-isso a partir de uma história, `@vitest/browser/context` (`commands`), lança
-em runtime sob a combinação de versões que o repositório fixa hoje:
-`@storybook/addon-vitest@10.6.0` declara peer `vitest@^3.0.0 || ^4.0.0`, e o
-repositório fixa `vitest@5.0.1` (aviso de `pnpm install`). **Medição:**
-importar `@vitest/browser/context` dentro de `play`, nesta bancada, reprova
-com "vitest/browser can be imported only inside the Browser Mode" — o módulo
-que o Vitest substitui em Browser Mode genuíno não é aplicado sob o pool que
-`@storybook/addon-vitest` usa nesta combinação de versões.
-
-**Por que ficou aberto:** contornar exigiria subir (ou trocar)
-`@storybook/addon-vitest` para uma versão compatível com Vitest 5, ou
-reconfigurar a arquitetura de projetos da bancada (uma instância de navegador
-dedicada, com `contextOptions.reducedMotion` fixo) — as duas são mudança de
-infraestrutura de verificação, fora do escopo de um ciclo de componente, e a
-segunda esbarra no mesmo tipo de risco que
-`docs/incidente-instabilidade-da-bancada.md` já registra para a arquitetura de
-projetos do Vitest.
-
-**Consequência enquanto não existe:** a história "Sem movimento reduzido" de
-`Spinner` prova o caso sem a preferência. O caso "Com movimento reduzido" não
-tem prova automatizada — a regra em `spinner.module.css`
-(`@media (prefers-reduced-motion: reduce)`) existe e foi lida a olho, mas
-nenhuma execução de `pnpm verify` a exercita sob a preferência ativa.
-
-**Gatilho:** a atualização de `@storybook/addon-vitest` para uma versão que
-declare suporte a Vitest 5 (ou posterior), ou a primeira exigência que precise
-emular outra media query no navegador — o que vier primeiro reabre a decisão
-de como a bancada emula preferência de mídia.
-
----
-
 ## Fechados
 
 - **12. Dois guardiões leem `next-env.d.ts`** — fechado pelo PR que arrumou a
@@ -213,3 +175,17 @@ de como a bancada emula preferência de mídia.
   qualquer capacidade. Se uma forma "bolha" um dia precisar de uma segunda
   magnitude codificada em tamanho, a pergunta volta, presa a um requisito
   novo e específico daquela forma — não a este, que não existe mais.
+- **15. A bancada não emula `prefers-reduced-motion` no navegador** —
+  fechado por decisão do dono, na aplicação de `button-variants`. **Recusado,
+  não adiado: sem gatilho de reabertura.** O requisito "Spinner respeita
+  preferência de movimento reduzido" foi removido do delta de
+  `interface-atoms` — a bancada não prova o caso "com a preferência" (ver a
+  medição que motivou o registro original deste ponto, abaixo), e o dono
+  decidiu não perseguir a prova, não adiá-la para um gatilho. A regra CSS
+  (`@media (prefers-reduced-motion: reduce)` em `spinner.module.css`)
+  **permanece** — é comportamento correto, e a ausência de requisito que a
+  cubra não é indício de código órfão. **Medição que motivou o registro
+  original:** importar `@vitest/browser/context` dentro de `play`, nesta
+  bancada, reprova com "vitest/browser can be imported only inside the
+  Browser Mode" — `@storybook/addon-vitest@10.6.0` declara peer
+  `vitest@^3.0.0 || ^4.0.0`, e o repositório fixa `vitest@5.0.1`.

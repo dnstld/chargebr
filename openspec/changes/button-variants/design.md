@@ -262,6 +262,18 @@ O toggle em si é estrutural, não um valor: `spinner.module.css` aplica
 `@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }`
 — uma media query, não um literal de design.
 
+**Correção do dono, na aplicação:** o requisito "Spinner respeita
+preferência de movimento reduzido" (`specs/interface-atoms/spec.md`) foi
+removido do delta — decisão do dono, recusada, não adiada, sem gatilho de
+reabertura (ver `docs/pontos-abertos.md`, ponto 15 fechado como recusado). A
+regra CSS acima **permanece** em `spinner.module.css`: é comportamento
+correto, é a leitura padrão de `prefers-reduced-motion` que qualquer
+elemento animado deveria ter, e não depende de requisito nenhum para
+justificar sua existência. **A ausência de requisito não é indício de código
+órfão** — não a apague por achar que sobrou de uma tarefa desfeita; ela nunca
+teve uma tarefa que a desfizesse, só deixou de ter uma prova formal cobrindo
+o caso "com a preferência".
+
 A duração e a curva da animação, quando ela roda, são outra história:
 `packages/tokens` não declara hoje nenhum eixo de movimento — nenhum
 arquivo em `primitive/`, `semantic/` ou `component/` tem `$type` de
@@ -366,16 +378,19 @@ já dá — é o que reabriria esta decisão.
   (mais recente e mais específica) e não criar o mecanismo — confirmado à mão
   que todo estado declarado tem história própria, sem combinar eixos, sem
   prova automatizada de que isso continua valendo depois desta mudança.
-- [Risco, medido na aplicação] a bancada não emula `prefers-reduced-motion`
-  no navegador: `@vitest/browser/context` (`commands`), a ponte que
-  permitiria acionar `page.emulateMedia` do Playwright a partir de uma
-  história, lança em runtime sob a combinação de versões que este
-  repositório fixa (`@storybook/addon-vitest@10.6.0` declara peer
-  `vitest@^3||^4`; o repositório fixa `vitest@5.0.1`) → [Mitigação] a
-  história "Sem movimento reduzido" prova o caso sem a preferência (padrão
-  do Chromium headless); o caso "com a preferência" fica sem prova
-  automatizada, registrado como ponto 15 de `docs/pontos-abertos.md`, com o
-  gatilho que o reabre — decisão do dono do repositório, não suposição.
+- [Risco, medido na aplicação, recusado pelo dono] a bancada não emula
+  `prefers-reduced-motion` no navegador: `@vitest/browser/context`
+  (`commands`), a ponte que permitiria acionar `page.emulateMedia` do
+  Playwright a partir de uma história, lança em runtime sob a combinação de
+  versões que este repositório fixa (`@storybook/addon-vitest@10.6.0`
+  declara peer `vitest@^3||^4`; o repositório fixa `vitest@5.0.1`) →
+  [Decisão do dono] o requisito "Spinner respeita preferência de movimento
+  reduzido" foi removido do delta — recusado, não adiado, sem gatilho (ponto
+  15 de `docs/pontos-abertos.md`, fechado como recusado). A regra CSS
+  permanece em `spinner.module.css` (D7) como comportamento correto sem
+  requisito que a cubra; a história "Sem movimento reduzido" continua
+  existindo como documentação viva, sem pretender provar a preferência
+  ativa.
 
 ## Migration Plan
 

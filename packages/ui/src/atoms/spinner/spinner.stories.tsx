@@ -26,14 +26,14 @@ export const Padrao: Story = {
 };
 
 // Sem `prefers-reduced-motion` declarado — o padrão do Chromium headless
-// desta bancada —, a rotação contínua está presente.
-//
-// O caso "com a preferência" fica sem história: emulá-la exigiria o
-// navegador real (Playwright `page.emulateMedia`), e a ponte que o Vitest
-// expõe para isso a partir de uma história, `@vitest/browser/context`
-// (`commands`), lança em runtime sob a combinação de versões que este
-// repositório fixa hoje — ponto 15 de `docs/pontos-abertos.md`, com o
-// gatilho que reabre esta história.
+// desta bancada —, a rotação contínua está presente. Documentação viva do
+// comportamento padrão, não prova da preferência: o caso "com a preferência"
+// não tem história — emulá-la exigiria o navegador real (Playwright
+// `page.emulateMedia`), e a ponte que o Vitest expõe para isso a partir de
+// uma história lança em runtime sob a combinação de versões que este
+// repositório fixa. Ponto 15 de `docs/pontos-abertos.md`, fechado como
+// recusado pelo dono — sem gatilho, a regra CSS permanece correta assim
+// mesmo (design.md, D7).
 export const SemMovimentoReduzido: Story = {
   name: "Sem movimento reduzido",
   play: async ({ canvasElement }) => {
