@@ -666,6 +666,26 @@ export const tokens = {
     light: "8px",
     dark: "8px",
   },
+  "spinner-color": {
+    css: "var(--spinner-color)",
+    light: "#302681",
+    dark: "#8788fe",
+  },
+  "spinner-size-lg": {
+    css: "var(--spinner-size-lg)",
+    light: "14px",
+    dark: "14px",
+  },
+  "spinner-size-md": {
+    css: "var(--spinner-size-md)",
+    light: "13px",
+    dark: "13px",
+  },
+  "spinner-size-sm": {
+    css: "var(--spinner-size-sm)",
+    light: "12px",
+    dark: "12px",
+  },
 } as const;
 
 export type TokenName = keyof typeof tokens;

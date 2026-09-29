@@ -137,6 +137,10 @@
   --button-sm-gap: var(--space-gap-sm);
   --button-sm-padding-block: var(--space-inset-sm);
   --button-sm-padding-inline: var(--space-inset-sm);
+  --spinner-color: var(--color-action-primary);
+  --spinner-size-lg: var(--text-control-lg);
+  --spinner-size-md: var(--text-control-md);
+  --spinner-size-sm: var(--text-control-sm);
 }
 
 @media (prefers-color-scheme: dark) {

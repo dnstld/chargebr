@@ -1,0 +1,46 @@
+/* Indicador de progresso indeterminado. Duração e curva da rotação são
+   literal, de propósito (design.md, D7): `packages/tokens` não declara hoje
+   nenhum eixo de movimento, `Spinner` é o único consumidor, e
+   `animation-duration`/`animation-timing-function` não estão em
+   `GUARDED_PROPERTIES` (tools/checks/style-literals.test.ts) — um segundo
+   consumidor é o gatilho para medir um eixo de token de movimento. */
+.spinner {
+  display: inline-block;
+  color: var(--spinner-color);
+  animation: girar 0.8s linear infinite;
+}
+
+.spinner.sm {
+  width: var(--spinner-size-sm);
+  height: var(--spinner-size-sm);
+}
+
+.spinner.md {
+  width: var(--spinner-size-md);
+  height: var(--spinner-size-md);
+}
+
+.spinner.lg {
+  width: var(--spinner-size-lg);
+  height: var(--spinner-size-lg);
+}
+
+.arc {
+  stroke: currentColor;
+  stroke-linecap: round;
+  /* Perímetro do círculo r=10 é ~62.8; 16/62.8 desenha um arco parcial, não
+     o anel inteiro — geometria do desenho, não valor de design. */
+  stroke-dasharray: 16 62.8;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

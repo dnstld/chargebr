@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button as AriaButton } from "react-aria-components";
 import { Icon } from "../icon/icon";
+import { Spinner } from "../spinner/spinner";
 import styles from "./button.module.css";
 
 // Um botão sem rótulo visível precisa de nome acessível por propriedade — o
@@ -26,6 +27,11 @@ export type ButtonProps = ButtonContent & {
   size?: ButtonSize;
   /** Estado desabilitado: não dispara `onPress`, aparência por token próprio. */
   isDisabled?: boolean;
+  /**
+   * Estado de pendência: `react-aria-components` desliga press/hover mantendo
+   * o elemento focalizável, e o conteúdo normal cede lugar ao átomo `Spinner`.
+   */
+  isPending?: boolean;
   /** Ação ao ativar o botão. */
   onPress?: () => void;
 };
@@ -36,6 +42,7 @@ export type ButtonProps = ButtonContent & {
 export function Button({
   icon: IconComponent,
   size = "md",
+  isPending,
   onPress,
   children,
   ...rest
@@ -45,11 +52,20 @@ export function Button({
     <AriaButton
       type="button"
       className={`${styles.button ?? ""} ${sizeClass}`}
+      {...(isPending !== undefined ? { isPending } : {})}
       {...(onPress ? { onPress } : {})}
       {...rest}
     >
-      {IconComponent ? <Icon as={IconComponent} /> : null}
-      {children}
+      {(renderProps) =>
+        renderProps.isPending ? (
+          <Spinner size={size} />
+        ) : (
+          <>
+            {IconComponent ? <Icon as={IconComponent} /> : null}
+            {children}
+          </>
+        )
+      }
     </AriaButton>
   );
 }

@@ -1,7 +1,15 @@
 export {
+  BUTTON_SIZES,
   Button,
   type ButtonProps,
+  type ButtonSize,
 } from "./button/button";
+export {
+  FONT_EMPHASES,
+  FONT_WEIGHTS,
+  type FontEmphasis,
+  type FontWeight,
+} from "./font-variant";
 export {
   HATCH_MIN_SIZE,
   HATCH_PERIOD,
@@ -22,11 +30,11 @@ export {
 export { Icon, type IconProps } from "./icon/icon";
 export { Link, type LinkProps } from "./link/link";
 export { Logo, type LogoProps } from "./logo/logo";
+export {
+  SPINNER_SIZES,
+  Spinner,
+  type SpinnerProps,
+  type SpinnerSize,
+} from "./spinner/spinner";
 export { Text, type TextProps } from "./text/text";
 export { useFormattedNumber } from "./text/use-formatted-number";
-export {
-  FONT_EMPHASES,
-  FONT_WEIGHTS,
-  type FontEmphasis,
-  type FontWeight,
-} from "./font-variant";

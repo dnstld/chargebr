@@ -303,6 +303,16 @@ movimento — como R3/R6, hoje nenhum precisa.
   um repõe quando o próprio ciclo tocar o componente — o risco real é alguém
   tratar o silêncio como "resolvido para o pacote todo", por isso fica
   registrado aqui e não só implícito no código.
+- [Risco, medido na aplicação] a bancada não emula `prefers-reduced-motion`
+  no navegador: `@vitest/browser/context` (`commands`), a ponte que
+  permitiria acionar `page.emulateMedia` do Playwright a partir de uma
+  história, lança em runtime sob a combinação de versões que este
+  repositório fixa (`@storybook/addon-vitest@10.6.0` declara peer
+  `vitest@^3||^4`; o repositório fixa `vitest@5.0.1`) → [Mitigação] a
+  história "Sem movimento reduzido" prova o caso sem a preferência (padrão
+  do Chromium headless); o caso "com a preferência" fica sem prova
+  automatizada, registrado como ponto 15 de `docs/pontos-abertos.md`, com o
+  gatilho que o reabre — decisão do dono do repositório, não suposição.
 
 ## Migration Plan
 

@@ -121,6 +121,32 @@ export const TamanhoNaoEspecificado: Story = {
   },
 };
 
+// Pendente: nem clique nem teclado disparam `onPress`, o botão continua
+// alcançável por Tab, e o `Spinner` aparece no lugar do conteúdo normal. O
+// nome acessível vem de `aria-label` — um controle já rotulado independente
+// do conteúdo (design.md, D3) —, e continua o mesmo com o `Spinner` composto:
+// a mesma execução de `addon-a11y` desta história prova a tarefa 3.5, sem
+// nome acessível duplicado nem ausente.
+export const Pendente: Story = {
+  name: "Pendente",
+  args: {
+    icon: Menu,
+    "aria-label": "Abrir menu",
+    isPending: true,
+    onPress: () => {
+      throw new Error("onPress não deveria disparar com o botão pendente");
+    },
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Abrir menu" });
+    await userEvent.tab();
+    await expect(document.activeElement).toBe(button);
+    await expect(button.querySelector('[role="status"]')).not.toBeNull();
+    await userEvent.click(button);
+    await userEvent.keyboard("{Enter}");
+  },
+};
+
 // Desabilitado: nem clique nem teclado disparam `onPress`, o estado é exposto
 // a tecnologia assistiva pelo atributo nativo, e a aparência resolve pelos
 // tokens de `disabled` nos dois temas.
