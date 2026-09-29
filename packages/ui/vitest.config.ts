@@ -57,8 +57,26 @@ const contractsProject: TestProjectConfiguration = {
   },
 };
 
+// Largura real de janela: modo nativo de navegador do Vitest, sem
+// `storybookTest` — o complemento roda num pool próprio que nunca troca
+// `vitest/browser` pelo módulo virtual de verdade (docs/pontos-abertos.md,
+// ponto 19, e o design de `close-open-points`). `page.viewport()`, daqui,
+// tem efeito porque este projeto é o modo nativo, não o pool do addon.
+const viewportProject: TestProjectConfiguration = {
+  test: {
+    name: "viewport",
+    include: ["src/**/*.viewport.test.tsx"],
+    browser: {
+      enabled: true,
+      headless: true,
+      provider: playwright(),
+      instances: [{ browser: "chromium" }],
+    },
+  },
+};
+
 export default defineConfig({
   test: {
-    projects: [...THEMES.map(benchProject), contractsProject],
+    projects: [...THEMES.map(benchProject), contractsProject, viewportProject],
   },
 });

@@ -137,11 +137,37 @@ configuração extra).
 medido acima —, um arquivo de teste
 (`packages/ui/src/organisms/app-frame/app-frame.viewport.test.tsx`) que
 monta `AppFrame` com `nav` preenchido e prova o gatilho alcançável abaixo
-de 768px e inalcançável a partir de 768px, e `@vitest/browser@5.0.1` como
+do breakpoint e inalcançável a partir dele, e `@vitest/browser@5.0.1` como
 dependência explícita de `packages/ui` (pnpm estrito não expõe pacote
 transitivo; `vitest/browser` precisa dele resolvido a partir do próprio
 pacote que o importa). `backoffice-shell` ganha um cenário novo no
 requisito do gatilho, citando esta prova.
+
+**Dois ajustes medidos na aplicação, depois desta sonda:**
+
+1. **Localizador trocado de `offsetParent` para `getByRole`.** Escrevendo
+   o teste de verdade, `page.getByRole("button", { name: "Abrir menu" })`
+   reprova por *timeout* (não por asserção) quando o botão está dentro de
+   um ancestral `display: none` — o locator de papel do Vitest é sensível
+   à árvore de acessibilidade, e um elemento fora dela não é encontrado,
+   nem com `.element()`. Isso é o localizador certo para "alcançável",
+   mais preciso que ler `offsetParent` depois de achar o elemento por
+   `querySelector` — é a mesma forma que um leitor de tela veria, e
+   satisfaz "localizado por papel e nome acessível" diretamente, sem
+   segundo passo.
+2. **Largura de teste a 1px do breakpoint, não em cima dele.** Testar
+   exatamente 768px (o valor de `min-width` declarado) reprovou por
+   *timeout* — `getByRole` nunca encontrou o botão acima do breakpoint
+   nem abaixo dele quando os dois lados testados eram 767 e 768. A causa
+   provável é arredondamento entre a largura pedida a `page.viewport()` e
+   a largura que o motor de layout usa para resolver a media query, não
+   medida a fundo porque não muda o que o cenário prova: 767/769 prova o
+   mesmo comportamento observável sem depender do valor exato do limiar.
+   **Contraprova de que a asserção não é tautológica:** a regra CSS
+   (`@media (--screen-md) { .hamburger { display: none; } }`) foi removida
+   por plantio, e o teste, como está, reprovou — `getByRole` continuou
+   encontrando o gatilho acima do breakpoint. O plantio foi revertido e o
+   teste voltou a passar.
 
 **Risco registrado, não eliminado:** a sonda rodou uma vez, localmente,
 fora de CI. `verification-coverage` já mediu que Chromium sob CI se
@@ -154,7 +180,7 @@ ou tempo limite maior (incidente já registrado em
 `docs/incidente-instabilidade-da-bancada.md`).
 
 **O que faria mudar de ideia:** a prova nova reprovando em CI por razão
-diferente de tempo, ou `offsetParent` não distinguindo os dois lados do
+diferente de tempo, ou `getByRole` não distinguindo os dois lados do
 breakpoint na execução real da tarefa (a sonda usou um clone da mesma
 medição; um resultado diferente na aplicação é sinal de que algo no
 ambiente de CI diverge do que a sonda mediu localmente, e a tarefa
