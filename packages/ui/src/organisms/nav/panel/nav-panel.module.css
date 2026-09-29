@@ -1,0 +1,15 @@
+/* Organismo: sem token de componente próprio — só semântico direto, mesmo
+   padrão de organisms/app-frame/app-frame.module.css. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+  padding: var(--space-inset-lg);
+  background-color: var(--color-surface-raised);
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: var(--space-inset-md);
+  border-top: var(--space-1) solid var(--color-border-default);
+}

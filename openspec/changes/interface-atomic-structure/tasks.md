@@ -36,11 +36,138 @@
 
 ## 6. Navegação
 
-- [ ] 6.1 Construir `PathLabel` (texto, sem papel de navegação, sem foco) — verificar com o teste do requisito "Rótulo de caminho não é região de navegação" de `specs/shell-components/spec.md`
-- [ ] 6.2 Construir `NavItem` (estado corrente com superfície preenchida além do peso) — verificar com o teste do requisito "Item de navegação corrente é marcado por mais de um sinal"
-- [ ] 6.3 Construir `NavSection` (rótulo não clicável, exige ao menos uma folha) — verificar com o teste de tipos que planta seção sem folha e confere `verify:types` falhando
+**Extensão de escopo descoberta na execução de 6.2, registrada aqui antes da
+tarefa ser dada como pronta.** `NavItem` precisa de `Link` (`atoms/link/`) com
+fundo preenchido, preenchimento interno e raio de pílula no estado corrente —
+nenhum dos três é eixo que `Link` expõe hoje: o componente lê token semântico
+direto (`--text-label-weight`, `--color-action-primary`, `--radius-sm`), sem
+camada de token própria, e `LinkProps` só aceita `href`/`children`, sem
+`className` nem qualquer prop de estilo. O mecanismo já decidido para
+componente de família (`docs/decisao-biblioteca-de-componentes.md`,
+"estrutura por camada e família") é redefinir, por herança de custom
+property, um nome de token que a própria base já lê — e isso só funciona
+para o que a base já lê. Medido: não há outro jeito de dar a `NavItem` fundo
+preenchido sem tocar `Link`, porque CSS Modules não deixam um seletor de um
+módulo alcançar a classe de outro por fora da herança de custom property, e
+`Link` não aceita `className` para receber uma classe de fora de qualquer
+forma.
+
+Decidido pelo dono: dar a `Link` a camada de token completa nesta mesma
+tarefa — `component/link.json`, todo eixo visual que `link.module.css` já
+declara ganha nome `--link-*`, com o valor de hoje (zero mudança visual,
+provada pelas histórias existentes de `Link` continuando verdes) — mais dois
+eixos que `Link` nunca teve (fundo, preenchimento), lidos por `var(--nome,
+<fallback>)` com fallback explícito em vez de depender de custom property
+nunca declarada.
+
+Medido antes de aplicar o fallback: `tools/checks/style-literals.test.ts`
+reprovava `var(--link-background, transparent)` mesmo com `transparent` em
+`ALLOWED_KEYWORDS` — o regex de limpeza (`var\(--[a-z0-9-]+\)`) exige
+fechamento imediato do `)`, sem vírgula, e a vírgula do fallback quebra o
+casamento antes mesmo de `ALLOWED_KEYWORDS` entrar em jogo. Não era
+restrição de design, era defeito do guardião: o fallback nunca continha
+literal algum. Corrigido em `tools/checks/style-literals.test.ts` (commit
+próprio, antes do de `Link`): a limpeza passa a reconhecer `var(--nome,
+<fallback>)` e remove só quando o fallback é uma das palavras-chave já
+permitidas — `var(--x, transparent)` e `var(--x, 0)` passam, `var(--x, #fff)`
+e `var(--x, 4px)` continuam reprovando, os quatro casos provados em teste
+(`tools/checks/style-literals.test.ts`, `guardedValueRemainder`) antes de
+usar a construção em `link.module.css`.
+
+`link.module.css:11` lia `var(--radius-sm)` — token primitivo direto, o único
+componente do pacote alcançando além do semântico. Medido antes de trocar:
+`primitive/radius.json` fixa `sm = 2px`, `md = 4px`; `radius.control` (a
+única entrada semântica de raio para "controles interativos: botão, campo,
+seletor", mesma família de `Link`) referencia `{radius.md}` = 4px — nenhuma
+entrada semântica resolve para 2px hoje, então não existe troca que preserve
+o valor exato só usando semântico. Trocado para `--link-radius:
+var(--radius-control)` (o mesmo caminho de `--button-radius`), aceitando a
+mudança visual de 2px para 4px — sutil, e a alternativa (manter leitura de
+primitivo) perpetua a única exceção do pacote à regra "componente só alcança
+semântico".
+
+- [x] 6.1 **Emendado.** Construído `PathLabel` (`atoms/path-label/`) e depois
+  apagado — a tarefa foi escrita antes da regra que a invalida. Medido contra
+  a decisão de 29/09 em `docs/decisao-biblioteca-de-componentes.md`
+  ("estrutura por camada e família"): "se precisa de tokens próprios, é
+  componente próprio; se não precisa, é propriedade do componente
+  existente — não ganha nome novo só para existir." `PathLabel` não tinha CSS
+  Module, não tinha token, não tinha comportamento além de
+  `<Text>{segments.join(" / ")}</Text>` — o teste da própria regra diz que
+  isso não é componente, é uso de `Text`. `openspec/config.yaml` ganhou a
+  regra geral: tarefa escrita antes de uma regra não a sobrepõe, e tarefa que
+  contradiz regra vigente é emendada antes de executada — 6.1 é o caso que a
+  produziu, executado antes de eu medir contra a regra de 29/09, que já
+  valia na hora em que a tarefa rodou. O `join(" / ")` não virou hook ao lado
+  de `text/use-formatted-number.ts`: sem consumidor real hoje (a composição
+  em `AppFrame`, grupo 7, não foi feita nesta sessão), abstrair um `join` de
+  uma linha sem uso seria a mesma invenção sem consumidor que `docs/
+  decisao-biblioteca-de-componentes.md` já recusa para escala e para
+  variante — o ciclo que compuser o cabeçalho de `AppFrame` decide se o
+  `join` merece nome próprio, com o consumidor real na frente. Removido de
+  `atoms/index.ts`. Verificado: `pnpm exec tsc --noEmit`, `pnpm exec biome
+  lint` sem apontamento, nenhum import quebrado (grep por `PathLabel` e
+  `path-label` fora deste arquivo, vazio) — não prova mais o requisito
+  "Rótulo de caminho não é região de navegação" de
+  `specs/shell-components/spec.md`; esse requisito fica sem componente que o
+  prove até o ciclo que precisar dele decidir a forma de novo.
+- [x] 6.2 Construído `NavItem` (`atoms/nav/link/nav-item.tsx`) — família de `Link`, não `atoms/nav-item/`: o diagrama de D1 de `design.md` estava desatualizado antes mesmo desta tarefa começar (escrito antes da regra de camada/família de `openspec/config.yaml`, `3a33e96`). Decidido pelo dono, por semântica de HTML: item que navega é âncora — a família `nav/` também recebe `atoms/nav/button` no futuro (gatilho do hambúrguer, grupo 7), não construído aqui. Compõe `Link` e `Icon` (ícone opcional), nunca reimplementa nenhum dos dois. Extensão de escopo desta tarefa, com a razão completa registrada acima: guardião de literal de estilo corrigido (`tools/checks/style-literals.test.ts`, commit próprio) e `Link` ganhou camada de token completa (`component/link.json`, commit próprio, zero mudança visual provada pelas histórias de `Link` continuando verdes) antes de `NavItem` existir. Token próprio, `component/nav-item.json`, nascendo nesta mesma tarefa: preenchimento e raio valem nos dois estados (área clicável = área pintada, por `--link-padding-*`/`--link-radius` redefinidos no wrapper `display: contents` de `nav-item.module.css`); fundo/cor/peso do estado corrente redefinem `--link-background`/`--link-color`/`--link-weight`. Medido contra a lacuna de `docs/decisao-biblioteca-de-componentes.md` ("checagem de contraste não enumera token por componente automaticamente", gatilho nomeado como este componente): `current.background`/`current.color` só referenciam `{color.action.primary}`/`{color.text.on-action}`, o mesmo par de contraste que `component/button.json` já usa para fundo de ação/texto sobre ação — nenhuma cor própria entra, mesma forma não-disparadora que `component/spinner.json` já tinha (D-nota de 29/09 em `docs/decisao-biblioteca-de-componentes.md`); a lacuna continua registrada, não fechada, mas não é esta tarefa que a dispara. Achado ao validar o build de tokens: camada `component` só pode referenciar `semantic`, nunca `primitive` direto — `nav-item.current.weight` foi de `{font.weight.semibold}` (primitive, reprovou) para `{text.heading.weight}` (semantic, mesmo valor 600). Cinco histórias — Em repouso, Corrente, Item corrente difere do repouso em mais de uma propriedade (a prova direta do requisito, lado a lado, sem literal — comparação de computados, não contra string fixa, porque o guardião de literal de estilo reprova `rgba(...)` mesmo dentro de asserção de teste), Com foco pelo teclado, Com ícone. Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/nav/link src/atoms/link` (14/14, os dois temas), `tools/checks/style-literals.test.ts` e `component-vocabulary.test.ts` verdes, `pnpm exec biome lint` sobre os arquivos tocados sem apontamento — verificar com o teste do requisito "Item de navegação corrente é marcado por mais de um sinal"
+- [x] 6.3 Construído `NavSection` (`molecules/nav-section/nav-section.tsx`) — primeira `molecules/` do pacote: a pasta de primeiro nível não existia (removida por inteiro, com `molecules/domain/`, por `remove-domain-capabilities`). Sem família: não especializa nenhuma molécula genérica existente — é a base. Compõe `Text` (rótulo, não clicável) e `NavItem` (folhas), sem CSS de componente próprio, só layout em token. `items` é `readonly [NavSectionItem, ...NavSectionItem[]]` — tupla TypeScript de ao menos um elemento, plantado em `nav-section.typecheck.tsx` (`navSectionWithoutLeaf`). Achado ao compilar: `exactOptionalPropertyTypes` reprova passar `icon`/`isCurrent` possivelmente `undefined` direto para `NavItemProps` — corrigido com o mesmo padrão condicional já usado em `Button`/`Text` (`{...(valor ? {...} : {})}`). Duas histórias: "Padrão" e "O rótulo da seção não é focalizável" (prova direta — rótulo sem `href`/`tabindex`/`role="button"`, primeiro Tab alcança a primeira folha direto). Criado `molecules/index.ts`, acrescentado a `src/index.ts`. Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/molecules` (4/4, os dois temas), guardiões e `biome lint` sem apontamento — verificar com o teste de tipos que planta seção sem folha e confere `verify:types` falhando
 - [x] 6.4 Decidido pelo dono (`design.md`, D5): posição (a) — `NavPanel` só na bancada, sem ligar ao `AppFrame` real; o requisito de `backoffice-shell` permanece como está
-- [ ] 6.5 Construir `NavPanel` (organismo, modo persistente e modo sobreposto, foco preso só no modo sobreposto) só na bancada, com fixture de folhas de exemplo com origem declarada — verificar com os dois cenários do requisito "Foco preso só no modo sobreposto"
+- [x] 6.5 Construído `NavPanel` (`organisms/nav-panel/nav-panel.tsx`) — organismo raiz, sem família (não especializa nenhum organismo genérico existente), sem token de componente próprio (só semântico direto, mesmo padrão de `organisms/app-frame/app-frame.module.css`). Compõe `NavSection` e um `footer?: ReactNode` genérico — não sabe o que é "Deslogar"; quem compõe a história decide (`<Button icon={LogOut}>Sair</Button>`), mantendo `NavPanel` sem vocabulário de negócio, mesma razão de `AppFrame` não conhecer a forma de `NavPanel` (design.md, D3). Fixture `organisms/nav-panel/fixtures/example-sections.ts`, origem `synthetic` declarada (`tools/checks/fixture-origin.test.ts` verde). **Bloqueio real na execução, registrado aqui:** `react-aria-components@1.21.1` não exporta `FocusScope` — só `Dialog`/`Modal`/`ModalOverlay`, com semântica de diálogo (portal para `document.body`, ESC-para-fechar) que este painel não quer. Medido antes de decidir: `FocusScope` existe em `react-aria@3.52.1`, exatamente a versão que `react-aria-components@1.21.1` já resolve por dentro (`node_modules/.pnpm/react-aria@3.52.1_...`) — mas `packages/ui` não conseguia `require("react-aria")` sem declará-lo como dependência própria (isolamento estrito do pnpm). Decidido pelo dono: acrescentar `react-aria@3.52.1` (fixado na mesma versão já resolvida, para não duplicar instância) a `dependencies` de `packages/ui/package.json`, mesmo processo de D4 para `lucide-react` — `dependencies`, não `devDependencies` (uso em runtime), mais a linha em `BENCH_OPTIMIZE_DEPS.include`, mesmo grupo de `react-aria-components`. `FocusScope` de `react-aria` tem exatamente `contain`, sem a semântica de diálogo que `Dialog`/`Modal` trariam. Duas histórias, uma por cenário do requisito — "Foco não escapa do painel sobreposto" (foca o último elemento à mão, um Tab volta ao primeiro — prova direta de `contain`, sem contar tabulações) e "Foco atravessa o painel persistente livremente" (mesmo Tab, de um `render` com um botão sentinela depois do painel, sai para ele). Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/organisms/nav-panel` (4/4, os dois temas), `pnpm --filter @chargebr/ui exec vitest run --project contratos` (`optimize-deps.test.ts` confirma `react-aria` pré-empacotado, nenhuma dependência não declarada), guardiões (`style-literals`, `component-vocabulary`, `fixture-origin`) e `biome lint` sem apontamento — verificar com os dois cenários do requisito "Foco preso só no modo sobreposto"
+
+## Nota de 2026-09-29, sem alterar o log acima
+
+Decidido pelo dono, depois de 6.5 dado como pronto: a família é pasta em
+todo componente do grupo, não só em `NavItem` — `atoms/nav/item/`,
+`molecules/nav/section/`, `organisms/nav/panel/`, uniforme nas três camadas.
+6.2, 6.3 e 6.5 acima descrevem `atoms/nav/link/nav-item.tsx`,
+`molecules/nav-section/nav-section.tsx` e `organisms/nav-panel/nav-panel.tsx`
+— os caminhos certos no momento em que cada tarefa foi dada como pronta, e o
+texto delas não é reescrito por isso. Movidos por `git mv`, com imports,
+barris (`atoms/index.ts`, `molecules/index.ts`, `src/index.ts`) e título de
+história ajustados: `Átomos/Navegação/Item` (já estava certo), `Moléculas/
+Navegação/Seção` (era "Moléculas/Seção de navegação"), `Organismos/
+Navegação/Painel` (era "Organismos/Painel de navegação").
+
+`atoms/nav/link/` também saiu de nome: a pasta de família nomeia o
+contexto que o componente serve — `nav` —, nunca a primitiva que ele compõe
+por dentro. `NavItem` compõe `Link`; isso vive no código
+(`atoms/nav/item/nav-item.tsx`, `import { Link } from "../../link/link"`) e
+no comentário do componente, não no caminho. `atoms/nav/item/` é o nome
+correto porque "item" é o que o componente É para quem usa (uma folha de
+navegação), não o que ele reaproveita por dentro. Exemplo real acrescentado
+a `docs/decisao-biblioteca-de-componentes.md` (seção de 29/09), com esta
+mesma distinção.
+
+Verificado depois da movimentação: `pnpm exec tsc --noEmit`,
+`pnpm --filter @chargebr/ui exec vitest run --project claro|escuro|contratos
+src/atoms/nav src/molecules/nav src/organisms/nav` (18/18), guardiões e
+`pnpm exec biome lint` sem apontamento.
+
+**Achado depois de 6.5 dado como pronto, sobre 6.2.** `NavItem` corrente
+diferia de repouso por dois sinais visuais (superfície, peso) e nenhum
+sinal para tecnologia assistiva — quem usa leitor de tela não recebia
+anúncio nenhum de qual item é a página atual. Medido: `aria-current` não
+aparecia em nenhum arquivo do pacote antes desta correção; `LinkProps`
+aceitava só `href`/`children`. Estendido `LinkProps` com `"aria-current"?:
+"page"`, repassado para `AriaLink` por `...rest` — mesmo caminho de `Button`
+para `aria-expanded`/`aria-controls`: a primitiva de baixo já repassa, o
+tipo é que fechava a porta. `NavItem` passa `aria-current="page"` só quando
+`isCurrent`. Prova plantada antes da correção — a história "Corrente"
+localizada por papel e nome acessível (nunca por `data-current`, atributo
+do outro sinal — mesmo padrão que o ponto 16 de `docs/pontos-abertos.md`
+nomeia) reprovou (`expected null to be 'page'`) antes da mudança, passou
+depois. Requisito "Item de navegação corrente é marcado por mais de um
+sinal" (`specs/shell-components/spec.md`) ganhou o terceiro sinal e um
+cenário novo — decidido que sim, é delta desta mudança: o componente já
+construído, hoje, na bancada, fica sem anúncio nenhum sem isso, o mesmo
+teste que `rules.specs` já exige ("nomear o que quebra sem ele, hoje, no
+que está construído"). Verificado: `pnpm exec tsc --noEmit`,
+`pnpm --filter @chargebr/ui exec vitest run --project claro|escuro
+src/atoms/nav src/atoms/link src/molecules/nav src/organisms/nav` (22/22),
+`openspec validate interface-atomic-structure --strict`, guardiões e
+`biome lint` sem apontamento.
 
 ## 7. AppFrame
 

@@ -1,0 +1,15 @@
+{
+  "link": {
+    "$description": "Camada de componente do link: tipografia, cor e raio — os eixos que já existiam antes desta camada, com o mesmo valor de hoje. Fundo e preenchimento interno não têm entrada aqui: são eixos que Link nunca teve, lidos com fallback explícito em CSS (var(--link-background, transparent)) — a mesma ausência de valor de antes, agora nomeada para um componente de família redefinir. Redefinível por composição, nunca reimplementado (docs/decisao-biblioteca-de-componentes.md, 'estrutura por camada e família').",
+    "family": { "$type": "fontFamily", "$value": "{text.label.family}" },
+    "size": { "$type": "dimension", "$value": "{text.label.size}" },
+    "weight": { "$type": "fontWeight", "$value": "{text.label.weight}" },
+    "line-height": { "$type": "number", "$value": "{text.label.line-height}" },
+    "color": { "$type": "color", "$value": "{color.action.primary}" },
+    "radius": {
+      "$description": "Antes desta mudança, `link.module.css` lia `{radius.sm}` (2px) direto do primitivo — o único componente do pacote alcançando além do semântico. `radius.control` (controles interativos) resolve para {radius.md} (4px); não há entrada semântica para 2px. Trocado para o semântico, aceitando a mudança visual de 2px para 4px.",
+      "$type": "dimension",
+      "$value": "{radius.control}"
+    }
+  }
+}

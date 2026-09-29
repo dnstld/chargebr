@@ -30,6 +30,7 @@ export {
 export { Icon, type IconProps } from "./icon/icon";
 export { Link, type LinkProps } from "./link/link";
 export { Logo, type LogoProps } from "./logo/logo";
+export { NavItem, type NavItemProps } from "./nav/item/nav-item";
 export {
   SPINNER_SIZES,
   Spinner,

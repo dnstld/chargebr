@@ -1,0 +1,24 @@
+/* NavItem é família de Link (atoms/link/): só existe para redefinir, por
+   herança de custom property, os eixos que Link já declara (component/link.json)
+   e os dois que Link deixa sem valor em repouso (fundo, preenchimento) —
+   nunca reimplementa Link. `display: contents` porque o span em si não é
+   superfície nenhuma: quem recebe preenchimento, raio e fundo é a âncora que
+   Link renderiza, para que a área clicável e a área pintada sejam o mesmo
+   elemento.
+
+   Preenchimento e raio valem nos dois estados — são o que dá forma de pílula
+   ao item, corrente ou não. Só fundo, cor e peso mudam com `data-current`:
+   a superfície preenchida além do peso que o requisito "Item de navegação
+   corrente é marcado por mais de um sinal" exige. */
+.navItem {
+  display: contents;
+  --link-padding-inline: var(--nav-item-padding-inline);
+  --link-padding-block: var(--nav-item-padding-block);
+  --link-radius: var(--nav-item-radius);
+}
+
+.navItem[data-current] {
+  --link-background: var(--nav-item-current-background);
+  --link-color: var(--nav-item-current-color);
+  --link-weight: var(--nav-item-current-weight);
+}

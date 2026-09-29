@@ -666,6 +666,66 @@ export const tokens = {
     light: "8px",
     dark: "8px",
   },
+  "link-color": {
+    css: "var(--link-color)",
+    light: "#302681",
+    dark: "#8788fe",
+  },
+  "link-family": {
+    css: "var(--link-family)",
+    light: "Inter, system-ui, sans-serif",
+    dark: "Inter, system-ui, sans-serif",
+  },
+  "link-line-height": {
+    css: "var(--link-line-height)",
+    light: "1.35",
+    dark: "1.35",
+  },
+  "link-radius": {
+    css: "var(--link-radius)",
+    light: "4px",
+    dark: "4px",
+  },
+  "link-size": {
+    css: "var(--link-size)",
+    light: "13px",
+    dark: "13px",
+  },
+  "link-weight": {
+    css: "var(--link-weight)",
+    light: "500",
+    dark: "500",
+  },
+  "nav-item-current-background": {
+    css: "var(--nav-item-current-background)",
+    light: "#302681",
+    dark: "#8788fe",
+  },
+  "nav-item-current-color": {
+    css: "var(--nav-item-current-color)",
+    light: "#ffffff",
+    dark: "#101013",
+  },
+  "nav-item-current-weight": {
+    css: "var(--nav-item-current-weight)",
+    light: "600",
+    dark: "600",
+  },
+  "nav-item-padding-block": {
+    css: "var(--nav-item-padding-block)",
+    light: "4px",
+    dark: "4px",
+  },
+  "nav-item-padding-inline": {
+    css: "var(--nav-item-padding-inline)",
+    light: "8px",
+    dark: "8px",
+  },
+  "nav-item-radius": {
+    css: "var(--nav-item-radius)",
+    light: "9999px",
+    dark: "9999px",
+  },
   "spinner-color": {
     css: "var(--spinner-color)",
     light: "#302681",

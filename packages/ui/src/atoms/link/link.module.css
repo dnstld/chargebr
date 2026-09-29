@@ -1,14 +1,28 @@
-/* Link genérico, com foco visível pelo anel de foco dos tokens. Os estados
-   vêm dos atributos de dado da primitiva de comportamento, nunca de
-   pseudo-classe própria, para que teclado e ponteiro produzam o mesmo estado. */
+/* Link genérico. O anel de foco usa o par compartilhado por toda primitiva
+   interativa (--space-1/--color-focus-ring, o mesmo de Button) — não ganha
+   nome próprio, porque não é identidade visual de Link, é mecânica de foco
+   comum a qualquer controle. Os estados vêm dos atributos de dado da
+   primitiva de comportamento, nunca de pseudo-classe própria, para que
+   teclado e ponteiro produzam o mesmo estado.
+
+   Tipografia, cor e raio — a identidade visual de Link — leem um nome
+   --link-*, com o mesmo valor de hoje (component/link.json): um componente
+   de família redefine esse nome, por herança de custom property, nunca
+   reimplementa a regra. Fundo e preenchimento interno são eixos que Link
+   nunca teve: sem entrada em component/link.json, lidos com fallback
+   explícito (var(--nome, transparent), var(--nome, 0)) — o mesmo valor que
+   já valia por Link nunca os declarar, agora nomeado para quem compuser. */
 .link {
-  font-family: var(--text-label-family);
-  font-size: var(--text-label-size);
-  font-weight: var(--text-label-weight);
-  line-height: var(--text-label-line-height);
-  color: var(--color-action-primary);
+  font-family: var(--link-family);
+  font-size: var(--link-size);
+  font-weight: var(--link-weight);
+  line-height: var(--link-line-height);
+  color: var(--link-color);
   text-decoration: underline;
-  border-radius: var(--radius-sm);
+  border-radius: var(--link-radius);
+  padding-inline: var(--link-padding-inline, 0);
+  padding-block: var(--link-padding-block, 0);
+  background-color: var(--link-background, transparent);
   outline: none;
 }
 

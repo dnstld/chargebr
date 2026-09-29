@@ -23,6 +23,7 @@ export const BENCH_OPTIMIZE_DEPS: DepOptimizationOptions = {
     "react",
     "react/jsx-dev-runtime",
     "react-aria-components",
+    "react-aria",
     "lucide-react",
     // O que a camada de gráficos importa: escalas, eixos, grade e grupo.
     "@visx/axis",
