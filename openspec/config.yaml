@@ -65,6 +65,10 @@ rules:
     - Componente que usa React Aria ou estado do cliente declara "use client" no próprio arquivo
     - Componente recebe dados por propriedade; nenhum componente busca dados
     - "A sonda que sustenta uma decisão reproduz a forma do uso real de que a decisão depende. Onde simplificar, o design diz o que simplificou e por que a simplificação não altera o que está sendo decidido"
+    - "Componente de @chargebr/ui é genérico; vive em <camada>/<família>/<componente>, com a primitiva base na raiz da camada"
+    - Componente específico de domínio vive na pasta de componentes do app, não no pacote
+    - Componente de família compõe a primitiva base e redefine os tokens dela; nunca a reimplementa
+    - "Tokens de componente não são compartilhados entre componentes; precisar de tokens próprios é o que faz algo ser componente, e não propriedade"
   tasks:
     - Tarefa sem teste correspondente não é considerada pronta
     - Toda tarefa tem critério de pronto verificável por execução

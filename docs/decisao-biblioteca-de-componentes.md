@@ -476,6 +476,25 @@ nunca reaproveitar um atributo que ele não declarou como contrato.
 (`remove-domain-capabilities`); o achado sobre a forma certa de compor
 sobrevive a ele.
 
+**A regra de camada.** Camada (átomo, molécula, organismo) descreve o que o
+componente é para quem consome — um controle indivisível, uma composição
+local de poucos controles, uma seção própria da tela —, não se ele compõe
+outro componente por dentro. Um controle indivisível para quem usa é átomo
+mesmo quando construído, por dentro, sobre outro átomo: `atoms/nav/button`
+compõe `atoms/button`, mas continua sendo, para quem usa, um botão só, sem
+partes que se manipulem em separado. **Isto é um desvio deliberado do
+sentido clássico de átomo, do atomic design (Brad Frost)**, que definia
+átomo como o que não renderiza nenhum outro componente nomeado do inventário
+como filho estrutural — sem o desvio, o próprio exemplo desta seção
+(`atoms/nav/button` compondo `atoms/button`) contradiria essa definição.
+
+**A forma do caminho.** `<camada>/<família>/<componente>` — a primitiva base
+fica na raiz da camada (`atoms/button/`) e permanece ali, permanente: o
+primeiro componente de família que aparecer nunca realoca a base para dentro
+de uma pasta de família. A pasta de família (`atoms/nav/`) só recebe o que é
+próprio daquele contexto — o componente de família em si (`atoms/nav/button/`)
+—, nunca a primitiva que ele compõe.
+
 **O destino do componente de domínio.** Não existe mais um terceiro eixo
 arquitetural chamado "domínio" com perímetro, guardião e pasta própria — isso
 saiu inteiro com `domain-primitives` e `domain-charts`
@@ -488,7 +507,12 @@ não é "domínio" com nome trocado: nenhum guardião varre `atoms/nav/` do jeit
 que `component-vocabulary` varria `molecules/domain/` e `organisms/domain/`,
 porque não há vocabulário de negócio para proibir ali — se um dia houver, aí
 sim é domínio de novo, e volta pela porta que `docs/decisao-configuracao-inicial-do-workspace.md`
-já registrou: quando existir banco e API.
+já registrou: quando existir banco e API. Quando esse dia chegar, o
+componente que souber vocabulário de negócio de verdade — que leia
+`verification_level`, ou qualquer outro nome vindo do contrato de leitura —
+não entra em `@chargebr/ui`: vive na pasta de componentes do próprio app que
+o consome, como `apps/backoffice/app/_components/` já existe para isso. O
+pacote fica genérico; o que sabe domínio mora onde o domínio é consumido.
 
 **Lacuna registrada, não resolvida.** As checagens de contraste e de
 legibilidade de `design-tokens` conhecem os conjuntos de token que existem
