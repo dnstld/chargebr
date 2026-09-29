@@ -197,7 +197,11 @@ intenção de quem o escreveu, não do comportamento renderizado. O desvio é
 a forma final deste requisito, não uma lacuna a mecanizar depois; escrever
 como se fosse mecanizável, sem sê-lo, seria o mesmo erro de outra forma.
 
-### Guardião do ciclo de vida de mudanças (pontos 17 e 20)
+### Guardião do ciclo de vida de mudanças (pontos 17 e 20, mais um terceiro cheque)
+
+O mesmo arquivo ganha um terceiro teste depois da revisão do dono do
+repositório — desenhado em "Terceiro cheque no guardião", abaixo. As duas
+primeiras afirmações:
 
 **O que muda:** `tools/checks/change-lifecycle.test.ts`, no formato dos
 quatro guardiões existentes — TypeScript lido pela árvore sintática
@@ -249,42 +253,97 @@ este ciclo nomeou `proposal.md`, `design.md` e `tasks.md`, e
 `skip_specs`), não um artefato de planejamento que alguém escreve e
 revisa.
 
-### Perímetro isolado passa a nomear o território, não `apps/*`/`packages/*`
+### Perímetro isolado se inverte: exclusão nomeada, não inclusão
 
-**O que foi medido:** o requisito "Perímetro isolado", em
-`workspace-verification`, diz hoje "A verificação SHALL cobrir
-exclusivamente `apps/*` e `packages/*`, e SHALL NOT alcançar, alterar ou
-reprovar conteúdo fora desse perímetro." O guardião novo lê
-`openspec/changes/`, fora dos dois. Lido ao pé da letra, o requisito
-reprovaria o próprio guardião que este ciclo escreve. O cenário existente
-do requisito só prova o lado que importava até aqui — `src/`, `tests/`,
-`data/`, `queries/`, `supabase/` (a frente de coleta) inalcançados —, e
-CLAUDE.md já declara o território real por nome, no primeiro parágrafo:
-"Este arquivo governa a frente de interface: `apps/`, `packages/`,
-`openspec/`, `tools/` e a seção Interface de `docs/`." O requisito vivo
-nunca foi atualizado para dizer isso — ele nasceu (ciclo
-`fundacao-do-workspace`) quando `openspec/` e `tools/checks/` ainda não
-existiam como território verificado por guardião próprio.
+**Correção sobre a primeira versão deste design, depois de revisão do dono
+do repositório:** a primeira versão desta decisão alargava o requisito
+para nomear `apps/*`, `packages/*`, `openspec/` e `tools/` como inclusão
+exaustiva. O dono apontou duas coisas, e as duas se sustentam depois de
+remedidas:
 
-**Decisão:** o requisito passa a nomear `apps/*`, `packages/*`,
-`openspec/` e `tools/` — os quatro, com a mesma razão que CLAUDE.md já
-registra: território é o que é nosso, não uma lista do que não é. A seção
-Interface de `docs/` fica fora da lista, porque nenhum estágio de
-`pnpm verify` lê `docs/` hoje, nem este ciclo passa a ler — incluir um
-diretório que nada alcança seria declarar mais do que a mudança prova.
-Ganha um cenário novo provando que o guardião novo alcança
-`openspec/changes/` legitimamente, ao lado do cenário existente que prova
-`src/`/`tests/`/`data/`/`queries/`/`supabase/` fora de alcance — as duas
-metades do mesmo requisito, positiva e negativa.
+1. **O cenário do requisito nunca protegeu uma lista de inclusão — protege
+   a árvore herdada.** O único cenário original (`src/`, `tests/`, `data/`,
+   `queries/`, `supabase/` fora de alcance) é sobre a frente de coleta,
+   não sobre onde a verificação chega dentro do nosso próprio território.
+   Alargar a inclusão não tornava esse cenário mais verdadeiro; só
+   acrescentava uma segunda garantia (positiva) que ninguém pediu.
+2. **O texto "exclusivamente `apps/*` e `packages/*`" já não descrevia o
+   repositório, e alargá-lo repetiria o mesmo defeito de outra forma.**
+   Reli `tools/checks/versioning.ts`, `style-literals.test.ts` e
+   `component-vocabulary.test.ts`: todos os três montam `ROOT` a partir da
+   raiz do repositório (`fileURLToPath(new URL("../../", import.meta.url))`)
+   e escolhem seu próprio perímetro a partir daí — nada estrutural impede
+   um guardião de ler qualquer caminho. Uma lista de inclusão exaustiva
+   ("cobre X, Y, Z") precisa ser reescrita a cada guardião novo que
+   alcançar um diretório diferente — exatamente o problema que motivou
+   corrigir o requisito agora, e que se repetiria no próximo guardião.
 
-**Achado a registrar para quem revisar:** isto é uma leitura, não uma
-descoberta de bug — nenhum guardião existente hoje sai de `apps/*`/
-`packages/*`, então nada estava quebrado antes deste ciclo. O que mudaria
-minha conclusão: se o dono do repositório preferir que o guardião novo
-viva fora de `verify:test` (outro estágio, outro comando), o requisito
-não precisa mudar — mas isso contradiz "quatro guardiões rodam dentro de
-`verify:test`" de CLAUDE.md, que trata o formato como já decidido para
-qualquer guardião novo.
+**Decisão:** o requisito passa a dizer só o que ele sempre garantiu de
+fato — "A verificação SHALL NOT alcançar, alterar ou reprovar conteúdo sob
+`src/`, `tests/`, `data/`, `queries/` ou `supabase/`" —, sem a cláusula de
+inclusão. `openspec/changes/` deixa de ser assunto deste requisito porque
+nunca esteve dentro da proibição, não porque uma lista de permissão
+cresceu para incluí-lo. O cenário novo que a primeira versão acrescentava
+("um guardião pode alcançar `openspec/changes/` legitimamente") sai —
+nada precisa provar uma permissão que o requisito corrigido nunca nega.
+
+**O que faria mudar de ideia de novo:** um guardião futuro que precisasse
+tocar `src/`, `tests/`, `data/`, `queries/` ou `supabase/` para verificar
+algo da frente de interface — nesse caso a exclusão nomeada precisaria de
+uma exceção explícita, e essa exceção seria a decisão de um ciclo próprio,
+não uma reescrita silenciosa deste requisito.
+
+### Terceiro cheque no guardião: ponto declarado fechado, ainda aberto no registro
+
+**O que foi medido:** o próprio achado do ponto 5 desta proposta — um
+ciclo arquivado (`tokens-obligation-form`) cujo `proposal.md` termina "Fecha
+o ponto 5 de `docs/pontos-abertos.md`", e o registro nunca foi atualizado —
+é uma comparação entre duas listas que já existem por escrito, não uma
+propriedade de intenção como o ponto 16. Toda declaração de fechamento
+observada em `openspec/changes/archive/*/proposal.md` segue um padrão
+textual estável: a palavra "fecha" seguida, a poucos caracteres, de
+"ponto" ou "pontos" e um ou mais números —
+"Fecha o ponto 5 de `docs/pontos-abertos.md`.",
+"fecha os pontos 4 e 11 citando este [ciclo]",
+"fecha os pontos 2 e 3, abre dois,",
+"Fecha o ponto aberto 7 de `docs/pontos-abertos.md`". As quatro variações
+têm em comum: "fecha" e "ponto"/"pontos" na mesma frase, com os números do
+fechamento logo depois.
+
+**Desenho do guardião:**
+
+```
+declaredClosedPoints(proposalText): para cada ocorrência de
+  /fecha\b[^\n]{0,15}?pontos?/i no texto, lê os 60 caracteres seguintes ao
+  casamento e extrai todo /\d+/ encontrado — os números que aquela frase
+  declara fechados
+
+stillOpenPoints(pontosAbertosText): para cada linha que casa com
+  /^## (\d+)\./ antes da linha "## Fechados", o número capturado
+
+violations(): para cada mudança sob openspec/changes/archive/, para cada
+  número em declaredClosedPoints(sua proposal.md), se esse número está em
+  stillOpenPoints(docs/pontos-abertos.md atual), reporta
+  `${mudança} declara fechar o ponto ${número}, ainda aberto no registro`
+
+test("ponto declarado fechado por mudança arquivada não continua aberto")
+  — expect(violations()).toEqual([])
+```
+
+Rodado sobre a árvore corrente — depois que a tarefa de registro deste
+mesmo ciclo mover os pontos 5, 16, 17, 19 e 20 para "Fechados" —, o
+guardião passa. A prova de que ele alcança o que devia é uma tarefa de
+aplicação que planta uma mudança arquivada com uma declaração de
+fechamento e mantém (ou planta de volta) o ponto correspondente como
+aberto, confere que o guardião reprova nomeando os dois, e reverte.
+
+**Por que a janela de 60 caracteres, e não a frase inteira:** as quatro
+variações observadas têm todos os números dentro de 40 caracteres da
+palavra "ponto"/"pontos"; 60 dá margem sem alcançar a frase seguinte em
+nenhum dos quatro casos medidos. Um padrão de declaração muito diferente
+dos quatro observados — por exemplo, o número antes da palavra "fecha" —
+escaparia deste guardião; é uma lacuna aceita, não coberta por este
+desenho, porque não há exemplo real dela hoje.
 
 ## Risks / Trade-offs
 
@@ -300,3 +359,10 @@ qualquer guardião novo.
   `pontos-abertos.md` teria que reescrever a passagem — mas o mesmo já
   vale ao contrário, e `forma-do-produto.md` é onde o dono do repositório
   decidiu que perguntas de forma do produto vivem.
+- **O terceiro cheque do guardião reconhece só os quatro padrões de
+  declaração de fechamento já observados.** Uma proposta futura que
+  declare fechar um ponto numa forma textual muito diferente ("o ponto 5
+  fecha aqui", número antes de "fecha") escaparia do guardião sem
+  reprovar nada — registrado no design como lacuna aceita, não coberta.
+  Se isso acontecer, é sinal para alargar o padrão, não para reescrever a
+  convenção de como propostas declaram fechamento.

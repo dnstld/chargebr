@@ -70,19 +70,28 @@ design — não uma promessa de mecanizar depois.
 
 ## What Changes
 
-- **Guardião novo, `tools/checks/change-lifecycle.test.ts`** (pontos 17 e
-  20): toda mudança ativa em `openspec/changes/` (fora de `archive/`) tem
-  `proposal.md`, `design.md` e `tasks.md`; nenhuma mudança ativa tem 100%
-  das tarefas de `tasks.md` marcadas. `archive/` é ignorado por completo.
-- **`workspace-verification` — "Perímetro isolado" muda de forma.** O texto
-  hoje lê "exclusivamente `apps/*` e `packages/*`", e o guardião novo lê
-  `openspec/changes/`, fora dos dois. `openspec/` e `tools/` já são nosso
-  território — CLAUDE.md declara a fronteira por `apps/`, `packages/`,
-  `openspec/`, `tools/` e a seção Interface de `docs/`, não pela dupla
-  `apps/*`/`packages/*` que o requisito usa hoje. O requisito passa a
-  nomear o território real, e ganha um cenário provando que o guardião novo
-  alcança `openspec/changes/` legitimamente. Nenhum dos quatro guardiões
-  existentes muda de alcance.
+- **Guardião novo, `tools/checks/change-lifecycle.test.ts`**, com três
+  checagens. Duas para os pontos 17 e 20: toda mudança ativa em
+  `openspec/changes/` (fora de `archive/`) tem `proposal.md`, `design.md`
+  e `tasks.md`; nenhuma mudança ativa tem 100% das tarefas de `tasks.md`
+  marcadas. A terceira, acrescentada depois de revisão do dono do
+  repositório: uma mudança arquivada cujo `proposal.md` declare fechar um
+  ponto de `docs/pontos-abertos.md` reprova se esse número ainda constar
+  como aberto no registro — o próprio defeito que o achado do ponto 5
+  expôs, agora coberto (`design.md` tem o padrão textual medido nas 14
+  mudanças arquivadas e o desenho da comparação). `archive/` é ignorado
+  pelas duas primeiras checagens, e é exatamente o que a terceira varre.
+- **`workspace-verification` — "Perímetro isolado" se inverte.** O texto
+  hoje ("SHALL cobrir exclusivamente `apps/*` e `packages/*`") descreve
+  uma inclusão que nada aplica — os quatro guardiões existentes montam
+  caminho a partir da raiz e escolhem seu próprio perímetro, sem mecanismo
+  estrutural algum restringindo a `apps/*`/`packages/*`. O único cenário
+  do requisito sempre protegeu outra coisa: a árvore herdada da frente de
+  coleta. O requisito passa a dizer só isso — exclusão nomeada de `src/`,
+  `tests/`, `data/`, `queries/`, `supabase/` —, e `openspec/changes/` deixa
+  de ser assunto dele por nunca ter sido proibido, não por uma lista de
+  permissão alargada. Nenhum dos quatro guardiões existentes muda de
+  alcance.
 - **`verification-bench` ganha "Asserção prova o comportamento, não o
   ambiente"** (ponto 16): toda história ou teste que alega provar uma
   garantia é revisado contra mutação do comportamento que alega provar — se
@@ -134,9 +143,9 @@ Nenhuma.
 
 ### Modified Capabilities
 
-- `workspace-verification`: "Perímetro isolado" muda de forma (território
-  nomeado, não a dupla `apps/*`/`packages/*`); dois requisitos novos para o
-  guardião do ciclo de vida de mudanças OpenSpec.
+- `workspace-verification`: "Perímetro isolado" se inverte (exclusão
+  nomeada da árvore herdada, não inclusão de `apps/*`/`packages/*`); três
+  requisitos novos para o guardião do ciclo de vida de mudanças OpenSpec.
 - `verification-bench`: um requisito novo, "Asserção prova o comportamento,
   não o ambiente".
 - `backoffice-shell`: o requisito "Moldura expõe um gatilho de navegação

@@ -4,9 +4,24 @@
 
 ### Requirement: Perímetro isolado
 
-A verificação SHALL cobrir `apps/*`, `packages/*`, `openspec/` e `tools/` —
-o território da frente de interface declarado em CLAUDE.md — e SHALL NOT
-alcançar, alterar ou reprovar conteúdo fora dele.
+A verificação SHALL NOT alcançar, alterar ou reprovar conteúdo sob `src/`,
+`tests/`, `data/`, `queries/` ou `supabase/` — a árvore da frente de coleta.
+
+**Por quê:** o texto anterior ("cobre exclusivamente `apps/*` e
+`packages/*`") descrevia uma inclusão que nenhum mecanismo aplica — cada
+guardião de `tools/checks/` monta seu próprio caminho a partir da raiz do
+repositório (`ROOT = fileURLToPath(new URL("../../", import.meta.url))`) e
+escolhe seu próprio perímetro; nada estrutural impede um guardião de ler
+outra coisa. O que a verificação de fato garante, e o único cenário deste
+requisito sempre provou, é que ela não toca a árvore de outra frente —
+`src/`, `tests/`, `data/`, `queries/`, `supabase/`, mantidas por processo
+próprio, fora de `apps/`, `packages/`, `openspec/` e `tools/`. Nomear essa
+exclusão, pequena e estável, é mais preciso do que listar tudo que a
+verificação alcança — essa segunda lista cresce a cada guardião novo (o
+guardião do ciclo de vida de mudanças, abaixo, é o caso mais recente) e
+precisaria ser reescrita a cada vez, o mesmo risco que motivou o próprio
+requisito. Ler `openspec/changes/` deixa de ser assunto deste requisito:
+não é uma inclusão nova, é a ausência de proibição.
 
 #### Scenario: Conteúdo herdado não é verificado nem alterado
 
@@ -19,12 +34,6 @@ alcançar, alterar ou reprovar conteúdo fora dele.
 - **WHEN** os scripts `collect` e `test` da raiz são executados depois da conversão em workspace
 - **THEN** ambos se comportam exatamente como antes da conversão
 - **Prova:** execução dos dois scripts antes e depois, com comparação de saída e código de saída
-
-#### Scenario: Um guardião pode alcançar `openspec/changes/` legitimamente
-
-- **WHEN** um guardião sob `tools/checks/` lê `openspec/changes/` para verificar o estado de uma mudança
-- **THEN** essa leitura não é uma violação do perímetro — `openspec/` está dentro do território declarado
-- **Prova:** `tools/checks/change-lifecycle.test.ts` executado sobre a árvore corrente, sem reprovar por alcance
 
 ## ADDED Requirements
 
@@ -69,3 +78,26 @@ há o que significar "concluída" nela.
 - **WHEN** uma mudança sob `openspec/changes/` tem `tasks.md` sem nenhuma linha de checkbox
 - **THEN** a verificação passa para essa mudança, quanto a este requisito
 - **Prova:** mudança plantada com `tasks.md` sem checkbox, verificação passando, plantio revertido
+
+### Requirement: Ponto declarado fechado por mudança arquivada não continua aberto no registro
+
+Se o `proposal.md` de uma mudança sob `openspec/changes/archive/` declarar
+fechar um ponto de `docs/pontos-abertos.md`, nomeado por número, esse
+número SHALL NOT constar entre os pontos abertos do arquivo. Encontrar os
+dois SHALL reprovar a verificação, nomeando o ponto e a mudança arquivada
+que declarou fechá-lo.
+
+**Por quê:** medido nesta própria proposta — o ciclo `tokens-obligation-form`
+arquivou declarando "Fecha o ponto 5 de `docs/pontos-abertos.md`", e o
+registro nunca foi atualizado; o ponto continuou aberto até esta mudança
+encontrar a divergência por leitura manual. Ao contrário do ponto 16 (que
+depende de saber a intenção de um teste, não mecanizável), esta é
+comparação entre duas listas que já existem por escrito — o número que uma
+mudança arquivada declara fechar, e os números que `docs/pontos-abertos.md`
+ainda lista como abertos —, mecanicamente detectável.
+
+#### Scenario: Ponto declarado fechado mas ainda aberto reprova
+
+- **WHEN** uma mudança arquivada declara, no `proposal.md`, fechar um ponto, e esse número de ponto ainda consta como aberto em `docs/pontos-abertos.md`
+- **THEN** a verificação falha, nomeando o ponto e a mudança arquivada
+- **Prova:** mudança arquivada plantada com essa declaração, ponto correspondente plantado como aberto em `docs/pontos-abertos.md`, verificação falhando, os dois plantios revertidos

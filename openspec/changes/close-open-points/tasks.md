@@ -6,13 +6,13 @@ código), depois o harness de viewport (o mais arriscado — a sonda foi
 medida fora de CI), depois o fechamento, depois os registros de
 arquivamento.
 
-## 1. Guardião do ciclo de vida de mudanças OpenSpec (pontos 17 e 20)
+## 1. Guardião do ciclo de vida de mudanças OpenSpec (pontos 17 e 20, mais um terceiro cheque)
 
 - [ ] 1.1 Escrever `tools/checks/change-lifecycle.test.ts` conforme o
       design: `activeChanges()`, `missingArtifacts()`, `tasksAllChecked()`,
-      duas afirmações. Pronto quando o arquivo passa sobre a árvore
-      corrente (`openspec/changes/` sem mudança ativa hoje), as duas
-      afirmações verdes por vacuidade.
+      duas afirmações sobre mudança ativa. Pronto quando o arquivo passa
+      sobre a árvore corrente (`openspec/changes/` sem mudança ativa
+      hoje), as duas afirmações verdes por vacuidade.
 - [ ] 1.2 Plantar `openspec/changes/probe-lifecycle/` com `proposal.md` e
       `tasks.md`, sem `design.md`; rodar o guardião. Pronto quando ele
       reprova nomeando `openspec/changes/probe-lifecycle` e `design.md`, e
@@ -26,8 +26,27 @@ arquivamento.
       guardião. Pronto quando ele passa para essa mudança, e o plantio
       está revertido.
 - [ ] 1.5 Confirmar, no corpo do PR, que `archive/` com mudanças 100%
-      concluídas (as 14 hoje arquivadas) não é varrido — rodar o guardião
-      e registrar que nenhuma delas aparece nas violações.
+      concluídas (as 14 hoje arquivadas) não é varrido pelas duas
+      primeiras afirmações — rodar o guardião e registrar que nenhuma
+      delas aparece nas violações.
+- [ ] 1.6 Escrever `declaredClosedPoints()` e `stillOpenPoints()`
+      conforme o design, e a terceira afirmação. Pronto quando o arquivo
+      passa sobre a árvore corrente — condição de passagem real, não
+      vacuidade: as 14 mudanças arquivadas declaram fechar pontos, e
+      `docs/pontos-abertos.md`, na árvore desta tarefa (antes do registro
+      da seção 6), ainda lista os pontos 5, 16, 17, 19 e 20 como abertos.
+      Isso é esperado reprovar aqui — ver 1.7.
+- [ ] 1.7 Rodar o guardião completo nesta árvore (antes do registro da
+      seção 6) e registrar, no corpo do PR, que a terceira afirmação
+      reprova nomeando o ponto 5 e `tokens-obligation-form` — a prova viva
+      do achado que motivou este cheque. Depois da seção 6 mover os
+      cinco pontos para "Fechados", repetir e confirmar que passa.
+- [ ] 1.8 Plantar uma mudança arquivada descartável
+      (`openspec/changes/archive/9999-01-01-probe-registry/proposal.md`)
+      com a frase "Fecha o ponto 9999 de `docs/pontos-abertos.md`.", e
+      plantar um ponto 9999 aberto em `docs/pontos-abertos.md`; rodar o
+      guardião. Pronto quando ele reprova nomeando o ponto 9999 e
+      `probe-registry`, e os dois plantios estão revertidos.
 
 ## 2. Perímetro do `workspace-verification` (ponto 17/20, efeito colateral)
 
@@ -36,10 +55,12 @@ arquivamento.
       `type-suppression`) continuam com o mesmo alcance —
       `git diff --stat` deles vazio. Pronto quando registrado no corpo do
       PR.
-- [ ] 2.2 Rodar `tools/checks/change-lifecycle.test.ts` e registrar, no
-      corpo do PR, que ele é a prova do cenário "Um guardião pode
-      alcançar `openspec/changes/` legitimamente" do requisito
-      "Perímetro isolado".
+- [ ] 2.2 Confirmar, no corpo do PR, que o requisito "Perímetro isolado"
+      reescrito (exclusão nomeada de `src/`, `tests/`, `data/`, `queries/`,
+      `supabase/`) continua provado pelos dois cenários existentes, sem
+      cenário novo — `tools/checks/change-lifecycle.test.ts` lendo
+      `openspec/changes/` não precisa de prova de permissão, porque o
+      requisito corrigido nunca o proíbe.
 
 ## 3. Requisito de revisão (ponto 16) — sem código
 
