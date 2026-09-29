@@ -69,6 +69,7 @@ rules:
     - Componente específico de domínio vive na pasta de componentes do app, não no pacote
     - Componente de família compõe a primitiva base e redefine os tokens dela; nunca a reimplementa
     - "Tokens de componente não são compartilhados entre componentes; precisar de tokens próprios é o que faz algo ser componente, e não propriedade"
+    - "Token de componente nasce na mesma mudança que o componente que o consome, nunca num ciclo à parte; token sem componente não é revisável, é abstração aprovada às cegas (docs/decisao-biblioteca-de-componentes.md, caso component/button.json)"
   tasks:
     - Tarefa sem teste correspondente não é considerada pronta
     - Toda tarefa tem critério de pronto verificável por execução

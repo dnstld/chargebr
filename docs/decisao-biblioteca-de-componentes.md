@@ -523,3 +523,31 @@ medição de contraste nenhuma. Não resolvo isso aqui: registro a lacuna, com
 gatilho. **Gatilho:** o primeiro componente de família com cor própria — que
 será `atoms/nav/button` ou `atoms/nav/link`, no grupo 6 de
 `interface-atomic-structure`.
+
+*Fechado por `button-variants` (adenda de 29 de setembro de 2026, abaixo) —
+não pelo gatilho literal (não é componente de família), mas pela mesma causa:
+o primeiro conjunto de token co-nascido com um componente que a checagem
+hardcoded de `color-action-primary`/`color-action-primary-hover`/
+`color-text-on-action` não alcança.*
+
+## Adenda, 29 de setembro de 2026: token nasce com o componente que o consome
+
+**Decisão do dono.** Token e o componente que o consome nascem na mesma
+mudança. Nunca em ciclos separados — token sem componente não é visível, e
+aprová-lo sozinho é aprovar abstração; com os dois juntos, mudar o token e ver
+o resultado na bancada é o mesmo passo. Registrado em `rules.design` de
+`openspec/config.yaml`.
+
+**O caso que provou o contrário, medido.** `component/button.json` nasceu
+antes de `Button` existir — o próprio arquivo se descreve assim:
+`"$description": "Mínimo da camada de componente: prova a regra de
+referência antes de existir componente."` (`component/button.json:3`). Sem
+componente para revisar contra ele, o token saiu com um par de cor (`primary`)
+e sem os dois eixos que a primeira leitura de referência (MUI, gluestack,
+react-aria-components) viria a apontar como convergência das três —
+desabilitar e tamanho. Não é defeito do arquivo: é a consequência mecânica de
+um token nascer sem o componente que o forçaria a decidir esses eixos na
+hora. O ciclo `button-variants` é o primeiro a aplicar a regra nova, com os
+dois nascendo juntos — e, de caminho, fecha a lacuna de enumeração registrada
+acima, na mesma causa: token e checagem de contraste também nascendo
+desalinhados quando nascem em momentos diferentes.
