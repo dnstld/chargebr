@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Button as AriaButton } from "react-aria-components";
+import { Button as AriaButton, type PressEvent } from "react-aria-components";
 import { Icon } from "../icon/icon";
 import { Spinner } from "../spinner/spinner";
 import styles from "./button.module.css";
@@ -32,8 +32,14 @@ export type ButtonProps = ButtonContent & {
    * o elemento focalizável, e o conteúdo normal cede lugar ao átomo `Spinner`.
    */
   isPending?: boolean;
-  /** Ação ao ativar o botão. */
-  onPress?: () => void;
+  /** Identifica, para tecnologia assistiva, o painel que este botão expande ou recolhe. */
+  "aria-expanded"?: boolean;
+  /** Identifica, para tecnologia assistiva, o elemento que este botão controla. */
+  "aria-controls"?: string;
+  /** Identifica, para tecnologia assistiva, o texto que descreve este botão. */
+  "aria-describedby"?: string;
+  /** Ação ao ativar o botão. Recebe o evento de ativação completo da primitiva. */
+  onPress?: (e: PressEvent) => void;
 };
 
 // Botão genérico: cor de ação, com ícone opcional por composição — sempre

@@ -1,6 +1,7 @@
 import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LogOut, Menu } from "lucide-react";
+import type { PressEvent } from "react-aria-components";
 import { expect, userEvent, waitFor } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
 import { resolveColor } from "../../bench/computed";
@@ -118,6 +119,63 @@ export const TamanhoNaoEspecificado: Story = {
     await expect(getComputedStyle(button).fontSize).toBe(
       tokens["button-md-font-size"][theme],
     );
+  },
+};
+
+// Os três atributos de controle que a primitiva já suporta e o wrapper
+// anterior bloqueava — consumidor nomeado: a tarefa 7.3 de
+// `interface-atomic-structure` (o gatilho do hambúrguer).
+export const AtributosDeControle: Story = {
+  name: "Atributos de controle",
+  args: {
+    children: "Abrir menu",
+    "aria-expanded": true,
+    "aria-controls": "painel-de-navegacao",
+    "aria-describedby": "texto-de-apoio",
+  },
+  // `aria-controls`/`aria-describedby` referenciam elementos que precisam
+  // existir na árvore — sem eles a checagem de acessibilidade reprova por
+  // referência inválida, não pelos atributos em si.
+  render: (args) => (
+    <>
+      <Button {...args} />
+      <div id="painel-de-navegacao">Painel de navegação</div>
+      <p id="texto-de-apoio">Abre o painel lateral de navegação.</p>
+    </>
+  ),
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Abrir menu" });
+    await expect(button).toHaveAttribute("aria-expanded", "true");
+    await expect(button).toHaveAttribute(
+      "aria-controls",
+      "painel-de-navegacao",
+    );
+    await expect(button).toHaveAttribute("aria-describedby", "texto-de-apoio");
+  },
+};
+
+// `onPress` recebe o evento de ativação completo da primitiva — não uma
+// função sem argumento (BREAKING, proposal.md).
+const eventosCapturados: PressEvent[] = [];
+
+export const EventoDeAtivacao: Story = {
+  name: "Evento de ativação",
+  args: {
+    children: "Confirmar",
+    onPress: (e: PressEvent) => {
+      eventosCapturados.push(e);
+    },
+  },
+  play: async ({ canvas }) => {
+    eventosCapturados.length = 0;
+    const button = canvas.getByRole("button", { name: "Confirmar" });
+    await userEvent.click(button);
+    await userEvent.keyboard("{Enter}");
+    await expect(eventosCapturados).toHaveLength(2);
+    await expect(eventosCapturados[0]?.type).toBe("press");
+    await expect(eventosCapturados[0]?.pointerType).toBe("mouse");
+    await expect(eventosCapturados[1]?.type).toBe("press");
+    await expect(eventosCapturados[1]?.pointerType).toBe("keyboard");
   },
 };
 

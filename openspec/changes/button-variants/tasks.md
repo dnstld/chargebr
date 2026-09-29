@@ -26,10 +26,10 @@
 
 ## 4. ARIA de controle e PressEvent
 
-- [ ] 4.1 `ButtonProps` ganha `aria-expanded?`, `aria-controls?`, `aria-describedby?`, repassados ao elemento nativo — verificar com história que passa os três e confere cada um no elemento renderizado
-- [ ] 4.2 `onPress` muda de `() => void` para `(e: PressEvent) => void` — verificar com história que ativa o botão por ponteiro e por teclado e confere as propriedades do `PressEvent` recebido
-- [ ] 4.3 Criar `atoms/button/button.typecheck.tsx` — arquivo de plantio só deste componente, sem `defineAtom`, lista de contratos ou cobertura de estado (D6 de design.md) — replantando a prova perdida em `793d8e2`: `<Button icon={Menu} />` sem `children` nem `aria-label`, com `@ts-expect-error` e a mesma justificativa de uma linha do arquivo original — verificar removendo o comentário e confirmando que `pnpm exec tsc --noEmit` reprova nomeando o arquivo; com o comentário presente, a checagem passa
-- [ ] 4.4 `grep` por todo consumidor existente de `Button.onPress` fora das próprias histórias do átomo; ajustar cada um encontrado à nova assinatura, nomeando o achado no corpo do PR — verificar com `pnpm exec tsc --noEmit` sobre a árvore inteira
+- [x] 4.1 `ButtonProps` ganha `aria-expanded?`, `aria-controls?`, `aria-describedby?`, repassados ao elemento nativo — verificar com história que passa os três e confere cada um no elemento renderizado
+- [x] 4.2 `onPress` muda de `() => void` para `(e: PressEvent) => void` — verificar com história que ativa o botão por ponteiro e por teclado e confere as propriedades do `PressEvent` recebido
+- [x] 4.3 Criar `atoms/button/button.typecheck.tsx` — arquivo de plantio só deste componente, sem `defineAtom`, lista de contratos ou cobertura de estado (D6 de design.md) — replantando a prova perdida em `793d8e2`: `<Button icon={Menu} />` sem `children` nem `aria-label`, com `@ts-expect-error` e a mesma justificativa de uma linha do arquivo original — verificar removendo o comentário e confirmando que `pnpm exec tsc --noEmit` reprova nomeando o arquivo; com o comentário presente, a checagem passa. (O arquivo já existia desde a tarefa 1.3, com o plantio de `size`; esta tarefa acrescenta o segundo plantio ao mesmo arquivo — mesma leitura de "um arquivo de plantio por componente" de D6.)
+- [x] 4.4 `grep` por todo consumidor existente de `Button.onPress` fora das próprias histórias do átomo; ajustar cada um encontrado à nova assinatura, nomeando o achado no corpo do PR — verificar com `pnpm exec tsc --noEmit` sobre a árvore inteira. **Achado:** nenhum consumidor fora das próprias histórias de `Button` chama `onPress` hoje — `grep -rn "onPress" packages apps` só retorna `atoms/button/button.tsx` e `atoms/button/button.stories.tsx`.
 
 ## 5. Fechamento
 
