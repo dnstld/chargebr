@@ -64,9 +64,11 @@ o par ação/hover/onAction é o único campo ainda hardcoded nesse arquivo.
   `docs/incidente-instabilidade-da-bancada.md` continua valendo; nada aqui a
   levanta.
 - Reposição da prova de tipo de qualquer outro átomo que também a perdeu em
-  `793d8e2` (`Icon`, `Heading`, `Text`, `NumericValue`, `StatusMarker`,
-  `DeclaredAbsence`) — cada um repõe a sua quando o próprio ciclo dele tocar
-  o componente, mesma disciplina de "token nasce com o componente" aplicada
+  `793d8e2` e continua existindo hoje (`Icon`, `Heading`, `Text` — medido em
+  `packages/ui/src/atoms/`; `NumericValue`, `StatusMarker` e
+  `DeclaredAbsence` foram dissolvidos em `6a70b82`, não há ciclo futuro que
+  os toque) — cada um repõe a sua quando o próprio ciclo dele tocar o
+  componente, mesma disciplina de "token nasce com o componente" aplicada
   à prova de tipo.
 
 ## Decisions
@@ -295,12 +297,12 @@ movimento — como R3/R6, hoje nenhum precisa.
   [Mitigação] nomeada como decisão do primeiro consumidor (`Button`); o
   ciclo de cada um mede de novo se três degraus bastam, sem obrigação de
   reaproveitar os mesmos nomes.
-- [Risco] repor a prova de tipo só de `Button` deixa `Icon`, `Heading`,
-  `Text`, `NumericValue`, `StatusMarker` e `DeclaredAbsence` sem a garantia
-  que também perderam em `793d8e2`, por tempo indefinido → [Mitigação]
-  escopo nomeado em Non-Goals; cada um repõe quando o próprio ciclo tocar o
-  componente — o risco real é alguém tratar o silêncio como "resolvido para
-  o pacote todo", por isso fica registrado aqui e não só implícito no código.
+- [Risco] repor a prova de tipo só de `Button` deixa `Icon`, `Heading` e
+  `Text` sem a garantia que também perderam em `793d8e2` e ainda existem
+  hoje, por tempo indefinido → [Mitigação] escopo nomeado em Non-Goals; cada
+  um repõe quando o próprio ciclo tocar o componente — o risco real é alguém
+  tratar o silêncio como "resolvido para o pacote todo", por isso fica
+  registrado aqui e não só implícito no código.
 
 ## Migration Plan
 
