@@ -495,6 +495,22 @@ de uma pasta de família. A pasta de família (`atoms/nav/`) só recebe o que é
 próprio daquele contexto — o componente de família em si (`atoms/nav/button/`)
 —, nunca a primitiva que ele compõe.
 
+**Exemplo real, acrescentado depois de o grupo 6 de
+`interface-atomic-structure` construir a família `nav`.** `atoms/nav/item/`
+(compõe `atoms/link/`), `molecules/nav/section/` (sem família — primeira
+molécula do pacote, não especializa nenhuma base existente) e
+`organisms/nav/panel/` (sem família, mesma razão): os três com `nav`
+nomeando o contexto de navegação, nunca a primitiva que cada um compõe por
+dentro. A pasta de família nomeia o contexto, nunca a primitiva composta —
+isso vive no código e no comentário do componente, não no caminho:
+`atoms/nav/item/` não se chama `atoms/nav/link/`, porque "item" é o que o
+componente É para quem usa (uma folha de navegação), não o que ele
+reaproveita por dentro (`import { Link } from "../../link/link"`). A
+primeira versão deste componente, construída antes desta frase existir,
+chamou a pasta de `atoms/nav/link/` — pelo nome da primitiva composta — e
+precisou ser corrigida por `git mv`. Regra com instância na árvore é o que
+impede a próxima improvisação.
+
 **O destino do componente de domínio.** Não existe mais um terceiro eixo
 arquitetural chamado "domínio" com perímetro, guardião e pasta própria — isso
 saiu inteiro com `domain-primitives` e `domain-charts`
