@@ -74,9 +74,8 @@ superfície preenchida, além de peso, e SHALL NOT depender só de cor para
 marcar o estado corrente. Um `NavItem` no estado corrente SHALL anunciar esse
 estado a tecnologia assistiva.
 
-**Por quê:** mesma lógica do requisito "Papéis não são intercambiáveis" de
-`domain-primitives` — um sinal só de cor não sustenta a distinção para quem
-não a percebe. O anúncio a tecnologia assistiva é um terceiro canal, não uma
+**Por quê:** um sinal só de cor não sustenta a distinção para quem não a
+percebe. O anúncio a tecnologia assistiva é um terceiro canal, não uma
 variação dos outros dois: superfície preenchida e peso são sinais visuais —
 não alcançam quem não vê a tela —, e sem `aria-current` o estado corrente
 existiria só visualmente, o mesmo defeito de fundo (um canal só) atrás de
@@ -140,9 +139,8 @@ Todo estado declarado no contrato de um componente deste inventário SHALL
 possuir história correspondente, e estado sem história SHALL reprovar a
 verificação.
 
-**Por quê:** mesma regra já vigente em `interface-atoms` e em
-`domain-primitives`, estendida ao inventário de shell — um componente novo
-não fica fora da cobertura que os demais já têm.
+**Por quê:** um componente novo não fica fora da cobertura de história que
+todo componente do pacote já tem.
 
 #### Scenario: Estado sem história reprova
 
