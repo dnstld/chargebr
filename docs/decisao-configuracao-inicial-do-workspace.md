@@ -301,6 +301,32 @@ expressáveis antes de qualquer tela existir.
 | R6 | Ferramenta de processo abandonada ou com atualização que quebra | OpenSpec é MIT com repositório público e artefatos em markdown; migrar custa reescrever cabeçalho, não recuperar dado |
 | R7 | A ferramenta não exige teste por padrão | Regras em `openspec/config.yaml`: todo critério de aceite nomeia seu teste, tarefa sem teste não é pronta |
 
+## Decisão de 2026-09-29: o guardião `fixture-origin` fica
+
+**Decidido por omissão, registrado agora.** `remove-domain-capabilities`
+retirou a fixture derivada do contrato de leitura de `packages/ui`
+(mitigação de R2, acima) e deixou só fixture sintética na árvore — o que
+esvaziou metade do que `tools/checks/fixture-origin.test.ts` tinha para
+distinguir. Ninguém decidiu explicitamente manter o guardião; ele
+simplesmente continuou rodando, e essa continuidade não estava escrita em
+lugar nenhum.
+
+**Por que fica.** Com fixture só sintética, o guardião ainda obriga toda
+fixture nova, em qualquer parte do perímetro (`apps/*`, `packages/*`), a
+declarar no próprio arquivo se é sintética ou derivada do contrato de
+leitura — e reprova quem não declarar, ou quem declarar sintética por
+engano sobre dado real. É garantia viva num produto de dados: o dia em que
+uma fixture derivada de banco ou de publicação entrar (a primeira rota de
+negócio real, ou o primeiro gráfico com dado real), o guardião já está no
+lugar para pegá-la sem declaração — não é código morto esperando um
+consumidor, é precondição para quando o consumidor chegar.
+
+**O que me faria mudar de ideia:** se o perímetro inteiro (`apps/*` e
+`packages/*`) ficasse sem nenhuma fixture derivada de dado real por um
+prazo longo *e* sem nenhum plano de trazer uma — não é o caso: `apps/backoffice`
+é exatamente o destino da primeira rota de negócio real, ainda sem data,
+mas sem revogação também.
+
 ## Decisões em aberto
 
 Nenhuma é exigida pelos ciclos 1 a 6. Registrar antes do ciclo 7.

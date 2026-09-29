@@ -88,3 +88,19 @@ remoção de `interface-atoms` já terá acontecido pela outra.
 Os grupos 6, 7 e 8 acima (Navegação, `AppFrame`, Fechamento) não tocam
 domínio e continuam válidos como estão — nenhuma tarefa deles depende de
 `molecules/domain/`, `organisms/domain/` ou de `domain-primitives`.
+
+## Nota de 2026-09-29, sem alterar o log acima
+
+`remove-domain-capabilities` arquivou primeiro — confirmado:
+`openspec/changes/archive/2026-09-29-remove-domain-capabilities`. Como a nota
+anterior já previa para esta ordem, o `REMOVED`/`MODIFIED` desta mudança
+contra `interface-atoms`/`domain-primitives` ficou sem alvo — `interface-atoms`
+já não tinha mais "Distinção não depende só de cor" para remover, e
+`domain-primitives` não existe mais para modificar. Os dois arquivos de delta
+(`specs/interface-atoms/spec.md`, `specs/domain-primitives/spec.md`) foram
+removidos de `openspec/changes/interface-atomic-structure/specs/`, e as duas
+entradas correspondentes saíram de "Modified Capabilities" em `proposal.md`,
+com a razão registrada ali. `molecules/domain/` e `organisms/domain/`, criadas
+pelas tarefas 1.1–1.2, foram esvaziadas e removidas por inteiro pela outra
+mudança — o que a nota anterior media como consequência já aconteceu.
+Nenhuma tarefa executada acima foi reescrita.
