@@ -171,6 +171,21 @@ tamanho referenciando o degrau de `text.control` correspondente ao `size` do
 na mesma mudança — é o segundo caso da regra nova (`rules.design`),
 depois do próprio `component/button.json` estendido.
 
+**Correção medida na aplicação:** `color.action.primary` é a cor certa para
+um `Spinner` solto sobre superfície neutra, mas o `Spinner` composto dentro
+de `Button` pousa sobre o **fundo do botão** — que também é
+`color.action.primary` —, e ficava invisível; token de componente que vai
+ser composto dentro de outro se escolhe contra a superfície em que ele
+pousa, não só pelo papel semântico, e foi isso que faltou aqui. Corrigido em
+`button.module.css`: `.button` redefine `--spinner-color: var(--button-
+primary-text)` (a cor do rótulo ao lado, não a de fundo) —
+`component/spinner.json` não muda, o valor genérico continua certo para o
+caso solto; o que muda é o que `.button`/`.button[data-disabled]`
+redefinem, o mesmo padrão de sobrescrita no próprio seletor que a adenda de
+29/09 de `docs/decisao-biblioteca-de-componentes.md` já registra. Sem par de
+contraste novo: `color.text.on-action` × `color.action.primary` já é
+varrido por `contrast.ts`.
+
 **Alternativa considerada:** prop de estilo dentro de `Button` (padrão
 `loadingIndicator` do Material UI). Descartada pela regra já registrada em
 `rules.design`: "tokens de componente não são compartilhados... precisar de

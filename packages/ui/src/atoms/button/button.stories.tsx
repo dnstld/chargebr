@@ -193,12 +193,20 @@ export const Pendente: Story = {
       throw new Error("onPress não deveria disparar com o botão pendente");
     },
   },
-  play: async ({ canvas }) => {
+  play: async ({ canvas, globals }) => {
+    const theme = globals.theme as Theme;
     const button = canvas.getByRole("button", { name: "Confirmar" });
     await userEvent.tab();
     await expect(document.activeElement).toBe(button);
     await expect(button.textContent).toContain("Confirmar");
-    await expect(button.querySelector("[data-spinner]")).not.toBeNull();
+    const spinner = button.querySelector("[data-spinner]");
+    await expect(spinner).not.toBeNull();
+    // O Spinner pousa sobre o fundo do botão, não sobre uma superfície
+    // neutra — precisa da cor do rótulo ao lado, não da cor de ação que
+    // component/spinner.json declara para o caso solto (design.md).
+    await expect(getComputedStyle(spinner as Element).color).toBe(
+      resolveColor(tokens["button-primary-text"][theme]),
+    );
     await userEvent.click(button);
     await userEvent.keyboard("{Enter}");
   },

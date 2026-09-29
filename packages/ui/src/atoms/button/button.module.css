@@ -13,6 +13,12 @@
   background-color: var(--button-primary-background);
   color: var(--button-primary-text);
   outline: none;
+  /* `Spinner` pousa sobre o fundo do botão, não sobre uma superfície neutra —
+     a cor de ação que component/spinner.json declara para esse caso combina
+     com o próprio fundo aqui. Quem compõe redefine para a cor do rótulo ao
+     lado (rules.design; docs/decisao-biblioteca-de-componentes.md, adenda de
+     29/09: token de componente é API de tema, redefinível por quem compõe). */
+  --spinner-color: var(--button-primary-text);
 }
 
 .button.sm {
@@ -48,4 +54,5 @@
 .button[data-disabled] {
   background-color: var(--button-disabled-background);
   color: var(--button-disabled-text);
+  --spinner-color: var(--button-disabled-text);
 }
