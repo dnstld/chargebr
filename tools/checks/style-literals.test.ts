@@ -45,6 +45,31 @@ const GUARDED_PROPERTIES = [
 const ALLOWED_KEYWORDS =
   /\b(inherit|initial|unset|revert|revert-layer|currentColor|transparent|none|auto|normal|0)\b/gi;
 
+// `var(--nome, <fallback>)`: a mesma referência a token, com um segundo
+// argumento para quando a propriedade nunca é declarada em `:root` — caso de
+// um eixo que a primitiva só expõe para quem compuser redefinir (ver
+// docs/decisao-biblioteca-de-componentes.md, "estrutura por camada e
+// família"). O fallback não é literal livre: só passa se for, sozinho, uma
+// das palavras-chave de ALLOWED_KEYWORDS — cor (`#fff`) e medida (`4px`)
+// continuam reprovando, porque não têm token nenhum atrás.
+const VAR_WITH_FALLBACK = /var\(--[a-z0-9-]+\s*,\s*([^()]+)\)/gi;
+const ALLOWED_FALLBACK =
+  /^(inherit|initial|unset|revert|revert-layer|currentColor|transparent|none|auto|normal|0)$/i;
+
+// Sobra de um valor guardado depois de retirar toda referência a token.
+// Exportado para prova direta do mecanismo, sem escrever arquivo — mesmo
+// princípio de D6 (docs/decisao-biblioteca-de-componentes.md): medir o
+// mecanismo antes de confiar nele, aqui sobre o próprio guardião.
+export function guardedValueRemainder(value: string): string {
+  return value
+    .replace(VAR_WITH_FALLBACK, (match, fallback: string) =>
+      ALLOWED_FALLBACK.test(fallback.trim()) ? "" : match,
+    )
+    .replace(/var\(--[a-z0-9-]+\)/gi, "")
+    .replace(ALLOWED_KEYWORDS, "")
+    .replace(/[\s,/]/g, "");
+}
+
 // Literal de cor, em qualquer propriedade e em qualquer arquivo.
 const COLOR_LITERAL =
   /#[0-9a-f]{3,8}\b|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/i;
@@ -132,10 +157,7 @@ function cssViolations(file: string): string[] {
       continue;
     }
     if (!GUARDED_PROPERTIES.some((pattern) => pattern.test(property))) continue;
-    const remainder = value
-      .replace(/var\(--[a-z0-9-]+\)/gi, "")
-      .replace(ALLOWED_KEYWORDS, "")
-      .replace(/[\s,/]/g, "");
+    const remainder = guardedValueRemainder(value);
     if (remainder.length > 0) {
       violations.push(`${location} — ${property}: ${value.trim()} (literal de estilo)`);
     }
@@ -174,4 +196,16 @@ function styleLiterals(): string[] {
 
 test("fora de @chargebr/tokens, nenhum arquivo declara valor literal de estilo", () => {
   expect(styleLiterals()).toEqual([]);
+});
+
+test("var() com fallback: só palavra-chave permitida passa, literal continua reprovando", () => {
+  // Os dois que precisam passar — nenhum literal aqui, "transparent" e "0"
+  // já estavam em ALLOWED_KEYWORDS antes desta extensão.
+  expect(guardedValueRemainder("var(--link-background, transparent)")).toBe("");
+  expect(guardedValueRemainder("var(--link-padding-inline, 0)")).toBe("");
+  // Os dois que continuam reprovando: medida literal no fallback não é
+  // palavra-chave, e cor literal é pega pela etapa que já existia (COLOR_LITERAL),
+  // antes até de chegar aqui.
+  expect(guardedValueRemainder("var(--link-padding-inline, 4px)")).not.toBe("");
+  expect(COLOR_LITERAL.test("var(--link-background, #fff)")).toBe(true);
 });

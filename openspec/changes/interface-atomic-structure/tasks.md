@@ -36,7 +36,55 @@
 
 ## 6. Navegação
 
-- [ ] 6.1 Construir `PathLabel` (texto, sem papel de navegação, sem foco) — verificar com o teste do requisito "Rótulo de caminho não é região de navegação" de `specs/shell-components/spec.md`
+**Extensão de escopo descoberta na execução de 6.2, registrada aqui antes da
+tarefa ser dada como pronta.** `NavItem` precisa de `Link` (`atoms/link/`) com
+fundo preenchido, preenchimento interno e raio de pílula no estado corrente —
+nenhum dos três é eixo que `Link` expõe hoje: o componente lê token semântico
+direto (`--text-label-weight`, `--color-action-primary`, `--radius-sm`), sem
+camada de token própria, e `LinkProps` só aceita `href`/`children`, sem
+`className` nem qualquer prop de estilo. O mecanismo já decidido para
+componente de família (`docs/decisao-biblioteca-de-componentes.md`,
+"estrutura por camada e família") é redefinir, por herança de custom
+property, um nome de token que a própria base já lê — e isso só funciona
+para o que a base já lê. Medido: não há outro jeito de dar a `NavItem` fundo
+preenchido sem tocar `Link`, porque CSS Modules não deixam um seletor de um
+módulo alcançar a classe de outro por fora da herança de custom property, e
+`Link` não aceita `className` para receber uma classe de fora de qualquer
+forma.
+
+Decidido pelo dono: dar a `Link` a camada de token completa nesta mesma
+tarefa — `component/link.json`, todo eixo visual que `link.module.css` já
+declara ganha nome `--link-*`, com o valor de hoje (zero mudança visual,
+provada pelas histórias existentes de `Link` continuando verdes) — mais dois
+eixos que `Link` nunca teve (fundo, preenchimento), lidos por `var(--nome,
+<fallback>)` com fallback explícito em vez de depender de custom property
+nunca declarada.
+
+Medido antes de aplicar o fallback: `tools/checks/style-literals.test.ts`
+reprovava `var(--link-background, transparent)` mesmo com `transparent` em
+`ALLOWED_KEYWORDS` — o regex de limpeza (`var\(--[a-z0-9-]+\)`) exige
+fechamento imediato do `)`, sem vírgula, e a vírgula do fallback quebra o
+casamento antes mesmo de `ALLOWED_KEYWORDS` entrar em jogo. Não era
+restrição de design, era defeito do guardião: o fallback nunca continha
+literal algum. Corrigido em `tools/checks/style-literals.test.ts` (commit
+próprio, antes do de `Link`): a limpeza passa a reconhecer `var(--nome,
+<fallback>)` e remove só quando o fallback é uma das palavras-chave já
+permitidas — `var(--x, transparent)` e `var(--x, 0)` passam, `var(--x, #fff)`
+e `var(--x, 4px)` continuam reprovando, os quatro casos provados em teste
+(`tools/checks/style-literals.test.ts`, `guardedValueRemainder`) antes de
+usar a construção em `link.module.css`.
+
+`link.module.css:11` lia `var(--radius-sm)` — token primitivo direto, o único
+componente do pacote alcançando além do semântico. Medido antes de trocar:
+`primitive/radius.json` fixa `sm = 2px`, `md = 4px`; `radius.control` (a
+única entrada semântica de raio para "controles interativos: botão, campo,
+seletor", mesma família de `Link`) referencia `{radius.md}` = 4px — nenhuma
+entrada semântica resolve para 2px hoje, então não existe troca que preserve
+o valor exato só usando semântico. Trocado para `--link-radius:
+var(--radius-control)` (o mesmo caminho de `--button-radius`), aceitando a
+mudança visual de 2px para 4px — sutil, e a alternativa (manter leitura de
+primitivo) perpetua a única exceção do pacote à regra "componente só alcança
+semântico".- [ ] 6.1 Construir `PathLabel` (texto, sem papel de navegação, sem foco) — verificar com o teste do requisito "Rótulo de caminho não é região de navegação" de `specs/shell-components/spec.md`
 - [ ] 6.2 Construir `NavItem` (estado corrente com superfície preenchida além do peso) — verificar com o teste do requisito "Item de navegação corrente é marcado por mais de um sinal"
 - [ ] 6.3 Construir `NavSection` (rótulo não clicável, exige ao menos uma folha) — verificar com o teste de tipos que planta seção sem folha e confere `verify:types` falhando
 - [x] 6.4 Decidido pelo dono (`design.md`, D5): posição (a) — `NavPanel` só na bancada, sem ligar ao `AppFrame` real; o requisito de `backoffice-shell` permanece como está
