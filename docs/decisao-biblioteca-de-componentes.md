@@ -427,4 +427,75 @@ real em breve: o grupo 6 de `interface-atomic-structure` constrói `NavItem`,
 que é um link.
 
 **Onde isto está aplicado:** `openspec/config.yaml` (`rules.specs`) e
-`openspec/changes/remove-domain-capabilities/` (proposta, design e specs).
+`openspec/changes/archive/2026-09-29-remove-domain-capabilities/` (proposta,
+design e specs).
+
+## Decisão de 2026-09-29: estrutura por camada e família, e o destino do componente de domínio
+
+**Decidido pelo dono.**
+
+**Cada componente tem seus próprios tokens.** Tokens de componente não são
+compartilhados entre componentes. Componente novo carrega visual próprio, e é
+isso que o distingue de uma variante do que já existe: se precisa de tokens
+próprios, é componente próprio; se não precisa, é propriedade do componente
+existente — não ganha nome novo só para existir.
+
+**O mecanismo, não só o princípio.** Os nomes de token de um componente são a
+API pública de tema dele. Um componente de família — que compõe a primitiva
+base para um contexto visual específico, como navegação — aplica seus
+próprios valores redefinindo esses nomes no próprio seletor, e isso é uso
+documentado da API de tema, não travessia:
+
+```css
+.navButton {
+  --button-primary-background: var(--nav-button-background);
+}
+```
+
+Isto funciona porque declaração no próprio elemento vence a do ancestral: o
+`Button` genérico lê `--button-primary-background` no seu próprio CSS Module,
+e o seletor acima, mais específico, redefine essa variável só dentro de
+`.navButton`, antes de `Button` a ler. Um valor colocado no invólucro sob um
+nome novo — uma variável que `Button` nunca declara nem lê — não funciona: o
+componente base não tem como saber que ela existe, e o efeito não aparece em
+lugar nenhum, silenciosamente.
+
+**Precedente que já reprovou uma vez, pelo caminho errado.**
+`ValueWithProvenance` (D8 de `interface-atomic-structure`) resolveu o mesmo
+problema — um componente de composição precisando de um valor visual que a
+primitiva base não expõe como variante — alcançando dentro do átomo `Text`
+por um seletor, `.context [data-weight]`, usando um atributo que não era
+contrato declarado do átomo, em vez de redefinir um token. Funcionou até a
+prova ser refeita com o localizador decoplado do mesmo atributo: a afirmação
+indireta (comparação entre papéis) passou mesmo com o acoplamento quebrado,
+porque os dois átomos comparados já diferiam de tamanho por outro motivo, sem
+relação com o que estava sendo provado. O padrão que evita repetir esse
+defeito é este: redefinir o nome de token que o componente base já declara,
+nunca reaproveitar um atributo que ele não declarou como contrato.
+`ValueWithProvenance` saiu do pacote junto com `domain-primitives`
+(`remove-domain-capabilities`); o achado sobre a forma certa de compor
+sobrevive a ele.
+
+**O destino do componente de domínio.** Não existe mais um terceiro eixo
+arquitetural chamado "domínio" com perímetro, guardião e pasta própria — isso
+saiu inteiro com `domain-primitives` e `domain-charts`
+(`remove-domain-capabilities`). O que resta como eixo de variação entre
+componentes é camada (átomo, molécula, organismo) × família: uma
+especialização visual e de composição, como "nav", sem vocabulário de
+negócio e sem status arquitetural privilegiado — um componente de família é
+um componente comum, que compõe outro e redefine tokens, nada mais. "Família"
+não é "domínio" com nome trocado: nenhum guardião varre `atoms/nav/` do jeito
+que `component-vocabulary` varria `molecules/domain/` e `organisms/domain/`,
+porque não há vocabulário de negócio para proibir ali — se um dia houver, aí
+sim é domínio de novo, e volta pela porta que `docs/decisao-configuracao-inicial-do-workspace.md`
+já registrou: quando existir banco e API.
+
+**Lacuna registrada, não resolvida.** As checagens de contraste e de
+legibilidade de `design-tokens` conhecem os conjuntos de token que existem
+hoje, enumerados à mão. Com um conjunto de token por componente — não um
+conjunto pequeno e fixo por camada semântica —, essas checagens precisam
+enumerar os conjuntos automaticamente, ou todo componente novo entra sem
+medição de contraste nenhuma. Não resolvo isso aqui: registro a lacuna, com
+gatilho. **Gatilho:** o primeiro componente de família com cor própria — que
+será `atoms/nav/button` ou `atoms/nav/link`, no grupo 6 de
+`interface-atomic-structure`.
