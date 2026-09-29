@@ -1,24 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-  expectBlockedReplacesChart,
   expectLegendNamesSeries,
-  expectMissingDeclared,
   expectNoInteractiveInPlot,
   expectNoLegend,
+  expectNoMarkForMissingValue,
   expectTextEquivalent,
   expectTextOutsideChartSurface,
-  expectUnresolvedHatchedAndDetached,
-  expectUnresolvedOutsideStack,
+  expectTexturedFill,
 } from "../chart.assert";
 import {
-  CURRENT_METHODOLOGY,
-  ELECTRIFIED_UNITS,
-} from "../fixtures/abve-eletrificados-janeiro-2025";
-import {
+  COMPLETE,
   SYNTHETIC_UNITS,
   THREE_SERIES,
   WITH_MISSING,
-  WITH_UNRESOLVED,
+  WITH_TEXTURED,
 } from "../fixtures/synthetic-series";
 import { StackedBarChart } from "./stacked-bar-chart";
 
@@ -32,12 +27,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const TresSeries: Story = {
-  name: "Três séries, com não resolvido e ausência",
-  tags: [
-    "state:multiple_series",
-    "state:unresolved_point",
-    "state:missing_point",
-  ],
+  name: "Três séries, com preenchimento texturizado e ausência",
   args: {
     title: "Fixture sintética",
     measure: SYNTHETIC_UNITS,
@@ -50,49 +40,27 @@ export const TresSeries: Story = {
       canvasElement,
       THREE_SERIES.map((one) => one.name),
     );
-    await expectUnresolvedHatchedAndDetached(
+    await expectTexturedFill(canvasElement, WITH_TEXTURED.name, "Março");
+    await expectNoMarkForMissingValue(
       canvasElement,
-      WITH_UNRESOLVED.name,
+      WITH_MISSING.name,
       "Março",
     );
-    await expectMissingDeclared(canvasElement, WITH_MISSING.name, "Março");
     await expectTextEquivalent(canvasElement, THREE_SERIES);
-    await expectUnresolvedOutsideStack(
-      canvasElement,
-      "Março",
-      WITH_UNRESOLVED.name,
-    );
   },
 };
 
 export const UmaSerie: Story = {
-  name: "Uma série, derivada do contrato",
-  tags: ["state:single_series"],
+  name: "Uma série",
   args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    series: [CURRENT_METHODOLOGY],
+    title: "Fixture sintética",
+    measure: SYNTHETIC_UNITS,
+    series: [COMPLETE],
   },
   play: async ({ canvasElement }) => {
     await expectNoInteractiveInPlot(canvasElement);
     await expectTextOutsideChartSurface(canvasElement);
     await expectNoLegend(canvasElement);
-    await expectTextEquivalent(canvasElement, [CURRENT_METHODOLOGY]);
-  },
-};
-
-export const Bloqueada: Story = {
-  name: "Projeção bloqueada",
-  tags: ["state:blocked"],
-  args: {
-    title: "Veículos leves eletrificados",
-    measure: ELECTRIFIED_UNITS,
-    blocked: ["metric_not_found", "provenance_incomplete"],
-  },
-  play: async ({ canvasElement }) => {
-    await expectBlockedReplacesChart(canvasElement, [
-      "metric_not_found",
-      "provenance_incomplete",
-    ]);
+    await expectTextEquivalent(canvasElement, [COMPLETE]);
   },
 };

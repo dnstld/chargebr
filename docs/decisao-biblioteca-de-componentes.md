@@ -244,13 +244,21 @@ acessibilidade) só quando compostas. Encontrado um, ele entra aqui nomeado, com
 a combinação exata, e a regra de cobertura por variante ganha essa exceção
 nomeada — não uma exceção geral.
 
+> **Nota de 793d8e2.** O requisito vivo em que esta posição se apoiava —
+> "todo estado declarado tem história", verificado por
+> `stories-coverage.test.ts` — foi removido: a checagem lia a lista de
+> estados que o próprio componente declarava, e declarar menos fazia a prova
+> passar. A posição em si continua válida — cobertura por variante, não por
+> combinação — agora como critério de revisão, sem guardião automatizado. O
+> que caiu foi só a afirmação de que a máquina já a sustentava.
+
 ## O que o CI reprova, e o que só a revisão pega
 
 | Regra | Guardião | Situação |
 | --- | --- | --- |
 | Valor de variante não resolvido inteiro por token (literal de peso, destaque, raio, sombra) | `style-literals` | **Já cobre.** `GUARDED_PROPERTIES` já inclui `font-weight`, `font-style`, `font-size`, `border-radius`, `box-shadow`; a extensão de `valueRole` para `weight`/`emphasis` não pede guardião novo. |
-| Todo valor de propriedade declarado tem história | `stories-coverage.test.ts` (generaliza `AtomContract.states`) | **Mecanismo já suporta, sem mudança de forma.** `states` é `readonly State[]` de string opaca, comparada por tag `state:<valor>` — codificar `weight:semibold` como um desses valores não pede campo novo em `contract.ts`, só que cada primitiva declare `eixo:valor` em vez de um valor solto. Implementação é do ciclo de aplicação, não deste documento. |
-| Componente de domínio declara rótulo em português no próprio arquivo | `component-vocabulary` | **Já cobre `domain/` e `shell/`.** Não cobre `atoms/` — e não deveria: o problema em `atoms/` não é a língua do rótulo (ver seção `valueRole`), é a forma do prop, e isso um guardião de string não enxerga. |
+| Todo valor de propriedade declarado tem história | nenhum hoje | **Removido em 793d8e2.** `stories-coverage.test.ts` e `AtomContract.states` não existem mais: a checagem lia a lista de estados que o próprio componente declarava — `Hatch` declarava `[]` e passava. Cobertura por variante é critério de revisão, não de `pnpm verify`; o `addon-vitest` executa toda história que existe, nos dois temas, com `axe`, e é isso que protege. |
+| Componente de domínio declara rótulo em português no próprio arquivo | `component-vocabulary` | **Sai com o perímetro de domínio.** `shell/` deixou de ser pasta no PR #177; o guardião sai inteiro no passo seguinte, junto com o perímetro `domain/`. |
 | Primitiva genérica não importa de `domain/` | nenhum hoje | **Lacuna nova.** `biome.json` hoje separa perímetro por pacote (`packages/**` vs `apps/**`), não por pasta dentro do mesmo pacote. Nada impede hoje que um arquivo em `atoms/` importe de `domain/`. Regra proponível via `noRestrictedImports` escopado a `packages/ui/src/atoms/**`; fica para a proposta do ciclo de migração — este documento só nomeia a lacuna. |
 | Primitiva genérica não tem prop com forma de papel de domínio (`valueRole` e equivalentes futuros) | nenhum | **Só revisão.** Forma de prop não é string nem import — nenhum guardião varre "isto parece modelagem de domínio". Fica como critério de revisão de PR, não de `pnpm verify`. |
 | Nova primitiva interativa declara estado de ponteiro (`hover`/`pressed`) verificado por história | nenhum | **Só revisão**, e com precedente de recuo: ver riscos, abaixo. |
@@ -373,3 +381,145 @@ Catorze dos dezesseis requisitos atravessam a migração sem mudança de texto.
 Os dois que mudam — um em cada spec — são o mesmo requisito visto de dois
 lugares, e o ciclo de migração decide onde ele mora, com proposta e revisão
 próprias: não é decisão deste documento.
+
+## Decisão de 2026-09-28: teste de componente, e o destino de Hatch, DeclaredAbsence e EvidenceAnchor
+
+**Decidido pelo dono, em conversa que acompanhou a escrita de
+`openspec/changes/remove-domain-capabilities/`.** Registrado aqui porque
+decisão que existe só em conversa é invisível para todo agente que ler o
+repositório depois — foi assim que aquela proposta nasceu com um item em
+aberto que já estava decidido.
+
+**O teste de um componente de biblioteca não é o mesmo teste de um
+requisito.** `rules.specs` de `openspec/config.yaml` (desde `bdde87e`) exige
+que todo requisito nomeie o que quebra sem ele, hoje, no que está
+construído — e isso vale para requisito, não para componente. Biblioteca de
+UI é inventário: um componente genérico, sem consumidor construído, é
+catálogo à espera de uso, não lacuna a fechar. A regra ganhou essa
+distinção, explícita, em `openspec/config.yaml`, na mesma data — sem ela, a
+regra do requisito vira licença para esvaziar a biblioteca componente por
+componente.
+
+**`Hatch` e `ChartHatchPattern` ficam — as duas definições de hachura
+continuam existindo, e com elas o requisito que garante que não divergem.**
+Pelo teste acima, `Hatch` já ficaria: é genérico. O gráfico também ganha uma
+opção de preenchimento por ponto, genérica — cheio ou texturizado —, escolha
+visual de quem compõe, sem estado nem significado de negócio atribuído a
+ela. Com as duas definições de hachura em uso outra vez, o requisito "A
+hachura é uma só" continua tendo o que provar — migra para a capacidade de
+gráfico, em vez de sair com o resto da metodologia.
+
+**`DeclaredAbsence` sai — não por falta de consumidor, por não ser
+primitiva.** `kind` vale `"blocked"` ou `"unknown"`: são nomes de vocabulário
+de domínio (`projection_status = blocked`, `date_precision = unknown`), não
+uma variante genérica. Nas palavras do dono: "na minha visão isso é só um
+texto" — sem o vocabulário de domínio por trás do `kind`, o que sobra é texto
+sem propriedade própria que o distinga de `Text`. Diferente de `Hatch`: o
+átomo nasceu para nomear dois estados de domínio, e não há generalização que
+sobre sem eles.
+
+**`EvidenceAnchor` vira `Link`, genérico.** `href` e conteúdo, nome acessível
+obrigatório, sem depender só de ícone ou posição — a mesma garantia que o
+átomo já tinha, menos o nome "evidência" e o vocabulário que vinha junto.
+Passa o teste de componente de biblioteca mesmo sem consumidor imediato —
+link é primitiva legítima de qualquer biblioteca de UI — e ganha consumidor
+real em breve: o grupo 6 de `interface-atomic-structure` constrói `NavItem`,
+que é um link.
+
+**Onde isto está aplicado:** `openspec/config.yaml` (`rules.specs`) e
+`openspec/changes/archive/2026-09-29-remove-domain-capabilities/` (proposta,
+design e specs).
+
+## Decisão de 2026-09-29: estrutura por camada e família, e o destino do componente de domínio
+
+**Decidido pelo dono.**
+
+**Cada componente tem seus próprios tokens.** Tokens de componente não são
+compartilhados entre componentes. Componente novo carrega visual próprio, e é
+isso que o distingue de uma variante do que já existe: se precisa de tokens
+próprios, é componente próprio; se não precisa, é propriedade do componente
+existente — não ganha nome novo só para existir.
+
+**O mecanismo, não só o princípio.** Os nomes de token de um componente são a
+API pública de tema dele. Um componente de família — que compõe a primitiva
+base para um contexto visual específico, como navegação — aplica seus
+próprios valores redefinindo esses nomes no próprio seletor, e isso é uso
+documentado da API de tema, não travessia:
+
+```css
+.navButton {
+  --button-primary-background: var(--nav-button-background);
+}
+```
+
+Isto funciona porque declaração no próprio elemento vence a do ancestral: o
+`Button` genérico lê `--button-primary-background` no seu próprio CSS Module,
+e o seletor acima, mais específico, redefine essa variável só dentro de
+`.navButton`, antes de `Button` a ler. Um valor colocado no invólucro sob um
+nome novo — uma variável que `Button` nunca declara nem lê — não funciona: o
+componente base não tem como saber que ela existe, e o efeito não aparece em
+lugar nenhum, silenciosamente.
+
+**Precedente que já reprovou uma vez, pelo caminho errado.**
+`ValueWithProvenance` (D8 de `interface-atomic-structure`) resolveu o mesmo
+problema — um componente de composição precisando de um valor visual que a
+primitiva base não expõe como variante — alcançando dentro do átomo `Text`
+por um seletor, `.context [data-weight]`, usando um atributo que não era
+contrato declarado do átomo, em vez de redefinir um token. Funcionou até a
+prova ser refeita com o localizador decoplado do mesmo atributo: a afirmação
+indireta (comparação entre papéis) passou mesmo com o acoplamento quebrado,
+porque os dois átomos comparados já diferiam de tamanho por outro motivo, sem
+relação com o que estava sendo provado. O padrão que evita repetir esse
+defeito é este: redefinir o nome de token que o componente base já declara,
+nunca reaproveitar um atributo que ele não declarou como contrato.
+`ValueWithProvenance` saiu do pacote junto com `domain-primitives`
+(`remove-domain-capabilities`); o achado sobre a forma certa de compor
+sobrevive a ele.
+
+**A regra de camada.** Camada (átomo, molécula, organismo) descreve o que o
+componente é para quem consome — um controle indivisível, uma composição
+local de poucos controles, uma seção própria da tela —, não se ele compõe
+outro componente por dentro. Um controle indivisível para quem usa é átomo
+mesmo quando construído, por dentro, sobre outro átomo: `atoms/nav/button`
+compõe `atoms/button`, mas continua sendo, para quem usa, um botão só, sem
+partes que se manipulem em separado. **Isto é um desvio deliberado do
+sentido clássico de átomo, do atomic design (Brad Frost)**, que definia
+átomo como o que não renderiza nenhum outro componente nomeado do inventário
+como filho estrutural — sem o desvio, o próprio exemplo desta seção
+(`atoms/nav/button` compondo `atoms/button`) contradiria essa definição.
+
+**A forma do caminho.** `<camada>/<família>/<componente>` — a primitiva base
+fica na raiz da camada (`atoms/button/`) e permanece ali, permanente: o
+primeiro componente de família que aparecer nunca realoca a base para dentro
+de uma pasta de família. A pasta de família (`atoms/nav/`) só recebe o que é
+próprio daquele contexto — o componente de família em si (`atoms/nav/button/`)
+—, nunca a primitiva que ele compõe.
+
+**O destino do componente de domínio.** Não existe mais um terceiro eixo
+arquitetural chamado "domínio" com perímetro, guardião e pasta própria — isso
+saiu inteiro com `domain-primitives` e `domain-charts`
+(`remove-domain-capabilities`). O que resta como eixo de variação entre
+componentes é camada (átomo, molécula, organismo) × família: uma
+especialização visual e de composição, como "nav", sem vocabulário de
+negócio e sem status arquitetural privilegiado — um componente de família é
+um componente comum, que compõe outro e redefine tokens, nada mais. "Família"
+não é "domínio" com nome trocado: nenhum guardião varre `atoms/nav/` do jeito
+que `component-vocabulary` varria `molecules/domain/` e `organisms/domain/`,
+porque não há vocabulário de negócio para proibir ali — se um dia houver, aí
+sim é domínio de novo, e volta pela porta que `docs/decisao-configuracao-inicial-do-workspace.md`
+já registrou: quando existir banco e API. Quando esse dia chegar, o
+componente que souber vocabulário de negócio de verdade — que leia
+`verification_level`, ou qualquer outro nome vindo do contrato de leitura —
+não entra em `@chargebr/ui`: vive na pasta de componentes do próprio app que
+o consome, como `apps/backoffice/app/_components/` já existe para isso. O
+pacote fica genérico; o que sabe domínio mora onde o domínio é consumido.
+
+**Lacuna registrada, não resolvida.** As checagens de contraste e de
+legibilidade de `design-tokens` conhecem os conjuntos de token que existem
+hoje, enumerados à mão. Com um conjunto de token por componente — não um
+conjunto pequeno e fixo por camada semântica —, essas checagens precisam
+enumerar os conjuntos automaticamente, ou todo componente novo entra sem
+medição de contraste nenhuma. Não resolvo isso aqui: registro a lacuna, com
+gatilho. **Gatilho:** o primeiro componente de família com cor própria — que
+será `atoms/nav/button` ou `atoms/nav/link`, no grupo 6 de
+`interface-atomic-structure`.

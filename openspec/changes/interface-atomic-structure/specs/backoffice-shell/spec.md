@@ -46,3 +46,31 @@ nome do produto pode assumir no cabeçalho — texto visível ou `alt`/rótulo d
 `Logo` — sem prescrever qual delas a implementação escolhe; a garantia que
 importa para quem navega por leitura assistida é que o cabeçalho se anuncia
 pelo nome do produto, não a forma visual exata.
+
+### Requirement: Moldura recebe por propriedade todo texto que exibe
+
+Componente da moldura SHALL receber por propriedade todo texto que exibe, e
+SHALL NOT declarar rótulo em português no próprio arquivo.
+
+**Por quê:** nome do produto e texto do salto são decisão da aplicação, não da
+biblioteca. Rótulo embutido no componente vira valor padrão que ninguém
+revisa e que reaparece em qualquer aplicação que consuma o pacote.
+
+#### Scenario: Moldura sem o texto exigido não compila
+
+- **WHEN** a moldura é usada sem o nome do produto ou sem o texto do salto
+- **THEN** a verificação de tipos falha, nomeando o uso
+- **Prova:** uso incompleto plantado em arquivo de checagem de tipos, `verify:types` falhando, plantio revertido
+
+#### Scenario: Rótulo declarado no componente reprova
+
+- **WHEN** um componente da moldura declara texto em português no próprio arquivo
+- **THEN** a verificação falha, nomeando o arquivo e o texto
+- **Prova:** rótulo plantado no componente, guardião de vocabulário falhando, plantio revertido
+
+**Por quê (mudança desta cena):** a razão original comparava esta fronteira
+"à mesma fronteira que as primitivas de domínio já respeitam" — primitivas
+que não existem mais (`remove-domain-capabilities`). A comparação sai; a
+fronteira que basta continua a mesma e não precisa de outra camada para se
+justificar: texto de rótulo é decisão da aplicação, não da biblioteca. Nada
+mais no requisito muda — mesma obrigação, mesmos dois cenários.

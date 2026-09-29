@@ -23,16 +23,16 @@
 
 ## 4. lucide-react
 
-- [ ] 4.1 Acrescentar `lucide-react` a `dependencies` de `packages/ui/package.json` — verificar com `pnpm install` sem erro e o lockfile atualizado
-- [ ] 4.2 Acrescentar `"lucide-react"` a `BENCH_OPTIMIZE_DEPS.include` em `packages/ui/.storybook/optimize-deps.ts` — verificar com `src/bench/optimize-deps.test.ts` passando depois do primeiro componente que importa `lucide-react`
+- [x] 4.1 Acrescentado `lucide-react@1.48.0` (mesma versão medida em D4) a `dependencies` de `packages/ui/package.json`, ordem alfabética entre `@visx/shape` e `react-aria-components`. Verificado com `pnpm install`: sem erro, `+2 -1` pacotes, `pnpm-lock.yaml` atualizado; os avisos de peer dependency pré-existentes de `@storybook/addon-vitest` não mudam.
+- [x] 4.2 Acrescentada a linha `"lucide-react"` a `BENCH_OPTIMIZE_DEPS.include`, no grupo "o que as histórias, os átomos e as primitivas importam" (mesmo grupo de `react-aria-components`, junto de D4). Verificado depois de 5.1 (`Icon`, o primeiro componente que importa `lucide-react`): `pnpm --filter @chargebr/ui exec vitest run --project contratos` — `src/bench/optimize-deps.test.ts` passa, nenhuma dependência não declarada — e as histórias de `Icon` (5.1) e `Button` (5.3), as duas consumidoras reais de `lucide-react`, carregam e passam nos dois projetos de tema (navegador real, chromium), confirmando que o pré-empacotamento cobre o especificador.
 
 ## 5. Átomos novos sem dependência de outros novos
 
-- [ ] 5.1 Construir `Icon` (recebe o componente do ícone por propriedade, cor por `currentColor`) — verificar com as histórias do requisito "Ícone recebe o componente por propriedade" de `specs/shell-components/spec.md`
-- [ ] 5.2 Construir `Logo` (referencia `src/images/logo-charge-br-{vertical,horizontal}.svg` como recurso externo, sem literal de cor no `.tsx`) — verificar com `tools/checks/style-literals.test.ts` não reportando o arquivo e com a história nos dois temas
-- [ ] 5.3 Construir `Button` (ícone opcional via `Icon`) — verificar com história cobrindo cada variante declarada e checagem de acessibilidade nos dois temas
+- [x] 5.1 Construído `Icon` (`atoms/icon/icon.tsx`): recebe o componente por propriedade (`as: LucideIcon`), sem importar nem nomear ícone algum. Cor: o átomo não declara `color`/`stroke` — herda `currentColor`, o padrão do próprio `lucide-react` (D4). Tamanho: sem token de tamanho de ícone hoje, `width`/`height: 1em` no CSS Module (não são propriedade guardada por `style-literals`) — sobrescreve o `width`/`height: 24` que o pacote gravaria sozinho, porque CSS de folha externa vence atributo de apresentação do SVG. Três histórias, todas tag `state:default` (`Icon` não tem eixo de variante, só um estado): "Padrão" (uso comum, decorativo); "Recebe o componente por propriedade" — dois ícones (`Check`, `X`) lado a lado, localizados pela classe que o próprio `lucide-react` grava (`lucide-check`/`lucide-x`, não por nada que `Icon` declare), provando que o `d` do `path` desenhado difere — prova do requisito "Icon renderiza o componente recebido"; "Cor segue o texto ao redor" — ícone dentro de um `<span>` colorido por token (`color-action-primary`), localizado pela classe do ícone (independente do que é afirmado), comparando `getComputedStyle(icone).stroke` contra `getComputedStyle(envolvente).color`. Plantio em `contracts.typecheck.tsx` (`iconWithoutComponent`) prova que `Icon` sem `as` não compila. Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/icon` (3/3 nos dois temas, com a checagem de acessibilidade automática de `addon-a11y`), `tools/checks/style-literals.test.ts` e `component-vocabulary.test.ts` (perímetro não alcança `atoms/`) verdes.
+- [x] 5.2 Construído `Logo` (`atoms/logo/logo.tsx`): `<img>` referenciando `logo-charge-br-horizontal.svg`, ao lado de `logo.tsx`, como import de asset do Vite (recurso externo, nunca marcação inline) — nenhum literal de cor no `.tsx`. Nome acessível por propriedade (`label`, obrigatória): `backoffice-shell` (delta desta mudança) já registra que o cabeçalho de `AppFrame` vai precisar do nome do produto como nome acessível de `Logo` ou como texto — `label` é o que permite a primeira opção no ciclo que ligar isso (grupo 7, fora desta sessão). Sem variante `vertical`: D3 só lista `AppFrame` como consumidor, e o arquivo vertical fica sem uso até um ciclo precisar dele (mesma disciplina de R3/R6, "não invento sem consumidor") — registrado aqui, não é ponto aberto novo. **Correção pedida pelo gerente antes do merge do #181, medida no código:** a primeira versão desta tarefa importava os SVGs de `src/images/` na raiz do repositório, fora de `packages/`, com uma supressão de `noRestrictedImports` (`biome.json`) para permitir. O gerente mediu a contradição: a decisão do dono, registrada no histórico do #173 ("`chore/declare-interface-perimeter`", que existe para destravar exatamente este movimento), é que o logo mora dentro do pacote de UI e todo consumidor busca dali — `@chargebr/ui` não constrói a partir da raiz do monorepo, e o fato de ter passado antes era acidente do monorepo (`@fs`), não garantia do pacote; a supressão não era ruído do guardião, era o guardião certo, reportando um import real fora do perímetro; e o comentário da supressão reinterpretava o texto do perímetro (CLAUDE.md) em vez de propor a mudança que o próprio #173 já previa. `D7` não exigia o diretório: "origem externa" é arquivo em vez de marcação embutida, não uma posição específica. **Verificado antes de mover:** nenhum outro arquivo do repositório referencia `src/images/` ou os dois nomes de arquivo (`grep -rn "src/images\|logo-charge-br"` fora de `node_modules`/`storybook-static` — só a linha do próprio `logo.tsx`) — sem consumidor na frente de coleta, seguro mover. Os dois SVGs movidos por `git mv` para `packages/ui/src/atoms/logo/` (ao lado do componente que os usa, não uma pasta `assets/` genérica — um consumidor real hoje, `Logo`, e nenhum outro átomo com essa necessidade); `src/images/` removida por ficar vazia. Import local (`./logo-charge-br-horizontal.svg`), sem `../` nenhum, e a supressão de `noRestrictedImports` removida — o especificador local não casa com `**/src/**` nem com nenhum outro padrão do guardião. **Consequência direta do movimento, medida ao rodar `verify:lint` de novo:** os dois `.svg`, antes fora de `packages/`, agora entram no perímetro que o Biome varre, e `lint/a11y/noSvgWithoutTitle` reprovou os dois arquivos por não terem `<title>`. Não é caso para supressão — é lacuna real de acessibilidade do próprio arquivo, independente de como `Logo` o consome — corrigido com `<title>ChargeBR</title>` como primeiro filho de cada `<svg>`, o mesmo texto nos dois arquivos, mesma marca. Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/logo` (nos dois temas, asset servido pela raiz do próprio pacote, sem `/@fs/`), `tools/checks/style-literals.test.ts` sem ocorrência no arquivo, `component-vocabulary.test.ts` verde, `pnpm run verify:lint` verde sem nenhuma supressão, `pnpm verify` passando sobre a árvore inteira.
+- [x] 5.3 Construído `Button` (`atoms/button/button.tsx`): ícone opcional por composição, sempre via `Icon` (nunca um ícone importado direto). Comportamento de `react-aria-components` `Button` — mesma primitiva de `EvidenceAnchor` —, com a mesma restrição de R1 (`docs/decisao-biblioteca-de-componentes.md`): `hovered`/`pressed` não entram como estado coberto por história; só `idle`/`focus-visible`, mesmos dois estados de `EvidenceAnchor`. Cores e medidas vêm de `component/button.json` (único par declarado hoje, "primary") via os tokens já gerados (`--button-primary-background`, `--button-primary-text`, `--button-radius`, `--button-padding-inline/block`, `--button-font-size/weight`); anel de foco com o mesmo par de `EvidenceAnchor` (`--color-focus-ring`, `--space-1`). **Decisão de tipo tomada durante a execução, registrada aqui por não estar no texto da tarefa:** um botão sem rótulo visível (o caso ícone-só, usado pelo gatilho do hambúrguer) precisa de nome acessível — o tipo (`ButtonContent`, união discriminada `children` XOR `aria-label`) recusa a combinação que deixaria os dois ausentes, plantado em `contracts.typecheck.tsx` (`buttonWithoutAccessibleName`), mesmo padrão de `DeclaredAbsence`/`StatusMarker`. Quatro histórias, cada uma um estado ou um uso: "Em repouso" (`state:idle`), "Com foco pelo teclado" (`state:focus-visible`, mesma prova de `EvidenceAnchor`), "Com ícone e rótulo" (a forma da ação "Deslogar" no rodapé de `NavPanel`, grupo 6), "Ícone só" (a forma do gatilho do hambúrguer, grupo 7) — as duas últimas não são estado novo do contrato, são uso, cobertura por variante não por combinação (`docs/decisao-biblioteca-de-componentes.md`, "Cobertura"). Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/button` (4/4 nos dois temas, com a checagem de acessibilidade automática de `addon-a11y`), `tools/checks/style-literals.test.ts` e `component-vocabulary.test.ts` verdes.
 - [x] 5.4 Decidido pelo dono (`design.md`, D3): `Heading` é `Text` especializado com variante `level`, sem prop de subtítulo — "subtítulo sendo nível menor" é padrão de uso, não parte do componente; nível de título é decisão da página, não do componente
-- [ ] 5.5 Construir `Heading` conforme a decisão de 5.4 — verificar com história por nível e checagem de acessibilidade nos dois temas
+- [x] 5.5 Construído `Heading` (`atoms/heading/heading.tsx`) conforme 5.4: sete níveis, o mesmo domínio de `font.size.*` sem subconjunto inventado (D3 diz "level mapeada a font.size.*"); nível maior é texto maior — mesmo sentido do índice do token —, e "subtítulo" é uma segunda chamada com nível menor (texto menor), nunca um prop. **Achado durante a execução, não previsto por D3: o texto de D3 não fixa qual elemento nativo cada nível usa, e `verify:lint` (`useSemanticElements`) recusa `role="heading"` solto num `<span>` — exige tag real.** h1-h6 são seis tags para sete níveis; medido que nenhum requisito observável desta mudança distingue nível 1 de nível 2 no documento (nenhum dos dois tem consumidor real ainda — ver 5.2 sobre "não invento sem consumidor"), resolvido com nível maior escolhendo a tag mais rasa (nível 7 → `h1` … nível 3 → `h5`) e os dois níveis mais discretos, 1 e 2, compartilhando `h6`, a mais funda — mecânico, muda só a tag entregue ao leitor de tela (nível 7 relatado como profundidade 1, coerente com "título de página"), nunca o tamanho, que continua vindo direto de `font.size.<nível>`. **O que me faria mudar de ideia:** um requisito futuro que precise distinguir nível 1 de nível 2 no documento — nesse caso a tabela ganha uma tag a mais só se o HTML ganhar uma, ou o par 1/2 vira uma decisão própria, não mais mecânica. Sete histórias, uma por nível (`docs/decisao-biblioteca-de-componentes.md`, "uma história por peso, uma por destaque" — aqui, uma por nível), cada uma localizando pela tag nativa renderizada (não pelo número do prop `level`, que diverge dela por construção) e conferindo o tamanho computado contra `font-size-<nível>` no tema corrente. Plantio em `contracts.typecheck.tsx` (`headingWithoutLevel`) prova que `Heading` sem `level` não compila. Verificado: `pnpm exec tsc --noEmit`, `pnpm --filter @chargebr/ui exec vitest run --project claro|escuro src/atoms/heading` (7/7 nos dois temas, com a checagem de acessibilidade automática de `addon-a11y`), `pnpm run verify:lint` verde (`useSemanticElements` sem ocorrência).
 
 ## 6. Navegação
 
@@ -52,3 +52,55 @@
 
 - [ ] 8.1 `pnpm verify` passando sobre a árvore inteira, com as quatro spec deltas desta mudança (`shell-components`, `interface-atoms`, `domain-primitives`, `backoffice-shell`) — verificar com a execução completa registrada
 - [ ] 8.2 Registrar em `docs/pontos-abertos.md` o ponto novo, conforme a posição (a) decidida em D5: "NavPanel construído, sem rota de negócio para religar" — verificar com a entrada citando o número e o gatilho (primeira rota de negócio real)
+
+## Nota de 2026-09-28, sem alterar o log acima
+
+Acrescentada pela proposta `remove-domain-capabilities`, sem reescrever
+nenhuma tarefa já executada acima — só apontando o que muda para quem ler
+este log depois.
+
+As tarefas 1.1 e 1.2, já executadas, criaram `molecules/domain/` e
+`organisms/domain/` e moveram `value-with-provenance`, `blocked-projection` e
+`status-panel` para dentro delas; o princípio de D1 de `design.md` (por que
+`domain/` continua pasta de primeiro nível) foi escrito para justificar isso.
+A proposta `remove-domain-capabilities` esvazia e remove as duas pastas por
+inteiro — `domain-primitives` (a capacidade inteira) retira, sem substituto,
+porque não existe backend nem dado hoje e a metodologia que essas primitivas
+expressavam não é regra de interface. Quando essa proposta for aplicada, o
+raciocínio de D1 sobre `domain/` deixa de ter objeto: não sobra primitiva
+nenhuma para o barril agregar.
+
+A spec delta desta mudança em `specs/interface-atoms/spec.md` (`REMOVED
+"Distinção não depende só de cor"`) e em `specs/domain-primitives/spec.md`
+(`MODIFIED "Papéis não são intercambiáveis"`, absorvendo o conteúdo da
+primeira) ainda não foi sincronizada às specs vivas — a tarefa 2.4 já registra
+que a sincronização é o grupo 3 (arquivamento), fora do escopo de aplicação.
+`remove-domain-capabilities` chega à mesma remoção de "Distinção não depende
+só de cor" por conta própria, mas sem migrar o conteúdo para lugar nenhum,
+porque `domain-primitives` — o destino que esta mudança propunha — deixa de
+existir. Quem arquivar as duas mudanças decide a ordem: se esta
+(`interface-atomic-structure`) arquivar primeiro, o `MODIFIED` acima em
+`domain-primitives` deve ser retirado antes de sincronizar, porque não há
+capacidade para modificar; se `remove-domain-capabilities` arquivar primeiro,
+o `REMOVED`/`MODIFIED` desta mudança fica sem alvo e se reduz a nada — a
+remoção de `interface-atoms` já terá acontecido pela outra.
+
+Os grupos 6, 7 e 8 acima (Navegação, `AppFrame`, Fechamento) não tocam
+domínio e continuam válidos como estão — nenhuma tarefa deles depende de
+`molecules/domain/`, `organisms/domain/` ou de `domain-primitives`.
+
+## Nota de 2026-09-29, sem alterar o log acima
+
+`remove-domain-capabilities` arquivou primeiro — confirmado:
+`openspec/changes/archive/2026-09-29-remove-domain-capabilities`. Como a nota
+anterior já previa para esta ordem, o `REMOVED`/`MODIFIED` desta mudança
+contra `interface-atoms`/`domain-primitives` ficou sem alvo — `interface-atoms`
+já não tinha mais "Distinção não depende só de cor" para remover, e
+`domain-primitives` não existe mais para modificar. Os dois arquivos de delta
+(`specs/interface-atoms/spec.md`, `specs/domain-primitives/spec.md`) foram
+removidos de `openspec/changes/interface-atomic-structure/specs/`, e as duas
+entradas correspondentes saíram de "Modified Capabilities" em `proposal.md`,
+com a razão registrada ali. `molecules/domain/` e `organisms/domain/`, criadas
+pelas tarefas 1.1–1.2, foram esvaziadas e removidas por inteiro pela outra
+mudança — o que a nota anterior media como consequência já aconteceu.
+Nenhuma tarefa executada acima foi reescrita.

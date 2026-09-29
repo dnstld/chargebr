@@ -1,0 +1,37 @@
+/* Título genérico: família, peso e altura de linha vêm de text.heading.* —
+   fixos, sem variante — e só o tamanho muda por nível, direto de
+   font.size.<nível>. */
+.heading {
+  font-family: var(--text-heading-family);
+  font-weight: var(--text-heading-weight);
+  line-height: var(--text-heading-line-height);
+  color: var(--color-text-primary);
+}
+
+.level1 {
+  font-size: var(--font-size-1);
+}
+
+.level2 {
+  font-size: var(--font-size-2);
+}
+
+.level3 {
+  font-size: var(--font-size-3);
+}
+
+.level4 {
+  font-size: var(--font-size-4);
+}
+
+.level5 {
+  font-size: var(--font-size-5);
+}
+
+.level6 {
+  font-size: var(--font-size-6);
+}
+
+.level7 {
+  font-size: var(--font-size-7);
+}

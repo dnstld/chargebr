@@ -1,0 +1,29 @@
+/* Botão genérico: um só par de cor hoje (component/button.json, "Mínimo da
+   camada de componente"). Foco visível segue o mesmo anel de token de Link;
+   ponteiro (hover) é estilo, não estado declarado — mesma razão de
+   link.module.css. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-gap-sm);
+  border: none;
+  border-radius: var(--button-radius);
+  padding-inline: var(--button-padding-inline);
+  padding-block: var(--button-padding-block);
+  font-family: var(--text-label-family);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: var(--text-label-line-height);
+  background-color: var(--button-primary-background);
+  color: var(--button-primary-text);
+  outline: none;
+}
+
+.button[data-hovered] {
+  background-color: var(--button-primary-background-hover);
+}
+
+.button[data-focus-visible] {
+  outline: var(--space-1) solid var(--color-focus-ring);
+  outline-offset: var(--space-1);
+}

@@ -1,5 +1,5 @@
-/* O gráfico é uma figura: nome, legenda, desenho, ausências declaradas e a
-   representação em texto, nesta ordem. */
+/* O gráfico é uma figura: nome, legenda, desenho e a representação em texto,
+   nesta ordem. */
 .chart {
   margin: 0;
   display: grid;
@@ -26,8 +26,8 @@
 
 /* A superfície do gráfico é a do desenho, e só dela: é contra ela que a paleta
    categórica foi verificada, e é nela que as marcas caem. O texto ao redor —
-   nome, legenda, ausências, tabela — fica na superfície da página, onde os
-   átomos que o compõem já foram verificados. */
+   nome, legenda, tabela — fica na superfície da página, onde os átomos que o
+   compõem já foram verificados. */
 .plot {
   inline-size: 100%;
   background-color: var(--color-chart-surface);
@@ -80,14 +80,6 @@
   flex: none;
 }
 
-.absences {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  row-gap: var(--space-gap-sm);
-}
-
 .table {
   border-collapse: collapse;
   inline-size: 100%;
@@ -113,11 +105,4 @@
   vertical-align: baseline;
   padding-block: var(--space-gap-sm);
   padding-inline-end: var(--space-gap-md);
-}
-
-.cellValue {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-gap-sm);
-  flex-wrap: wrap;
 }

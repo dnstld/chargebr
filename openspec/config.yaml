@@ -25,7 +25,7 @@ context: |
   - Node 24.21.0, pnpm 10.34.5, ESM, TypeScript 5.9 estrito
   - Aplicação: Next.js 16 App Router, React 19
   - Pacotes: @chargebr/tokens (Style Dictionary, DTCG) e @chargebr/ui
-    (átomos, primitivas de domínio e gráficos por subpath)
+    (átomos, moléculas, organismos e gráficos por subpath)
   - Primitivas de comportamento: React Aria Components
   - Estilo: CSS Modules consumindo custom properties de @chargebr/tokens
   - Gráficos: visx
@@ -38,27 +38,6 @@ context: |
   Interface de docs/. Na raiz, os scripts `collect`, `extract` e `test` do
   package.json não são nossos: `verify` os consome e não os altera. Nenhuma
   rota de negócio, nenhuma chamada a banco e nenhum dado real nesta fase.
-
-  ## Restrições de domínio que a interface deve preservar
-
-  Nomes conferidos contra supabase/migrations/. Não são preferências de
-  interface: determinam quais componentes existem.
-
-  - verification_level (confirmed, corroborated, unverified), workflow_status
-    (accepted, under_review, candidate) e normalization_status (normalized,
-    not_attempted, unresolved) são eixos independentes. Nenhum componente pode
-    colapsá-los num selo único.
-  - unresolved é estado legítimo: permanece visível, nunca é agregado a valores
-    resolvidos e nunca recebe preenchimento sólido — recebe hachura.
-  - projection_status = blocked significa não exibir número algum, nem parcial.
-    Exige componente próprio.
-  - Todo número exibido carrega caminho até sua evidência. Valor sem
-    proveniência não tem componente que o exiba.
-  - source_claim e normalized_claim aparecem lado a lado; a normalização nunca
-    substitui a redação original.
-  - Conflito entre fontes é exibido e preservado, nunca resolvido pela interface.
-  - Valor principal, contrafactual e contexto são visualmente distintos.
-  - date_precision = unknown e ausência de informação nunca são exibidos como zero.
 
   ## Convenções do repositório
 
@@ -75,6 +54,7 @@ rules:
     - Diga explicitamente o que a mudança não faz
     - Nenhuma decisão em aberto pode ser preenchida por suposição; registre a lacuna e pare
   specs:
+    - "Requisito só existe se nomear o que quebra sem ele, hoje, no que está construído. Regra sobre dado que nenhuma tela exibe é anotação, não requisito. Isto vale para requisito, não para componente: o teste de um componente de biblioteca é ser genérico, nunca ter consumidor — biblioteca de UI é inventário, e componente genérico sem consumidor construído é catálogo, não lacuna"
     - Todo critério de aceite nomeia o teste que o prova
     - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
     - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
@@ -85,6 +65,10 @@ rules:
     - Componente que usa React Aria ou estado do cliente declara "use client" no próprio arquivo
     - Componente recebe dados por propriedade; nenhum componente busca dados
     - "A sonda que sustenta uma decisão reproduz a forma do uso real de que a decisão depende. Onde simplificar, o design diz o que simplificou e por que a simplificação não altera o que está sendo decidido"
+    - "Componente de @chargebr/ui é genérico; vive em <camada>/<família>/<componente>, com a primitiva base na raiz da camada"
+    - Componente específico de domínio vive na pasta de componentes do app, não no pacote
+    - Componente de família compõe a primitiva base e redefine os tokens dela; nunca a reimplementa
+    - "Tokens de componente não são compartilhados entre componentes; precisar de tokens próprios é o que faz algo ser componente, e não propriedade"
   tasks:
     - Tarefa sem teste correspondente não é considerada pronta
     - Toda tarefa tem critério de pronto verificável por execução

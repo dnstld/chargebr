@@ -23,10 +23,10 @@ export const NoLimiteMinimo: Story = {
         data-size="minimum"
         style={{ inlineSize: HATCH_MIN_SIZE, blockSize: HATCH_MIN_SIZE }}
       >
-        <Hatch label="Não resolvido, no tamanho mínimo" />
+        <Hatch label="Textura no tamanho mínimo" />
       </div>
       <div className={`${styles.box} ${styles.large}`}>
-        <Hatch label="Não resolvido, em tamanho grande" />
+        <Hatch label="Textura em tamanho grande" />
       </div>
     </div>
   ),
@@ -44,7 +44,7 @@ export const NoLimiteMinimo: Story = {
     await expect(HATCH_MIN_SIZE / HATCH_PERIOD).toBeGreaterThanOrEqual(3);
 
     const hatch = canvas.getByRole("img", {
-      name: "Não resolvido, no tamanho mínimo",
+      name: "Textura no tamanho mínimo",
     });
     const pattern = hatch.querySelector("pattern");
     await expect(pattern?.getAttribute("width")).toBe(String(HATCH_PERIOD));
@@ -53,7 +53,7 @@ export const NoLimiteMinimo: Story = {
 };
 
 // Sem nome, a hachura é decorativa: fica fora da árvore de acessibilidade, e
-// o significado vem do texto ao lado (caso do marcador de estado).
+// o significado vem do texto ao lado — de quem compõe, não da hachura.
 export const Decorativa: Story = {
   name: "Decorativa, ao lado do texto",
   render: () => (
@@ -64,7 +64,7 @@ export const Decorativa: Story = {
       >
         <Hatch />
       </span>
-      <span>Não resolvido</span>
+      <span>Rótulo qualquer</span>
     </p>
   ),
   play: async ({ canvas, canvasElement }) => {

@@ -8,7 +8,7 @@ Plataforma de inteligência sobre mobilidade elétrica no Brasil.
 | --- | --- |
 | `apps/backoffice/` | Aplicação Next.js do back office. |
 | `packages/tokens/` | `@chargebr/tokens` — fonte DTCG, critérios de paleta e de contraste, geração das custom properties. |
-| `packages/ui/` | `@chargebr/ui` — átomos, primitivas de domínio, formas de gráfico e a moldura, com a bancada do Storybook. |
+| `packages/ui/` | `@chargebr/ui` — átomos, moléculas, organismos e gráficos, com a bancada do Storybook. |
 | `openspec/` | Specs vivas, propostas em andamento e ciclos arquivados. |
 | `tools/checks/` | Guardiões que rodam com os testes: literal de estilo, vocabulário, origem de fixture, supressão de tipo. |
 | `docs/` | Decisões, incidentes e os pontos abertos. Comece por [`docs/README.md`](docs/README.md). |

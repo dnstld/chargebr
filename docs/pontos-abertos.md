@@ -1,8 +1,10 @@
 # Pontos abertos
 
-**Atualizado em:** 26 de setembro de 2026, no PR que arrumou a verificação
-**Estado do repositório:** 7 capacidades vivas, 73 requisitos, 10 ciclos
-arquivados, nenhum change ativo. **4 pontos abertos**
+**Atualizado em:** 29 de setembro de 2026, no arquivamento de
+`remove-domain-capabilities`
+**Estado do repositório:** 6 capacidades vivas, 56 requisitos, 12 ciclos
+arquivados, um change ativo (`interface-atomic-structure`, grupos 6–8
+pendentes). **3 pontos abertos**
 
 ## O que este arquivo é
 
@@ -75,24 +77,6 @@ razões.
 **Nota:** fechar este ponto **não** cala os avisos INFO de
 `openspec validate`. Aquele aviso é heurística de comprimento; foi o sintoma que
 levou ao problema, não o problema.
-
----
-
-## 7. "Uma escala por gráfico" abrange o canal de tamanho?
-
-**O que é:** o ciclo 6 não construiu as formas bolha e mapa. Mapa não era exigido
-por requisito nenhum. Bolha é diferente: ela codifica uma segunda magnitude no
-**tamanho da marca**, e isso colide com o requisito de uma escala por gráfico.
-
-**Por que ficou aberto:** construir bolha exige decidir antes se "escala" abrange
-o canal de tamanho ou só o canal de valor. Essa decisão não existe e não foi
-suposta.
-
-**Gatilho:** a primeira exigência que peça bolha, ou qualquer forma que codifique
-uma segunda magnitude num canal que não seja a posição.
-
-**Nota:** a classe todos-contra-todos da verificação de paleta já está coberta
-por dot e small-multiples, então não há lacuna de cobertura — só de forma.
 
 ---
 
@@ -182,3 +166,13 @@ forma de declaração, com o que a camada 2 afirma sobre cada parte.
   e pula `.next`, como os outros guardiões de perímetro. A regra que ele aplica
   passou a requisito vivo: "Fixture com origem declarada em todo o perímetro",
   em `workspace-verification`.
+- **7. "Uma escala por gráfico" abrange o canal de tamanho?** — perdido por
+  construção, fechado por `remove-domain-capabilities`. **Não é resposta à
+  pergunta original:** o canal de tamanho continua sem decisão, e bolha
+  continua sem construir. O que fechou o ponto foi a forma nova do ponto do
+  gráfico, `{ category, value, fill? }` — sem `measure` por série, não há mais
+  como uma série declarar uma segunda escala, e o requisito em que a pergunta
+  se apoiava ("Uma escala por gráfico") deixou de ter o que provar, em
+  qualquer capacidade. Se uma forma "bolha" um dia precisar de uma segunda
+  magnitude codificada em tamanho, a pergunta volta, presa a um requisito
+  novo e específico daquela forma — não a este, que não existe mais.

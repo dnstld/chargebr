@@ -250,6 +250,17 @@ Versões conferidas no registro npm em 21 de setembro de 2026.
 
 ## Restrições de domínio que a biblioteca deve preservar
 
+> **Revogado em 2026-09-28.** Estas restrições são da metodologia de coleta e
+> do modelo de dados, não da interface. Enquanto não existe backend nem dado,
+> exigir que a biblioteca de UI as exprima produziu regra de negócio em tipo
+> de componente — sete mil linhas de biblioteca para uma aplicação que
+> renderiza uma moldura. Elas voltam quando existir banco e API, na camada que
+> tiver os dados. A frase "essas restrições são a razão de a biblioteca não
+> ser genérica" está errada e é substituída por: a biblioteca de UI é
+> genérica; todo componente em átomo, molécula ou organismo é elemento de
+> visualização e não segue regra de negócio. A metodologia permanece descrita
+> nos documentos da frente de coleta, que são a sua fonte.
+
 Não são preferências de interface. Vêm da metodologia já aceita e determinam
 quais componentes existem. Os nomes foram conferidos contra
 `supabase/migrations/`.
@@ -283,12 +294,38 @@ expressáveis antes de qualquer tela existir.
 | ID | Risco | Mitigação |
 | --- | --- | --- |
 | R1 | O workspace na raiz interfere no que já existe fora dele | `pnpm-workspace.yaml` lista apenas `apps/*` e `packages/*`; scripts `collect` e `test` intocados; `pnpm verify` é script novo |
-| R2 | O design system modela estados que o modelo não produz | Fixtures derivadas de `queries/0001_abve-eletrificados-janeiro-2025.read.sql`, que já expressa as projeções do contrato de leitura |
+| R2 | O design system modela estados que o modelo não produz | Fixtures sintéticas na biblioteca de UI, sem derivação de query nem de banco |
 | R3 | Fronteira `"use client"` vaza para o consumidor | `"use client"` no arquivo do componente; regra verificada no lint |
 | R4 | A fase infla até virar produto | Nenhuma rota de negócio, nenhuma chamada a banco e nenhum dado real |
 | R5 | Gabaritos em inglês diluem o rito em PT-BR | Conteúdo escrito em PT-BR sob cabeçalhos estruturais em inglês |
 | R6 | Ferramenta de processo abandonada ou com atualização que quebra | OpenSpec é MIT com repositório público e artefatos em markdown; migrar custa reescrever cabeçalho, não recuperar dado |
 | R7 | A ferramenta não exige teste por padrão | Regras em `openspec/config.yaml`: todo critério de aceite nomeia seu teste, tarefa sem teste não é pronta |
+
+## Decisão de 2026-09-29: o guardião `fixture-origin` fica
+
+**Decidido por omissão, registrado agora.** `remove-domain-capabilities`
+retirou a fixture derivada do contrato de leitura de `packages/ui`
+(mitigação de R2, acima) e deixou só fixture sintética na árvore — o que
+esvaziou metade do que `tools/checks/fixture-origin.test.ts` tinha para
+distinguir. Ninguém decidiu explicitamente manter o guardião; ele
+simplesmente continuou rodando, e essa continuidade não estava escrita em
+lugar nenhum.
+
+**Por que fica.** Com fixture só sintética, o guardião ainda obriga toda
+fixture nova, em qualquer parte do perímetro (`apps/*`, `packages/*`), a
+declarar no próprio arquivo se é sintética ou derivada do contrato de
+leitura — e reprova quem não declarar, ou quem declarar sintética por
+engano sobre dado real. É garantia viva num produto de dados: o dia em que
+uma fixture derivada de banco ou de publicação entrar (a primeira rota de
+negócio real, ou o primeiro gráfico com dado real), o guardião já está no
+lugar para pegá-la sem declaração — não é código morto esperando um
+consumidor, é precondição para quando o consumidor chegar.
+
+**O que me faria mudar de ideia:** se o perímetro inteiro (`apps/*` e
+`packages/*`) ficasse sem nenhuma fixture derivada de dado real por um
+prazo longo *e* sem nenhum plano de trazer uma — não é o caso: `apps/backoffice`
+é exatamente o destino da primeira rota de negócio real, ainda sem data,
+mas sem revogação também.
 
 ## Decisões em aberto
 

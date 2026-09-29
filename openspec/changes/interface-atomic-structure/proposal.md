@@ -55,14 +55,6 @@ evita que o primeiro componente novo já nasça no lugar errado.
 
 ### Modified Capabilities
 
-- `interface-atoms`: o requisito "Distinção não depende só de cor" nomeia
-  papel de domínio (principal/contrafactual/contexto) numa spec que passa a
-  descrever só a camada genérica; o requisito sai daqui e o conteúdo normativo
-  se funde a "Papéis não são intercambiáveis", em `domain-primitives`.
-- `domain-primitives`: "Papéis não são intercambiáveis" absorve o conteúdo
-  normativo do requisito removido de `interface-atoms` — a garantia observável
-  não muda (os três papéis continuam distintos por propriedade não cromática),
-  mas ela passa a viver inteira aqui.
 - `backoffice-shell`: o requisito "Regiões da moldura no documento entregue"
   tem uma cena que hoje prova "o nome do produto aparece no cabeçalho" lendo
   texto visível; com `Logo` (imagem vetorial) substituindo o texto puro do
@@ -82,6 +74,21 @@ em D6 (Opção B, `postcss-custom-media`) resolve o breakpoint sem literal
 nenhum em CSS Module, então o guardião de literal de estilo não precisa de
 exceção — versão anterior desta proposta chegou a escrever essa exceção como
 delta (Opção A) antes da decisão; foi removida.
+
+**Correção de 2026-09-29.** `interface-atoms` e `domain-primitives` saíram
+das capacidades modificadas acima — nesta mesma data, `domain-primitives`
+foi arquivada e retirada por `remove-domain-capabilities`
+(`openspec/changes/archive/2026-09-29-remove-domain-capabilities`), que
+chegou por conta própria à mesma remoção de "Distinção não depende só de
+cor" em `interface-atoms`, mas sem destino de migração: como
+`domain-primitives` deixa de existir, não há para onde o conteúdo
+normativo migrar. Os dois deltas desta mudança que dependiam desse destino
+(`specs/interface-atoms/spec.md`, REMOVED; `specs/domain-primitives/spec.md`,
+MODIFIED) foram removidos — a remoção já aconteceu pela outra mudança, e
+modificar uma capacidade que não existe mais não é uma operação válida de
+sincronização. Nenhuma tarefa executada (grupo 2, `tasks.md`) foi reescrita;
+a correção é só nestes dois artefatos de planejamento, ainda não
+sincronizados.
 
 ## Impact
 

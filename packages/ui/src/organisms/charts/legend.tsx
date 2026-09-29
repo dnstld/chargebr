@@ -1,11 +1,9 @@
-import type { Terms } from "../../vocabulary/vocabulary";
 import { seriesColor, seriesSymbol } from "./palette";
 import type { ChartSeries } from "./series";
 import styles from "./chart.module.css";
 
 export interface ChartLegendProps {
   series: readonly ChartSeries[];
-  vocabulary: Terms;
 }
 
 const SWATCH = 14;
@@ -15,10 +13,10 @@ const RADIUS = 5;
 // Legenda. Existe a partir de duas séries e nomeia cada uma; a amostra carrega
 // a mesma forma que a marca desenhada, e não só a cor. É HTML, fora do SVG,
 // para que a leitura assistida a alcance como alcança qualquer lista.
-export function ChartLegend({ series, vocabulary }: ChartLegendProps) {
+export function ChartLegend({ series }: ChartLegendProps) {
   return (
     <div className={styles.legend} data-legend="">
-      <p className={styles.legendTitle}>{vocabulary.chart.legend}</p>
+      <p className={styles.legendTitle}>Legenda</p>
       <ul className={styles.legendItems}>
         {series.map((one, index) => (
           <li
