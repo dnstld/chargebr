@@ -162,7 +162,8 @@ Nenhuma.
   partir do próprio pacote.
 - **Specs vivas:** `workspace-verification`, `verification-bench`,
   `backoffice-shell` sincronizadas no arquivamento.
-- **Registros:** `docs/pontos-abertos.md` fica sem ponto aberto;
+- **Registros:** fecha os pontos 16, 17, 19 e 20 de
+  `docs/pontos-abertos.md`, que fica sem ponto aberto;
   `docs/forma-do-produto.md` ganha três itens, com o texto e o gatilho de
   cada um preservados do registro anterior.
 - **Intocados:** `@chargebr/tokens` inteiro; todo componente visual de
