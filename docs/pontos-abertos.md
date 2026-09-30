@@ -1,9 +1,17 @@
 # Pontos abertos
 
-**Atualizado em:** 29 de setembro de 2026, no arquivamento de
-`button-variants`
+**Atualizado em:** 30 de setembro de 2026, na aplicação de
+`close-open-points`
 **Estado do repositório:** 7 capacidades vivas, 14 ciclos arquivados,
-nenhum change ativo. **8 pontos abertos**
+um change ativo (`close-open-points`). **7 pontos abertos**
+
+Esta atualização corrige só o ponto 5 (ver "Fechados") — fora do padrão do
+resto desta lista, que muda no arquivamento do ciclo que fecha o ponto. A
+razão está no próprio parágrafo do ponto 5, em "Fechados": o guardião
+novo deste ciclo reprova `pnpm verify` enquanto o registro divergir do que
+já está fechado. Os pontos 16, 17, 19 e 20 continuam abertos aqui — fecham
+no arquivamento de `close-open-points`, junto com a reclassificação dos
+pontos 1, 10 e 18 para `docs/forma-do-produto.md`.
 
 ## O que este arquivo é
 
@@ -50,32 +58,6 @@ provável até a camada 3. Hoje é o caso de `/prova/[id]`, que existe só para
 exercitar essa forma; cada rota de negócio declarada assim herda a mesma lacuna.
 
 **Onde está registrado:** `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
-
----
-
-## 5. Três requisitos de `design-tokens` misturam obrigação e razão
-
-**O que é:** medindo os requisitos vivos, a mediana do corpo é de **4 linhas** e
-o maior fora do ciclo 7 tem **10**. Três requisitos tocados pelo ciclo 7 têm
-**22, 30 e 38**. Neles, frases normativas e justificativa convivem no mesmo
-parágrafo, e o leitor não distingue o que obriga do que explica.
-
-**O que já está feito:** a regra está em `rules.specs` de `openspec/config.yaml`
-desde o ciclo 7 — o corpo de um requisito contém só o que obriga, e a razão vai
-em bloco aberto por `**Por quê:**`. O ciclo 8 já a cumpriu.
-
-**Por que o retrofit não foi feito junto:** não é editorial. Pelo menos três
-frases precisam ser reescritas **como obrigação** — há frases sem `SHALL` que
-decidem qual piso se aplica. Reescrever conteúdo normativo é mudança, com
-proposta e revisão; fazê-lo sob o rótulo de "arrumar a redação" é como conteúdo
-normativo passa sem ser olhado.
-
-**Gatilho:** o próximo ciclo que tocar `design-tokens` pelas suas próprias
-razões.
-
-**Nota:** fechar este ponto **não** cala os avisos INFO de
-`openspec validate`. Aquele aviso é heurística de comprimento; foi o sintoma que
-levou ao problema, não o problema.
 
 ---
 
@@ -300,6 +282,22 @@ propor.
 
 ## Fechados
 
+- **5. Três requisitos de `design-tokens` misturam obrigação e razão** —
+  fechado por `tokens-obligation-form` (arquivado em 2026-09-26), não por
+  `close-open-points`. Medido na aplicação deste ciclo: o delta de
+  `tokens-obligation-form` reescreveu os três requisitos — corpo só com
+  obrigação, razão em `**Por quê:**`, as quatro frases que decidiam piso
+  sem `SHALL` viradas em obrigação explícita —, e a própria proposta
+  daquele ciclo termina com "Fecha o ponto 5 de
+  `docs/pontos-abertos.md`". O registro nunca foi atualizado: nenhum
+  commit do arquivamento daquele ciclo tocou este arquivo. `close-open-points`
+  corrige só o registro, com este parágrafo, fora do padrão do resto
+  desta lista (registros mudam no arquivamento do ciclo que fecha o
+  ponto): o guardião novo daquele mesmo ciclo
+  (`tools/checks/change-lifecycle.test.ts`) lê este arquivo e reprova
+  `pnpm verify` enquanto o ponto 5 continuar listado como aberto — a
+  correção precisa entrar na aplicação, não pode esperar o arquivamento,
+  ou o portão fica vermelho entre os dois PRs.
 - **12. Dois guardiões leem `next-env.d.ts`** — fechado pelo PR que arrumou a
   verificação. `style-literals` e `type-suppression` deixaram de pular
   diretório de artefato pelo nome e passaram a filtrar pelo que o versionamento

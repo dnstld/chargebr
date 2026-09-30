@@ -59,4 +59,4 @@ do modo nativo de navegador; o especificador correto,
 
 - **WHEN** `AppFrame` é renderizado com o slot de navegação preenchido, e a largura real da janela é alternada entre abaixo e a partir de `--screen-md`
 - **THEN** o gatilho é alcançável abaixo do breakpoint e deixa de ser alcançável a partir dele
-- **Prova:** projeto do Vitest em modo nativo de navegador (`browser.enabled`, sem `storybookTest`) que monta `AppFrame` direto, redimensiona a janela real com `page.viewport()` de `"vitest/browser"`, e confere `offsetParent` do gatilho nos dois lados
+- **Prova:** projeto do Vitest em modo nativo de navegador (`browser.enabled`, sem `storybookTest`) que monta `AppFrame` direto, redimensiona a janela real com `page.viewport()` de `"vitest/browser"`, e confere se `page.getByRole("button", { name: "Abrir menu" })` localiza o gatilho — um botão dentro de ancestral `display: none` não é localizável por papel, o mesmo que um leitor de tela veria — 1px abaixo e 1px acima do breakpoint declarado
