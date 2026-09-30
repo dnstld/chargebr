@@ -5,6 +5,7 @@ import { canonicalJson } from "../../src/collector/canonical-json.js";
 import { CONTRACT_VERSION } from "../../src/collector/constants.js";
 import {
   configFingerprint,
+  createManifestPayload,
   deriveAggregateCounts,
   responseManifestHash,
   validateManifest,
@@ -108,6 +109,36 @@ test("manifest validation rejects incoherent aggregate counts", () => {
     },
   };
   assert.throws(() => validateManifestPayload(invalidPayload), /Aggregate counts/u);
+});
+
+test("inaccessible items require discovered identity and URL but not a fingerprint", () => {
+  const payload = createManifestPayload({
+    config_fingerprint: configFingerprint(PUBLIC_CONFIG_FIXTURE),
+    endpoint_key: "example-posts",
+    window: {
+      start: null,
+      end: "2026-01-02T03:04:05.000Z",
+      freeze_before: "2026-01-02T03:04:05.000Z",
+    },
+    requests: [],
+    items: [{
+      native_identity: { id: 7 },
+      canonical_url: "https://example.invalid/post/7",
+      content_fingerprint: null,
+      classification: "inaccessible",
+    }],
+  });
+  assert.equal(payload.aggregate_counts.items_inaccessible, 1);
+
+  assert.throws(() => createManifestPayload({
+    ...payload,
+    items: [{
+      native_identity: null,
+      canonical_url: "https://example.invalid/post/7",
+      content_fingerprint: null,
+      classification: "inaccessible",
+    }],
+  }), /identity/u);
 });
 
 test("manifest validation rejects payload arrays that bypass deterministic sorting", () => {

@@ -1,6 +1,11 @@
 import { pathToFileURL } from "node:url";
 
-import { runAbveCollector, type AbveRunnerDependencies } from "./runner.js";
+import {
+  runAbveCollector,
+  runAneelCollector,
+  type AbveRunnerDependencies,
+  type AneelRunnerDependencies,
+} from "./runner.js";
 import { sanitizeMessage } from "./sanitize.js";
 
 export interface CliResult {
@@ -14,6 +19,7 @@ const USAGE = "Usage: pnpm collect <abve|aneel>";
 export async function executeCli(
   args: readonly string[],
   runnerDependencies: Partial<AbveRunnerDependencies> = {},
+  aneelRunnerDependencies: Partial<AneelRunnerDependencies> = {},
 ): Promise<CliResult> {
   if (args.length === 1 && (args[0] === "--help" || args[0] === "-h")) {
     return { exitCode: 0, stdout: `${USAGE}\n` };
@@ -31,10 +37,7 @@ export async function executeCli(
   }
 
   if (args[0] === "aneel") {
-    return {
-      exitCode: 69,
-      stderr: `${sanitizeMessage("source_unavailable: aneel is known but unavailable")}\n`,
-    };
+    return runAneelCollector(readCollectorEnvironment(), aneelRunnerDependencies);
   }
 
   if (args[0] === "abve") {

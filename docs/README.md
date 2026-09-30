@@ -70,6 +70,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Decisão: acesso mínimo do collector ao endpoint ANEEL](decisao-acesso-collector-aneel.md)
 - [Revisão da implementação do acesso do collector à ANEEL](revisao-acesso-collector-aneel.md)
 - [Resultado da aplicação do acesso do collector à ANEEL](resultado-aplicacao-acesso-collector-aneel.md)
+- [Revisão da implementação do adapter ANEEL](revisao-implementacao-adapter-aneel.md)
 - [Collector local runtime v1](collector-local-runtime-v1.md)
 - [Decisão: extrator ABVE v1](decisao-extrator-abve-v1.md)
 - [Resultado do ensaio controlado do extrator ABVE v1](resultado-ensaio-extrator-abve-v1.md)

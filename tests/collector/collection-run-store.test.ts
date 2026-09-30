@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { ABVE_ENDPOINT_CONTRACT } from "../../src/collector/abve-adapter.js";
+import { ANEEL_ENDPOINT_CONTRACT } from "../../src/collector/aneel-adapter.js";
 import {
   ConcurrentRunError,
   PostgresCollectionRunStore,
@@ -59,6 +60,17 @@ test("database store resolves exactly one ABVE endpoint contract", async () => {
   const ambiguous = new FakeDatabaseClient();
   ambiguous.queue.push({ rows: [{}, {}], rowCount: 2 });
   assert.equal(await store(ambiguous).resolveAbveEndpoint(), null);
+});
+
+test("database store resolves exactly one ANEEL endpoint contract", async () => {
+  const client = new FakeDatabaseClient();
+  client.queue.push({
+    rows: [{ id: "43", contract: ANEEL_ENDPOINT_CONTRACT }],
+    rowCount: 1,
+  });
+  const resolved = await store(client).resolveAneelEndpoint();
+  assert.deepEqual(resolved, { id: "43", contract: ANEEL_ENDPOINT_CONTRACT });
+  assert.deepEqual(client.calls[0]?.values, ["aneel", "aneel-board-meetings-index"]);
 });
 
 test("database store maps running and complete run state", async () => {
