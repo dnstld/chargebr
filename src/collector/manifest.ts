@@ -266,9 +266,15 @@ export function validateManifestPayload(payload: ManifestPayload): void {
     }
     if (
       item.classification !== "rejected" &&
-      (item.native_identity === null || item.canonical_url === null || item.content_fingerprint === null)
+      (item.native_identity === null || item.canonical_url === null)
     ) {
-      throw new Error("Classified item is missing identity or fingerprint");
+      throw new Error("Classified item is missing identity or canonical URL");
+    }
+    if (
+      item.classification !== "rejected" && item.classification !== "inaccessible" &&
+      item.content_fingerprint === null
+    ) {
+      throw new Error("Classified item is missing content fingerprint");
     }
   }
 

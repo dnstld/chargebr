@@ -28,10 +28,10 @@ test("unknown commands, flags, and extra arguments are invalid", async () => {
   }
 });
 
-test("aneel is known but unavailable", async () => {
+test("aneel is executable and fails closed before connecting when environment is missing", async () => {
   const result = await executeCli(["aneel"]);
-  assert.equal(result.exitCode, 69);
-  assert.match(result.stderr ?? "", /source_unavailable/u);
+  assert.equal(result.exitCode, 70);
+  assert.match(result.stderr ?? "", /missing_database_url/u);
 });
 
 test("abve fails closed before connecting when required environment is missing", async () => {

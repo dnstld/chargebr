@@ -6,6 +6,7 @@ import type {
   CollectorDiagnostic,
   ProposedOperationalStatus,
 } from "./abve-adapter.js";
+import type { AneelEndpointContract } from "./aneel-adapter.js";
 import type { AggregateCounts } from "./manifest.js";
 
 const COLLECTOR_ROLE = "chargebr_collector_0001";
@@ -13,6 +14,11 @@ const COLLECTOR_ROLE = "chargebr_collector_0001";
 export interface ResolvedAbveEndpoint {
   readonly id: string;
   readonly contract: AbveEndpointContract;
+}
+
+export interface ResolvedAneelEndpoint {
+  readonly id: string;
+  readonly contract: AneelEndpointContract;
 }
 
 export interface RunningCollectionRun {
@@ -73,6 +79,7 @@ export interface FinishCollectionRunInput {
 
 export interface CollectionRunStore {
   resolveAbveEndpoint(): Promise<ResolvedAbveEndpoint | null>;
+  resolveAneelEndpoint(): Promise<ResolvedAneelEndpoint | null>;
   findRunningRun(endpointId: string): Promise<RunningCollectionRun | null>;
   interruptStaleRun(runId: string, reconciliationAt: string): Promise<boolean>;
   findLatestCompleteRun(endpointId: string): Promise<CompleteCollectionRun | null>;
@@ -135,6 +142,23 @@ export class PostgresCollectionRunStore implements CollectionRunStore {
   }
 
   async resolveAbveEndpoint(): Promise<ResolvedAbveEndpoint | null> {
+    const resolved = await this.resolveEndpoint("abve", "abve-news-wordpress-posts");
+    return resolved === null || !isEndpointContract(resolved.contract)
+      ? null
+      : { id: resolved.id, contract: resolved.contract as AbveEndpointContract };
+  }
+
+  async resolveAneelEndpoint(): Promise<ResolvedAneelEndpoint | null> {
+    const resolved = await this.resolveEndpoint("aneel", "aneel-board-meetings-index");
+    return resolved === null || !isEndpointContract(resolved.contract)
+      ? null
+      : { id: resolved.id, contract: resolved.contract as AneelEndpointContract };
+  }
+
+  private async resolveEndpoint(
+    sourceSlug: string,
+    endpointKey: string,
+  ): Promise<EndpointRow | null> {
     const result = await this.client.query<EndpointRow>(
       `select
          se.id::text as id,
@@ -162,16 +186,13 @@ export class PostgresCollectionRunStore implements CollectionRunStore {
        from public.sources s
        join public.source_endpoints se on se.source_id = s.id
        where s.slug = $1 and se.endpoint_key = $2`,
-      ["abve", "abve-news-wordpress-posts"],
+      [sourceSlug, endpointKey],
     );
     if (result.rows.length !== 1) {
       return null;
     }
     const row = result.rows[0];
-    if (row === undefined || !isAbveEndpointContract(row.contract)) {
-      return null;
-    }
-    return { id: row.id, contract: row.contract };
+    return row ?? null;
   }
 
   async findRunningRun(endpointId: string): Promise<RunningCollectionRun | null> {
@@ -428,7 +449,7 @@ function validateConnectionString(value: string): URL {
   return url;
 }
 
-function isAbveEndpointContract(value: unknown): value is AbveEndpointContract {
+function isEndpointContract(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 

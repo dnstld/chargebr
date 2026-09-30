@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -7,6 +8,10 @@ import {
   collectAbve,
   type AbveCollectionOutcome,
 } from "../../src/collector/abve-adapter.js";
+import {
+  ANEEL_ENDPOINT_CONTRACT,
+  collectAneel,
+} from "../../src/collector/aneel-adapter.js";
 import type {
   CollectionRunStore,
   CompleteCollectionRun,
@@ -15,7 +20,7 @@ import type {
   StartCollectionRunInput,
 } from "../../src/collector/collection-run-store.js";
 import { createManifestPayload, responseManifestHash } from "../../src/collector/manifest.js";
-import { runAbveCollector } from "../../src/collector/runner.js";
+import { runAbveCollector, runAneelCollector } from "../../src/collector/runner.js";
 
 const RUN_KEY = "123e4567-e89b-42d3-a456-426614174000";
 const VERSION = "0123456789abcdef0123456789abcdef01234567";
@@ -25,6 +30,7 @@ class FakeStore implements CollectionRunStore {
   running: RunningCollectionRun | null = null;
   previous: CompleteCollectionRun | null = null;
   endpoint = { id: "42", contract: ABVE_ENDPOINT_CONTRACT };
+  aneelEndpoint = { id: "43", contract: ANEEL_ENDPOINT_CONTRACT };
   interrupted = 0;
   starts: StartCollectionRunInput[] = [];
   heartbeats: Array<{ runId: string; heartbeatAt: string; staleAfterAt: string }> = [];
@@ -33,6 +39,10 @@ class FakeStore implements CollectionRunStore {
 
   async resolveAbveEndpoint() {
     return this.endpoint;
+  }
+
+  async resolveAneelEndpoint() {
+    return this.aneelEndpoint;
   }
 
   async findRunningRun() {
@@ -181,6 +191,51 @@ test("runner connects the real adapter to HTTP, manifest writing, and terminal s
   assert.equal(store.finishes[0]?.input.status, "succeeded");
   assert.equal(store.finishes[0]?.input.counts.items_new, 1);
   assert.equal(store.finishes[0]?.input.httpStatus, 200);
+  assert.ok(writtenManifest);
+});
+
+test("runner connects the ANEEL adapter with no cursor and a ready handoff", async () => {
+  const store = new FakeStore();
+  const fixture = (name: string) => readFileSync(
+    new URL(`./fixtures/${name}`, import.meta.url),
+    "utf8",
+  );
+  const responses = [
+    fixture("aneel-index-final.html"),
+    fixture("aneel-detail-14810.html"),
+    fixture("aneel-detail-14809.html"),
+  ];
+  let clock = START;
+  let writtenManifest: unknown;
+  const result = await runAneelCollector(environment, {
+    openStore: async () => store,
+    collect: collectAneel,
+    writeManifest: async (_root, manifest) => {
+      writtenManifest = manifest;
+      return "/workspace/.chargebr/manifest.v1.json";
+    },
+    readManifest: async () => { throw new Error("not expected"); },
+    resolveVersion: () => VERSION,
+    uuid: () => RUN_KEY,
+    now: () => clock++,
+    sleep: async () => undefined,
+    fetch: async () => {
+      const body = responses.shift();
+      assert.ok(body);
+      return new Response(Buffer.from(body, "latin1"), {
+        headers: { "Content-Type": "text/html; charset=iso-8859-1" },
+      });
+    },
+    rootDirectory: "/workspace",
+  });
+
+  assert.equal(result.exitCode, 0);
+  assert.match(result.stdout ?? "", /"endpoint_key":"aneel-board-meetings-index"/u);
+  assert.equal(store.starts.at(-1)?.cursorIn, null);
+  assert.equal(store.starts.at(-1)?.windowStart, null);
+  assert.equal(store.finishes.at(-1)?.input.status, "succeeded");
+  assert.equal(store.finishes.at(-1)?.input.handoffStatus, "ready_for_extraction");
+  assert.equal(store.finishes.at(-1)?.input.counts.items_new, 2);
   assert.ok(writtenManifest);
 });
 
