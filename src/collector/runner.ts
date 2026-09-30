@@ -11,6 +11,12 @@ import {
   type PriorManifestInput,
 } from "./abve-adapter.js";
 import {
+  ANEEL_ENDPOINT_CONTRACT,
+  aneelConfigFingerprint,
+  collectAneel,
+  type AneelAdapterDependencies,
+} from "./aneel-adapter.js";
+import {
   manifestReference,
   readManifestReference,
   writeManifestAtomic,
@@ -53,9 +59,46 @@ export interface AbveRunnerDependencies {
   readonly rootDirectory: string;
 }
 
+export interface AneelRunnerDependencies {
+  readonly openStore: (connectionString: string) => Promise<CollectionRunStore>;
+  readonly collect: typeof collectAneel;
+  readonly writeManifest: typeof writeManifestAtomic;
+  readonly readManifest: typeof readManifestReference;
+  readonly resolveVersion: () => string;
+  readonly uuid: () => string;
+  readonly now: () => number;
+  readonly sleep: (milliseconds: number) => Promise<void>;
+  readonly fetch: AneelAdapterDependencies["fetch"];
+  readonly rootDirectory: string;
+}
+
+interface RunnerCollectionOutcome {
+  readonly status: AbveCollectionOutcome["status"];
+  readonly error: AbveCollectionOutcome["error"];
+  readonly cursor_out: AbveCursor | null;
+  readonly requests: readonly ManifestRequest[];
+  readonly attempt_history: AbveCollectionOutcome["attempt_history"];
+  readonly counts: AbveCollectionOutcome["counts"];
+  readonly manifest_payload: AbveCollectionOutcome["manifest_payload"];
+  readonly response_manifest_hash: string;
+}
+
 const DEFAULT_DEPENDENCIES: AbveRunnerDependencies = {
   openStore: openPostgresCollectionRunStore,
   collect: collectAbve,
+  writeManifest: writeManifestAtomic,
+  readManifest: readManifestReference,
+  resolveVersion: resolveCollectorVersion,
+  uuid: randomUUID,
+  now: () => Date.now(),
+  sleep: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
+  fetch: (input, init) => fetch(input, init),
+  rootDirectory: process.cwd(),
+};
+
+const DEFAULT_ANEEL_DEPENDENCIES: AneelRunnerDependencies = {
+  openStore: openPostgresCollectionRunStore,
+  collect: collectAneel,
   writeManifest: writeManifestAtomic,
   readManifest: readManifestReference,
   resolveVersion: resolveCollectorVersion,
@@ -98,7 +141,7 @@ export async function runAbveCollector(
     }
 
     const reconciliationAt = utcInstant(dependencies.now());
-    const concurrent = await reconcileRunningRun(store, endpoint.id, reconciliationAt);
+    const concurrent = await reconcileRunningRun(store, endpoint.id, reconciliationAt, "ABVE");
     if (concurrent !== null) {
       return concurrent;
     }
@@ -128,7 +171,7 @@ export async function runAbveCollector(
       if (error instanceof ConcurrentRunError) {
         return await store.findRunningRun(endpoint.id) === null
           ? internalFailure("concurrent_insert_without_running_run")
-          : concurrentResult();
+          : concurrentResult("ABVE");
       }
       throw error;
     }
@@ -197,7 +240,143 @@ export async function runAbveCollector(
     if (!await store.finishRun(runId, terminal)) {
       throw new RunStateError("collection run terminal transition affected no row");
     }
-    return outcomeResult(runKey, outcome, reference);
+    return outcomeResult(ABVE_ENDPOINT_CONTRACT.endpoint_key, runKey, outcome, reference);
+  } catch (error) {
+    if (store !== undefined && runId !== undefined && !(error instanceof RunStateError)) {
+      await finishUnexpectedFailure(store, runId, dependencies.now).catch(() => undefined);
+    }
+    return internalFailure(error instanceof RunStateError ? "run_state_changed" : "collector_internal_error");
+  } finally {
+    await store?.close().catch(() => undefined);
+  }
+}
+
+export async function runAneelCollector(
+  environment: CollectorEnvironment,
+  dependencyOverrides: Partial<AneelRunnerDependencies> = {},
+): Promise<CollectorExecutionResult> {
+  const dependencies = { ...DEFAULT_ANEEL_DEPENDENCIES, ...dependencyOverrides };
+  const databaseUrl = environment.CHARGEBR_COLLECTOR_DATABASE_URL;
+  const initiatedBy = environment.CHARGEBR_COLLECTOR_INITIATED_BY;
+  if (databaseUrl === undefined || databaseUrl === "") {
+    return internalFailure("missing_database_url");
+  }
+  if (initiatedBy === undefined || !INITIATED_BY.test(initiatedBy)) {
+    return internalFailure("invalid_initiated_by");
+  }
+
+  let store: CollectionRunStore | undefined;
+  let runId: string | undefined;
+  try {
+    store = await dependencies.openStore(databaseUrl);
+    const endpoint = await store.resolveAneelEndpoint();
+    if (
+      endpoint === null || endpoint.contract.status !== "active" ||
+      !aneelContractMatches(endpoint.contract)
+    ) {
+      return {
+        exitCode: 69,
+        stderr: "source_unavailable: ANEEL endpoint is missing, inactive, or contract-incompatible\n",
+      };
+    }
+
+    const reconciliationAt = utcInstant(dependencies.now());
+    const concurrent = await reconcileRunningRun(store, endpoint.id, reconciliationAt, "ANEEL");
+    if (concurrent !== null) return concurrent;
+
+    const previous = await store.findLatestCompleteRun(endpoint.id);
+    const priorManifest = previous === null
+      ? undefined
+      : await loadPriorManifest(dependencies, previous);
+    const runStartedAt = utcInstant(dependencies.now());
+    const runKey = dependencies.uuid();
+    const configFingerprint = aneelConfigFingerprint(endpoint.contract);
+    const collectorVersion = dependencies.resolveVersion();
+
+    try {
+      runId = await store.startRun({
+        endpointId: endpoint.id,
+        runKey,
+        startedAt: runStartedAt,
+        staleAfterAt: addLease(runStartedAt),
+        initiatedBy,
+        collectorVersion,
+        configFingerprint,
+        windowStart: null,
+        windowEnd: runStartedAt,
+        cursorIn: null,
+      });
+    } catch (error) {
+      if (error instanceof ConcurrentRunError) {
+        return await store.findRunningRun(endpoint.id) === null
+          ? internalFailure("concurrent_insert_without_running_run")
+          : concurrentResult("ANEEL");
+      }
+      throw error;
+    }
+
+    const heartbeat = async (): Promise<void> => {
+      const heartbeatAt = utcInstant(dependencies.now());
+      try {
+        if (!await store?.heartbeat(runId as string, heartbeatAt, addLease(heartbeatAt))) {
+          throw new RunStateError("collection run is no longer running");
+        }
+      } catch (error) {
+        if (error instanceof RunStateError) throw error;
+        throw new RunStateError("collection run heartbeat failed");
+      }
+    };
+
+    await heartbeat();
+    const startedMilliseconds = dependencies.now();
+    const collectionInput = priorManifest === undefined
+      ? { contract: endpoint.contract, run_started_at: runStartedAt }
+      : {
+          contract: endpoint.contract,
+          run_started_at: runStartedAt,
+          prior_manifest: priorManifest,
+        };
+    const outcome = await dependencies.collect(collectionInput, {
+      fetch: async (input, init) => {
+        await heartbeat();
+        try {
+          return await dependencies.fetch(input, init);
+        } finally {
+          await heartbeat();
+        }
+      },
+      sleep: async (milliseconds) => {
+        await heartbeat();
+        await dependencies.sleep(milliseconds);
+        await heartbeat();
+      },
+      isFatalError: (error) => error instanceof RunStateError,
+    });
+    await heartbeat();
+
+    const manifest: CollectionManifestV1 = {
+      manifest_version: MANIFEST_VERSION,
+      envelope: {
+        run_key: runKey,
+        collector_name: COLLECTOR_NAME,
+        collector_version: collectorVersion,
+        started_at: runStartedAt,
+        request_attempt_count: outcome.attempt_history.length,
+        attempt_history: outcome.attempt_history,
+        duration_ms: Math.max(0, dependencies.now() - startedMilliseconds),
+      },
+      payload: outcome.manifest_payload,
+    };
+    await heartbeat();
+    await dependencies.writeManifest(dependencies.rootDirectory, manifest);
+    await heartbeat();
+
+    const reference = manifestReference(runKey);
+    const finishedAt = utcInstant(dependencies.now());
+    if (!await store.finishRun(runId, terminalSnapshot(outcome, finishedAt, reference))) {
+      throw new RunStateError("collection run terminal transition affected no row");
+    }
+    return outcomeResult(ANEEL_ENDPOINT_CONTRACT.endpoint_key, runKey, outcome, reference);
   } catch (error) {
     if (store !== undefined && runId !== undefined && !(error instanceof RunStateError)) {
       await finishUnexpectedFailure(store, runId, dependencies.now).catch(() => undefined);
@@ -212,6 +391,7 @@ async function reconcileRunningRun(
   store: CollectionRunStore,
   endpointId: string,
   reconciliationAt: string,
+  sourceLabel: string,
 ): Promise<CollectorExecutionResult | null> {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const running = await store.findRunningRun(endpointId);
@@ -219,13 +399,13 @@ async function reconcileRunningRun(
       return null;
     }
     if (Date.parse(running.staleAfterAt) > Date.parse(reconciliationAt)) {
-      return concurrentResult();
+      return concurrentResult(sourceLabel);
     }
     if (await store.interruptStaleRun(running.id, reconciliationAt)) {
       return null;
     }
   }
-  return concurrentResult();
+  return concurrentResult(sourceLabel);
 }
 
 function requireCursor(previous: CompleteCollectionRun): AbveCursor {
@@ -236,7 +416,9 @@ function requireCursor(previous: CompleteCollectionRun): AbveCursor {
 }
 
 async function loadPriorManifest(
-  dependencies: AbveRunnerDependencies,
+  dependencies:
+    | Pick<AbveRunnerDependencies, "readManifest" | "rootDirectory">
+    | Pick<AneelRunnerDependencies, "readManifest" | "rootDirectory">,
   previous: CompleteCollectionRun | null,
 ): Promise<PriorManifestInput | null> {
   if (previous === null) {
@@ -263,7 +445,7 @@ async function loadPriorManifest(
 }
 
 function terminalSnapshot(
-  outcome: AbveCollectionOutcome,
+  outcome: RunnerCollectionOutcome,
   finishedAt: string,
   reference: string,
 ): FinishCollectionRunInput {
@@ -336,8 +518,9 @@ async function finishUnexpectedFailure(
 }
 
 function outcomeResult(
+  endpointKey: string,
   runKey: string,
-  outcome: AbveCollectionOutcome,
+  outcome: RunnerCollectionOutcome,
   reference: string,
 ): CollectorExecutionResult {
   const exitCode = outcome.status === "partial"
@@ -354,7 +537,7 @@ function outcomeResult(
     exitCode,
     stdout: `${JSON.stringify({
       run_key: runKey,
-      endpoint_key: ABVE_ENDPOINT_CONTRACT.endpoint_key,
+      endpoint_key: endpointKey,
       status: outcome.status,
       counts: outcome.counts,
       bytes: sumResponseBytes(outcome.requests),
@@ -366,10 +549,10 @@ function outcomeResult(
   };
 }
 
-function concurrentResult(): CollectorExecutionResult {
+function concurrentResult(sourceLabel: string): CollectorExecutionResult {
   return {
     exitCode: 5,
-    stderr: "collection_in_progress: an unexpired ABVE collection run already exists\n",
+    stderr: `collection_in_progress: an unexpired ${sourceLabel} collection run already exists\n`,
   };
 }
 
@@ -395,6 +578,14 @@ function utcInstant(milliseconds: number): string {
 function contractMatches(contract: typeof ABVE_ENDPOINT_CONTRACT): boolean {
   try {
     return canonicalJson(contract) === canonicalJson(ABVE_ENDPOINT_CONTRACT);
+  } catch {
+    return false;
+  }
+}
+
+function aneelContractMatches(contract: typeof ANEEL_ENDPOINT_CONTRACT): boolean {
+  try {
+    return canonicalJson(contract) === canonicalJson(ANEEL_ENDPOINT_CONTRACT);
   } catch {
     return false;
   }
