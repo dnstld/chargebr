@@ -134,6 +134,20 @@ arquivamento.
 
 ## 6. Registros (no arquivamento — `docs/archive-close-open-points`)
 
+**O arquivamento e o zeramento do registro são o mesmo passo, sem estado
+intermediário.** A partir do momento em que `close-open-points` entra em
+`openspec/changes/archive/`, `tools/checks/change-lifecycle.test.ts`
+(terceira checagem) o lê — o `proposal.md` deste change declara fechar os
+pontos 16, 17, 19 e 20 — contra `docs/pontos-abertos.md`. Se o diretório
+mover para `archive/` numa árvore, num commit ou num push onde
+`docs/pontos-abertos.md` ainda liste algum desses quatro como aberto, o
+próprio guardião que este ciclo escreveu reprova nomeando **este change**,
+e `pnpm verify` fica vermelho — na branch de arquivamento, e em `main` se
+isso chegar ao merge. As tarefas 6.1 a 6.4 não têm ordem entre si por
+acaso: são partes de um commit só. Nenhuma delas é testada (`pnpm verify`
+rodado, push feito) sozinha, com o diretório já em `archive/` e o registro
+ainda não.
+
 - [x] 6.1 Mover o ponto 5 para "Fechados" em `docs/pontos-abertos.md`,
       citando `tokens-obligation-form` como o ciclo que fez o trabalho e
       este ciclo como o que corrigiu o registro — conforme o design.
@@ -161,3 +175,15 @@ arquivamento.
       delta de `backoffice-shell` e o requisito de `verification-bench`
       sobre viewport, este passo sincroniza só o que não foi retirado, e
       o ponto 19 permanece registrado como aberto, com a medição nova.
+- [ ] 6.6 **Prova de que o ponto 20 morreu de verdade — o guardião cobra
+      de si mesmo no primeiro ciclo em que existe.** Antes de commitar
+      6.2–6.4: com o diretório do change já movido para `archive/` (ou
+      `.openspec.yaml` marcado, conforme o mecanismo de `/opsx:archive`) e
+      `docs/pontos-abertos.md` **ainda não editado**, rodar
+      `tools/checks/change-lifecycle.test.ts` isolado e registrar, no
+      corpo do PR, que a terceira afirmação reprova nomeando
+      `close-open-points` e os pontos 16/17/19/20 — a mesma classe de
+      falha que o ponto 5 expôs, desta vez pega antes de chegar a
+      `main`, no primeiro ciclo que o guardião podia pegar. Só depois
+      disso commitar 6.2–6.4 juntas com o movimento para `archive/`, e
+      confirmar que a mesma afirmação passa.
