@@ -1,6 +1,7 @@
 # A forma do produto, e o que ainda não foi decidido
 
-**Atualizado em:** 26 de setembro de 2026
+**Atualizado em:** 30 de setembro de 2026, no arquivamento de
+`close-open-points`
 **Estado:** ponto de partida para a fase de desenho — **não é decisão tomada**
 
 ## O que este arquivo é
@@ -101,6 +102,83 @@ arquivo: console interno não é entregue junto com produto público.
 **O que está construído hoje:** `apps/backoffice` de pé, sem tela de negócio;
 `@chargebr/tokens` e `@chargebr/ui` com bancada provando cada estado nos dois
 temas; nenhuma busca de dado em lugar nenhum, por decisão.
+
+---
+
+## Pontos técnicos reclassificados de `docs/pontos-abertos.md`
+
+Três pontos de `docs/pontos-abertos.md` saíram de lá no arquivamento de
+`close-open-points` (2026-09-30), não por terem sido resolvidos — nenhum
+foi — mas porque nunca foram dívida de interface. `pontos-abertos.md`
+registra o que um ciclo deixou aberto de propósito dentro de um trabalho
+já decidido; estes três são o produto ainda não decidido, e é isso que os
+gatilhos de cada um sempre disseram: a primeira rota de negócio real, a
+primeira exigência de navegação entre rotas. Nenhum ciclo de interface
+pode fechá-los sozinho — cada um depende de uma resposta que só a fase de
+desenho dá, registrada acima neste arquivo. Texto e gatilho de cada um
+estão preservados por inteiro, como estavam em `pontos-abertos.md`.
+
+### A camada 3 não existe
+
+**O que é:** o repositório prova comportamento de aplicação em duas camadas — a
+bancada, para componentes, e o documento emitido pela construção, para o
+documento. A terceira camada, um navegador dirigido contra um servidor iniciado,
+nunca foi construída.
+
+**Por que ficou aberto:** nenhuma exigência precisou dela até aqui, e o custo é
+alto: servidor, segundo executor, provavelmente um estágio novo em
+`pnpm verify`.
+
+**Gatilho:** a primeira exigência que fale de navegação entre rotas, ou de
+comportamento que só exista depois da hidratação.
+
+**Consequência enquanto não existe:** nenhuma exigência pode ser redigida como
+"antes da primeira pintura". A camada 2 prova a condição necessária — um script
+síncrono posicionado antes de `<body>` —, nunca a suficiente.
+
+E uma rota resolvida por requisição não tem documento emitido: a camada 2 prova
+que ela existe e está declarada com essa forma, e nada sobre o conteúdo dela é
+provável até a camada 3. Hoje é o caso de `/prova/[id]`, que existe só para
+exercitar essa forma; cada rota de negócio declarada assim herda a mesma lacuna.
+
+**Onde está registrado:** `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
+
+### A forma mista é recusada, não resolvida
+
+**O que é:** uma rota com parâmetro pré-renderizada para uma lista de valores e
+resolvida por requisição para valor fora dela — lista aberta, `fallback: null`
+em `prerender-manifest.json` — reprova na camada 2, declarada ou não. Só a
+lista fechada (`dynamicParams = false`) é aceita como pré-renderizada.
+
+**Por que ficou aberto:** a parte resolvida por requisição é o mesmo ponto cego
+que o ciclo `dynamic-route-readiness` fechou, e aceitá-la exigiria uma terceira
+forma de declaração que nenhum ciclo precisou. Recusar é o que não supõe.
+
+**Gatilho:** a primeira exigência que precise de uma rota pré-renderizada para
+uma lista e resolvida por requisição fora dela. O ciclo que a trouxer propõe a
+forma de declaração, com o que a camada 2 afirma sobre cada parte.
+
+**Onde está registrado:** requisito "Rotas construídas são as declaradas" de
+`backoffice-shell`; design do ciclo `dynamic-route-readiness`.
+
+### `NavPanel` construído, sem rota de negócio para religar
+
+**O que é:** `NavPanel`, `NavSection` e `NavItem` existem como componentes de
+`@chargebr/ui`, exercitados na bancada (Storybook), e `AppFrame` ganhou um
+slot de navegação (`nav`, `navToggleLabel`, `navOpen`, `onNavToggle`) e o
+gatilho do hambúrguer que o abre e fecha — mas nenhum dos dois está ligado a
+`apps/backoffice`. O requisito "Regiões da moldura no documento entregue"
+(`backoffice-shell`) continua proibindo região de navegação no documento
+emitido, porque não existe rota de negócio real para listar (decisão do
+dono, `design.md` D5 de `interface-atomic-structure`).
+
+**Por que ficou aberto:** popular `nav` com destinos de mentira reproduziria
+exatamente o defeito que aquele requisito foi escrito para impedir — uma
+região de navegação vazia (ou fictícia) anuncia um destino que não existe.
+
+**Gatilho:** a primeira rota de negócio real — o ciclo que a trouxer decide
+a forma final de `nav` em `apps/backoffice` e revisa o requisito "Regiões da
+moldura no documento entregue" em conjunto.
 
 ---
 

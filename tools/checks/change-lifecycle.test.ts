@@ -81,9 +81,28 @@ test("mudança ativa não tem todas as tarefas concluídas", () => {
 // poucos caracteres, de "ponto"/"pontos", com os números do fechamento nos
 // caracteres seguintes — "Fecha o ponto 5 de `docs/pontos-abertos.md`.",
 // "fecha os pontos 4 e 11 citando este", "fecha os pontos 2 e 3, abre dois,",
-// "Fecha o ponto aberto 7 de `docs/pontos-abertos.md`". Um padrão de
-// declaração muito diferente destes quatro escapa deste guardião — lacuna
-// aceita, sem exemplo real hoje.
+// "Fecha o ponto aberto 7 de `docs/pontos-abertos.md`".
+//
+// O que esta checagem NÃO pega: uma declaração de fechamento redigida fora
+// deste padrão. Não é hipotético — aconteceu na tarefa 6.6 do arquivamento
+// de `close-open-points`, o próprio ciclo que escreveu este guardião: com o
+// change já movido para `archive/` e docs/pontos-abertos.md ainda listando
+// os pontos 16, 17, 19 e 20 como abertos, a checagem passou — devia
+// reprovar. A causa: o `proposal.md` daquele change dizia "docs/pontos-
+// abertos.md fica sem ponto aberto" na seção Registros, sem o verbo "fecha"
+// perto de "ponto" em lugar nenhum — nada para este regex casar. Corrigido
+// ali reescrevendo a frase na convenção ("fecha os pontos 16, 17, 19 e 20
+// de..."), não consertando o guardião: o casamento por frase sempre vai ter
+// esse ponto cego, para qualquer padrão fixo que se escolha.
+//
+// O conserto de verdade é outra forma de armazenar o dado, não mais regex:
+// um campo estruturado em `.openspec.yaml` (`closes_points: [16, 17, 19,
+// 20]`, por exemplo) que este guardião lesse como dado, não casasse como
+// prosa. Registrado como risco, com gatilho, em
+// `openspec/changes/archive/2026-09-30-close-open-points/design.md`
+// ("Risks / Trade-offs") — não repetido aqui como ponto novo em
+// `docs/pontos-abertos.md`: é o mesmo achado, e o design já arquivado é
+// onde ele mora.
 const CLOSES_POINT = /fecha\b[^\n]{0,15}?pontos?\b/gi;
 // "não"/"nem" logo antes de "fecha" é negação — "nem fecha o ponto 4" declara
 // o oposto de um fechamento. Medido em `dynamic-route-readiness`.
