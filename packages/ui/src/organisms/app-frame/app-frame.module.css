@@ -81,3 +81,73 @@
   padding: var(--space-inset-md) var(--space-inset-lg);
   outline: none;
 }
+
+/* A forma da maquete só existe quando algum slot lateral é preenchido. Sem
+   `data-shape`, todas as regras anteriores continuam sendo a moldura real. */
+.frame[data-shape="shell"] {
+  --app-frame-rail-size: calc(var(--space-7) + var(--space-inset-lg));
+  --app-frame-panel-size: calc(
+    var(--space-9) +
+    var(--space-9) +
+    var(--space-9) +
+    var(--space-8) +
+    var(--space-3)
+  );
+  display: grid;
+  grid-template-columns: var(--app-frame-rail-size) minmax(var(--space-0), 1fr);
+  grid-template-rows: auto minmax(var(--space-0), 1fr);
+  min-block-size: 100%;
+}
+
+.frame[data-shape="shell"] .rail {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-block-size: 0;
+}
+
+.frame[data-shape="shell"] .header {
+  grid-column: 2;
+  grid-row: 1;
+  background: var(--color-nav-panel);
+  border-bottom: var(--space-1) solid var(--color-nav-edge);
+}
+
+.frame[data-shape="shell"] .nav {
+  position: fixed;
+  z-index: 2;
+  inset-block: var(--space-0);
+  inset-inline-start: var(--app-frame-rail-size);
+  inline-size: var(--app-frame-panel-size);
+  max-inline-size: calc(100% - var(--space-7) - var(--space-inset-lg));
+}
+
+.frame[data-shape="shell"] .main {
+  grid-column: 2;
+  grid-row: 2;
+  min-inline-size: 0;
+}
+
+@media (--screen-md) {
+  .frame[data-shape="shell"] {
+    grid-template-columns:
+      var(--app-frame-rail-size)
+      var(--app-frame-panel-size)
+      minmax(var(--space-0), 1fr);
+  }
+
+  .frame[data-shape="shell"] .header {
+    grid-column: 3;
+  }
+
+  .frame[data-shape="shell"] .nav {
+    position: static;
+    grid-column: 2;
+    grid-row: 1 / -1;
+    inline-size: auto;
+    max-inline-size: none;
+  }
+
+  .frame[data-shape="shell"] .main {
+    grid-column: 3;
+  }
+}

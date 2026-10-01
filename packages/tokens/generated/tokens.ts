@@ -351,9 +351,59 @@ export const tokens = {
     light: "#302681",
     dark: "#8788fe",
   },
+  "color-nav-accent": {
+    css: "var(--color-nav-accent)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
+  "color-nav-current": {
+    css: "var(--color-nav-current)",
+    light: "#302681",
+    dark: "#302681",
+  },
+  "color-nav-current-text": {
+    css: "var(--color-nav-current-text)",
+    light: "#ffffff",
+    dark: "#ffffff",
+  },
+  "color-nav-edge": {
+    css: "var(--color-nav-edge)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "color-nav-hover": {
+    css: "var(--color-nav-hover)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "color-nav-panel": {
+    css: "var(--color-nav-panel)",
+    light: "#18181d",
+    dark: "#18181d",
+  },
+  "color-nav-rail": {
+    css: "var(--color-nav-rail)",
+    light: "#101013",
+    dark: "#101013",
+  },
+  "color-nav-text": {
+    css: "var(--color-nav-text)",
+    light: "#c6c6ce",
+    dark: "#c6c6ce",
+  },
+  "color-nav-text-muted": {
+    css: "var(--color-nav-text-muted)",
+    light: "#73737f",
+    dark: "#73737f",
+  },
+  "color-nav-text-strong": {
+    css: "var(--color-nav-text-strong)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
   "color-surface-base": {
     css: "var(--color-surface-base)",
-    light: "#ffffff",
+    light: "#f7f7f8",
     dark: "#101013",
   },
   "color-surface-raised": {
@@ -571,6 +621,21 @@ export const tokens = {
     light: "500",
     dark: "500",
   },
+  "avatar-background": {
+    css: "var(--avatar-background)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "avatar-color": {
+    css: "var(--avatar-color)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
+  "avatar-focus": {
+    css: "var(--avatar-focus)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
   "button-disabled-background": {
     css: "var(--button-disabled-background)",
     light: "#c6c6ce",
@@ -696,6 +761,46 @@ export const tokens = {
     light: "500",
     dark: "500",
   },
+  "nav-folder-trigger-background": {
+    css: "var(--nav-folder-trigger-background)",
+    light: "#18181d",
+    dark: "#18181d",
+  },
+  "nav-folder-trigger-background-hover": {
+    css: "var(--nav-folder-trigger-background-hover)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "nav-folder-trigger-color": {
+    css: "var(--nav-folder-trigger-color)",
+    light: "#c6c6ce",
+    dark: "#c6c6ce",
+  },
+  "nav-folder-trigger-color-hover": {
+    css: "var(--nav-folder-trigger-color-hover)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
+  "nav-folder-trigger-current-background": {
+    css: "var(--nav-folder-trigger-current-background)",
+    light: "#302681",
+    dark: "#302681",
+  },
+  "nav-folder-trigger-current-color": {
+    css: "var(--nav-folder-trigger-current-color)",
+    light: "#ffffff",
+    dark: "#ffffff",
+  },
+  "nav-folder-trigger-focus": {
+    css: "var(--nav-folder-trigger-focus)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
+  "nav-folder-trigger-muted": {
+    css: "var(--nav-folder-trigger-muted)",
+    light: "#73737f",
+    dark: "#73737f",
+  },
   "nav-item-current-background": {
     css: "var(--nav-item-current-background)",
     light: "#302681",
@@ -725,6 +830,91 @@ export const tokens = {
     css: "var(--nav-item-radius)",
     light: "9999px",
     dark: "9999px",
+  },
+  "nav-leaf-background": {
+    css: "var(--nav-leaf-background)",
+    light: "#18181d",
+    dark: "#18181d",
+  },
+  "nav-leaf-background-hover": {
+    css: "var(--nav-leaf-background-hover)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "nav-leaf-color": {
+    css: "var(--nav-leaf-color)",
+    light: "#c6c6ce",
+    dark: "#c6c6ce",
+  },
+  "nav-leaf-color-hover": {
+    css: "var(--nav-leaf-color-hover)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
+  "nav-leaf-current-accent": {
+    css: "var(--nav-leaf-current-accent)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
+  "nav-leaf-current-background": {
+    css: "var(--nav-leaf-current-background)",
+    light: "#302681",
+    dark: "#302681",
+  },
+  "nav-leaf-current-color": {
+    css: "var(--nav-leaf-current-color)",
+    light: "#ffffff",
+    dark: "#ffffff",
+  },
+  "nav-leaf-current-meta": {
+    css: "var(--nav-leaf-current-meta)",
+    light: "#ffffff",
+    dark: "#ffffff",
+  },
+  "nav-leaf-dot": {
+    css: "var(--nav-leaf-dot)",
+    light: "#73737f",
+    dark: "#73737f",
+  },
+  "nav-leaf-meta": {
+    css: "var(--nav-leaf-meta)",
+    light: "#c6c6ce",
+    dark: "#c6c6ce",
+  },
+  "nav-rail-item-background": {
+    css: "var(--nav-rail-item-background)",
+    light: "#101013",
+    dark: "#101013",
+  },
+  "nav-rail-item-background-hover": {
+    css: "var(--nav-rail-item-background-hover)",
+    light: "#2a2a31",
+    dark: "#2a2a31",
+  },
+  "nav-rail-item-color": {
+    css: "var(--nav-rail-item-color)",
+    light: "#73737f",
+    dark: "#73737f",
+  },
+  "nav-rail-item-color-hover": {
+    css: "var(--nav-rail-item-color-hover)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
+  "nav-rail-item-current-accent": {
+    css: "var(--nav-rail-item-current-accent)",
+    light: "#8788fe",
+    dark: "#8788fe",
+  },
+  "nav-rail-item-current-color": {
+    css: "var(--nav-rail-item-current-color)",
+    light: "#eeeef1",
+    dark: "#eeeef1",
+  },
+  "nav-rail-item-focus": {
+    css: "var(--nav-rail-item-focus)",
+    light: "#8788fe",
+    dark: "#8788fe",
   },
   "spinner-color": {
     css: "var(--spinner-color)",

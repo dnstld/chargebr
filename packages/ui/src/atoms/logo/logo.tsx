@@ -1,9 +1,15 @@
 /// <reference types="vite/client" />
 import horizontal from "./logo-charge-br-horizontal.svg";
+import mark from "./logo-charge-br-mark.svg";
+
+export const LOGO_VARIANTS = ["horizontal", "mark"] as const;
+export type LogoVariant = (typeof LOGO_VARIANTS)[number];
 
 export interface LogoProps {
   /** Nome acessível da marca — normalmente o nome do produto que a compõe. */
   label: string;
+  /** Forma da marca. A versão horizontal permanece o padrão. */
+  variant?: LogoVariant;
 }
 
 // Marca da ChargeBR. Referencia o SVG de marca existente, ao lado deste
@@ -18,6 +24,12 @@ export interface LogoProps {
 // versão horizontal, que é a única com consumidor hoje (cabeçalho de
 // AppFrame); a vertical fica ao lado, sem prop que a selecione, até um
 // ciclo com esse consumidor.
-export function Logo({ label }: LogoProps) {
-  return <img src={horizontal} alt={label} />;
+export function Logo({ label, variant = "horizontal" }: LogoProps) {
+  return (
+    <img
+      src={variant === "mark" ? mark : horizontal}
+      alt={label}
+      data-variant={variant}
+    />
+  );
 }

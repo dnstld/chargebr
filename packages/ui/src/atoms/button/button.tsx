@@ -40,6 +40,8 @@ export type ButtonProps = ButtonContent & {
   "aria-controls"?: string;
   /** Identifica, para tecnologia assistiva, o texto que descreve este botão. */
   "aria-describedby"?: string;
+  /** Identifica o destino ou a página corrente representada pelo botão. */
+  "aria-current"?: boolean | "page";
   /** Ação ao ativar o botão. Recebe o evento de ativação completo da primitiva. */
   onPress?: (e: PressEvent) => void;
 };

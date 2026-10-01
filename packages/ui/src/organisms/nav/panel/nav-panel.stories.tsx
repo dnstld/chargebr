@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LogOut } from "lucide-react";
 import { expect, userEvent } from "storybook/test";
 import { Button } from "../../../atoms/button/button";
-import { EXAMPLE_SECTIONS } from "./fixtures/example-sections";
+import { EXAMPLE_TREE } from "../tree/fixtures/example-tree";
 import { NavPanel } from "./nav-panel";
 
 const meta = {
@@ -10,7 +10,8 @@ const meta = {
   component: NavPanel,
   args: {
     label: "Navegação principal",
-    sections: EXAMPLE_SECTIONS,
+    heading: "Fontes",
+    tree: EXAMPLE_TREE,
     footer: <Button icon={LogOut}>Sair</Button>,
   },
 } satisfies Meta<typeof NavPanel>;
@@ -26,12 +27,26 @@ export const FocoNaoEscapaDoPainelSobreposto: Story = {
   name: "Foco não escapa do painel sobreposto",
   args: { mode: "overlay" },
   play: async ({ canvas }) => {
-    const primeiraFolha = canvas.getByRole("link", { name: "ABEV" });
+    const primeiraFolha = canvas.getByRole("link", { name: "Visão geral" });
     const ultimoFocalizavel = canvas.getByRole("button", { name: "Sair" });
     ultimoFocalizavel.focus();
     await expect(document.activeElement).toBe(ultimoFocalizavel);
     await userEvent.tab();
     await expect(document.activeElement).toBe(primeiraFolha);
+  },
+};
+
+export const RenderizaArvoreSemSecoes: Story = {
+  name: "Renderiza a árvore, não seções planas",
+  args: { mode: "persistent" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("Fontes")).toBeInTheDocument();
+    await expect(
+      canvas.getByRole("link", {
+        name: "ABVE — Associação Brasileira do Veículo Elétrico 14",
+      }),
+    ).toBeInTheDocument();
+    await expect(canvas.queryByText("Configurações")).toBeNull();
   },
 };
 

@@ -154,6 +154,18 @@ export const AtributosDeControle: Story = {
   },
 };
 
+export const DestinoCorrente: Story = {
+  name: "Destino corrente",
+  args: {
+    children: "Fontes",
+    "aria-current": true,
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Fontes" });
+    await expect(button).toHaveAttribute("aria-current", "true");
+  },
+};
+
 // `onPress` recebe o evento de ativação completo da primitiva — não uma
 // função sem argumento (BREAKING, proposal.md).
 const eventosCapturados: PressEvent[] = [];

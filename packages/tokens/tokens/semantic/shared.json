@@ -1,4 +1,49 @@
 {
+  "color": {
+    "$type": "color",
+    "nav": {
+      "rail": {
+        "$description": "Fundo fixo da trilha de navegação.",
+        "$value": "{color.gray.950}"
+      },
+      "panel": {
+        "$description": "Fundo fixo do painel e da barra de conteúdo.",
+        "$value": "{color.gray.900}"
+      },
+      "edge": {
+        "$description": "Borda e divisor do conjunto fixo de navegação.",
+        "$value": "{color.gray.800}"
+      },
+      "hover": {
+        "$description": "Fundo de interação em hover no conjunto fixo.",
+        "$value": "{color.gray.800}"
+      },
+      "text": {
+        "$description": "Texto em repouso no conjunto fixo.",
+        "$value": "{color.gray.300}"
+      },
+      "text-strong": {
+        "$description": "Texto enfatizado ou em hover no conjunto fixo.",
+        "$value": "{color.gray.100}"
+      },
+      "text-muted": {
+        "$description": "Texto apagado e rótulos secundários no conjunto fixo.",
+        "$value": "{color.gray.500}"
+      },
+      "current": {
+        "$description": "Preenchimento da entrada corrente no conjunto fixo.",
+        "$value": "{color.indigo.700}"
+      },
+      "current-text": {
+        "$description": "Texto sobre a entrada corrente no conjunto fixo.",
+        "$value": "{color.white}"
+      },
+      "accent": {
+        "$description": "Acento, marcador e anel de foco do conjunto fixo.",
+        "$value": "{color.indigo.300}"
+      }
+    }
+  },
   "space": {
     "$type": "dimension",
     "inset": {

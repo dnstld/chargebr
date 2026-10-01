@@ -8,7 +8,10 @@ const meta = {
   args: {
     label: "Fontes",
     items: [
-      { href: "#abev", label: "ABEV" },
+      {
+        href: "#abve",
+        label: "ABVE — Associação Brasileira do Veículo Elétrico",
+      },
       { href: "#raizen", label: "Raízen" },
       { href: "#vibra", label: "Vibra" },
     ],

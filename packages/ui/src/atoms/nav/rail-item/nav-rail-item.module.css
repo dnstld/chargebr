@@ -1,0 +1,35 @@
+.item {
+  display: contents;
+  --button-primary-background: var(--nav-rail-item-background);
+  --button-primary-background-hover: var(--nav-rail-item-background-hover);
+  --button-primary-text: var(--nav-rail-item-color);
+  --button-radius: var(--radius-control);
+  --button-md-padding-inline: var(--space-0);
+  --button-md-padding-block: var(--space-0);
+  --button-md-gap: var(--space-0);
+  --color-focus-ring: var(--nav-rail-item-focus);
+}
+
+.item > button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: calc(var(--space-inset-lg) + var(--space-gap-lg));
+  block-size: calc(var(--space-inset-lg) + var(--space-gap-lg));
+}
+
+.item > button[data-hovered],
+.item > button[aria-current="true"] {
+  --button-primary-text: var(--nav-rail-item-color-hover);
+}
+
+.item > button[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--space-inset-sm);
+  inset-inline-start: var(--space-0);
+  inline-size: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--nav-rail-item-current-accent);
+  transform: translateX(calc(var(--space-inset-sm) * -1));
+}

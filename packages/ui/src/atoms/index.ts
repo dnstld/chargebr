@@ -29,8 +29,23 @@ export {
 } from "./heading/heading";
 export { Icon, type IconProps } from "./icon/icon";
 export { Link, type LinkProps } from "./link/link";
-export { Logo, type LogoProps } from "./logo/logo";
+export {
+  LOGO_VARIANTS,
+  Logo,
+  type LogoProps,
+  type LogoVariant,
+} from "./logo/logo";
+export { Avatar, type AvatarProps } from "./avatar/avatar";
+export { NavLeaf, type NavLeafProps } from "./nav/leaf/nav-leaf";
+export {
+  NavFolderTrigger,
+  type NavFolderTriggerProps,
+} from "./nav/folder-trigger/nav-folder-trigger";
 export { NavItem, type NavItemProps } from "./nav/item/nav-item";
+export {
+  NavRailItem,
+  type NavRailItemProps,
+} from "./nav/rail-item/nav-rail-item";
 export {
   SPINNER_SIZES,
   Spinner,

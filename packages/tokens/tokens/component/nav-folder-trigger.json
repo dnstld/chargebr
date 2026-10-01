@@ -1,0 +1,21 @@
+{
+  "nav-folder-trigger": {
+    "$description": "Cores fixas do gatilho de pasta da árvore de navegação.",
+    "background": { "$type": "color", "$value": "{color.nav.panel}" },
+    "color": { "$type": "color", "$value": "{color.nav.text}" },
+    "color-hover": {
+      "$type": "color",
+      "$value": "{color.nav.text-strong}"
+    },
+    "muted": { "$type": "color", "$value": "{color.nav.text-muted}" },
+    "background-hover": {
+      "$type": "color",
+      "$value": "{color.nav.hover}"
+    },
+    "current": {
+      "background": { "$type": "color", "$value": "{color.nav.current}" },
+      "color": { "$type": "color", "$value": "{color.nav.current-text}" }
+    },
+    "focus": { "$type": "color", "$value": "{color.nav.accent}" }
+  }
+}

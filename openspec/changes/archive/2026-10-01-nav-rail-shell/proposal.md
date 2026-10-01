@@ -29,8 +29,9 @@ unidade deste ciclo é a tela inteira, não um componente isolado.
   `apps/backoffice/app/layout.tsx`, o documento emitido fica byte a byte
   idêntico ao de hoje.
 - Um átomo novo, `NavFolderTrigger` (disclosure de pasta).
-- `NavItem` ganha duas propriedades opcionais (`dot`, `meta`) para o visual de
-  folha aninhada — não quebra nenhum consumidor existente.
+- Um átomo novo, `NavLeaf`, apresenta a folha aninhada com as propriedades
+  opcionais `dot` e `meta`, usando tokens fixos de navegação. `NavItem`
+  continua inalterado e nenhum consumidor existente é quebrado.
 - `Logo` ganha a propriedade `variant` (`"horizontal" | "mark"`, padrão
   `"horizontal"`), com um SVG de marca novo (`logo-charge-br-mark.svg`) para o
   selo isolado da trilha. Nenhum consumidor existente muda de variante.
@@ -126,11 +127,13 @@ unidade deste ciclo é a tela inteira, não um componente isolado.
   condicional, medido sem mudar o documento real — `design.md`, D1),
   `organisms/nav/panel/` (reescrito), `organisms/nav/rail/` (novo),
   `organisms/nav/tree/` (novo), `atoms/nav/folder-trigger/` (novo),
-  `atoms/nav/item/` (propriedades novas), `atoms/avatar/` (novo),
+  `atoms/nav/rail-item/` (novo), `atoms/nav/leaf/` (novo),
+  `atoms/avatar/` (novo),
   `atoms/logo/` (propriedade nova + SVG novo).
 - `packages/tokens/tokens/semantic/shared.json` (grupo novo),
   `packages/tokens/tokens/semantic/light.json` (base/raised),
-  `packages/tokens/tokens/component/` (arquivo novo), `packages/tokens/src/`
+  `packages/tokens/tokens/component/` (quatro arquivos novos),
+  `packages/tokens/src/`
   (novo teste de contraste do conjunto fixo).
 - `packages/ui/src/bench/bench.module.css`, `organisms/app-frame/app-frame.module.css`,
   `organisms/charts/chart.assert.ts` (comentário) — consumidores de
