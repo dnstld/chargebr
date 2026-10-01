@@ -349,7 +349,10 @@ de negócio para listar, e região de navegação vazia anuncia um destino que n
 existe. `NavPanel` e o slot `nav` de `AppFrame` existem como componentes de
 biblioteca, verificados na bancada (`shell-components`) — nenhum dos dois é
 ligado ao documento emitido por `apps/backoffice` enquanto não existir rota de
-negócio real, pela mesma razão registrada aqui. O gatilho já previsto — "a
+negócio real, pela mesma razão registrada aqui. A mesma disciplina vale para
+`NavRail` e para o slot `rail` de `AppFrame`, acrescentados numa mudança
+posterior: nenhum dos dois é ligado a `apps/backoffice` enquanto não existir
+rota de negócio real. O gatilho já previsto — "a
 moldura hospedar conteúdo que dependa de dado" — segue sendo o que reabre este
 requisito. O cabeçalho compõe `Logo` — uma imagem vetorial de marca — em vez
 de exibir o nome do produto como texto puro; "nome acessível" é a prova
@@ -452,6 +455,17 @@ O gatilho SHALL ser alcançável (fora de `display: none`) abaixo do
 breakpoint declarado em `--screen-md`, e SHALL NOT ser alcançável a partir
 dele.
 
+`AppFrame` SHALL aceitar, de forma independente do slot de navegação, uma
+propriedade opcional `rail` de conteúdo opaco, apresentada como uma região à
+esquerda do cabeçalho e do conteúdo principal, em altura total. `rail` SHALL
+NOT exigir nenhuma outra propriedade — ao contrário do slot de navegação,
+não tem estado de aberto/fechado para refletir.
+
+Quando `rail` e `nav` estão ambos ausentes, o documento emitido por
+`apps/backoffice` SHALL permanecer exatamente como seria sem esta
+propriedade existir — mesmas regiões, mesma ordem de foco, nenhum atributo
+novo no elemento raiz da moldura.
+
 **Por quê:** o gatilho precisa de `aria-expanded`, que exige estado
 aberto/fechado — mas a moldura já é, pela mesma decisão que sustenta o
 requisito anterior, um componente sem script próprio (salto por fragmento
@@ -469,6 +483,23 @@ importavam `@vitest/browser/context`, que só existe como stub estático fora
 do modo nativo de navegador; o especificador correto,
 `"vitest/browser"`, resolvido sob um projeto do Vitest com
 `browser.enabled: true` fora do complemento do Storybook, prova o efeito.
+
+`rail` nasce separado de `nav` — não um quinto campo do mesmo slot — porque
+não compartilha a razão de ser de um slot controlado: não tem gatilho, não
+tem estado aberto/fechado, e nada em `AppFrame` precisa saber se está
+presente para decidir outra coisa. Agrupá-lo às quatro propriedades de `nav`
+obrigaria quem usa só um dos dois a declarar campos que não servem a nada.
+`AppFrame` continua sem um quarto estado de moldura e sem `"use client"`
+por causa de `rail` pela mesma razão que já valia para `nav`: nenhum dos
+dois pede estado — `rail` nunca muda de forma sozinho, e o único estado de
+`nav` já é controlado de fora.
+
+A garantia de documento inalterado quando os dois estão ausentes não é
+promessa não verificada: é o estado que `apps/backoffice` já tem hoje, e
+`nav`/`rail` continuam ausentes de `app/layout.tsx` depois desta mudança —
+os testes de "Regiões da moldura no documento entregue", "Salto para o
+conteúdo" e os demais abaixo, todos executados sobre o documento real,
+continuam sendo a prova; nenhum teste novo precisa duplicá-los.
 
 #### Scenario: Sem nav, nenhum gatilho renderiza
 
@@ -493,6 +524,18 @@ do modo nativo de navegador; o especificador correto,
 - **WHEN** `AppFrame` é renderizado com o slot de navegação preenchido, e a largura real da janela é alternada entre abaixo e a partir de `--screen-md`
 - **THEN** o gatilho é alcançável abaixo do breakpoint e deixa de ser alcançável a partir dele
 - **Prova:** projeto do Vitest em modo nativo de navegador (`browser.enabled`, sem `storybookTest`) que monta `AppFrame` direto, redimensiona a janela real com `page.viewport()` de `"vitest/browser"`, e confere se `page.getByRole("button", { name: "Abrir menu" })` localiza o gatilho — um botão dentro de ancestral `display: none` não é localizável por papel, o mesmo que um leitor de tela veria — 1px abaixo e 1px acima do breakpoint declarado
+
+#### Scenario: Rail renderiza sem exigir nada além de si
+
+- **WHEN** `AppFrame` é renderizado só com `rail`, sem nenhuma das quatro propriedades de navegação
+- **THEN** o conteúdo de `rail` aparece numa região própria, e nenhuma propriedade de navegação é exigida pela verificação de tipos
+- **Prova:** história da moldura só com `rail` preenchido, e uso equivalente em arquivo de checagem de tipos compilando sem as quatro propriedades de navegação
+
+#### Scenario: Sem rail nem nav, o documento emitido não muda
+
+- **WHEN** a construção de `apps/backoffice` é executada com `app/layout.tsx` continuando a não passar `rail` nem nenhuma das quatro propriedades de navegação
+- **THEN** o documento emitido da rota raiz continua sem atributo de forma na moldura, com as mesmas duas regiões, a mesma ausência de região de navegação, e o salto continuando o primeiro focalizável
+- **Prova:** `apps/backoffice/tests/emitted-document.test.ts` ("o documento emitido contém as duas regiões e nenhuma navegação", "o primeiro focalizável do documento emitido é o salto para o conteúdo") executado sobre a construção real, sem alteração de `app/layout.tsx`; medido na proposta deste ciclo por protótipo descartável — com `rail` acrescentado a `AppFrame` e nunca passado por `apps/backoffice`, as doze afirmações de `emitted-document.test.ts` continuaram passando, e o `<body>` emitido ficou byte a byte idêntico; só o hash do arquivo CSS (efeito de qualquer edição de CSS, não desta em particular) e um `null` inerte no payload de hidratação — sem efeito no DOM — divergiram
 
 ### Requirement: Tipografia declarada aplicada à moldura
 

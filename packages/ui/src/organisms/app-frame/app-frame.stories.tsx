@@ -1,11 +1,18 @@
 import { tokens } from "@chargebr/tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import {
+  ChartNoAxesCombined,
+  Database,
+  FileText,
+  Settings,
+} from "lucide-react";
 import { useState } from "react";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
 import { resolveColor } from "../../bench/computed";
-import { EXAMPLE_SECTIONS } from "../nav/panel/fixtures/example-sections";
 import { NavPanel } from "../nav/panel/nav-panel";
+import { NavRail } from "../nav/rail/nav-rail";
+import { EXAMPLE_TREE } from "../nav/tree/fixtures/example-tree";
 import { AppFrame, MAIN_CONTENT_ID, NAV_CONTENT_ID } from "./app-frame";
 
 // A moldura é a raiz da história: aninhá-la dentro de outra região faria a
@@ -189,7 +196,8 @@ function AppFrameComGatilhoDeNavegacao() {
         <NavPanel
           label="Navegação principal"
           mode="overlay"
-          sections={EXAMPLE_SECTIONS}
+          heading="Fontes"
+          tree={EXAMPLE_TREE}
         />
       }
       navToggleLabel="Abrir menu"
@@ -211,14 +219,14 @@ export const ComGatilhoDeNavegacao: Story = {
     await expect(hamburguer.getAttribute("aria-expanded")).toBe("false");
 
     // Fechado: a região de navegação não está na árvore de acessibilidade.
-    await expect(canvas.queryByRole("link", { name: "ABEV" })).toBeNull();
+    await expect(canvas.queryByRole("link", { name: /ABVE/ })).toBeNull();
 
     await userEvent.click(hamburguer);
     await waitFor(() => {
       expect(hamburguer.getAttribute("aria-expanded")).toBe("true");
     });
     await expect(
-      canvas.getByRole("link", { name: "ABEV" }),
+      canvas.getByRole("link", { name: /ABVE/ }),
     ).toBeInTheDocument();
 
     // Fecha de novo — prova que o clique alterna nos dois sentidos, não só abre.
@@ -226,5 +234,80 @@ export const ComGatilhoDeNavegacao: Story = {
     await waitFor(() => {
       expect(hamburguer.getAttribute("aria-expanded")).toBe("false");
     });
+  },
+};
+
+const RAIL_DESTINATIONS = [
+  { icon: Database, label: "Fontes", isCurrent: true },
+  { icon: ChartNoAxesCombined, label: "Séries" },
+  { icon: FileText, label: "Instrumentos" },
+  { icon: Settings, label: "Configurações" },
+] as const;
+
+const rail = (
+  <NavRail
+    label="Áreas do produto"
+    brandLabel="ChargeBR"
+    destinations={RAIL_DESTINATIONS}
+    avatarInitials="DT"
+    avatarLabel="Conta de Denis Toledo"
+  />
+);
+
+export const SomenteComTrilha: Story = {
+  name: "Somente com trilha",
+  args: { rail },
+  play: async ({ canvasElement }) => {
+    const frame = frameOf(canvasElement);
+    await expect(frame).toHaveAttribute("data-shape", "shell");
+    await expect(
+      canvasElement.querySelector(`[aria-controls="${NAV_CONTENT_ID}"]`),
+    ).toBeNull();
+  },
+};
+
+function CompleteShell() {
+  const [navOpen, setNavOpen] = useState(true);
+  return (
+    <AppFrame
+      productName="ChargeBR"
+      skipLabel="Ir para o conteúdo"
+      rail={rail}
+      nav={
+        <NavPanel
+          label="Navegação principal"
+          mode="persistent"
+          heading="Fontes"
+          tree={EXAMPLE_TREE}
+        />
+      }
+      navToggleLabel="Abrir navegação"
+      navOpen={navOpen}
+      onNavToggle={() => setNavOpen((open) => !open)}
+    >
+      <h1>ABVE — Associação Brasileira do Veículo Elétrico</h1>
+      <p>Conteúdo sintético para exercitar a composição da moldura.</p>
+    </AppFrame>
+  );
+}
+
+export const ComposicaoCompleta: Story = {
+  name: "Composição completa",
+  render: () => <CompleteShell />,
+  play: async ({ canvas, canvasElement }) => {
+    await expect(frameOf(canvasElement)).toHaveAttribute("data-shape", "shell");
+    await expect(
+      canvas.getByRole("button", { name: "Fontes" }),
+    ).toHaveAttribute("aria-current", "true");
+    await expect(
+      canvas.getByRole("link", {
+        name: "ABVE — Associação Brasileira do Veículo Elétrico 14",
+      }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(
+      canvas.getByRole("heading", {
+        name: "ABVE — Associação Brasileira do Veículo Elétrico",
+      }),
+    ).toBeInTheDocument();
   },
 };

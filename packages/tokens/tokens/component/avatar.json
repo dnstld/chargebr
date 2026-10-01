@@ -1,0 +1,8 @@
+{
+  "avatar": {
+    "$description": "Cores fixas do avatar no rodapé da trilha de navegação.",
+    "background": { "$type": "color", "$value": "{color.nav.hover}" },
+    "color": { "$type": "color", "$value": "{color.nav.text-strong}" },
+    "focus": { "$type": "color", "$value": "{color.nav.accent}" }
+  }
+}

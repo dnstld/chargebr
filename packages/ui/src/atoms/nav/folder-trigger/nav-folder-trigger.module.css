@@ -1,0 +1,43 @@
+.trigger {
+  display: contents;
+  --button-primary-background: var(--nav-folder-trigger-background);
+  --button-primary-background-hover: var(--nav-folder-trigger-background-hover);
+  --button-primary-text: var(--nav-folder-trigger-color);
+  --button-font-weight: var(--text-label-weight);
+  --button-radius: var(--radius-control);
+  --button-md-padding-inline: var(--space-inset-sm);
+  --button-md-padding-block: var(--space-gap-sm);
+  --button-md-gap: var(--space-gap-md);
+  --color-focus-ring: var(--nav-folder-trigger-focus);
+}
+
+.trigger > button {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: start;
+}
+
+.trigger > button[data-hovered] {
+  --button-primary-text: var(--nav-folder-trigger-color-hover);
+}
+
+.trigger[data-current] {
+  --button-primary-background: var(--nav-folder-trigger-current-background);
+  --button-primary-text: var(--nav-folder-trigger-current-color);
+  --button-font-weight: var(--text-heading-weight);
+}
+
+.trigger > button > svg {
+  color: var(--nav-folder-trigger-muted);
+  transition: transform 150ms ease;
+}
+
+.trigger > button[aria-expanded="true"] > svg {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger > button > svg {
+    transition: none;
+  }
+}

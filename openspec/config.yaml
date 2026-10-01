@@ -71,6 +71,7 @@ rules:
     - "Tokens de componente não são compartilhados entre componentes; precisar de tokens próprios é o que faz algo ser componente, e não propriedade"
     - "Token de componente nasce na mesma mudança que o componente que o consome, nunca num ciclo à parte; token sem componente não é revisável, é abstração aprovada às cegas (docs/decisao-biblioteca-de-componentes.md, caso component/button.json)"
     - "Tarefa escrita antes de uma regra não a sobrepõe; tarefa que contradiz regra vigente é emendada antes de executada, nunca executada como está (docs/decisao-biblioteca-de-componentes.md, caso PathLabel: construído sem token, sem CSS e sem comportamento próprio, contra a regra que já valia quando a tarefa rodou, e apagado depois)"
+    - "Todo componente de @chargebr/ui recebe por propriedade individual todo texto que exibe ou anuncia, nome acessível de ícone e rótulo de controle incluídos"
   tasks:
     - Tarefa sem teste correspondente não é considerada pronta
     - Toda tarefa tem critério de pronto verificável por execução

@@ -24,6 +24,11 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // declaram vocabulário, e continuam fora.
 const PERIMETERS: Readonly<Record<string, string>> = {
   moldura: join(ROOT, "packages/ui/src/organisms/app-frame"),
+  "organismos de navegação": join(ROOT, "packages/ui/src/organisms/nav"),
+  "moléculas de navegação": join(ROOT, "packages/ui/src/molecules/nav"),
+  "átomos de navegação": join(ROOT, "packages/ui/src/atoms/nav"),
+  avatar: join(ROOT, "packages/ui/src/atoms/avatar"),
+  marca: join(ROOT, "packages/ui/src/atoms/logo"),
 };
 const COMPONENT_EXTENSION = ".tsx";
 const EXCLUDED_SUFFIXES = [".stories.tsx", ".typecheck.tsx", ".test.tsx"];
@@ -72,6 +77,10 @@ function isModuleSpecifier(node: ts.Node): boolean {
   );
 }
 
+function isDirective(node: ts.Node): boolean {
+  return ts.isExpressionStatement(node.parent) && node.parent.expression === node;
+}
+
 function literalsIn(file: string): string[] {
   const source = ts.createSourceFile(
     file,
@@ -90,7 +99,7 @@ function literalsIn(file: string): string[] {
     if (ts.isJsxText(node)) {
       report(node, node.text);
     } else if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-      if (!isModuleSpecifier(node)) report(node, node.text);
+      if (!isModuleSpecifier(node) && !isDirective(node)) report(node, node.text);
     } else if (ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) {
       report(node, node.text);
     }

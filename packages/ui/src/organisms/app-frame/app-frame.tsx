@@ -45,6 +45,8 @@ export type AppFrameProps = AppFrameNavSlot & {
   skipLabel: string;
   /** O conteúdo da rota, dentro da região de conteúdo principal. */
   children: ReactNode;
+  /** Trilha lateral independente do painel de navegação. */
+  rail?: ReactNode;
 };
 
 // Moldura do shell: salto, cabeçalho, slot de navegação opcional e conteúdo
@@ -64,11 +66,19 @@ export type AppFrameProps = AppFrameNavSlot & {
 // do slot de navegação é renderizado, e o documento emitido não muda.
 export function AppFrame(props: AppFrameProps) {
   const { productName, skipLabel, children } = props;
+  const hasShell = props.rail !== undefined || props.nav !== undefined;
   return (
-    <div className={styles.frame ?? ""} data-frame="app">
+    <div
+      className={styles.frame ?? ""}
+      data-frame="app"
+      {...(hasShell ? { "data-shape": "shell" } : {})}
+    >
       <a className={styles.skip ?? ""} href={`#${MAIN_CONTENT_ID}`}>
         {skipLabel}
       </a>
+      {props.rail !== undefined ? (
+        <div className={styles.rail ?? ""}>{props.rail}</div>
+      ) : null}
       <header className={styles.header ?? ""}>
         <Logo label={productName} />
         {props.nav ? (

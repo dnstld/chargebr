@@ -30,6 +30,18 @@ export const appFrameWithoutNav = (
   </AppFrame>
 );
 
+// `rail` é independente do grupo controlado de navegação: não exige nenhuma
+// das três propriedades do gatilho.
+export const appFrameWithRailOnly = (
+  <AppFrame
+    productName="ChargeBR"
+    skipLabel="Ir para o conteúdo"
+    rail={<p>Trilha</p>}
+  >
+    <p>Conteúdo</p>
+  </AppFrame>
+);
+
 // `nav`, `navToggleLabel`, `navOpen` e `onNavToggle` entram juntos ou
 // nenhum — preencher só `nav` não compila.
 export const appFrameWithPartialNav = (

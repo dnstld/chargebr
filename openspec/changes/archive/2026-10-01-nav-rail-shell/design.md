@@ -47,8 +47,8 @@ mede a ação do tema **ativo** contra a superfície **daquele tema**.
 - Corrigir ABEV → ABVE nas fixtures sintéticas existentes.
 
 **Non-Goals:**
-- Mudar `AppFrame` ou `apps/backoffice/app/layout.tsx` — ver `proposal.md`,
-  "O que esta mudança não faz".
+- Ligar os novos slots de `AppFrame` a `apps/backoffice/app/layout.tsx` — ver
+  `proposal.md`, "O que esta mudança não faz".
 - Resolver o eixo de separação de aplicações, a leitura de dado via GraphQL,
   ou qualquer pergunta em aberto de `docs/forma-do-produto.md` além de moldar
   o dado da árvore para não colidir com uma resposta futura.
@@ -174,19 +174,21 @@ valores diferentes — a maquete os distingue para dois papéis diferentes
 alteração reprovaria um par que não deveria reprovar.
 
 A checagem nova (`packages/tokens/src/nav-contrast.test.ts`) chama só
-`measureTheme` (que apenas mede pares — ação × superfícies ao piso de texto,
-anel × superfícies ao piso de objeto gráfico — sem a invariante de
-igualdade) com um único `ContrastInput` sintético: `surfaces` = `[nav.rail,
-nav.panel, nav.edge]`, `action` = `nav.current`, `onAction` =
-`nav.current-text`, `focusRing` = `nav.accent`, sem `hover` (o conjunto fixo
-não declara estado de hover de ação — só os componentes que o consomem
-declaram hover de interação, D6). Sem `hover`, os diagnósticos de passo
-entre temas de `measureTheme` já saem `null` por conta própria — nenhum
-código precisa suprimi-los. As próprias asserções do teste (margem ≥ 0 por
-par, piso nomeado na mensagem de falha) reproduzem o formato de
-`themeViolations` manualmente, sem importar a função: são ~10 linhas, e
-importar uma função pensada para invariantes que não valem aqui seria mais
-confuso do que reescrevê-las.
+`measureTheme`, em duas entradas sintéticas que separam os dois papéis. A
+primeira deixa `surfaces` vazio e mede `nav.current-text` sobre
+`nav.current` ao piso de texto. A segunda deixa `action` ausente e mede
+`nav.accent` como `focusRing` contra `[nav.rail, nav.panel, nav.edge]` ao
+piso de objeto gráfico. Essa separação é necessária porque
+`measureTheme` também trataria `action` como **texto** sobre cada superfície;
+`nav.current` não é texto, é o preenchimento da pílula. A medição confirmou o
+erro da forma anterior: `nav.current` × superfícies ficaria entre 1,167:1 e
+1,556:1, enquanto o par real `nav.current-text` × `nav.current` mede
+12,210:1. O pior par gráfico real, `nav.accent` × `nav.edge`, mede 4,737:1.
+
+As próprias asserções do teste (margem ≥ 0 por par, piso nomeado na mensagem
+de falha) reproduzem o formato de `themeViolations` manualmente, sem importar
+a função: importar uma função pensada para invariantes que não valem aqui
+seria mais confuso do que afirmar os dois conjuntos de pares diretamente.
 
 **Alternativa descartada:** adicionar um terceiro "tema" fixo a
 `THEMES`. Rejeitada porque `THEMES` tipa `Theme` como `"light" | "dark"` em
@@ -277,7 +279,7 @@ que a selecione — este ciclo não é o gatilho dela.
 ```ts
 type NavTreeNode =
   | { kind: "page"; id: string; label: string; href: string; meta?: ReactNode; isCurrent?: boolean }
-  | { kind: "folder"; id: string; label: string; children: readonly [NavTreeNode, ...NavTreeNode[]]; isCurrent?: boolean };
+  | { kind: "folder"; id: string; label: string; children: readonly [NavTreeNode, ...NavTreeNode[]]; isCurrent?: boolean; isExpandedByDefault?: boolean };
 ```
 
 `id` é a única concessão a identidade estável (chave de lista e de estado de
@@ -286,10 +288,14 @@ navega, só expande). `dot` não é campo do dado: é decisão de apresentação
 `NavTree` (acende para todo `page` que não esteja no primeiro nível,
 apagado para o de primeiro nível) — a maquete amarra o ponto à profundidade,
 não ao conteúdo, e o dado não precisa carregar o que a posição já diz.
+`isExpandedByDefault` só semeia o estado local inicial da pasta; depois da
+primeira interação, `NavTree` guarda a expansão por `id`. Sem esse campo, o
+dado não conseguiria reproduzir a maquete, que começa com duas pastas abertas
+e duas fechadas, sem ensinar ao componente os nomes dessas pastas.
 
 ## Risks / Trade-offs
 
-- **[Risco]** Nove tokens novos em `color.nav.*`, quatro componentes novos
+- **[Risco]** Dez tokens novos em `color.nav.*`, quatro componentes novos
   com arquivo de token próprio, mais um teste de contraste novo — superfície
   grande para uma mudança de bancada. **Mitigação:** nenhum valor é
   primitivo novo (todos já existem e já são medidos em outro papel); a
@@ -301,7 +307,7 @@ não ao conteúdo, e o dado não precisa carregar o que a posição já diz.
   dois papéis explícitos; nenhum dos dois é alias do outro.
 - **[Risco]** `interface-charts` fica com uma regra nova que ela já viola
   (`value-table.tsx`) e que este ciclo não corrige. **Mitigação:** registrado
-  como ponto aberto novo em `docs/pontos-abertos.md` (tarefa 8 de
+  como ponto aberto novo em `docs/pontos-abertos.md` (tarefa 4.4 de
   `tasks.md`), com gatilho nomeado — não fica esquecido, fica adiado por
   escrito.
 - **[Risco]** `AppFrame` passa a ter duas formas de CSS (bloco vertical sem

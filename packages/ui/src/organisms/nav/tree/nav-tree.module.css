@@ -1,0 +1,21 @@
+.tree {
+  background: var(--color-nav-panel);
+  color: var(--color-nav-text);
+  font-family: var(--text-label-family);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-line-height);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+.list .list {
+  margin-inline-start: var(--space-inset-md);
+  padding-inline-start: var(--space-gap-md);
+  border-inline-start: var(--space-1) solid var(--color-nav-edge);
+}

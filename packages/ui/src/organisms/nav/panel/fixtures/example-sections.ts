@@ -15,7 +15,11 @@ export const EXAMPLE_SECTIONS: readonly [
   {
     label: "Fontes",
     items: [
-      { href: "#abev", label: "ABEV", isCurrent: true },
+      {
+        href: "#abve",
+        label: "ABVE — Associação Brasileira do Veículo Elétrico",
+        isCurrent: true,
+      },
       { href: "#raizen", label: "Raízen" },
       { href: "#vibra", label: "Vibra" },
     ],

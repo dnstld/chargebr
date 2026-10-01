@@ -2,7 +2,7 @@
   "color": {
     "$type": "color",
     "surface": {
-      "base": { "$value": "{color.white}" },
+      "base": { "$value": "{color.gray.50}" },
       "sunken": { "$value": "{color.gray.50}" },
       "raised": { "$value": "{color.white}" }
     },

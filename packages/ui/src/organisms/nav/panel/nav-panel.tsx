@@ -7,10 +7,7 @@ import type { ReactNode } from "react";
 // usa por dentro; fixado na mesma versão que ele já resolve (3.52.1), para
 // não duplicar instância.
 import { FocusScope } from "react-aria";
-import {
-  NavSection,
-  type NavSectionProps,
-} from "../../../molecules/nav/section/nav-section";
+import { NavTree, type NavTreeNode } from "../tree/nav-tree";
 import styles from "./nav-panel.module.css";
 
 export const NAV_PANEL_MODES = ["persistent", "overlay"] as const;
@@ -21,8 +18,10 @@ export interface NavPanelProps {
   label: string;
   /** Persistente fica sempre visível; sobreposto prende o foco enquanto aberto. */
   mode: NavPanelMode;
-  /** Seções da navegação — ao menos uma. */
-  sections: readonly [NavSectionProps, ...NavSectionProps[]];
+  /** Rótulo visível do conjunto de destinos apresentado. */
+  heading: string;
+  /** Árvore de navegação — ao menos uma entrada. */
+  tree: readonly [NavTreeNode, ...NavTreeNode[]];
   /** Conteúdo do rodapé — decisão de quem compõe; NavPanel não sabe o que é. */
   footer?: ReactNode;
 }
@@ -33,12 +32,19 @@ export interface NavPanelProps {
 // de navegação no documento emitido enquanto não existir rota de negócio
 // real, e ligar isso a `apps/backoffice` reproduziria o defeito que aquele
 // requisito já recusa.
-export function NavPanel({ label, mode, sections, footer }: NavPanelProps) {
+export function NavPanel({
+  label,
+  mode,
+  heading,
+  tree,
+  footer,
+}: NavPanelProps) {
   const content = (
     <nav aria-label={label} className={styles.panel ?? ""} data-mode={mode}>
-      {sections.map((section) => (
-        <NavSection key={section.label} {...section} />
-      ))}
+      <p className={styles.heading ?? ""}>{heading}</p>
+      <div className={styles.body ?? ""}>
+        <NavTree tree={tree} />
+      </div>
       {footer ? <div className={styles.footer ?? ""}>{footer}</div> : null}
     </nav>
   );

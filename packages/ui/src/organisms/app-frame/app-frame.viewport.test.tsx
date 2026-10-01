@@ -2,8 +2,8 @@ import { page } from "vitest/browser";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, test } from "vitest";
-import { EXAMPLE_SECTIONS } from "../nav/panel/fixtures/example-sections";
 import { NavPanel } from "../nav/panel/nav-panel";
+import { EXAMPLE_TREE } from "../nav/tree/fixtures/example-tree";
 import { AppFrame } from "./app-frame";
 
 // Ponto 19 (docs/pontos-abertos.md): a regra CSS do gatilho
@@ -31,7 +31,8 @@ function ViewportProbe() {
         <NavPanel
           label="Navegação principal"
           mode="overlay"
-          sections={EXAMPLE_SECTIONS}
+          heading="Fontes"
+          tree={EXAMPLE_TREE}
         />
       }
       navToggleLabel="Abrir menu"

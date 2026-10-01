@@ -1,9 +1,8 @@
 # Pontos abertos
 
-**Atualizado em:** 30 de setembro de 2026, no arquivamento de
-`close-open-points`
-**Estado do repositório:** 7 capacidades vivas, 15 ciclos arquivados,
-nenhum change ativo. **Nenhum ponto aberto**
+**Atualizado em:** 1º de outubro de 2026, no arquivamento de `nav-rail-shell`
+**Estado do repositório:** 7 capacidades vivas, 16 ciclos arquivados,
+nenhum change ativo. **1 ponto aberto**
 
 ## O que este arquivo é
 
@@ -30,6 +29,17 @@ aberto um ponto que uma mudança arquivada já declarou fechado,
 `close-open-points`, abaixo). Por isso o arquivamento de
 um ciclo e a atualização deste arquivo para o que esse ciclo fecha
 precisam estar no mesmo commit — nunca um antes do outro.
+
+---
+
+## Abertos
+
+- **21. O guardião de vocabulário não cobre `interface-charts`** —
+  `packages/ui/src/organisms/charts/value-table.tsx` contém a ocorrência que
+  revelou a lacuna, mas ampliar o perímetro agora faria este ciclo corrigir
+  uma capacidade que ele não toca. **Gatilho:** o próximo ciclo que tocar
+  `interface-charts` inclui esse perímetro no guardião e trata as ocorrências
+  que a ampliação revelar.
 
 ---
 

@@ -166,7 +166,7 @@ function chartSurfaceColor(chart: HTMLElement): string {
 // gráfico até achar o primeiro fundo próprio. A busca nunca sai de `chart` —
 // é esse limite, e não o valor da cor, que distingue "pintado pela página" de
 // "pintado pelo gráfico" mesmo quando os dois coincidem (hoje, no tema claro,
-// `color.chart.surface` e `color.surface.base` resolvem para o mesmo valor).
+// `color.chart.surface` e `color.surface.raised` resolvem para o mesmo valor).
 function paintedColor(
   element: Element,
   boundary: Element,

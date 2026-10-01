@@ -29,3 +29,18 @@ export const Padrao: Story = {
     });
   },
 };
+
+export const Selo: Story = {
+  name: "Selo isolado",
+  args: { variant: "mark" },
+  play: async ({ canvas, args }) => {
+    const image = canvas.getByRole("img", {
+      name: args.label,
+    }) as HTMLImageElement;
+    await waitFor(() => {
+      expect(image.complete).toBe(true);
+      expect(image.naturalWidth).toBeGreaterThan(0);
+    });
+    await expect(image).toHaveAttribute("data-variant", "mark");
+  },
+};

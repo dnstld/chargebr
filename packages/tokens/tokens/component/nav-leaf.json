@@ -1,0 +1,23 @@
+{
+  "nav-leaf": {
+    "$description": "Cores fixas da folha da árvore de navegação.",
+    "background": { "$type": "color", "$value": "{color.nav.panel}" },
+    "color": { "$type": "color", "$value": "{color.nav.text}" },
+    "color-hover": {
+      "$type": "color",
+      "$value": "{color.nav.text-strong}"
+    },
+    "background-hover": {
+      "$type": "color",
+      "$value": "{color.nav.hover}"
+    },
+    "meta": { "$type": "color", "$value": "{color.nav.text}" },
+    "dot": { "$type": "color", "$value": "{color.nav.text-muted}" },
+    "current": {
+      "background": { "$type": "color", "$value": "{color.nav.current}" },
+      "color": { "$type": "color", "$value": "{color.nav.current-text}" },
+      "accent": { "$type": "color", "$value": "{color.nav.accent}" },
+      "meta": { "$type": "color", "$value": "{color.nav.current-text}" }
+    }
+  }
+}

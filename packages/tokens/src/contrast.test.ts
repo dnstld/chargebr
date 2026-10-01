@@ -62,7 +62,7 @@ function lightInput(over: Partial<ContrastInput> = {}): ContrastInput {
   const merged: ContrastInput = {
     theme: "light",
     surfaces: [
-      { name: "color.surface.base", value: "#ffffff" },
+      { name: "color.surface.base", value: "#f7f7f8" },
       { name: "color.surface.raised", value: "#ffffff" },
       { name: "color.surface.sunken", value: "#f7f7f8" },
     ],
@@ -105,7 +105,7 @@ test("os pares de ação sustentam os pisos nos dois temas", () => {
 // entrega, e é por isso que ela é afirmada valor a valor.
 const MATRIX: Record<Theme, [string, string, number][]> = {
   light: [
-    ["color.action.primary", "color.surface.base", 12.21],
+    ["color.action.primary", "color.surface.base", 11.404],
     ["color.action.primary", "color.surface.sunken", 11.404],
     ["color.action.primary", "color.surface.raised", 12.21],
     ["color.action.primary", "color.chart.surface", 12.21],

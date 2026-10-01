@@ -110,8 +110,9 @@ depois.
 
 ### Requirement: Trilha e painel recebem por propriedade todo texto que exibem ou anunciam
 
-Todo componente do inventário desta capacidade — `Icon`, `Logo`, `NavItem`,
-`NavSection`, `NavPanel`, `NavRail`, `NavTree` e `NavFolderTrigger` — SHALL
+Todo componente do inventário desta capacidade — `Icon`, `Logo`, `Button`,
+`NavItem`, `NavLeaf`, `NavRailItem`, `NavFolderTrigger`, `Avatar`,
+`NavSection`, `NavPanel`, `NavRail` e `NavTree` — SHALL
 receber por propriedade individual todo texto que exibe ou anuncia a
 tecnologia assistiva, nome acessível de ícone e rótulo de controle incluídos.
 Nenhum destes componentes SHALL declarar rótulo em português no próprio
