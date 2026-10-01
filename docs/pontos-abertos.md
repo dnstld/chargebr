@@ -1,17 +1,9 @@
 # Pontos abertos
 
-**Atualizado em:** 30 de setembro de 2026, na aplicação de
+**Atualizado em:** 30 de setembro de 2026, no arquivamento de
 `close-open-points`
-**Estado do repositório:** 7 capacidades vivas, 14 ciclos arquivados,
-um change ativo (`close-open-points`). **7 pontos abertos**
-
-Esta atualização corrige só o ponto 5 (ver "Fechados") — fora do padrão do
-resto desta lista, que muda no arquivamento do ciclo que fecha o ponto. A
-razão está no próprio parágrafo do ponto 5, em "Fechados": o guardião
-novo deste ciclo reprova `pnpm verify` enquanto o registro divergir do que
-já está fechado. Os pontos 16, 17, 19 e 20 continuam abertos aqui — fecham
-no arquivamento de `close-open-points`, junto com a reclassificação dos
-pontos 1, 10 e 18 para `docs/forma-do-produto.md`.
+**Estado do repositório:** 7 capacidades vivas, 15 ciclos arquivados,
+nenhum change ativo. **Nenhum ponto aberto**
 
 ## O que este arquivo é
 
@@ -22,263 +14,39 @@ condição que obriga a retomá-lo.
 Este registro cobre **a frente de interface e nada mais**. A frente de coleta tem
 processo próprio e os pontos dela não moram aqui.
 
-Um ponto sai daqui quando um ciclo o fecha, e o ciclo que o fecha cita o número.
-Um ponto novo entra com gatilho — sem gatilho, não é ponto aberto, é esquecimento
-com nome bonito.
+Um ponto sai daqui quando um ciclo o fecha, e o ciclo que o fecha cita o número,
+ou quando um ciclo o reclassifica para fora deste registro — ver
+"Reclassificados", abaixo — porque nunca foi dívida de interface. Um ponto novo
+entra com gatilho — sem gatilho, não é ponto aberto, é esquecimento com nome
+bonito.
 
-Dois deles (1 e 10) atingem o próximo ciclo que criar rota de negócio. Vale ler
-os dois antes de propor esse ciclo.
+Os números não são reaproveitados: um ponto fechado ou reclassificado deixa o
+seu vago, e as listas no fim dizem qual ciclo o tirou daqui, e por quê.
 
-Os números não são reaproveitados: um ponto fechado deixa o seu vago, e a lista
-de fechados, no fim, diz qual ciclo o fechou.
-
----
-
-## 1. A camada 3 não existe
-
-**O que é:** o repositório prova comportamento de aplicação em duas camadas — a
-bancada, para componentes, e o documento emitido pela construção, para o
-documento. A terceira camada, um navegador dirigido contra um servidor iniciado,
-nunca foi construída.
-
-**Por que ficou aberto:** nenhuma exigência precisou dela até aqui, e o custo é
-alto: servidor, segundo executor, provavelmente um estágio novo em
-`pnpm verify`.
-
-**Gatilho:** a primeira exigência que fale de navegação entre rotas, ou de
-comportamento que só exista depois da hidratação.
-
-**Consequência enquanto não existe:** nenhuma exigência pode ser redigida como
-"antes da primeira pintura". A camada 2 prova a condição necessária — um script
-síncrono posicionado antes de `<body>` —, nunca a suficiente.
-
-E uma rota resolvida por requisição não tem documento emitido: a camada 2 prova
-que ela existe e está declarada com essa forma, e nada sobre o conteúdo dela é
-provável até a camada 3. Hoje é o caso de `/prova/[id]`, que existe só para
-exercitar essa forma; cada rota de negócio declarada assim herda a mesma lacuna.
-
-**Onde está registrado:** `docs/decisao-prova-de-comportamento-de-aplicacao.md`.
+`tools/checks/change-lifecycle.test.ts` lê este arquivo contra toda mudança
+arquivada que declare fechar um ponto: se este registro ainda listar como
+aberto um ponto que uma mudança arquivada já declarou fechado,
+`pnpm verify` reprova nomeando os dois (pontos 17 e 20, fechados por
+`close-open-points`, abaixo). Por isso o arquivamento de
+um ciclo e a atualização deste arquivo para o que esse ciclo fecha
+precisam estar no mesmo commit — nunca um antes do outro.
 
 ---
 
-## 10. A forma mista é recusada, não resolvida
+## Reclassificados
 
-**O que é:** uma rota com parâmetro pré-renderizada para uma lista de valores e
-resolvida por requisição para valor fora dela — lista aberta, `fallback: null`
-em `prerender-manifest.json` — reprova na camada 2, declarada ou não. Só a
-lista fechada (`dynamicParams = false`) é aceita como pré-renderizada.
+Os números abaixo não fecharam por trabalho — saíram porque nunca foram
+dívida de interface. Continuam vagos, como qualquer ponto fechado.
 
-**Por que ficou aberto:** a parte resolvida por requisição é o mesmo ponto cego
-que o ciclo `dynamic-route-readiness` fechou, e aceitá-la exigiria uma terceira
-forma de declaração que nenhum ciclo precisou. Recusar é o que não supõe.
-
-**Gatilho:** a primeira exigência que precise de uma rota pré-renderizada para
-uma lista e resolvida por requisição fora dela. O ciclo que a trouxer propõe a
-forma de declaração, com o que a camada 2 afirma sobre cada parte.
-
-**Onde está registrado:** requisito "Rotas construídas são as declaradas" de
-`backoffice-shell`; design do ciclo `dynamic-route-readiness`.
-
----
-
-## 16. Histórias que provam garantia com asserção tautológica
-
-**O que é:** medido em `button-variants` — cinco histórias/testes que
-provam uma garantia escolheram argumentos (valores de prop, estado de
-ambiente, ou o elemento consultado) sob os quais a asserção é verdadeira
-**independentemente** de o comportamento provado existir ou estar correto.
-Nenhuma tem erro de sintaxe nem falta asserção; cada uma roda, passa, e
-aparenta provar a garantia nomeada — só não prova.
-
-As cinco, nomeadas:
-
-1. `button.stories.tsx`, história `Pendente` (versão original). Args:
-   `icon={Menu}` + `aria-label`. A asserção de nome acessível passa tanto se
-   `Button` preserva o conteúdo durante a pendência quanto se o substitui
-   inteiramente — `aria-label` é atributo do elemento, independente do que
-   `children` renderiza. Este era um bug real, medido ao vivo (a história
-   corrigida, com `children` de texto, reprovou contra o componente antes da
-   correção) e já corrigido no mesmo ciclo.
-2. `spinner.stories.tsx`, história `SemMovimentoReduzido`. Roda sob o padrão
-   do Chromium headless, que não declara `prefers-reduced-motion`. A
-   asserção "animação presente" é verdadeira tanto se `spinner.module.css`
-   tiver a regra que desliga a animação sob a preferência quanto se nunca a
-   tivesse tido — o ramo que a regra desliga nunca é exercitado por este
-   estado de ambiente.
-3. `contrast.test.ts`, teste "remover um par de ação da fonte o remove da
-   checagem". Usa os tokens correntes reais, que nunca tiveram o par
-   plantado. A asserção de ausência é verdadeira tanto se a enumeração
-   funciona corretamente (e por isso não encontra o que não existe) quanto
-   se estivesse inteiramente quebrada (sempre vazia, sem nunca enumerar
-   nada). Só o teste irmão, que planta o par e confere presença, prova a
-   enumeração.
-4. `button.stories.tsx`, história `Desabilitado`, as asserções de clique e
-   teclado. O navegador bloqueia o clique no nível **nativo** (atributo
-   `disabled`), independente de qualquer lógica de `Button` acima dele — a
-   asserção passa mesmo que a ligação de `isDisabled` a outros efeitos
-   estivesse desconexa da que desliga o clique.
-5. `button.stories.tsx`, história `AtributosDeControle`. Testa só
-   `aria-expanded={true}` — um booleano, só um dos dois valores possíveis. A
-   asserção passa tanto se `Button` repassa o valor recebido quanto se
-   tivesse `"true"` fixo embutido por engano.
-
-**Confiança:** as três primeiras são inequívocas — a mutação que cada uma
-deixa passar é concreta, e a primeira foi medida ao vivo. As duas últimas
-seguem o mesmo formato, com severidade menor; ficam para quem retomar este
-ponto confirmar se contam como a mesma classe de defeito.
-
-**Por que ficou aberto:** o requisito correspondente pertence à capacidade
-`verification-bench`, que já existe e já é viva (`openspec/specs/
-verification-bench/spec.md`) — mudar uma spec viva é ciclo próprio, com
-proposta, design e tarefas, não uma linha solta encaixada em outro change. Um
-rascunho de proposta chegou a ser aberto em `openspec/changes/
-verification-bench-non-tautological-assertion/` durante a aplicação de
-`button-variants` e foi removido de lá por decisão do dono: o achado fica
-registrado aqui, não meio-proposto num PR de código.
-
-**Nota:** este requisito, quando escrito, não terá prova automatizável no
-formato que os demais requisitos de `verification-bench` usam (plantio de
-defeito, execução, reprovação nomeada) — é uma propriedade do desenho do
-teste, não do comportamento renderizado, verificável por revisão, no mesmo
-formato que `openspec/config.yaml` (`rules.specs`) já usa para "todo critério
-de aceite nomeia o teste que o prova". Como mecanizar isso, se for possível,
-é decisão do ciclo que escrever o requisito.
-
-**Gatilho:** o próximo ciclo que tocar `verification-bench` por suas
-próprias razões — é lá que a proposta se escreve inteira, com design e
-tarefas.
-
----
-
-## 17. `openspec validate --strict` aprova mudança sem `design.md` nem `tasks.md`
-
-**O que é:** o schema `spec-driven` declara `design` e `tasks` como
-artefatos de planejamento exigidos antes de aplicar (`applyRequires:
-["tasks"]`), mas `openspec validate` não os exige para considerar a mudança
-válida. **Medido nesta branch** (`button-variants`), sobre um change com só
-`proposal.md` e uma spec delta, sem `design.md` nem `tasks.md`:
-
-```
-$ npx openspec validate <nome> --strict --json
-{
-  "items": [{ "id": "<nome>", "type": "change", "valid": true, "issues": [] }],
-  "summary": { "totals": { "items": 1, "passed": 1, "failed": 0 } }
-}
-```
-
-`--strict` não muda o resultado. `valid: true`, zero `issues`, para uma
-mudança que ninguém poderia aplicar como está (falta o "como" e o "em que
-passos").
-
-**Por que ficou aberto:** `openspec` (`@fission-ai/openspec`) é ferramenta de
-terceiro, não deste repositório — não é nosso lugar consertar o
-comportamento do `validate`. O registro existe para que "`validate` passou"
-nunca seja lido como "mudança completa" por quem revisar um proposal daqui
-em diante; os dois fatos já divergiram uma vez sem estarem escritos em
-lugar nenhum.
-
-**Gatilho:** uma versão de `@fission-ai/openspec` que passe a considerar
-artefatos de planejamento ausentes na checagem de validade, ou a primeira
-vez que essa lacuna causar um problema real (uma mudança revisada ou
-aplicada como se completa por engano, apoiada só em `validate` verde).
-
----
-
-## 18. `NavPanel` construído, sem rota de negócio para religar
-
-**O que é:** `NavPanel`, `NavSection` e `NavItem` existem como componentes de
-`@chargebr/ui`, exercitados na bancada (Storybook), e `AppFrame` ganhou um
-slot de navegação (`nav`, `navToggleLabel`, `navOpen`, `onNavToggle`) e o
-gatilho do hambúrguer que o abre e fecha — mas nenhum dos dois está ligado a
-`apps/backoffice`. O requisito "Regiões da moldura no documento entregue"
-(`backoffice-shell`) continua proibindo região de navegação no documento
-emitido, porque não existe rota de negócio real para listar (decisão do
-dono, `design.md` D5 de `interface-atomic-structure`).
-
-**Por que ficou aberto:** popular `nav` com destinos de mentira reproduziria
-exatamente o defeito que aquele requisito foi escrito para impedir — uma
-região de navegação vazia (ou fictícia) anuncia um destino que não existe.
-
-**Gatilho:** a primeira rota de negócio real — o ciclo que a trouxer decide
-a forma final de `nav` em `apps/backoffice` e revisa o requisito "Regiões da
-moldura no documento entregue" em conjunto.
-
----
-
-## 19. O harness de viewport da bancada não redimensiona de verdade
-
-**O que é:** nenhuma forma testada de controlar a largura real da janela
-dentro de uma história (`play`) tem efeito em `packages/ui`, sob
-`@storybook/addon-vitest@10.6.0` + `vitest@5.0.1`. Medido, três tentativas:
-
-1. `parameters.viewport.defaultViewport` / `globals.viewport.value` — a
-   largura real medida (`window.innerWidth`) ficou em 414×896
-   independentemente do valor declarado.
-2. `page.viewport(width, height)` de `@vitest/browser/context`, importado
-   estático no topo do arquivo de história — lança
-   `vitest/browser can be imported only inside the Browser Mode. Your test
-   is running in browser pool.`
-3. O mesmo import, dinâmico, dentro do `play` — o mesmo erro, no mesmo lugar.
-
-O próprio código-fonte de `@vitest/browser/context` (versão instalada)
-confirma: fora do modo nativo de navegador do Vitest, o pacote serve um
-arquivo de _stub_ que sempre lança — "Vitest resolves 'vitest/browser' as a
-virtual module instead". `@storybook/addon-vitest` roda sob um pool próprio
-("browser pool", via `storybookTest()`), não sob `test.browser.enabled` do
-próprio Vitest, e por isso nunca aciona a substituição do módulo virtual. O
-código-fonte do complemento confirma o mesmo efeito por dentro: sua função
-`setViewport` importa `@vitest/browser/context` dentro de um `try/catch` que
-vira no-op silencioso quando a importação lança — a mesma causa, sem erro
-visível para quem só lê o resultado do parâmetro.
-
-**Por que ficou aberto:** bate com um par de peer dependency já registrado e
-aceito neste repositório — `@storybook/addon-vitest@10.6.0` declara par com
-`vitest@"^3.0.0 || ^4.0.0"` e `@vitest/browser-playwright@^4.0.0`; este
-repositório roda `vitest@5.0.1` de propósito (D4, `lucide-react`). Consertar
-isso é mudar a versão de uma dependência de teste em todo o pacote, risco
-maior que o de uma tarefa que só precisava de uma história a mais — não é
-decisão para um ciclo que só precisa mostrar um gatilho atrás de um
-breakpoint.
-
-**Consequência medida:** `interface-atomic-structure`, tarefa 7.3, prova o
-gatilho do hambúrguer por comportamento verificável sem largura real —
-`aria-controls`, `aria-expanded` alternando pelo clique, `nav` aparecendo e
-sumindo da árvore de acessibilidade — mas não prova visibilidade do gatilho
-nos dois lados do breakpoint em janela real. A regra CSS
-(`app-frame.module.css`, `@media (--screen-md)`) continua escrita.
-
-**Gatilho:** o par de `@storybook/addon-vitest` e `vitest` alinhado (para
-cima ou para baixo), ou outro mecanismo de redimensionamento real de
-viewport dentro de uma história provado por execução — não por leitura de
-documentação —, o que vier primeiro.
-
----
-
-## 20. Ciclo aplicado sem arquivamento não é pego por nada hoje
-
-**O que é:** medido em `button-variants` — 22/22 tarefas feitas e código
-mergeado (PR #184), e a mudança continuou em `openspec/changes/` como ativa,
-sem ser arquivada, até este ciclo (`docs/archive-button-variants`) a
-fechar. Os dois spec deltas (`interface-atoms`, `design-tokens`) nunca
-chegaram às specs vivas nesse intervalo: `interface-atoms` viva tinha três
-requisitos, nenhum sobre desabilitado, tamanho, pendência ou `Spinner`;
-`design-tokens` viva não mencionava `text.control` nem
-`color.action.disabled` — apesar do código já usar os dois há dias.
-
-**Por que ficou aberto:** `openspec validate` e `openspec list` não
-reclamam de uma mudança com todas as tarefas concluídas parada em
-`changes/`. Não há verificação, em `pnpm verify` ou no próprio `openspec`,
-que note a divergência entre "tarefas 100% feitas" e "specs vivas
-desatualizadas" — a lacuna só apareceu porque alguém foi procurar; sem
-isso, código e documentação viva divergem em silêncio por tempo
-indefinido.
-
-**Gatilho:** o próximo ciclo, qualquer um, como item de fechamento
-obrigatório — antes de propor uma mudança nova, confirmar que a anterior
-com tarefas completas já foi arquivada; se não foi, arquivar antes de
-propor.
-
----
+- **1. A camada 3 não existe** e **10. A forma mista é recusada, não
+  resolvida** e **18. `NavPanel` construído, sem rota de negócio para
+  religar** — reclassificados por `close-open-points` (arquivado em
+  2026-09-30) para `docs/forma-do-produto.md`, seção "Pontos técnicos
+  reclassificados". Nenhum dos três foi resolvido, e nenhum ciclo de
+  interface os fecha sozinho: cada um depende de uma decisão sobre a
+  forma do produto — eixo de separação de aplicações, quando a rota de
+  negócio nasce — que só a fase de desenho toma. Texto e gatilho de cada
+  um estão preservados por inteiro no arquivo novo.
 
 ## Fechados
 
@@ -298,6 +66,57 @@ propor.
   `pnpm verify` enquanto o ponto 5 continuar listado como aberto — a
   correção precisa entrar na aplicação, não pode esperar o arquivamento,
   ou o portão fica vermelho entre os dois PRs.
+- **16. Histórias que provam garantia com asserção tautológica** —
+  fechado por `close-open-points`, como critério de revisão, sem
+  guardião mecânico — a forma final registrada no design daquele ciclo,
+  não um adiamento. O requisito "Asserção prova o comportamento, não o
+  ambiente" entrou em `verification-bench`: uma asserção que alega
+  provar uma garantia é revisada contra mutação mínima do comportamento
+  que ela alega provar — se a asserção continuaria passando com o
+  comportamento quebrado, ela não prova nada, e a revisão nomeia a
+  mutação. As ocorrências 3 (`contrast.test.ts`), 4 (`Desabilitado`) e 5
+  (`AtributosDeControle`) continuam sem correção — não fazem parte deste
+  fechamento, e ficam como evidência que motivou o requisito, não como
+  pendência dele.
+- **17. `openspec validate --strict` aprova mudança sem `design.md` nem
+  `tasks.md`** — fechado por `close-open-points`.
+  `tools/checks/change-lifecycle.test.ts` é o substituto que este
+  repositório controla: toda mudança ativa sob `openspec/changes/`, fora
+  de `archive/`, precisa ter `proposal.md`, `design.md` e `tasks.md`, e a
+  ausência de qualquer um reprova `pnpm verify` nomeando a mudança e o
+  artefato que falta. A lacuna na ferramenta de terceiro
+  (`@fission-ai/openspec`) continua existindo e não é nosso lugar
+  consertar — o que fecha este ponto é ter um guardião próprio que não
+  depende dela.
+- **19. O harness de viewport da bancada não redimensiona de verdade** —
+  fechado por `close-open-points`, por medição nova, não pelo par de
+  dependência antes registrado. A causa real nunca foi o "browser pool"
+  do complemento do Storybook: era o especificador de importação.
+  `@vitest/browser/context` é stub estático fora do modo nativo do
+  Vitest; `"vitest/browser"` é o que o Vitest substitui de verdade sob
+  `browser.enabled`. Um projeto novo (`viewport`, em
+  `packages/ui/vitest.config.ts`), sem `storybookTest`, mede o gatilho
+  do `AppFrame` alcançável 1px abaixo do breakpoint e inalcançável 1px
+  acima, localizado por papel e nome acessível
+  (`page.getByRole("button", { name: "Abrir menu" })`) — testar
+  exatamente em cima do valor do breakpoint (768px) reprovou por timeout
+  (arredondamento de viewport real), por isso 767/769. Contraprova: com
+  a regra CSS do breakpoint removida por plantio, a prova reprova;
+  revertida, volta a passar — não é tautológica.
+- **20. Ciclo aplicado sem arquivamento não é pego por nada hoje** —
+  fechado por `close-open-points`, pela outra metade do mesmo guardião
+  do ponto 17: mudança ativa sob `openspec/changes/` com `tasks.md`
+  100% marcado reprova `pnpm verify`, nomeando a mudança — a divergência
+  que em `button-variants` só apareceu porque alguém foi procurar agora
+  reprova sozinha. **Medido no próprio arquivamento deste ciclo:** com
+  `close-open-points` já movido para `archive/` e este registro ainda
+  não atualizado, uma terceira checagem do mesmo guardião — mudança
+  arquivada que declara fechar um ponto, comparada contra o que este
+  arquivo ainda lista como aberto — reprovou nomeando o próprio
+  `close-open-points` e os pontos 16, 17, 19 e 20 (mensagem exata em
+  `openspec/changes/archive/2026-09-30-close-open-points/tasks.md`,
+  tarefa 6.6). É a prova de que este ponto morreu de verdade: o primeiro
+  ciclo em que o guardião existia para pegá-lo, pegou.
 - **12. Dois guardiões leem `next-env.d.ts`** — fechado pelo PR que arrumou a
   verificação. `style-literals` e `type-suppression` deixaram de pular
   diretório de artefato pelo nome e passaram a filtrar pelo que o versionamento

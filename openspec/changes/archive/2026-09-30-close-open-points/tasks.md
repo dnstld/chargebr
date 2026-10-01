@@ -157,25 +157,28 @@ ainda não.
       vermelho em `main` entre os dois PRs — o trabalho que fecha o
       ponto 5 já estava pronto (por `tokens-obligation-form`), então
       corrigir o registro não dependia de nada deste arquivamento.
-- [ ] 6.2 Mover os pontos 16, 17, 19 e 20 para "Fechados", cada um citando
+- [x] 6.2 Mover os pontos 16, 17, 19 e 20 para "Fechados", cada um citando
       `close-open-points` e o que especificamente fechou (o requisito de
       revisão; o guardião; o cenário de viewport, condicional à tarefa
       4.4; o guardião, para a metade de 20).
-- [ ] 6.3 Mover os pontos 1, 10 e 18 de `docs/pontos-abertos.md` para
+- [x] 6.3 Mover os pontos 1, 10 e 18 de `docs/pontos-abertos.md` para
       `docs/forma-do-produto.md`, texto e gatilho preservados por inteiro,
       registrando nos dois lados por que o registro mudou de arquivo.
-- [ ] 6.4 Atualizar o cabeçalho de `docs/pontos-abertos.md`: contagem de
+- [x] 6.4 Atualizar o cabeçalho de `docs/pontos-abertos.md`: contagem de
       ciclos arquivados, "nenhum ponto aberto", data. Pronto quando o
       diff mostra as oito mudanças (cinco fechamentos, três remoções por
       reclassificação) e o arquivo não lista nenhum ponto aberto
       remanescente.
-- [ ] 6.5 Sincronizar as specs vivas — `workspace-verification`,
+- [x] 6.5 Sincronizar as specs vivas — `workspace-verification`,
       `verification-bench`, `backoffice-shell` — a partir dos deltas
       deste change ("Sync now"). Se a tarefa 4.4 tiver parado a spec
       delta de `backoffice-shell` e o requisito de `verification-bench`
       sobre viewport, este passo sincroniza só o que não foi retirado, e
       o ponto 19 permanece registrado como aberto, com a medição nova.
-- [ ] 6.6 **Prova de que o ponto 20 morreu de verdade — o guardião cobra
+      Feito por `npx openspec archive close-open-points -y`: 4 requisitos
+      adicionados, 2 modificados, nos três arquivos — nenhum retirado,
+      as tarefas 4.1–4.4 não pararam nada.
+- [x] 6.6 **Prova de que o ponto 20 morreu de verdade — o guardião cobra
       de si mesmo no primeiro ciclo em que existe.** Antes de commitar
       6.2–6.4: com o diretório do change já movido para `archive/` (ou
       `.openspec.yaml` marcado, conforme o mecanismo de `/opsx:archive`) e
@@ -187,3 +190,33 @@ ainda não.
       `main`, no primeiro ciclo que o guardião podia pegar. Só depois
       disso commitar 6.2–6.4 juntas com o movimento para `archive/`, e
       confirmar que a mesma afirmação passa.
+
+      **Executada.** `npx openspec archive close-open-points -y` moveu o
+      diretório para `openspec/changes/archive/2026-09-30-close-open-points/`
+      sem commitar nada. Com `docs/pontos-abertos.md` intacto nesse
+      instante, `npx vitest run --project guards -t "continua aberto no
+      registro"` **passou** — não reprovou. Investigado: o `proposal.md`
+      deste change nunca usava o verbo "fecha" perto de "ponto" na seção
+      Registros (dizia "docs/pontos-abertos.md fica sem ponto aberto"),
+      então `declaredClosedPoints()` não achava nada ali — um caso real
+      do padrão de declaração diferente que o design já registrava como
+      lacuna aceita, batendo na própria proposta deste ciclo. Corrigido
+      no próprio `proposal.md` arquivado (ainda não commitado), trocando
+      a frase por "fecha os pontos 16, 17, 19 e 20 de
+      `docs/pontos-abertos.md`, que fica sem ponto aberto" — o que a
+      proposta sempre quis dizer, na convenção que o design mediu nas
+      outras 14 mudanças. Rodado de novo, a mensagem exata:
+
+      ```
+      AssertionError: expected [ …(4) ] to deeply equal []
+      + [
+      +   "openspec/changes/archive/2026-09-30-close-open-points declara fechar o ponto 16, ainda aberto em docs/pontos-abertos.md",
+      +   "openspec/changes/archive/2026-09-30-close-open-points declara fechar o ponto 17, ainda aberto em docs/pontos-abertos.md",
+      +   "openspec/changes/archive/2026-09-30-close-open-points declara fechar o ponto 19, ainda aberto em docs/pontos-abertos.md",
+      +   "openspec/changes/archive/2026-09-30-close-open-points declara fechar o ponto 20, ainda aberto em docs/pontos-abertos.md",
+      + ]
+      ```
+
+      Só então 6.2–6.4 foram commitadas junto com o movimento para
+      `archive/` e a correção do `proposal.md`, num commit só. Repetida a
+      afirmação depois: passa.
