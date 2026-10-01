@@ -73,6 +73,7 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Revisão da implementação do adapter ANEEL](revisao-implementacao-adapter-aneel.md)
 - [Decisão: indisponibilidade operacional do collector ANEEL](decisao-indisponibilidade-collector-aneel.md)
 - [Revisão da carga canônica 0012 — indisponibilidade ANEEL](revisao-carga-canonica-0012.md)
+- [Resultado da carga canônica 0012 — indisponibilidade ANEEL](resultado-carga-canonica-0012.md)
 - [Collector local runtime v1](collector-local-runtime-v1.md)
 - [Decisão: extrator ABVE v1](decisao-extrator-abve-v1.md)
 - [Resultado do ensaio controlado do extrator ABVE v1](resultado-ensaio-extrator-abve-v1.md)
