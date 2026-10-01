@@ -1,0 +1,447 @@
+<title>Navegação ChargeBR</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: trilha de ícones + painel de navegação em coluna fixa à esquerda, altura total;
+   área de conteúdo com barra própria. A navegação é escura nos dois temas — identidade
+   própria, como no Storybook; o conteúdo segue o tema do leitor. */
+:root {
+  /* conteúdo — segue o tema (valores de semantic/light.json) */
+  --surface-base: #F7F7F8;
+  --surface-sunken: #EEEEF1;
+  --surface-raised: #FFFFFF;
+  --text-primary: #18181D;
+  --text-secondary: #55555F;
+  --text-muted: #73737F;
+  --border-default: #DFDFE4;
+  --action: #302681;
+  --action-hover: #4640A7;
+  --on-action: #FFFFFF;
+  --focus-ring: #302681;
+
+  /* moldura — cabeçalho, painel e trilha formam uma superfície só, escura nos dois
+     temas (component/nav.json proposto). Só o conteúdo segue o tema do leitor.
+     A trilha é um degrau mais funda que o painel e o cabeçalho. */
+  --nav-rail: #101013;
+  --nav-panel: #18181D;
+  --nav-edge: #2A2A31;
+  --nav-text: #C6C6CE;
+  --nav-text-strong: #EEEEF1;
+  --nav-text-muted: #73737F;
+  --nav-hover: #2A2A31;
+  --nav-current: #302681;
+  --nav-current-text: #FFFFFF;
+  --nav-accent: #8788FE;
+
+  /* estado semântico */
+  --ok: #009440;
+  --warn: #B28D04;
+
+  /* espaço e forma (primitive/space.json, primitive/radius.json) */
+  --s1: 2px; --s2: 4px; --s3: 8px; --s4: 12px; --s5: 16px; --s6: 24px; --s7: 32px;
+  --r-control: 4px; --r-surface: 8px; --r-pill: 9999px;
+
+  /* tipo (primitive/typography.json) */
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --t1: 12px; --t2: 13px; --t3: 14px; --t4: 16px; --t5: 20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-base: #101013;
+    --surface-sunken: #101013;
+    --surface-raised: #18181D;
+    --text-primary: #EEEEF1;
+    --text-secondary: #C6C6CE;
+    --text-muted: #9C9CA8;
+    --border-default: #2A2A31;
+    --action: #8788FE;
+    --action-hover: #A8AEFE;
+    --on-action: #101013;
+    --focus-ring: #8788FE;
+    --ok: #067833;
+    --warn: #B28D04;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface-base: #101013;
+  --surface-sunken: #101013;
+  --surface-raised: #18181D;
+  --text-primary: #EEEEF1;
+  --text-secondary: #C6C6CE;
+  --text-muted: #9C9CA8;
+  --border-default: #2A2A31;
+  --action: #8788FE;
+  --action-hover: #A8AEFE;
+  --on-action: #101013;
+  --focus-ring: #8788FE;
+  --ok: #067833;
+  --warn: #B28D04;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--t3);
+  line-height: 1.5;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.nav :focus-visible { outline-color: var(--nav-accent); }
+
+/* ---------- moldura ---------- */
+.app { display: grid; grid-template-columns: 56px 248px 1fr; height: 100%; }
+
+/* ---------- cabeçalho do conteúdo ---------- */
+.topbar {
+  display: flex; align-items: center; gap: var(--s4);
+  padding-inline: var(--s6);
+  min-height: 56px;
+  background: var(--nav-panel);
+  border-bottom: 1px solid var(--nav-edge);
+  flex: none;
+}
+.topbar .wordmark { display: block; height: 22px; width: auto; }
+.topbar-actions { margin-left: auto; display: flex; gap: var(--s2); align-items: center; }
+.top-btn {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: none; border: none; cursor: pointer; border-radius: var(--r-control);
+  color: var(--nav-text-muted);
+}
+.top-btn:hover { background: var(--nav-hover); color: var(--nav-text-strong); }
+.top-btn svg { width: 17px; height: 17px; }
+.top-btn:focus-visible { outline-color: var(--nav-accent); }
+
+/* ---------- trilha de ícones ---------- */
+.rail {
+  grid-column: 1;
+  background: var(--nav-rail);
+  border-right: 1px solid var(--nav-edge);
+  display: flex; flex-direction: column; align-items: center;
+  padding-block: var(--s4);
+  gap: var(--s2);
+  z-index: 3;
+}
+.mark {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  margin-bottom: var(--s5);
+  flex: none;
+}
+.mark svg { height: 24px; width: auto; }
+.rail-btn {
+  position: relative;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: none; border: none; cursor: pointer;
+  color: var(--nav-text-muted);
+  border-radius: var(--r-control);
+  flex: none;
+}
+.rail-btn svg { width: 20px; height: 20px; }
+.rail-btn:hover { color: var(--nav-text-strong); }
+.rail-btn[aria-current="true"] { color: var(--nav-text-strong); }
+.rail-btn[aria-current="true"]::before {
+  content: ""; position: absolute; inset-block: 8px; inset-inline-start: -8px;
+  width: 2px; border-radius: var(--r-pill); background: var(--nav-accent);
+}
+.rail-spacer { flex: 1; }
+.avatar {
+  width: 32px; height: 32px; border-radius: var(--r-pill);
+  background: var(--nav-hover); color: var(--nav-text-strong);
+  display: grid; place-items: center;
+  font-size: var(--t1); font-weight: 600; letter-spacing: .02em;
+  border: none; cursor: pointer; flex: none;
+}
+
+/* ---------- painel ---------- */
+.nav {
+  grid-column: 2;
+  background: var(--nav-panel);
+  border-right: 1px solid var(--nav-edge);
+  display: flex; flex-direction: column;
+  min-width: 0;
+  z-index: 2;
+}
+.nav-head { padding: var(--s5) var(--s4) var(--s3); }
+.nav-sub {
+  font-size: var(--t1); color: var(--nav-text-muted);
+  text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+}
+.nav-body { flex: 1; overflow-y: auto; padding: var(--s2) var(--s3) var(--s5); min-height: 0; }
+
+ul.tree, ul.tree ul { list-style: none; margin: 0; padding: 0; }
+ul.tree ul { margin-left: var(--s4); border-left: 1px solid var(--nav-edge); padding-left: var(--s3); }
+.tree li { margin: 1px 0; }
+
+.branch, .leaf {
+  width: 100%;
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 6px var(--s3);
+  border-radius: var(--r-control);
+  font: inherit; font-size: var(--t2);
+  color: var(--nav-text); text-decoration: none;
+  background: none; border: none; cursor: pointer; text-align: left;
+}
+.branch:hover, .leaf:hover { background: var(--nav-hover); color: var(--nav-text-strong); }
+.branch { font-weight: 500; }
+.chev { width: 14px; height: 14px; flex: none; color: var(--nav-text-muted); transition: transform .15s ease; }
+.branch[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.leaf { padding-left: var(--s5); }
+/* folha de primeiro nível: página sem itens, alinhada ao rótulo das pastas */
+.leaf-top { padding-left: 30px; }
+.leaf .dot { width: 5px; height: 5px; border-radius: var(--r-pill); background: var(--nav-text-muted); flex: none; margin-left: 2px; }
+.leaf[aria-current="page"] {
+  background: var(--nav-current); color: var(--nav-current-text); font-weight: 500;
+}
+.leaf[aria-current="page"] .dot { background: var(--nav-accent); }
+.leaf .count {
+  margin-left: auto; font-size: var(--t1); color: var(--nav-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.leaf[aria-current="page"] .count { color: #A8AEFE; }
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+
+.nav-foot {
+  border-top: 1px solid var(--nav-edge);
+  padding: var(--s3);
+  display: flex; align-items: center; gap: var(--s3);
+}
+.who { min-width: 0; flex: 1; }
+.who .name { font-size: var(--t2); color: var(--nav-text-strong); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who .org { font-size: var(--t1); color: var(--nav-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.icon-btn {
+  width: 28px; height: 28px; display: grid; place-items: center;
+  background: none; border: none; cursor: pointer; border-radius: var(--r-control);
+  color: var(--nav-text-muted); flex: none;
+}
+.icon-btn:hover { background: var(--nav-hover); color: var(--nav-text-strong); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ---------- conteúdo ---------- */
+.content { grid-column: 3; display: flex; flex-direction: column; min-width: 0; background: var(--surface-base); }
+.burger { display: none; }
+.sheet { padding: var(--s6); overflow-y: auto; flex: 1; }
+.eyebrow {
+  font-size: var(--t1); font-weight: 500; color: var(--text-muted);
+  letter-spacing: .06em; text-transform: uppercase;
+  margin: 0 0 var(--s3);
+}
+.eyebrow span { color: var(--border-default); margin-inline: var(--s2); }
+.sheet h1 { font-size: var(--t5); font-weight: 600; letter-spacing: -.01em; margin: 0 0 var(--s2); text-wrap: balance; }
+.sheet .lede { color: var(--text-secondary); font-size: var(--t3); margin: 0 0 var(--s6); max-width: 62ch; }
+
+/* ---------- estreito: a trilha fica, o painel sobrepõe ---------- */
+.scrim { display: none; }
+@media (max-width: 767px) {
+  .app { grid-template-columns: 56px 1fr; }
+  .content { grid-column: 2; }
+  .nav {
+    position: fixed; inset-block: 0; inset-inline-start: 56px;
+    width: 248px; max-width: calc(100% - 56px);
+    transform: translateX(-104%); transition: transform .18s ease;
+    box-shadow: 0 0 0 1px var(--nav-edge);
+  }
+  .nav[data-open="true"] { transform: none; }
+  .scrim {
+    display: block; position: fixed; inset: 0; background: rgba(16,16,19,.5);
+    border: none; padding: 0; margin: 0;
+  }
+  .scrim[hidden] { display: none !important; }
+  .burger { display: grid; }
+  .topbar { padding-inline: var(--s5); }
+  .sheet { padding: var(--s5); }
+}
+@media (prefers-reduced-motion: reduce) { .nav { transition: none; } }
+</style>
+
+<div class="app">
+  <aside class="rail">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="758 0 265 303" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M777.467 302.33L1022.33 103.508L904.949 112.565L1007.82 0.862082L855.093 0L758.535 176.827L856.986 172.513L777.467 302.33Z" fill="#FFCB00"/></svg>
+    </div>
+
+    <button class="rail-btn" type="button" aria-current="true" aria-label="Fontes" title="Fontes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a9 3 0 1 0 18 0A9 3 0 1 0 3 7"/><path d="M3 7v10c0 1.7 4 3 9 3s9-1.3 9-3V7"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>
+    </button>
+    <button class="rail-btn" type="button" aria-label="Séries" title="Séries">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+    </button>
+    <button class="rail-btn" type="button" aria-label="Instrumentos" title="Instrumentos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+    </button>
+    <button class="rail-btn" type="button" aria-label="Configurações" title="Configurações">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7.9 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 14.6a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1.3Z"/></svg>
+    </button>
+
+    <div class="rail-spacer"></div>
+    <button class="avatar" type="button" aria-label="Conta de Denis Toledo">DT</button>
+  </aside>
+
+  <nav class="nav" id="nav-panel" aria-label="Navegação principal" data-open="false">
+    <div class="nav-head">
+      <div class="nav-sub">Fontes</div>
+    </div>
+
+    <div class="nav-body">
+      <ul class="tree">
+        <li><a class="leaf leaf-top" href="#">Visão geral</a></li>
+
+        <li>
+          <button class="branch" type="button" aria-expanded="true" aria-controls="g-assoc">
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            Associações do setor
+          </button>
+          <ul id="g-assoc">
+            <li><a class="leaf" href="#" aria-current="page"><span class="dot"></span>ABVE<span class="count">14</span></a></li>
+            <li><a class="leaf" href="#"><span class="dot"></span>ABRACE<span class="count">6</span></a></li>
+          </ul>
+        </li>
+
+        <li>
+          <button class="branch" type="button" aria-expanded="true" aria-controls="g-reg">
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            Reguladores governamentais
+          </button>
+          <ul id="g-reg">
+            <li><a class="leaf" href="#"><span class="dot"></span>ANEEL<span class="count">31</span></a></li>
+            <li><a class="leaf" href="#"><span class="dot"></span>MME<span class="count">9</span></a></li>
+            <li><a class="leaf" href="#"><span class="dot"></span>ANP<span class="count">4</span></a></li>
+          </ul>
+        </li>
+
+        <li>
+          <button class="branch" type="button" aria-expanded="false" aria-controls="g-conc">
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            Concessionárias
+          </button>
+          <ul id="g-conc" hidden>
+            <li><a class="leaf" href="#"><span class="dot"></span>Enel SP<span class="count">12</span></a></li>
+            <li><a class="leaf" href="#"><span class="dot"></span>CPFL<span class="count">8</span></a></li>
+          </ul>
+        </li>
+
+        <li>
+          <button class="branch" type="button" aria-expanded="false" aria-controls="g-imp">
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            Imprensa especializada
+          </button>
+          <ul id="g-imp" hidden>
+            <li><a class="leaf" href="#"><span class="dot"></span>Canal Energia<span class="count">22</span></a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="nav-foot">
+      <div class="who">
+        <div class="name">Denis Toledo</div>
+        <div class="org">ChargeBR</div>
+      </div>
+      <button class="icon-btn" type="button" aria-label="Sair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <button class="scrim" id="scrim" type="button" aria-label="Fechar navegação" hidden></button>
+
+  <div class="content">
+  <header class="topbar">
+    <button class="top-btn burger" id="burger" type="button" aria-label="Abrir navegação" aria-expanded="false" aria-controls="nav-panel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+
+    <svg class="wordmark" viewBox="0 0 1263 303" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ChargeBR">
+      <path d="M1128.07 252.538V50.994H1209.92C1224.92 50.994 1235.72 54.2905 1242.31 60.8836C1249.13 67.2493 1252.54 75.4339 1252.54 85.4372V116.129C1252.54 125.905 1250.16 134.885 1245.38 143.07C1240.84 151.027 1232.54 155.688 1220.49 157.052V157.734C1228.44 159.325 1233.9 161.94 1236.86 165.577C1240.04 168.988 1242.65 174.785 1244.7 182.97L1262.43 252.538H1202.07L1190.48 186.38C1189.57 181.833 1188.77 178.309 1188.09 175.808C1187.41 173.08 1186.61 171.716 1185.7 171.716H1184.68V252.538H1128.07ZM1184.68 134.203H1190.14C1193.09 134.203 1195.37 132.953 1196.96 130.452C1198.55 127.951 1199.34 123.632 1199.34 117.493V95.3268C1199.34 89.1884 1198.66 85.0962 1197.3 83.05C1196.16 80.7766 1194.12 79.6398 1191.16 79.6398H1184.68V134.203Z" fill="#009440"/>
+      <path d="M991.195 252.538V50.994H1070.31C1084.41 50.994 1094.64 54.2905 1101 60.8836C1107.6 67.2493 1110.89 75.4339 1110.89 85.4372V107.263C1110.89 112.946 1110.1 118.289 1108.51 123.291C1106.92 128.065 1104.3 132.157 1100.66 135.567C1098.39 137.841 1095.55 139.773 1092.14 141.365C1088.73 142.729 1085.09 143.638 1081.23 144.093V144.775C1084.41 144.775 1087.48 145.23 1090.43 146.139C1093.62 147.049 1097.03 148.754 1100.66 151.254C1104.76 154.21 1108.05 158.416 1110.55 163.872C1113.05 169.101 1114.3 175.694 1114.3 183.652V209.91C1114.3 220.596 1112.37 229.121 1108.51 235.487C1104.64 241.625 1099.07 246.059 1091.8 248.787C1084.52 251.288 1075.77 252.538 1065.54 252.538H991.195ZM1045.76 224.915H1052.58C1054.17 224.915 1055.42 224.461 1056.33 223.551C1057.24 222.414 1057.92 220.596 1058.38 218.095C1059.06 215.367 1059.4 211.615 1059.4 206.841V185.357C1059.4 177.854 1058.83 173.08 1057.69 171.034C1056.56 168.76 1054.74 167.624 1052.24 167.624H1045.76V224.915ZM1045.76 133.862H1051.22C1053.26 133.862 1055.08 132.612 1056.67 130.111C1058.26 127.383 1059.06 121.813 1059.06 113.401V95.3268C1059.06 89.4158 1058.49 85.3235 1057.35 83.05C1056.22 80.7766 1054.4 79.6398 1051.9 79.6398H1045.76V133.862Z" fill="#009440"/>
+      <path d="M692.741 252.42V50.8761H790.274V88.7295H749.351V127.947H786.863V170.575H749.351V215.59H790.274V252.42H692.741Z" fill="#009440"/>
+      <path d="M600.484 255.83C593.436 255.83 586.502 254.58 579.682 252.079C573.089 249.351 567.519 244.008 562.972 236.051C558.652 228.094 556.492 216.385 556.492 200.926V94.5268C556.492 83.1594 558.993 74.1792 563.995 67.5861C568.996 60.7656 575.931 55.8776 584.797 52.9221C593.891 49.9666 604.463 48.4888 616.512 48.4888C628.562 48.4888 639.247 49.9666 648.568 52.9221C657.89 55.8776 665.165 60.7656 670.394 67.5861C675.623 74.1792 678.237 83.1594 678.237 94.5268V125.219H625.72V91.1166C625.72 88.3884 625.379 86.3423 624.697 84.9782C624.015 83.3868 623.105 82.3637 621.969 81.909C621.059 81.227 619.809 80.8859 618.217 80.8859C616.853 80.8859 615.603 81.227 614.466 81.909C613.329 82.3637 612.42 83.3868 611.738 84.9782C611.056 86.3423 610.715 88.3884 610.715 91.1166V214.908C610.715 217.408 611.056 219.455 611.738 221.046C612.42 222.637 613.329 223.774 614.466 224.456C615.603 224.911 616.853 225.138 618.217 225.138C620.491 225.138 622.31 224.456 623.674 223.092C625.038 221.501 625.72 218.773 625.72 214.908V176.713H617.194V146.362H678.237V252.42H637.314L634.586 239.461C632.995 242.871 629.585 246.509 624.356 250.374C619.127 254.012 611.169 255.83 600.484 255.83Z" fill="#009440"/>
+      <path d="M413.663 252.42V50.8761H495.508C510.513 50.8761 521.312 54.1726 527.905 60.7657C534.726 67.1315 538.136 75.316 538.136 85.3193V116.011C538.136 125.787 535.749 134.768 530.974 142.952C526.427 150.909 518.129 155.57 506.08 156.934V157.616C514.037 159.207 519.493 161.822 522.449 165.46C525.632 168.87 528.246 174.667 530.292 182.852L548.025 252.42H487.664L476.07 186.262C475.16 181.715 474.365 178.191 473.683 175.69C473.001 172.962 472.205 171.598 471.295 171.598H470.272V252.42H413.663ZM470.272 134.085H475.729C478.684 134.085 480.958 132.835 482.549 130.334C484.141 127.833 484.936 123.514 484.936 117.375V95.2089C484.936 89.0705 484.254 84.9783 482.89 82.9322C481.753 80.6587 479.707 79.5219 476.752 79.5219H470.272V134.085Z" fill="#009440"/>
+      <path d="M266.621 252.42L295.608 50.8761H375.748L404.053 252.42H343.01L340.282 223.092H327.664L325.618 252.42H266.621ZM328.005 196.834H340.282L334.143 93.5038L328.005 196.834Z" fill="#009440"/>
+      <path d="M136.249 252.42V50.8761H190.472V128.97H202.748V50.8761H256.971V252.42H202.748V168.87H190.472V252.42H136.249Z" fill="#009440"/>
+      <path d="M62.066 256.512C49.7892 256.512 38.9902 255.035 29.6689 252.079C20.3477 249.124 13.0725 243.099 7.84351 234.005C2.6145 224.911 0 211.384 0 193.423V93.8448C0 82.4774 2.6145 73.4972 7.84351 66.9041C13.0725 60.0836 20.3477 55.1956 29.6689 52.2401C38.9902 49.2846 49.7892 47.8068 62.066 47.8068C74.5702 47.8068 85.2555 49.2846 94.1221 52.2401C102.989 55.1956 109.809 60.0836 114.583 66.9041C119.358 73.4972 121.745 82.4774 121.745 93.8448V140.906H67.5224V91.1166C67.5224 88.3885 67.295 86.3423 66.8404 84.9782C66.3857 83.3868 65.7036 82.3637 64.7942 81.909C64.1122 81.227 63.2028 80.886 62.066 80.886C60.9293 80.886 59.9062 81.227 58.9968 81.909C58.3148 82.3637 57.7464 83.3868 57.2917 84.9782C56.837 86.3423 56.6097 88.3885 56.6097 91.1166V214.908C56.6097 217.409 56.837 219.455 57.2917 221.046C57.7464 222.638 58.3148 223.774 58.9968 224.456C59.9062 224.911 60.9293 225.138 62.066 225.138C63.2028 225.138 64.1122 224.911 64.7942 224.456C65.7036 223.774 66.3857 222.638 66.8404 221.046C67.295 219.455 67.5224 217.409 67.5224 214.908V167.847H121.745V193.082C121.745 211.27 119.358 224.911 114.583 234.005C109.809 243.099 102.989 249.124 94.1221 252.079C85.2555 255.035 74.5702 256.512 62.066 256.512Z" fill="#009440"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M777.467 302.33L1022.33 103.508L904.949 112.565L1007.82 0.862082L855.093 0L758.535 176.827L856.986 172.513L777.467 302.33Z" fill="#FFCB00"/>
+    </svg>
+
+    <div class="topbar-actions">
+      <button class="top-btn" id="theme" type="button" aria-label="Alternar tema claro e escuro">
+        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </header>
+    <div class="sheet">
+      <p class="eyebrow">Fontes<span>/</span>Associações do setor</p>
+      <h1>ABVE — Associação Brasileira do Veículo Elétrico</h1>
+      <p class="lede">Boletins mensais de emplacamento de eletrificados. Última coleta em 28 de setembro de 2026.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  for (const b of document.querySelectorAll('.branch')) {
+    b.addEventListener('click', () => {
+      const open = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', String(!open));
+      const panel = document.getElementById(b.getAttribute('aria-controls'));
+      if (panel) panel.hidden = open;
+    });
+  }
+  for (const a of document.querySelectorAll('.leaf')) {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      for (const x of document.querySelectorAll('.leaf')) x.removeAttribute('aria-current');
+      a.setAttribute('aria-current', 'page');
+      closeNav();
+    });
+  }
+  for (const r of document.querySelectorAll('.rail-btn')) {
+    r.addEventListener('click', () => {
+      for (const x of document.querySelectorAll('.rail-btn')) x.setAttribute('aria-current', 'false');
+      r.setAttribute('aria-current', 'true');
+      document.querySelector('.nav-sub').textContent = r.getAttribute('aria-label');
+    });
+  }
+  const nav = document.getElementById('nav-panel');
+  const burger = document.getElementById('burger');
+  const scrim = document.getElementById('scrim');
+  function openNav() {
+    nav.dataset.open = 'true';
+    burger.setAttribute('aria-expanded', 'true');
+    scrim.hidden = false;
+    nav.querySelector('.branch')?.focus();
+  }
+  function closeNav() {
+    if (nav.dataset.open !== 'true') return;
+    nav.dataset.open = 'false';
+    burger.setAttribute('aria-expanded', 'false');
+    scrim.hidden = true;
+    burger.focus();
+  }
+  burger.addEventListener('click', () => nav.dataset.open === 'true' ? closeNav() : openNav());
+  scrim.addEventListener('click', closeNav);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNav(); });
+
+  const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>';
+  const root = document.documentElement;
+  const icon = document.getElementById('theme-icon');
+  function paint() {
+    const dark = root.dataset.theme
+      ? root.dataset.theme === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    icon.innerHTML = dark ? SUN : MOON;
+  }
+  document.getElementById('theme').addEventListener('click', () => {
+    const dark = root.dataset.theme
+      ? root.dataset.theme === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    paint();
+  });
+  paint();
+</script>
