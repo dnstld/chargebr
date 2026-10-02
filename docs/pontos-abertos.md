@@ -1,9 +1,9 @@
 # Pontos abertos
 
-**Atualizado em:** 2 de outubro de 2026, no arquivamento de `nav-frame-contrast`
-**Estado do repositório:** 7 capacidades vivas, 17 ciclos arquivados,
-nenhum change ativo. **1 ponto aberto** (21, sem alteração: `nav-frame-contrast`
-não toca `interface-charts`)
+**Atualizado em:** 2 de outubro de 2026, no arquivamento de `proof-falsifiability`
+**Estado do repositório:** 7 capacidades vivas, 18 ciclos arquivados,
+nenhum change ativo. **1 ponto aberto** (21, sem alteração: `proof-falsifiability`
+não toca `interface-charts`). Este ciclo não fecha nem abre ponto nenhum.
 
 ## O que este arquivo é
 

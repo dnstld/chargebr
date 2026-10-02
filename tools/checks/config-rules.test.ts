@@ -91,6 +91,12 @@ test("nenhuma seção de regras está vazia", () => {
 // passa pelas duas provas acima: é ausência vestida de presença. Recusá-la é
 // verificar presença, não julgar redação — este guardião não lê o conteúdo de
 // nenhuma regra.
+//
+// Seção que não é lista sai daqui por `[]`, sem violação: quem pega esse caso é a
+// prova da seção vazia, acima, com `ausente ou não é uma lista de entradas`. Quem
+// editar uma das duas precisa saber que a outra segura o caso — mover a checagem
+// de tipo para cá sem tirá-la de lá a duplica, e tirá-la de lá sem trazê-la para
+// cá deixa o caso sem ninguém.
 test("nenhuma entrada de regra é vazia ou só espaço", () => {
   const rules = readRules("o conteúdo de cada entrada de `rules`");
   const violations = DECLARED_SECTIONS.flatMap((section) => {

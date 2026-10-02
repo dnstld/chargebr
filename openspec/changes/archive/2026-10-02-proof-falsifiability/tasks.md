@@ -133,22 +133,30 @@ julgar redação, e o `SHALL NOT julgar o conteúdo de nenhuma regra` segue vale
 
 ## 5. Arquivamento
 
+Duas coisas decididas pelo dono no PR 3, fora do texto original deste grupo e
+feitas no mesmo commit do arquivamento: o acoplamento da contagem declarada do
+guardião ficou registrado em `CLAUDE.md`, junto da linha do `config-rules`, para
+que o próximo ciclo que mexer em `rules` saiba que a reprovação por contagem é a
+prova funcionando e não defeito; e o comentário do `config-rules` passou a dizer
+que o caso "seção não é lista" é pego pela prova da seção vazia, não pela da
+entrada vazia — quem editar uma das duas precisa saber que a outra segura o caso.
+
 As tarefas deste grupo rodam no terceiro PR do ciclo:
 `tools/checks/change-lifecycle.test.ts` reprova uma mudança ativa com todas as
 tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
 
-- [ ] 5.1 Arquivar a mudança **com sincronização da spec viva**: mover
+- [x] 5.1 Arquivar a mudança **com sincronização da spec viva**: mover
   `openspec/changes/proof-falsifiability/` para
   `openspec/changes/archive/<data>-proof-falsifiability/` e aplicar o delta de
   `workspace-verification` em `openspec/specs/`. Verificar com
   `npx openspec validate --specs --strict` passando nas sete capacidades e o
   requisito novo presente em `openspec/specs/workspace-verification/spec.md` com
   os cinco cenários.
-- [ ] 5.2 Atualizar o cabeçalho de `docs/pontos-abertos.md` — data, estado do
+- [x] 5.2 Atualizar o cabeçalho de `docs/pontos-abertos.md` — data, estado do
   repositório e contagem de ciclos arquivados, de 17 para 18 — no **mesmo commit**
   do movimento para `archive/`, registrando que este ciclo não fecha nem abre
   ponto nenhum e que o 21 segue aberto sem alteração. Verificar com
   `tools/checks/change-lifecycle.test.ts` passando.
-- [ ] 5.3 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
+- [x] 5.3 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
   estágios verdes, com o guardião novo passando contra o arquivo de regras já na
   forma final. Verificar pela saída do comando, código de saída zero.
