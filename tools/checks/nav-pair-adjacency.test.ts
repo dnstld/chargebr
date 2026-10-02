@@ -27,6 +27,21 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 // A cor de um token só vale como prova de adjacência quando um componente a
 // pinta como fundo; por isso a varredura é sobre o CSS entregue, e não sobre a
 // fonte de tokens.
+//
+// Dois limites medidos desta varredura, nenhum deles com ocorrência hoje:
+//
+// 1. O ponto fixo de aliases adota qualquer custom property cujo valor cite um
+//    alias conhecido, seja qual for a propriedade em que ele aparece. Se um dia
+//    uma custom property usar um token da moldura dentro de uma sombra composta
+//    (`box-shadow`) e outra pintar fundo com ela, a varredura contará como
+//    fundo o que é sombra. É falso positivo permissivo — passa o que deveria
+//    reprovar —, e a correção, quando houver caso, é classificar o alias pela
+//    propriedade em que ele é consumido, não só pelo nome.
+// 2. `BACKGROUND_PROPERTY` casa `background` e `background-color`, e nada mais.
+//    Um fundo pintado por `background-image: linear-gradient(...)` passaria por
+//    "não consumido como fundo" e reprovaria um par legítimo. É falso positivo
+//    restritivo — reprova o que deveria passar —, e a correção é acrescentar a
+//    propriedade à expressão quando o primeiro gradiente existir.
 
 const UI_STYLES = join(ROOT, "packages/ui/src");
 const COMPONENT_TOKENS = join(ROOT, "packages/tokens/tokens/component");

@@ -152,13 +152,17 @@ de `@chargebr/ui` e `@chargebr/tokens` pelo subpath publicado; o inverso nunca
 acontece. As listas por perímetro estão em `biome.json`, cada proibição com sua
 razão registrada no design do ciclo que a criou.
 
-Quatro guardiões rodam dentro de `verify:test`, em `tools/checks/`:
+Seis guardiões rodam dentro de `verify:test`, em `tools/checks/`:
 
 - `style-literals` — literal de estilo fora de tokens;
 - `component-vocabulary` — componente declarando rótulo em português no próprio
   arquivo;
 - `fixture-origin` — fixture sem origem declarada;
-- `type-suppression` — supressão de tipo sem justificativa.
+- `type-suppression` — supressão de tipo sem justificativa;
+- `change-lifecycle` — ciclo sem artefato de planejamento, aplicado sem
+  arquivamento, ou ponto fechado que o registro ainda lista como aberto;
+- `nav-pair-adjacency` — par de contraste declarado contra fundo que nenhum
+  componente pinta.
 
 ## Onde as regras de conteúdo moram
 
