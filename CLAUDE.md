@@ -167,6 +167,14 @@ Sete guardiões rodam dentro de `verify:test`, em `tools/checks/`:
   ausente, vazia ou não declarada, entrada vazia, ou contagem diferente da
   declarada.
 
+**Mexer em `rules` obriga atualizar a contagem do guardião.** `config-rules`
+declara quantas entradas cada seção de `openspec/config.yaml` tem, em
+`EXPECTED_COUNTS`. Acrescentar ou remover uma regra sem atualizar esse número faz
+`pnpm verify` reprovar com `<seção> — esperado N, lido M`. **Isso é a prova
+funcionando, não defeito:** a contagem é declarada de propósito, porque derivada
+do arquivo ela mudaria junto com a regra apagada e nunca reprovaria. O número
+entra no mesmo commit da regra.
+
 ## Onde as regras de conteúdo moram
 
 O que uma proposta, uma spec, um design e uma lista de tarefas precisam conter
