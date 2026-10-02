@@ -312,5 +312,27 @@ tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
   declarado na camada de tokens —, com o gatilho, e atualizar o cabeçalho do
   arquivo: data, estado do repositório e contagem de ciclos arquivados, de 18 para
   19. Verificar com `tools/checks/change-lifecycle.test.ts` passando.
-- [ ] 7.4 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
+- [ ] 7.4 Registrar em `docs/pontos-abertos.md`, no mesmo commit, o ponto aberto
+  do subpath `@chargebr/tokens/palette`, que arrasta o leitor de disco da fonte dos
+  tokens para o pacote da aplicação. **Causa medida:** a reexportação de valor em
+  `packages/tokens/src/palette.ts:15` (`export { THEMES, type Theme } from
+  "./source.ts"`) — a linha 11, que importa só o tipo, é apagada na compilação e é
+  inofensiva. `source.ts` importa `node:fs` na linha 1 e lê o disco nas linhas 64 e
+  93, e a construção avisa que isso leva "all source files (including the public
+  folder) to be deployed as part of the server code". **Cura medida:** `THEMES` e
+  `Theme` são as linhas 20 e 21 de `source.ts` e não têm dependência nenhuma —
+  tirá-las para um módulo próprio e reexportar dos dois lados é da ordem de dez
+  linhas, sem mudança de comportamento a provar. **Gatilho: o ciclo seguinte a
+  este**, e não "quando alguém mexer em tokens" — o ponto 21 é a evidência de que
+  gatilho vago é ponto que apodrece. Verificar com
+  `tools/checks/change-lifecycle.test.ts` passando e o ponto listado com o gatilho
+  datado.
+- [ ] 7.5 Acrescentar a `CLAUDE.md`, na seção do que nunca fazer, uma linha sobre a
+  disciplina do plantio: plantio é reversão destrutiva, então a árvore é commitada
+  antes de plantar — `git checkout --` restaura do commit e apaga edição não
+  commitada junto com o plantio. **Custou trabalho real na aplicação deste ciclo:**
+  dois arquivos de checagem de tipos foram apagados e tiveram de ser reconstruídos.
+  Verificar por leitura da seção e por `git diff CLAUDE.md` mostrando só a linha
+  nova.
+- [ ] 7.6 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
   estágios verdes. Verificar pela saída do comando, código de saída zero.

@@ -116,6 +116,18 @@ entregou a marca quebrada em três documentos emitidos. Consertar o sintoma e
 deixar a declaração de pé manteria a certificação valendo para todo consumidor
 futuro.
 
+**E a obrigação não é higiene: ela sustenta a construção de quem consome.**
+Medido na aplicação deste ciclo, com a diretiva devolvida por plantio ao arquivo de
+`Logo` depois de a aplicação passar a declarar os tipos de imagem dela: a
+declaração do Vite — `*.svg` é cadeia — **sobrepõe** a do framework, que é `any`, e
+a construção da aplicação **reprova**, com
+`app/layout.tsx(29,43): error TS2339: Property 'src' does not exist on type
+'string'`. Antes desta mudança a mesma diretiva passava calada e certificava a
+atribuição errada; depois dela, a mesma diretiva derruba a construção de quem
+consome o pacote. Nos dois estados ela é defeito, e em nenhum dos dois o pacote
+tem como saber qual é o empacotador do consumidor — é esta a razão pela qual a
+proibição é do pacote, e não um conselho de estilo.
+
 **Medido também:** hoje exatamente um arquivo alcançável declara diretiva de
 referência, o de `Logo`. As outras três ocorrências do perímetro —
 `packages/ui/src/bench/optimize-deps.test.ts`,
