@@ -28,6 +28,13 @@
   --link-weight: var(--text-heading-weight);
 }
 
+/* Mesma largura do chevron da pasta, que mede 1em por ser um Icon: o vão
+   acompanha a tipografia da árvore em vez de fixar um número. */
+.spacer {
+  inline-size: 1em;
+  flex: none;
+}
+
 .dot {
   inline-size: calc(var(--space-1) + var(--space-1));
   block-size: calc(var(--space-1) + var(--space-1));

@@ -4,11 +4,13 @@ import {
   ChartNoAxesCombined,
   Database,
   FileText,
+  LogOut,
   Settings,
 } from "lucide-react";
 import { useState } from "react";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
+import { Button } from "../../atoms/button/button";
 import { resolveColor } from "../../bench/computed";
 import { NavPanel } from "../nav/panel/nav-panel";
 import { NavRail } from "../nav/rail/nav-rail";
@@ -309,5 +311,113 @@ export const ComposicaoCompleta: Story = {
         name: "ABVE — Associação Brasileira do Veículo Elétrico",
       }),
     ).toBeInTheDocument();
+  },
+};
+
+// A marca na barra do conteúdo cabe na barra: sem altura declarada ela entra no
+// tamanho intrínseco do arquivo (303px de alto) e domina a moldura. A asserção
+// compara a altura pintada com o token que a declara — sem a regra, a diferença
+// é de mais de dez vezes.
+export const MarcaCabeNaBarraDeConteudo: Story = {
+  name: "A marca cabe na barra de conteúdo",
+  render: () => <CompleteShell />,
+  play: async ({ canvas }) => {
+    // A trilha também exibe a marca, com o mesmo nome acessível: a desta
+    // asserção é a da barra de conteúdo, dentro da região de cabeçalho.
+    const marca = within(canvas.getByRole("banner")).getByRole("img", {
+      name: "ChargeBR",
+    });
+    await waitFor(() => {
+      expect((marca as HTMLImageElement).complete).toBe(true);
+    });
+    await expect(getComputedStyle(marca).blockSize).toBe(
+      tokens["space-6"].light,
+    );
+    // E continua sendo a marca, não um quadrado: a largura acompanha a altura.
+    await expect(marca.getBoundingClientRect().width).toBeGreaterThan(
+      marca.getBoundingClientRect().height,
+    );
+  },
+};
+
+// A composição inteira com rodapé no painel, para a prova de tabulação de ponta
+// a ponta: trilha, conta, árvore e rodapé num documento só.
+function ShellComRodape() {
+  const [navOpen, setNavOpen] = useState(true);
+  return (
+    <AppFrame
+      productName="ChargeBR"
+      skipLabel="Ir para o conteúdo"
+      rail={rail}
+      nav={
+        <NavPanel
+          label="Navegação principal"
+          mode="persistent"
+          heading="Fontes"
+          tree={EXAMPLE_TREE}
+          footer={<Button icon={LogOut}>Sair</Button>}
+        />
+      }
+      navToggleLabel="Abrir navegação"
+      navOpen={navOpen}
+      onNavToggle={() => setNavOpen((open) => !open)}
+    >
+      <p>Conteúdo sintético para exercitar a composição da moldura.</p>
+    </AppFrame>
+  );
+}
+
+// Nome acessível de um controle, como a tecnologia assistiva o anuncia.
+function accessibleName(element: Element): string {
+  return (
+    element.getAttribute("aria-label") ??
+    element.textContent ??
+    ""
+  ).trim();
+}
+
+// Toda entrada declarada no dado precisa ser alcançável por Tab — nenhuma só
+// por clique. A lista esperada vem do dado (fixture da árvore e destinos da
+// trilha), nunca do DOM: derivá-la do que está renderizado faria a asserção
+// concordar com qualquer árvore, inclusive uma que tivesse perdido um nó.
+export const TudoAlcancavelPorTab: Story = {
+  name: "Trilha, árvore e rodapé são alcançáveis por Tab",
+  render: () => <ShellComRodape />,
+  play: async ({ canvasElement }) => {
+    const visiveisNaArvore = EXAMPLE_TREE.flatMap((node) =>
+      node.kind === "folder" && node.isExpandedByDefault
+        ? [node.label, ...node.children.map((child) => child.label)]
+        : [node.label],
+    );
+    const esperados = [
+      "Ir para o conteúdo",
+      ...RAIL_DESTINATIONS.map((destino) => destino.label),
+      "Conta de Denis Toledo",
+      ...visiveisNaArvore,
+      "Sair",
+    ];
+
+    const alcancados: string[] = [];
+    const limite = esperados.length * 3;
+    for (let passo = 0; passo < limite; passo += 1) {
+      await userEvent.tab();
+      const focado = document.activeElement;
+      if (focado === null || !canvasElement.contains(focado)) break;
+      alcancados.push(accessibleName(focado));
+    }
+
+    for (const esperado of esperados) {
+      await expect(
+        alcancados.some((nome) => nome.startsWith(esperado)),
+        `${esperado} não foi alcançado por Tab`,
+      ).toBe(true);
+    }
+
+    // E na ordem do documento: a árvore é percorrida de cima para baixo, sem
+    // seta nenhuma — é o que a divulgação entrega e o papel de árvore tiraria.
+    const indices = visiveisNaArvore.map((rotulo) =>
+      alcancados.findIndex((nome) => nome.startsWith(rotulo)),
+    );
+    await expect(indices).toEqual([...indices].sort((a, b) => a - b));
   },
 };
