@@ -17,6 +17,8 @@ export interface NavRailDestination {
 export interface NavRailProps {
   label: string;
   brandLabel: string;
+  /** URL do arquivo da marca, na forma do selo isolado. Decisão de quem compõe. */
+  brandSrc: string;
   destinations: readonly [NavRailDestination, ...NavRailDestination[]];
   avatarInitials: string;
   avatarLabel: string;
@@ -26,6 +28,7 @@ export interface NavRailProps {
 export function NavRail({
   label,
   brandLabel,
+  brandSrc,
   destinations,
   avatarInitials,
   avatarLabel,
@@ -34,7 +37,7 @@ export function NavRail({
   return (
     <aside aria-label={label} className={styles.rail ?? ""}>
       <span className={styles.mark ?? ""}>
-        <Logo label={brandLabel} variant="mark" />
+        <Logo label={brandLabel} src={brandSrc} variant="mark" />
       </span>
       {destinations.map((destination) => (
         <NavRailItem

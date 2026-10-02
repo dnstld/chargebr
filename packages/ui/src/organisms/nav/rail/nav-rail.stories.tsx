@@ -6,6 +6,7 @@ import {
   Settings,
 } from "lucide-react";
 import { expect } from "storybook/test";
+import { BRAND_MARK_URL } from "../../../atoms/logo/brand-assets";
 import { NavRail } from "./nav-rail";
 
 const meta = {
@@ -14,6 +15,7 @@ const meta = {
   args: {
     label: "Áreas do produto",
     brandLabel: "ChargeBR",
+    brandSrc: BRAND_MARK_URL,
     destinations: [
       { icon: Database, label: "Fontes", isCurrent: true },
       { icon: ChartNoAxesCombined, label: "Séries" },

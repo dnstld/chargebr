@@ -10,14 +10,14 @@ import { AppFrame } from "./app-frame";
 // caso para um arquivo por componente.
 export const appFrameWithoutProductName = (
   // @ts-expect-error productName é obrigatório
-  <AppFrame skipLabel="Ir para o conteúdo">
+  <AppFrame skipLabel="Ir para o conteúdo" brandSrc="/marca.svg">
     <p>Conteúdo</p>
   </AppFrame>
 );
 
 export const appFrameWithoutSkipLabel = (
   // @ts-expect-error skipLabel é obrigatório
-  <AppFrame productName="ChargeBR">
+  <AppFrame productName="ChargeBR" brandSrc="/marca.svg">
     <p>Conteúdo</p>
   </AppFrame>
 );
@@ -25,7 +25,11 @@ export const appFrameWithoutSkipLabel = (
 // `nav` é opcional por inteiro — compila sem o slot preenchido. É o caso
 // real de `apps/backoffice` hoje.
 export const appFrameWithoutNav = (
-  <AppFrame productName="ChargeBR" skipLabel="Ir para o conteúdo">
+  <AppFrame
+    productName="ChargeBR"
+    skipLabel="Ir para o conteúdo"
+    brandSrc="/marca.svg"
+  >
     <p>Conteúdo</p>
   </AppFrame>
 );
@@ -36,6 +40,7 @@ export const appFrameWithRailOnly = (
   <AppFrame
     productName="ChargeBR"
     skipLabel="Ir para o conteúdo"
+    brandSrc="/marca.svg"
     rail={<p>Trilha</p>}
   >
     <p>Conteúdo</p>
@@ -49,8 +54,19 @@ export const appFrameWithPartialNav = (
   <AppFrame
     productName="ChargeBR"
     skipLabel="Ir para o conteúdo"
+    brandSrc="/marca.svg"
     nav={<p>Navegação</p>}
   >
+    <p>Conteúdo</p>
+  </AppFrame>
+);
+
+// `brandSrc` é obrigatório: a URL do arquivo de marca é decisão de quem compõe,
+// porque o resultado de um import de asset depende do empacotador do consumidor
+// (specs/backoffice-shell, "Moldura sem a URL da marca não compila").
+export const appFrameWithoutBrandSrc = (
+  // @ts-expect-error brandSrc é obrigatório
+  <AppFrame productName="ChargeBR" skipLabel="Ir para o conteúdo">
     <p>Conteúdo</p>
   </AppFrame>
 );

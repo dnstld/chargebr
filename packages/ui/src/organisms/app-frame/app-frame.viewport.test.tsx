@@ -2,6 +2,7 @@ import { page } from "vitest/browser";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, test } from "vitest";
+import { BRAND_HORIZONTAL_URL } from "../../atoms/logo/brand-assets";
 import { NavPanel } from "../nav/panel/nav-panel";
 import { EXAMPLE_TREE } from "../nav/tree/fixtures/example-tree";
 import { AppFrame } from "./app-frame";
@@ -26,6 +27,7 @@ function ViewportProbe() {
   return (
     <AppFrame
       productName="ChargeBR"
+      brandSrc={BRAND_HORIZONTAL_URL}
       skipLabel="Ir para o conteúdo"
       nav={
         <NavPanel

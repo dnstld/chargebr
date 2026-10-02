@@ -1,6 +1,7 @@
 import "@chargebr/tokens/tokens.css";
 import "./global.css";
 import { AppFrame } from "@chargebr/ui/shell";
+import brandHorizontal from "@chargebr/ui/brand/logo-horizontal.svg";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -17,11 +18,25 @@ export const metadata: Metadata = {
 const PRODUCT_NAME = "ChargeBR";
 const SKIP_LABEL = "Ir para o conteúdo";
 
+// A URL do arquivo de marca também é decisão da aplicação, pela mesma razão: só
+// ela sabe como o próprio empacotador transforma o import num endereço. O pacote
+// publica o arquivo por subpath e recebe a URL por propriedade.
+//
+// O tipo que o framework declara para um import de `*.svg` é `any`, de propósito
+// (ver image-imports.d.ts), então nada aqui reprova se esta linha voltar a passar
+// o objeto inteiro em vez de `.src`. Quem pega isso é a afirmação sobre a
+// referência da marca em tests/emitted-document.test.ts.
+const BRAND_SRC: string = brandHorizontal.src;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <AppFrame productName={PRODUCT_NAME} skipLabel={SKIP_LABEL}>
+        <AppFrame
+          productName={PRODUCT_NAME}
+          skipLabel={SKIP_LABEL}
+          brandSrc={BRAND_SRC}
+        >
           {children}
         </AppFrame>
       </body>

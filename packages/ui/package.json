@@ -7,7 +7,9 @@
     ".": "./src/index.ts",
     "./atoms": "./src/atoms/index.ts",
     "./charts": "./src/organisms/charts/index.ts",
-    "./shell": "./src/organisms/app-frame/index.ts"
+    "./shell": "./src/organisms/app-frame/index.ts",
+    "./brand/logo-horizontal.svg": "./src/atoms/logo/logo-charge-br-horizontal.svg",
+    "./brand/logo-mark.svg": "./src/atoms/logo/logo-charge-br-mark.svg"
   },
   "scripts": {
     "charts:palette-report": "node --import tsx src/organisms/charts/palette-report.ts",

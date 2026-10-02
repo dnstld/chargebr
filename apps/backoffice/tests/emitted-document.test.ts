@@ -46,6 +46,11 @@ const DECLARED_ROUTES: Readonly<Record<string, Delivery>> = {
   },
   // Rota de prova: exercita a forma resolvida por requisição.
   "/prova/[id]": { form: "on-demand" },
+  // Arquivo de consumo dos subpaths publicados (app/prova/subpaths/route.ts).
+  // Manipulador de rota, não página: não emite documento, e por isso a lista de
+  // documentos dele é nenhuma — é o que mantém o custo da prova no menor valor
+  // medido.
+  "/prova/subpaths": { form: "on-demand" },
 };
 
 // As rotas que o framework gera sozinho fora da convenção, declaradas pelo nome
@@ -58,6 +63,26 @@ const FRAMEWORK_ROUTES: Readonly<Record<string, readonly string[]>> = {
 
 // O documento da rota raiz, sobre o qual as afirmações da moldura são feitas.
 const ROOT_DOCUMENT = "server/app/index.html";
+
+// Quantas folhas de estilo cada documento emitido entrega. É custo declarado, e
+// não derivado: a prova de consumo dos subpaths publicados
+// (app/prova/subpaths/route.ts) põe no grafo os módulos de estilo de componentes
+// que nenhuma tela ainda renderiza, e isso passou cada documento com moldura de
+// uma folha para duas. Derivar o esperado do documento lido faria esperado e lido
+// mudarem juntos, e a comparação nunca reprovaria — é a mesma razão da contagem
+// declarada em tools/checks/config-rules.test.ts.
+//
+// Contagem, e não bytes: byte varia com minificação, com ordem de regra e com
+// versão do empacotador, e viraria reprovação que ninguém sabe ler. Os dois
+// documentos que entregam zero folhas entram aqui com zero de propósito — deixá-los
+// de fora faria uma folha nova neles passar calada.
+const DECLARED_STYLESHEETS: Readonly<Record<string, number>> = {
+  "server/app/index.html": 2,
+  "server/app/_not-found.html": 2,
+  "server/app/_global-error.html": 0,
+  "server/pages/404.html": 2,
+  "server/pages/500.html": 0,
+};
 
 // Os três artefatos de onde a lista de rotas e a forma são lidas. São internos
 // ao framework, como o caminho do documento: por isso a ausência reprova e o
@@ -471,4 +496,109 @@ test("o primeiro focalizável do documento emitido é o salto para o conteúdo",
     main?.id,
     `destino do salto ${target} e região de conteúdo #${main?.id}`,
   ).toBe(target.slice(1));
+});
+
+// O prefixo por onde a construção serve o que emitiu: `/_next/x` é `x` dentro do
+// diretório de artefatos.
+const NEXT_ASSET_PREFIX = "/_next/";
+
+// A referência do arquivo de marca no cabeçalho de um documento emitido, ou nulo
+// quando aquele documento não tem imagem de marca.
+function brandReference(documentPath: string): string | null {
+  const document = parse(readEmitted(documentPath));
+  const image = document.querySelector(`${BANNER_ROLE_TAG} img`);
+  return image === null ? null : (image.getAttribute("src") ?? "");
+}
+
+// A referência do arquivo de marca aponta para um artefato que a construção
+// emitiu.
+//
+// **Esta afirmação não é redundante, e quem vier afrouxá-la vai estar olhando
+// este arquivo, não a spec.** A propriedade que leva a URL até a moldura é tipada
+// como cadeia, mas o que a aplicação tem para passar nela vem de um import de
+// imagem, e o tipo que o framework declara para `*.svg` é `any` — de propósito,
+// pelo comentário do próprio `next/image-types/global.d.ts`, para não conflitar
+// com plugins de SVG. `any` entra em cadeia sem reclamação: passar o objeto de
+// imagem em vez da URL **compila calado**, e o documento volta a sair com
+// `src="[object Object]"`, que é exatamente como a marca ficou quebrada em três
+// documentos emitidos. O sistema de tipos não guarda este limite; esta afirmação
+// é o único lugar em que esse erro reprova.
+test("a referência da imagem de marca aponta para um artefato emitido", () => {
+  const references = declaredDocuments()
+    .map((documentPath) => ({
+      documentPath,
+      src: brandReference(documentPath),
+    }))
+    .filter(
+      (entry): entry is { documentPath: string; src: string } =>
+        entry.src !== null,
+    );
+
+  // Lista vazia passa calada: sem esta afirmação, a prova sobreviveria à marca
+  // desaparecer de todos os documentos emitidos.
+  expect(
+    references.length,
+    "nenhum documento emitido tem imagem de marca no cabeçalho",
+  ).toBeGreaterThan(0);
+
+  const broken = references
+    .filter(({ src }) => {
+      if (!src.startsWith(NEXT_ASSET_PREFIX)) return true;
+      return !existsSync(join(BUILD_DIR, src.slice(NEXT_ASSET_PREFIX.length)));
+    })
+    .map(
+      ({ documentPath, src }) =>
+        `${documentPath}: referência ${src}; artefato procurado ${
+          src.startsWith(NEXT_ASSET_PREFIX)
+            ? src.slice(NEXT_ASSET_PREFIX.length)
+            : `(fora de ${NEXT_ASSET_PREFIX})`
+        }`,
+    );
+  expect(
+    broken,
+    "referência de marca que não aponta para artefato emitido",
+  ).toEqual([]);
+});
+
+function stylesheetCount(documentPath: string): number {
+  const document = parse(readEmitted(documentPath));
+  return document.querySelectorAll('link[rel="stylesheet"]').length;
+}
+
+// A contagem de folhas de estilo de cada documento é a declarada. Custo aceito é
+// custo afirmado: registrar no design não impede o próximo ciclo de acrescentar
+// um subpath à prova de consumo e subir a contagem sem ninguém ver.
+test("cada documento emitido entrega a contagem declarada de folhas de estilo", () => {
+  const divergent: string[] = [];
+  for (const documentPath of declaredDocuments()) {
+    const declared = DECLARED_STYLESHEETS[documentPath];
+    // Documento sem contagem declarada é reprovado pela cobertura, abaixo.
+    if (declared === undefined) continue;
+    const read = stylesheetCount(documentPath);
+    if (declared !== read) {
+      divergent.push(`${documentPath}: declarado ${declared}, lido ${read}`);
+    }
+  }
+  expect(
+    divergent,
+    "contagem de folhas de estilo divergente da declarada",
+  ).toEqual([]);
+});
+
+// A cobertura da contagem sai da lista de documentos que as rotas já declaram, em
+// vez de uma segunda lista para manter.
+test("a contagem de folhas de estilo cobre exatamente os documentos declarados", () => {
+  const declared = Object.keys(DECLARED_STYLESHEETS);
+  expect
+    .soft(
+      difference(declaredDocuments(), declared),
+      "documento declarado por rota sem contagem de folhas declarada",
+    )
+    .toEqual([]);
+  expect
+    .soft(
+      difference(declared, declaredDocuments()),
+      "contagem de folhas declarada para documento que nenhuma rota declara",
+    )
+    .toEqual([]);
 });

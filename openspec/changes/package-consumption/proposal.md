@@ -129,9 +129,9 @@ consome".
 
 - **O conserto de resolução é cinco especificadores em dois arquivos**, e o design
   registra por que é mínimo: são exatamente os alcançáveis a partir de um subpath
-  publicado. Os outros dezesseis de `packages/tokens/src` não são alcançáveis por
-  consumidor nenhum, e a obrigação nova é o que guarda essa linha — se alguém os
-  tornar alcançáveis, a construção reprova. `allowImportingTsExtensions` entra nas
+  publicado. Os outros trinta e nove de `packages/tokens/src` não são alcançáveis
+  por consumidor nenhum, e a obrigação nova é o que guarda essa linha — se alguém
+  os tornar alcançáveis, a construção reprova. `allowImportingTsExtensions` entra nas
   configurações de tipos de `packages/tokens` e de `apps/backoffice`.
 
 - **Um ponto aberto novo**, com gatilho: `color-scheme` não é declarado em lugar
@@ -165,8 +165,9 @@ consome".
   Descartado **antes** de medir: `docs/decisao-identidade-visual.md`, D7, escolheu
   asset externo justamente para o componente não declarar cor, e `style-literals`
   segue valendo.
-- **Não reescreve os outros dezesseis especificadores relativos de
-  `packages/tokens/src`.** Eles não são alcançáveis a partir de subpath publicado.
+- **Não reescreve os outros trinta e nove especificadores relativos de
+  `packages/tokens/src`** — 17 em arquivo que não é de teste e 22 em arquivo de
+  teste. Nenhum deles é alcançável a partir de subpath publicado.
 - **Não cria aplicação nova no workspace.** A alternativa de uma segunda aplicação
   só para hospedar a prova está medida e descartada em `design.md`, D3.
 - **Não resolve `color-scheme`.** Registra o ponto, com gatilho.
