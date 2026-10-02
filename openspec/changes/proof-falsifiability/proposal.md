@@ -49,9 +49,33 @@ plantio, o plantio reprovava, e ainda assim a lista descrevia adjacência que n�
 existe na tela. **Plantio prova que o teste roda; não prova que ele mede a coisa
 certa.**
 
+**Sexto caso, medido na emenda desta proposta, e o mais grave: a própria lista de
+regras não tem prova nenhuma.** `openspec/config.yaml` pode ficar sintaticamente
+inválido — aspa não fechada, parser levanta erro — e os comandos que este
+repositório de fato executa não reclamam:
+
+| Comando | Saída | Código |
+| --- | --- | --- |
+| `openspec validate --specs --strict` | `Totals: 7 passed, 0 failed` | 0 |
+| `openspec list` | `No active changes found` | 0 |
+
+Nenhum aviso em nenhum dos dois. E **nada no repositório lê o arquivo**: `grep`
+por `config.yaml` em `tools/`, `package.json` e `biome.json` volta vazio, e os
+quatro estágios de `pnpm verify` são `tsc`, `biome format`, `biome lint` e
+`vitest` — nenhum olha YAML. **As oito regras do projeto podem desaparecer
+inteiras com o portão verde.**
+
+Isso obriga este ciclo, e não um ciclo à parte: a lista de regras **é ela mesma
+uma lista de entrada declarada à mão**, e a regra 2 que este ciclo escreve exige
+prova de cobertura para lista declarada à mão. O ciclo que escreve a regra não
+deixa sem prova a lista mais importante do repositório. Não é escopo novo — é a
+regra aplicada a si mesma, e é esse argumento que justifica o guardião nascer
+aqui.
+
 ## What Changes
 
-Duas entradas novas em `rules.specs` de `openspec/config.yaml`. Nada mais.
+Duas entradas novas em `rules.specs` de `openspec/config.yaml`, e o guardião que
+impede essa lista de desaparecer em silêncio.
 
 - **Regra do plantio.** Critério de aceite cujo teste existe para **recusar**
   algo só está provado com o plantio registrado: o que foi plantado, a
@@ -64,6 +88,23 @@ Duas entradas novas em `rules.specs` de `openspec/config.yaml`. Nada mais.
   **correspondência**, conferindo que cada item cumpre no código o papel que o
   nome dele anuncia na lista. Sem a primeira, lista vazia passa; sem a segunda,
   item que não existe no papel declarado passa.
+
+- **Guardião novo, o sétimo: `tools/checks/config-rules.test.ts`.** Ele afirma
+  três coisas sobre `openspec/config.yaml`: que o arquivo **parseia**; que as
+  seções `rules.proposal`, `rules.specs`, `rules.design` e `rules.tasks`
+  **existem e nenhuma está vazia**; e que a **contagem por seção bate com a
+  declarada** no próprio guardião. As quatro seções declaradas são conferidas
+  contra as seções **descobertas** sob `rules:` no arquivo — é a prova de
+  cobertura da regra 2 aplicada à lista do próprio guardião, para que uma seção
+  nova de regras não entre sem ser coberta.
+- **O inventário de guardiões de `CLAUDE.md` passa de seis para sete**, com a
+  linha do guardião novo no formato das outras.
+- **`yaml` entra como dependência de desenvolvimento na raiz.** Medido:
+  `yaml@2.9.1` existe no armazenamento do pnpm como dependência transitiva de
+  `@fission-ai/openspec`, e **não resolve da raiz** —
+  `import("yaml")` falha com `ERR_MODULE_NOT_FOUND`. Sem parser não há como
+  afirmar "o arquivo parseia" sem escrever um parser de YAML à mão, que seria
+  pior do que o problema.
 
 **O limite entre as duas é decidido nesta proposta, não deixado em aberto.** O
 plantio vale para o critério cujo teste **recusa** algo — piso, proibição,
@@ -82,23 +123,29 @@ dependa de lembrar da conversa que a originou está errada e é refeita.
 
 - **Não exige plantio em asserção de tipo.** Checagem de tipo reprova na
   compilação, não por execução plantada, e a regra não a alcança.
-- **Não cria guardião novo.** `tools/checks/` continua com seis guardiões. As
-  duas regras são aplicadas na revisão de proposta e de aplicação, como as
-  demais entradas de `rules.specs`, e nenhuma delas tem guardião hoje.
+- **Não mecaniza as duas regras.** O guardião novo não lê o **conteúdo** de
+  nenhuma regra, não julga critério de aceite e não sabe o que um teste alega
+  provar. Ele prova que a lista de regras **está lá e está cheia** — nada além.
+  As duas regras continuam aplicadas na revisão, como as seis atuais.
 - **Não revisa ciclo arquivado.** Os dezessete ciclos em
   `openspec/changes/archive/` não são reabertos nem reauditados contra as regras
   novas. As regras valem para o que for escrito a partir do merge deste ciclo.
 - **Não cria ponto aberto.** `docs/pontos-abertos.md` não muda: o ponto 21
   continua aberto, com o gatilho que já tem, e este ciclo não toca
   `interface-charts`.
-- **Não altera nenhum requisito de spec viva.** Em particular, não mexe nos dois
-  requisitos de `verification-bench` que tratam do mesmo defeito por outro lado
+- **Não altera nenhum requisito de spec viva existente.** O ciclo acrescenta um
+  requisito a `workspace-verification` — o do guardião novo — e não toca nenhum
+  dos que já existem. Em particular, não mexe nos dois requisitos de
+  `verification-bench` que tratam do mesmo defeito por outro lado
   — "Localizador independente do que se afirma" e "Asserção prova o
   comportamento, não o ambiente" —, nem no requisito de `design-tokens` que
   `nav-frame-contrast` deixou com as três obrigações de cobertura, piso do papel
   e adjacência real.
-- **Não escreve código, teste nem história.** O único arquivo alterado na
-  aplicação é `openspec/config.yaml`.
+- **Não escreve componente, história nem estilo.** O único código do ciclo é o
+  guardião, em `tools/checks/`. Nada sob `apps/` ou `packages/` muda.
+- **O guardião não verifica a redação das regras.** Regra mal escrita, ambígua
+  ou contraditória passa por ele. Cobertura e preenchimento não são qualidade,
+  e o guardião não finge que são.
 - **Não toca `rules.proposal`, `rules.design`, `rules.tasks`, `context` nem
   `operations`.** A mudança é confinada à lista `rules.specs`.
 
@@ -110,21 +157,43 @@ Nenhuma.
 
 ### Modified Capabilities
 
-Nenhuma. Este ciclo não altera comportamento observável de nenhuma capacidade:
-ele muda o que um **artefato de planejamento** precisa conter, e a autoridade
-sobre isso é `openspec/config.yaml`, em `rules` — não `openspec/specs/`
-(`CLAUDE.md`, "Onde as regras de conteúdo moram"). A mudança declara
-`skip_specs: true` em `.openspec.yaml`, pelo que `openspec validate` pede de uma
-mudança sem delta. A razão está no `design.md`, decisão D1, junto da relação
-entre as duas regras novas e os dois requisitos de `verification-bench` que
-cobrem o mesmo defeito por outro lado.
+- `workspace-verification`: acrescenta o requisito do guardião novo — o arquivo
+  de regras do projeto, `openspec/config.yaml`, passa a ter integridade
+  verificada pelo portão: parseia, as quatro seções de `rules` existem e nenhuma
+  está vazia, e a contagem por seção bate com a declarada. Hoje a capacidade
+  cobre literal de estilo, supressão de tipo, origem de fixture e ciclo de vida
+  de mudança OpenSpec, e **não cobre o arquivo que carrega as regras do próprio
+  processo** — é essa a ausência que o requisito nomeia.
+
+**Por que há delta, embora as duas regras em si não produzam nenhum.** As duas
+regras continuam sem delta pela razão de `design.md`, D1: elas governam o que um
+artefato de planejamento contém, e a autoridade sobre isso é `rules` em
+`openspec/config.yaml`, que `CLAUDE.md` proíbe duplicar em spec viva. O delta não
+é delas — é do **guardião**, que muda comportamento observável do portão.
+**Medido:** os seis guardiões de hoje têm, cada um, requisito vivo que descreve o
+que eles reprovam (`style-literals` e `fixture-origin` em
+`workspace-verification`, nomeados; `type-suppression` e os três de
+`change-lifecycle` em `workspace-verification`, pelo comportamento;
+`component-vocabulary` em `shell-components`; `nav-pair-adjacency` em
+`design-tokens`). Um sétimo guardião sem requisito seria o primeiro, e deixaria
+uma reprovação nova do portão sem nenhum registro — exatamente o tipo de silêncio
+que este ciclo existe para fechar.
 
 ## Impact
 
 - `openspec/config.yaml`, seção `rules.specs`: duas entradas novas, de seis para
   oito. Nenhuma entrada existente é alterada ou removida.
-- Nenhum arquivo sob `apps/`, `packages/`, `tools/` ou `docs/` muda.
-- Nenhum arquivo sob `openspec/specs/` muda.
-- Efeito sobre o processo, não sobre a construção: o próximo ciclo que escrever
-  critério de aceite com teste que recusa algo, ou que declarar lista de entrada
-  à mão, passa a ter duas obrigações a mais na revisão da proposta.
+- `tools/checks/config-rules.test.ts`: guardião novo, o sétimo.
+- `CLAUDE.md`, seção "Perímetros": o inventário de guardiões passa de seis para
+  sete.
+- `package.json` da raiz: `yaml` entra em `devDependencies`. Nenhum script é
+  alterado — em particular, `collect`, `extract` e `test`, que não são nossos,
+  ficam intactos.
+- `openspec/specs/workspace-verification/spec.md`: um requisito novo, aplicado no
+  arquivamento (PR 3).
+- Nenhum arquivo sob `apps/`, `packages/` ou `docs/` muda, com a exceção do
+  cabeçalho de `docs/pontos-abertos.md` no arquivamento, que todo ciclo atualiza.
+- Efeito sobre o processo: o próximo ciclo que escrever critério de aceite com
+  teste que recusa algo, ou que declarar lista de entrada à mão, passa a ter duas
+  obrigações a mais na revisão da proposta. Efeito sobre o portão: `pnpm verify`
+  passa a reprovar quando o arquivo de regras fica ilegível ou perde uma seção.

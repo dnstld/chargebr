@@ -20,6 +20,14 @@ Duas restrições vindas do próprio repositório moldam o que pode ser escrito:
   `openspec/config.yaml`, em `rules`, é a **autoridade** sobre o que uma
   proposta, uma spec, um design e uma lista de tarefas precisam conter, e que
   essas regras não devem ser duplicadas em outro lugar.
+- **Nada verifica esse arquivo.** Medido: com YAML inválido plantado,
+  `openspec validate --specs --strict` e `openspec list` passam com código 0 e
+  **sem aviso**; nenhum estágio de `pnpm verify` o lê; `grep` por `config.yaml`
+  em `tools/`, `package.json` e `biome.json` volta vazio. A alavanca que
+  `CLAUDE.md` chama de autoridade é a única lista do repositório sem prova
+  nenhuma. Os comandos de autoria (`openspec instructions`, `openspec context`)
+  **avisam** e devolvem `rules: []`; os que o portão poderia rodar, não avisam.
+  A diferença não salva nada: nenhum dos dois grupos está no portão.
 
 ## Goals / Non-Goals
 
@@ -31,32 +39,53 @@ Duas restrições vindas do próprio repositório moldam o que pode ser escrito:
   caso 5 mostrou serem distintas.
 - Deixar o limite entre as duas regras escrito, para que a primeira não alcance
   toda asserção do repositório.
+- Deixar a lista de regras com a prova de cobertura que a segunda regra exige de
+  qualquer lista declarada à mão — a regra aplicada a si mesma, pelo guardião.
 
 **Non-Goals:**
 
-- Mecanizar qualquer uma das duas. Nenhum guardião novo — ver D4.
+- Mecanizar qualquer uma das duas regras. O guardião do ciclo não lê o conteúdo
+  de regra nenhuma — ver D4.
 - Reescrever qualquer entrada existente de `rules.specs`. As duas regras são
   acrescentadas; as seis atuais ficam literalmente como estão.
 - Resolver o ponto 21 de `docs/pontos-abertos.md`, que este ciclo não toca.
 
 ## Decisions
 
-### D1. A mudança não tem delta de spec: `skip_specs: true`
+### D1. As duas regras não produzem delta; o guardião produz
 
-**Decisão:** `.openspec.yaml` declara `skip_specs: true`, e a mudança não cria
-`specs/`.
+**Decisão:** a mudança **tem** delta — um requisito novo em
+`workspace-verification`, o do guardião. As duas regras de `rules.specs`
+continuam sem delta nenhum, e `.openspec.yaml` **não** declara `skip_specs`.
 
-**Por quê:** as duas regras novas não descrevem comportamento observável de
-nenhuma capacidade — descrevem o que um **artefato de planejamento** precisa
-conter. A autoridade sobre isso é `rules` em `openspec/config.yaml`, e
+**A primeira versão deste design decidiu o contrário**, `skip_specs: true`, e
+estava certa sobre as duas regras e errada sobre o ciclo: ela foi escrita antes de
+o guardião existir. O argumento sobre as regras sobrevive inteiro; o que ele não
+alcança é o guardião.
+
+**Por que as duas regras não têm delta:** elas não descrevem comportamento
+observável de nenhuma capacidade — descrevem o que um **artefato de planejamento**
+precisa conter. A autoridade sobre isso é `rules` em `openspec/config.yaml`, e
 `CLAUDE.md` proíbe duplicar essas regras fora dele. Escrever a mesma obrigação
-como requisito de capacidade seria inventar requisito para satisfazer validação,
-que é exatamente o que a instrução do artefato de proposta manda não fazer, e
-reprovaria a primeira entrada de `rules.specs`: um requisito só existe se nomear
-o que quebra sem ele, hoje, no que está construído — e nenhum código quebra sem
-uma regra de redação.
+como requisito de capacidade seria inventar requisito para satisfazer validação, e
+reprovaria a primeira entrada de `rules.specs`: um requisito só existe se nomear o
+que quebra sem ele, hoje, no que está construído — e nenhum código quebra sem uma
+regra de redação.
 
-**Alternativas consideradas:**
+**Por que o guardião tem:** ele muda comportamento observável do portão —
+`pnpm verify` passa a reprovar sobre um arquivo que antes podia desaparecer em
+silêncio. **Medido:** os seis guardiões de hoje têm, cada um, requisito vivo que
+descreve o que eles reprovam — `style-literals` ("Estilo sem literal em todo o
+perímetro") e `fixture-origin` ("Fixture com origem declarada em todo o
+perímetro") em `workspace-verification`, nomeados no texto; `type-suppression`
+("Supressão de tipo com justificativa") e os três de `change-lifecycle` na mesma
+capacidade, descritos pelo comportamento e sem nomear o arquivo;
+`component-vocabulary` em `shell-components`; `nav-pair-adjacency` em
+`design-tokens`, no requisito do conjunto que não varia por tema. Um sétimo sem
+requisito seria o primeiro, e deixaria uma reprovação nova do portão sem registro
+— o silêncio que este ciclo existe para fechar.
+
+**Alternativas consideradas, para o lugar das duas regras:**
 
 1. **Requisito em `verification-bench`.** Descartada. O argumento "não é
    mecanizável, logo não é requisito" **não vale** — `verification-bench` já tem
@@ -68,17 +97,16 @@ uma regra de redação.
    inclusive das que não têm bancada. São a mesma família de defeito em dois
    momentos diferentes do ciclo, em dois lugares diferentes — não a mesma regra
    escrita duas vezes.
-2. **Requisito em `workspace-verification`.** Descartada pela mesma razão, com
-   um agravante: os três requisitos de ciclo OpenSpec que vivem lá são provados
-   por `tools/checks/change-lifecycle.test.ts`, por execução. Pôr ali uma regra
-   sem guardião misturaria dois tipos de obrigação na mesma capacidade.
+2. **Requisito em `workspace-verification`.** Descartada **para as duas regras**,
+   pela mesma razão. A capacidade recebe o requisito **do guardião**, que é
+   comportamento de verificação executado, igual aos outros que moram lá.
 
 **Relação declarada, para quem revisar:** as duas regras novas **não substituem
 e não duplicam** os dois requisitos de `verification-bench`. Aqueles são lidos
 contra uma asserção escrita; estas são lidas contra um critério de aceite sendo
 escrito. Os casos 1, 2 e 3 da proposta foram encontrados por aqueles; os casos 4
-e 5, por revisão humana que nenhuma regra obrigava — é essa ausência que este
-ciclo fecha.
+e 5, por revisão humana que nenhuma regra obrigava; o caso 6 — a própria lista de
+regras sem prova — por medição na emenda. É essa ausência que este ciclo fecha.
 
 ### D2. O limite da primeira regra: recusar, não registrar
 
@@ -114,29 +142,55 @@ certa.** Uma regra só teria que dizer as duas coisas numa frase, e a frase úni
 **O que faria mudar de ideia:** uma redação única que um leitor aplique sem
 ambiguidade aos dois defeitos, e que não vire parágrafo. Não achei.
 
-### D4. Nenhum guardião, e isso é a forma final
+### D4. As duas regras ficam sem guardião; a lista que as carrega ganha um
 
 **Decisão:** as duas regras são aplicadas na revisão, como as outras seis de
-`rules.specs`. `tools/checks/` continua com seis guardiões.
+`rules.specs`. **Nenhum guardião lê o conteúdo de regra alguma.** O guardião novo
+verifica outra coisa: que o arquivo que carrega as regras **parseia, tem as quatro
+seções e não está vazio**.
 
-**Por quê:** nenhuma das seis entradas de `rules.specs` tem guardião hoje — elas
-governam texto de artefato, e o que um critério de aceite **alega provar** não
-está no código, está na intenção de quem o escreveu. É o mesmo achado que
-`close-open-points` registrou para o ponto 16, com as cinco ocorrências medidas,
-e a conclusão lá foi a mesma: forma final, não promessa de mecanizar depois.
+**Esta decisão substitui a da primeira versão deste design**, que dizia "nenhum
+guardião, e isso é a forma final". A parte que sobrevive é a que importava: o que
+um critério de aceite **alega provar** não está no código, está na intenção de
+quem o escreveu, e isso continua sem mecanismo — é o mesmo achado que
+`close-open-points` registrou para o ponto 16, com as cinco ocorrências medidas, e
+a conclusão lá é a mesma. A parte que caiu era uma generalização indevida: de "as
+duas regras não são mecanizáveis" não segue "nada neste ciclo é mecanizável". A
+**presença** da lista é mecanizável, e a medição da emenda mostrou que ela estava
+desprotegida.
 
-Há um guardião que cobre **uma fatia** da segunda regra, e isso é precedente, não
-contradição: `tools/checks/nav-pair-adjacency.test.ts` verifica a
-correspondência de papel para os pares da moldura de navegação — fundo de par
-declarado precisa ser pintado como `background` por algum componente, token
-isento precisa ser borda em algum lugar e fundo em nenhum. A regra nova é a
-obrigação geral; aquele guardião é como uma capacidade específica a cumpriu.
-Um ciclo futuro que declare lista à mão em outro domínio decide se mecaniza a
-correspondência do mesmo jeito — a regra pede a prova, não a forma dela.
+**Por que o guardião nasce neste ciclo, e não num ciclo à parte:** a lista de
+regras é uma lista de entrada declarada à mão, e a regra 2 que este ciclo escreve
+exige prova de cobertura para lista declarada à mão. Um ciclo que escrevesse a
+regra e deixasse sem prova a lista mais importante do repositório estaria
+afirmando a regra e não a cumprindo. Não é escopo novo; é a regra aplicada a si
+mesma.
 
-**O que faria mudar de ideia:** uma propriedade sintática comum aos cinco casos,
-verificável sem saber o que o teste alega provar. `close-open-points` já procurou
-por ela nas cinco ocorrências do ponto 16 e registrou que não existe.
+**Por que o plantio do grupo 2 das tarefas não bastava.** Aquele plantio — aspa
+quebrada e inversão de ordem, conferidos pela saída de `openspec instructions` —
+prova que a **conferência das tarefas** funciona, e é por isso que ele fica. Mas
+essa conferência é um ato do ciclo: ela morre no arquivamento. Depois do PR 3 o
+arquivo voltaria a não ter guardião nenhum. **Plantio prova que a conferência
+roda; não deixa nada de pé.** O guardião é o que fica vigente.
+
+**O que o guardião não faz:** não lê o conteúdo de nenhuma regra, não julga
+critério de aceite, não sabe o que um teste alega provar, e não detecta regra mal
+escrita, ambígua ou contraditória. Presença e contagem não são qualidade de
+redação.
+
+**Precedente de fatia mecanizada, não contradição:**
+`tools/checks/nav-pair-adjacency.test.ts` verifica a correspondência de papel para
+os pares da moldura de navegação — fundo de par declarado precisa ser pintado como
+`background` por algum componente, token isento precisa ser borda em algum lugar e
+fundo em nenhum. A regra nova é a obrigação geral; aquele guardião é como uma
+capacidade específica a cumpriu. Um ciclo futuro que declare lista à mão em outro
+domínio decide se mecaniza a correspondência do mesmo jeito — a regra pede a
+prova, não a forma dela.
+
+**O que faria mudar de ideia sobre as duas regras seguirem sem guardião:** uma
+propriedade sintática comum aos cinco primeiros casos, verificável sem saber o que
+o teste alega provar. `close-open-points` já procurou por ela nas cinco ocorrências
+do ponto 16 e registrou que não existe.
 
 ### D5. A redação não depende da conversa que a originou
 
@@ -157,6 +211,57 @@ de aceite nomeia o teste que o prova"; a regra da lista entra depois dela.
 
 **Por quê:** a primeira qualifica a entrada que a precede, e ler as duas fora de
 ordem inverte a leitura. As outras cinco entradas não mudam de posição.
+
+### D7. A forma do guardião: seções descobertas, contagem declarada
+
+**Decisão:** o guardião afirma quatro coisas, nesta ordem — o arquivo parseia; o
+conjunto de seções que ele declara (`proposal`, `specs`, `design`, `tasks`) é
+igual ao conjunto descoberto sob `rules:` no arquivo; nenhuma dessas seções está
+vazia; e a contagem de cada uma bate com a contagem declarada no próprio
+guardião.
+
+**Por que o conjunto é comparado com o descoberto, e não apenas declarado:** a
+lista de quatro seções dentro do guardião é ela mesma uma lista declarada à mão, e
+a regra 2 vale para ela. Sem a comparação, uma seção nova de regras entraria no
+arquivo sem nenhuma prova — o defeito do caso 4, `surfaces: []`, repetido no
+guardião que existe para evitá-lo. A comparação reprova nas duas direções: seção
+no arquivo que o guardião não declara, e seção declarada que o arquivo não tem.
+
+**Por que a contagem é declarada, e não derivada do arquivo:** derivada, a
+checagem não seria capaz de reprovar — uma regra apagada mudaria o esperado junto
+com o lido, e a comparação passaria sempre. É exatamente o localizador circular do
+caso 1, na forma de contagem. Declarada, ela custa uma linha a quem acrescenta ou
+remove uma regra, e esse custo é o ponto: a mudança fica visível.
+
+**Contagens medidas na main, antes da aplicação:** `proposal` 2, `specs` 6,
+`design` 11, `tasks` 2. Depois das duas entradas deste ciclo, `specs` passa a 8, e
+é esse o número que o guardião declara.
+
+**O que faria mudar de ideia:** uma forma de derivar o esperado de uma fonte
+independente do arquivo verificado — não existe aqui, porque o arquivo é a fonte.
+
+### D8. `yaml` entra como dependência de desenvolvimento na raiz
+
+**Decisão:** `yaml` é acrescentado a `devDependencies` do `package.json` da raiz.
+
+**Por quê:** afirmar "o arquivo parseia" exige um parser. **Medido:** `yaml@2.9.1`
+está no armazenamento do pnpm como dependência transitiva de
+`@fission-ai/openspec`, e **não resolve da raiz** — `import("yaml")` falha com
+`ERR_MODULE_NOT_FOUND`. Depender de resolução transitiva seria depender de um
+detalhe de árvore de dependências de terceiro, que muda sem aviso.
+
+**Alternativas consideradas:**
+
+1. **Escrever a leitura à mão**, por expressão regular sobre as linhas. Descartada:
+   um YAML inválido que a expressão aceita é precisamente o caso que o guardião
+   existe para pegar, e a expressão não tem como distinguir "não parseia" de "não
+   casou com o meu padrão".
+2. **Usar o parser de `@fission-ai/openspec`.** Descartada: não é interface
+   pública, e o aviso que ele emite não reprova nada — foi medido passando com
+   código 0.
+
+Nenhum script da raiz é alterado. `collect`, `extract` e `test` não são nossos, e
+continuam intactos.
 
 ## Texto proposto, literal
 
@@ -182,18 +287,32 @@ trazia.
   de D2 está na própria frase da regra ("existe para recusar algo", e a sentença
   que manda o critério de medição para a segunda regra), não num documento à
   parte que o leitor teria que achar.
-- **A segunda regra é lida como pedido de guardião** → D4 diz o contrário por
-  escrito, e a regra pede "duas provas próprias", sem nomear mecanismo. A prova
-  pode ser execução, como em `nav-pair-adjacency`, ou revisão nomeada, como em
-  `verification-bench`.
+- **A segunda regra é lida como pedido de guardião em todo domínio** → D4 diz o
+  contrário por escrito, e a regra pede "duas provas próprias", sem nomear
+  mecanismo. A prova pode ser execução, como em `nav-pair-adjacency` e no
+  guardião deste ciclo, ou revisão nomeada, como em `verification-bench`.
+- **O guardião é lido como se verificasse as regras** → o requisito do delta diz
+  `SHALL NOT julgar o conteúdo de nenhuma regra`, e a proposta repete na seção do
+  que o ciclo não faz. Ele prova presença e contagem; redação continua sendo
+  revisão humana.
+- **A contagem declarada vira atrito em todo ciclo que acrescentar regra** →
+  aceito, e é o objetivo. O custo é uma linha por regra acrescentada, e o que ele
+  compra é a mudança não passar sem ser vista. Derivar a contagem removeria o
+  atrito e removeria a prova junto (D7).
 - **`rules.specs` cresce de seis para oito entradas, e lista longa é lida por
-  diagonal** → aceito. As duas entradas atacam defeito medido cinco vezes em
+  diagonal** → aceito. As duas entradas atacam defeito medido seis vezes em
   dezessete ciclos; o custo é duas linhas num arquivo que `CLAUDE.md` já aponta
-  como leitura obrigatória antes de propor.
-- **Nenhum ciclo futuro é obrigado por mecanismo a cumprir as duas** → é o
+  como leitura obrigatória antes de propor. O guardião garante que elas não
+  desaparecem em silêncio, que era o risco maior.
+- **Dependência nova na raiz** → `yaml`, só em `devDependencies`, com as duas
+  alternativas descartadas por medição em D8. Nenhum script da raiz muda.
+- **Nenhum ciclo futuro é obrigado por mecanismo a cumprir as duas regras** → é o
   mesmo risco que as seis entradas atuais já correm, e a mitigação é a mesma: a
-  revisão independente mede contra `rules`, e `CLAUDE.md` manda ler lá.
+  revisão independente mede contra `rules`, e `CLAUDE.md` manda ler lá. O que o
+  guardião fecha é a camada abaixo dessa — que as regras **existam** para serem
+  lidas.
 - **Regra nova em `openspec/config.yaml` é a alavanca do over-engineering** →
   mitigado por `proposal.md`, "What This Does Not Do", que lista por escrito o
-  que as duas regras **não** exigem: plantio em asserção de tipo, guardião novo,
-  revisão de ciclo arquivado, ponto aberto novo.
+  que o ciclo **não** faz: plantio em asserção de tipo, mecanização das duas
+  regras, revisão de ciclo arquivado, ponto aberto novo, julgamento de redação
+  pelo guardião.
