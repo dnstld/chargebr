@@ -8,7 +8,8 @@ Esta pasta reunirá a documentação do ChargeBR, criada e revisada de forma inc
 - [Estratégia de produto](estrategia-de-produto.md)
 - [Metodologia de pesquisa e inteligência](metodologia-de-pesquisa-e-inteligencia.md)
 - [A forma do produto, e o que ainda não foi decidido](forma-do-produto.md) — ponto de partida da fase de desenho; o que está resolvido e o que não está.
-- [Handoff pré-backend](handoff-pre-backend.md) — fotografia auditada, cobertura real das fontes e condição de entrada para análise, planejamento e implementação do backend.
+- [Handoff pré-backend](handoff-pre-backend.md) — fotografia auditada produzida antes do mandato de revisão independente; é evidência histórica, não restrição aos especialistas.
+- [Registro-mestre da revisão independente](revisao-independente/README.md) — mandato, liberdade dos especialistas, frentes previstas e andamento da fase; não é handoff nem decisão técnica.
 
 ## Validação
 
