@@ -56,6 +56,8 @@ rules:
   specs:
     - "Requisito só existe se nomear o que quebra sem ele, hoje, no que está construído. Regra sobre dado que nenhuma tela exibe é anotação, não requisito. Isto vale para requisito, não para componente: o teste de um componente de biblioteca é ser genérico, nunca ter consumidor — biblioteca de UI é inventário, e componente genérico sem consumidor construído é catálogo, não lacuna"
     - Todo critério de aceite nomeia o teste que o prova
+    - "Critério de aceite cujo teste existe para recusar algo só está provado com o plantio registrado: o que foi plantado, a reprovação observada com o que ela nomeou, e a reversão do plantio. Critério que apenas registra uma medição não planta — a obrigação dele é a da lista declarada à mão. Prova que nunca foi vista reprovar não é prova, é coincidência registrada (docs/pontos-abertos.md, ponto 16)"
+    - "Lista de entrada declarada à mão — par de contraste, alvo de varredura, superfície, perímetro de guardião — é afirmação sobre o código, e tem duas provas próprias: cobertura, comparando a lista contra o conjunto descoberto da fonte, e correspondência, conferindo que cada item cumpre no código o papel que o nome dele anuncia. Lista vazia e item inexistente passam calados (openspec/specs/design-tokens/spec.md, o conjunto que não varia por tema)"
     - Critério de aceite descreve comportamento observável, nunca implementação ou biblioteca
     - Declare os estados obrigatórios, inclusive os não aplicáveis, com a razão
     - "O corpo de um requisito contém só o que obriga; a razão vai em bloco próprio, aberto por **Por quê:**"

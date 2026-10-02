@@ -20,7 +20,7 @@ guardião declara para `specs` é 8 — o número de depois das duas entradas no
 
 ## 1. As duas entradas em `rules.specs`
 
-- [ ] 1.1 Acrescentar a entrada do plantio em `openspec/config.yaml`, em
+- [x] 1.1 Acrescentar a entrada do plantio em `openspec/config.yaml`, em
   `rules.specs`, **imediatamente depois** de "Todo critério de aceite nomeia o
   teste que o prova", com o texto literal de `design.md`, seção "Texto proposto,
   literal". Verificar com
@@ -28,16 +28,16 @@ guardião declara para `specs` é 8 — o número de depois das duas entradas no
   devolvendo `rules` com **sete** entradas e a entrada nova na **posição 3**,
   logo após a de nomear o teste, com o texto idêntico caractere a caractere ao do
   design.
-- [ ] 1.2 Acrescentar a entrada da lista declarada à mão imediatamente depois da
+- [x] 1.2 Acrescentar a entrada da lista declarada à mão imediatamente depois da
   do plantio, com o texto literal do design. Verificar com o mesmo comando
   devolvendo `rules` com **oito** entradas, a da lista na **posição 4**, e as
   seis entradas originais inalteradas — conferidas uma a uma contra
   `git show main:openspec/config.yaml`.
-- [ ] 1.3 Confirmar que nada fora de `rules.specs` mudou: `context`,
+- [x] 1.3 Confirmar que nada fora de `rules.specs` mudou: `context`,
   `rules.proposal`, `rules.design`, `rules.tasks` e `operations` ficam idênticos.
   Verificar com `git diff main -- openspec/config.yaml` mostrando **duas linhas
   acrescentadas e nenhuma linha alterada ou removida**.
-- [ ] 1.4 Confirmar que a mudança continua válida com o delta de
+- [x] 1.4 Confirmar que a mudança continua válida com o delta de
   `workspace-verification` e sem `skip_specs`. Verificar com
   `npx openspec validate proof-falsifiability --strict` passando.
 
@@ -48,73 +48,87 @@ ato do ciclo e morre no arquivamento. O que fica vigente sobre o arquivo é o
 guardião do grupo 3 — plantio prova que a conferência roda, não deixa nada de pé
 (design, D4).
 
-- [ ] 2.1 Plantar uma aspa não fechada no fim de `rules.specs` e confirmar que a
+- [x] 2.1 Plantar uma aspa não fechada no fim de `rules.specs` e confirmar que a
   conferência de 1.2 reprova: o comando devolve `rules` com **zero** entradas e
   imprime o aviso de parse nomeando `openspec/config.yaml`. Reverter o plantio e
   confirmar as oito entradas de volta.
-- [ ] 2.2 Plantar a entrada do plantio **antes** da de nomear o teste e confirmar
+- [x] 2.2 Plantar a entrada do plantio **antes** da de nomear o teste e confirmar
   que a conferência de posição de 1.1 reprova, nomeando a posição encontrada.
   Reverter o plantio e confirmar a ordem de D6 do design.
-- [ ] 2.3 Registrar as duas reprovações e as duas reversões no corpo do pull
+- [x] 2.3 Registrar as duas reprovações e as duas reversões no corpo do pull
   request, na seção `## Verificação`, com a saída de cada comando. Verificar pela
   presença das quatro execuções no texto do PR antes de pedir o merge.
 
 ## 3. O guardião do arquivo de regras
 
-- [ ] 3.1 Acrescentar `yaml` a `devDependencies` do `package.json` da raiz, sem
+**Asserção a mais, decidida pelo dono depois da proposta e implementada sem
+emendar o requisito:** entrada de regra que seja string vazia ou só espaço
+reprova, nomeando a seção e o índice. **Medido no plantio 3.9:** uma entrada
+`"   "` conta e não deixa a seção vazia, então as outras quatro provas passam —
+é ausência vestida de presença, e só esta a pega. O requisito não foi emendado
+porque "cada seção contém ao menos uma entrada" já obriga presença de regra, e
+uma entrada sem conteúdo não é entrada; recusá-la é verificar presença, não
+julgar redação, e o `SHALL NOT julgar o conteúdo de nenhuma regra` segue valendo
+— o guardião não compara contra texto de regra nenhum.
+
+- [x] 3.1 Acrescentar `yaml` a `devDependencies` do `package.json` da raiz, sem
   tocar nenhum script. Verificar com `pnpm install` concluindo,
   `node --input-type=module -e "import('yaml').then(()=>console.log('ok'))"`
   imprimindo `ok` da raiz, e `git diff package.json` mostrando apenas a linha da
   dependência.
-- [ ] 3.2 Escrever `tools/checks/config-rules.test.ts` com as quatro afirmações de
+- [x] 3.2 Escrever `tools/checks/config-rules.test.ts` com as quatro afirmações de
   D7: o arquivo parseia; o conjunto de seções declarado (`proposal`, `specs`,
   `design`, `tasks`) é igual ao descoberto sob `rules:`; nenhuma dessas seções
   está vazia; a contagem de cada uma bate com a declarada (`proposal` 2,
   `specs` 8, `design` 11, `tasks` 2). A mensagem de falha de cada uma nomeia o que
   D7 manda nomear. Verificar com o arquivo passando dentro de `pnpm verify` e a
   contagem lida de cada seção impressa na execução.
-- [ ] 3.3 Plantar uma aspa não fechada em `openspec/config.yaml` e confirmar que o
+- [x] 3.3 Plantar uma aspa não fechada em `openspec/config.yaml` e confirmar que o
   guardião reprova nomeando o arquivo e o erro do parser. Transcrever a mensagem,
   reverter o plantio e confirmar o guardião verde de novo.
-- [ ] 3.4 Esvaziar uma seção de `rules` por plantio e confirmar que o guardião
+- [x] 3.4 Esvaziar uma seção de `rules` por plantio e confirmar que o guardião
   reprova nomeando a seção vazia. Transcrever a mensagem, reverter o plantio e
   confirmar o guardião verde de novo.
-- [ ] 3.5 Plantar uma seção nova sob `rules:` sem declará-la no guardião e
+- [x] 3.5 Plantar uma seção nova sob `rules:` sem declará-la no guardião e
   confirmar que ele reprova nomeando a seção descoberta e não coberta — a prova de
   cobertura da regra 2 aplicada à lista do próprio guardião. Transcrever a
   mensagem, reverter o plantio e confirmar o guardião verde de novo.
-- [ ] 3.6 Remover uma entrada de uma seção por plantio e confirmar que o guardião
+- [x] 3.6 Remover uma entrada de uma seção por plantio e confirmar que o guardião
   reprova nomeando a seção, a contagem esperada e a lida. Transcrever a mensagem,
   reverter o plantio e confirmar o guardião verde de novo.
-- [ ] 3.7 Acrescentar a linha do guardião novo ao inventário de `CLAUDE.md`, seção
+- [x] 3.7 Acrescentar a linha do guardião novo ao inventário de `CLAUDE.md`, seção
   "Perímetros", no formato das outras seis, e atualizar a frase que diz "seis
   guardiões" para sete. Verificar lendo a seção e conferindo que as seis linhas
   existentes não mudaram, com `git diff CLAUDE.md`.
-- [ ] 3.8 Confirmar que o guardião não lê conteúdo de regra nenhuma. Verificar por
+- [x] 3.9 Plantar uma entrada `"   "` em lugar de uma regra de `rules.specs` e
+  confirmar que o guardião reprova nomeando a seção e o índice, e que as outras
+  quatro provas passam — a medição que justifica esta asserção existir.
+  Transcrever a mensagem, reverter o plantio e confirmar o guardião verde de novo.
+- [x] 3.8 Confirmar que o guardião não lê conteúdo de regra nenhuma. Verificar por
   leitura do arquivo: nenhuma comparação contra texto de regra, só contra nome de
   seção e contagem.
 
 ## 4. Portão e perímetro
 
-- [ ] 4.1 Executar `pnpm verify` e confirmar os quatro estágios verdes, com o
+- [x] 4.1 Executar `pnpm verify` e confirmar os quatro estágios verdes, com o
   guardião novo entre os testes coletados. **Antes deste ciclo esta tarefa não
   provaria a mudança** — nenhum estágio lia `openspec/config.yaml`; com o guardião
   do grupo 3 ela passa a provar a integridade do arquivo, e nada além disso. Verificar pela saída do comando, código
   de saída zero, e a contagem de arquivos de teste subindo de 72 para 73.
-- [ ] 4.2 Confirmar que os arquivos alterados são exatamente estes quatro:
+- [x] 4.2 Confirmar que os arquivos alterados são exatamente estes quatro:
   `openspec/config.yaml`, `tools/checks/config-rules.test.ts`, `CLAUDE.md` e
   `package.json` (mais `pnpm-lock.yaml`, pela dependência). Verificar com
   `git diff --name-only main`.
-- [ ] 4.3 Confirmar que o inventário de guardiões bate com o disco. Verificar com
+- [x] 4.3 Confirmar que o inventário de guardiões bate com o disco. Verificar com
   `ls tools/checks/*.test.ts | wc -l` devolvendo 7 e os sete nomes iguais aos sete
   do inventário de `CLAUDE.md`.
-- [ ] 4.4 Confirmar que `docs/pontos-abertos.md` não muda neste PR e que o ponto
+- [x] 4.4 Confirmar que `docs/pontos-abertos.md` não muda neste PR e que o ponto
   21 segue listado como aberto, intocado. Verificar com `git diff main -- docs/`
   vazio.
-- [ ] 4.5 Confirmar que nenhum arquivo sob `openspec/specs/` muda neste PR — o
+- [x] 4.5 Confirmar que nenhum arquivo sob `openspec/specs/` muda neste PR — o
   delta só é aplicado no arquivamento. Verificar com
   `git diff main -- openspec/specs` vazio.
-- [ ] 4.6 Confirmar que nada sob `apps/` ou `packages/` muda. Verificar com
+- [x] 4.6 Confirmar que nada sob `apps/` ou `packages/` muda. Verificar com
   `git diff --stat main -- apps packages` vazio.
 
 ## 5. Arquivamento
