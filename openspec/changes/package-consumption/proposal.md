@@ -23,6 +23,19 @@ consumidor** e tipa todo import de SVG como cadeia. Foi ela que deixou
 `src={objeto}` compilar. O pacote não só adivinhou o empacotador do consumidor:
 ele impôs essa adivinhação ao sistema de tipos do consumidor.
 
+**E a mentira de tipo não desaparece com o conserto — ela se move para fora do
+nosso alcance.** `next/image-types/global.d.ts` declara
+`declare module '*.svg' { const content: any; export default content }`, com o
+`any` de propósito, pelo comentário do próprio arquivo. Com a URL chegando por
+propriedade, a propriedade é tipada como cadeia, mas o que a aplicação tem para
+passar nela é `any` — e `any` entra em cadeia calado. Se alguém voltar a passar o
+objeto de imagem, **o sistema de tipos não reclama.** Por isso a afirmação sobre a
+referência no documento emitido não é reforço: é a **única guarda** desse limite, e
+está escrita no requisito com essa razão ao lado — senão um ciclo futuro olha a
+propriedade tipada, conclui que a afirmação é redundante e a afrouxa, que é
+exatamente o movimento que custou a marca quebrada, agora com um argumento de
+aparência melhor.
+
 **E a asserção que deveria pegar foi afrouxada de propósito.** O requisito
 "Regiões da moldura no documento entregue" diz, no `**Por quê:**`, que "nome
 acessível" cobre "as duas formas que o nome do produto pode assumir no cabeçalho

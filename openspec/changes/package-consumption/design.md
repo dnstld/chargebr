@@ -248,6 +248,25 @@ alcança artefato de construção, que é o que motivou a exclusão original.
 subpaths, e a prova deste ciclo cobre os dois novos **sem ninguém editar o
 teste** — é a lista descoberta fazendo o trabalho que ela existe para fazer.
 
+**O que sai por construção, e o que não sai.** Com a URL por propriedade, o
+**pacote** deixa de importar SVG e nenhum arquivo publicado precisa mais de
+declaração para `*.svg`. A **aplicação**, não: é ela que importa o subpath
+publicado do arquivo de marca para obter a URL, e por isso ela continua precisando
+da declaração — a dela, sobre o empacotador dela, que é o ponto desta decisão.
+
+**E essa declaração é `any`. Medido** em `next/image-types/global.d.ts`:
+`declare module '*.svg' { const content: any; export default content }`, com o
+`any` escolhido de propósito, pelo comentário do próprio arquivo, para não
+conflitar com plugins de SVG. Consequência que precisa estar escrita: **do lado da
+aplicação o sistema de tipos não guarda nada.** A propriedade é tipada como
+cadeia, mas `any` entra em cadeia calado — passar o objeto de imagem outra vez
+compila. O `any` não é evitado por construção: ele é **confinado** à aplicação,
+onde é a afirmação da aplicação sobre o próprio empacotador, em vez de uma
+afirmação do pacote sobre o empacotador de quem o consome. O que impede o defeito
+de voltar por esse caminho é a afirmação sobre a referência no documento emitido —
+a única guarda, e é por isso que ela está escrita como obrigação no requisito, com
+a razão junto.
+
 ### D6. `variant` permanece, e o risco está registrado
 
 **Decisão:** `Logo` mantém `variant`, que declara a forma da marca e é o que o
@@ -332,10 +351,21 @@ próprio — `packages/ui/src/css-modules.d.ts` é o precedente —, que só ent
 programa de quem o inclui.
 
 **Medido, e é o que mostra que remover a diretiva não quebra outra coisa:** com a
-diretiva de `logo.tsx` removida, a checagem de tipos da aplicação reprova em
-exatamente dois lugares, os dois imports de arquivo de marca dentro do próprio
-`Logo` — e em nenhum import de módulo de estilo. A declaração de módulo de estilo
-não vem dela.
+diretiva de `logo.tsx` removida, a reprovação é de exatamente dois lugares — os
+dois imports de arquivo de marca dentro do próprio `Logo` — e de nenhum import de
+módulo de estilo. A declaração de módulo de estilo não vem dela.
+
+**E em qual programa essa reprovação acontece, porque isso foi perguntado na
+revisão e a medição responde o contrário do que se supôs:** o programa do
+**pacote** (`packages/ui/tsconfig.json`) fica **verde**; quem reprova é o programa
+da **aplicação** (`apps/backoffice/tsconfig.json`), nos dois imports dentro do
+arquivo do pacote. A razão é mensurável: `packages/ui/src/bench/optimize-deps.test.ts`
+declara `vite/client` e está no programa do pacote pelo `include` dele, então o
+pacote continua com a declaração de `*.svg` vinda de um arquivo de prova — onde ela
+é verdadeira. O programa da aplicação não inclui arquivo de prova do pacote, e
+recebia a declaração **exclusivamente** pela diretiva de `logo.tsx`. Isso aperta a
+causa raiz em vez de afrouxá-la: a única fonte da declaração falsa no programa da
+aplicação era o arquivo publicado.
 
 **O que faria mudar de ideia:** um pacote com necessidade legítima de diretiva de
 referência num arquivo publicado. Não conheço nenhuma: o que uma diretiva faz,
@@ -397,6 +427,11 @@ desejado.
   rotas; responde texto e não lê dado nenhum.
 - **`packages/tokens/src` fica com dois estilos de especificador relativo** →
   aceito, com a linha de D4 escrita e guardada pela obrigação central.
+- **O tipo do import de imagem na aplicação é `any`, então o sistema de tipos não
+  guarda a passagem da URL** → é o risco residual desta mudança, medido em
+  `next/image-types/global.d.ts` e dito no requisito: a afirmação sobre a
+  referência no documento emitido é a única guarda, e não pode ser lida como
+  redundante por quem olhar só a assinatura da propriedade (D5).
 - **A varredura de diretiva de referência proíbe mais do que o defeito medido**
   (qualquer diretiva, não só a de tipos de empacotador) → aceito e justificado em
   D9: as três formas chegam ao programa do consumidor pelo mesmo caminho, e o

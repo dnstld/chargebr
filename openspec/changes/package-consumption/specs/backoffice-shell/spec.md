@@ -48,6 +48,22 @@ contenção, era omissão. A obrigação nova não prescreve forma nenhuma: ela 
 que a referência, qualquer que seja, aponte para um arquivo que a construção
 emitiu.
 
+**A afirmação sobre a referência não é reforço: é a única guarda deste limite, e
+ela não pode ser lida como redundante.** A propriedade que leva a URL é tipada
+como cadeia, mas o que a aplicação tem em mãos para passar nela vem de um import
+de imagem, e o tipo desse import é `any`. **Medido** em
+`next/image-types/global.d.ts`:
+`declare module '*.svg' { const content: any; export default content }`, com o
+`any` declarado de propósito, pelo comentário do próprio arquivo, para não
+conflitar com plugins de SVG. `any` entra em cadeia sem reclamação: se alguém na
+aplicação voltar a passar o objeto de imagem em vez da URL, **o sistema de tipos
+não diz nada** e o documento volta a sair com referência quebrada. A mentira de
+tipo não desaparece com a propriedade — ela se move para um `any` que não é nosso.
+Quem olhar só a assinatura da propriedade vai concluir que esta afirmação é
+redundante e afrouxá-la; é o mesmo movimento que já custou a marca quebrada neste
+requisito, agora com um argumento de aparência melhor. Não é redundante: é o
+único lugar em que esse erro reprova.
+
 A moldura receber a URL por propriedade é a outra metade do mesmo defeito, do
 lado do pacote: `Logo` deixou de resolver o arquivo de marca
 (`shell-components`), e a moldura não pode resolver no lugar dele — resolveria
