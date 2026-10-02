@@ -126,3 +126,58 @@ export const DadoControlaAEstrutura: Story = {
     await expect(canvas.queryByText("Associações do setor")).toBeNull();
   },
 };
+
+// Borda esquerda do texto de um controle, medida sobre o próprio nó de texto:
+// é a posição do rótulo que se vê, não a da caixa que o contém — a caixa da
+// pasta e a da folha têm preenchimentos diferentes, e comparar caixas não
+// provaria alinhamento nenhum.
+function labelLeft(control: HTMLElement): number {
+  const text = [...control.childNodes].find(
+    (node) =>
+      node.nodeType === Node.TEXT_NODE &&
+      (node.textContent ?? "").trim() !== "",
+  );
+  const target =
+    text ??
+    [...control.querySelectorAll("span")]
+      .flatMap((span) => [...span.childNodes])
+      .find(
+        (node) =>
+          node.nodeType === Node.TEXT_NODE &&
+          (node.textContent ?? "").trim() !== "",
+      );
+  if (target === undefined) {
+    throw new Error(`sem nó de texto em ${control.tagName.toLowerCase()}`);
+  }
+  const range = document.createRange();
+  range.selectNodeContents(target);
+  return range.getBoundingClientRect().left;
+}
+
+// A página de primeiro nível alinha com os rótulos das pastas irmãs: as duas
+// começam depois do mesmo vão, porque a folha sem marcador reserva a largura do
+// chevron. Sem esse vão o rótulo da página encosta no preenchimento e fica 21px
+// à esquerda do das pastas — é essa diferença que esta história mede.
+export const PaginaDePrimeiroNivelAlinhaComPastas: Story = {
+  name: "Página de primeiro nível alinha com os rótulos de pasta",
+  play: async ({ canvas }) => {
+    const pagina = canvas.getByRole("link", { name: "Visão geral" });
+    const pasta = canvas.getByRole("button", { name: "Associações do setor" });
+    expect(labelLeft(pagina)).toBeCloseTo(labelLeft(pasta), 0);
+  },
+};
+
+// A folha aninhada não alinha com a de primeiro nível, e não deve: ela está
+// dentro do grupo recuado, e é esse recuo que mostra a hierarquia. A asserção
+// existe para que o vão da página de primeiro nível não seja confundido com
+// "todas as folhas no mesmo lugar".
+export const FolhaAninhadaRecuaAlemDaPagina: Story = {
+  name: "Folha aninhada recua além da página de primeiro nível",
+  play: async ({ canvas }) => {
+    const pagina = canvas.getByRole("link", { name: "Visão geral" });
+    const aninhada = canvas.getByRole("link", {
+      name: "ABVE — Associação Brasileira do Veículo Elétrico 14",
+    });
+    expect(labelLeft(aninhada)).toBeGreaterThan(labelLeft(pagina));
+  },
+};

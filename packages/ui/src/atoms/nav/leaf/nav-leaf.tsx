@@ -34,6 +34,14 @@ export function NavLeaf({
       <Link href={href} {...(isCurrent ? { "aria-current": "page" } : {})}>
         {IconComponent ? <Icon as={IconComponent} /> : null}
         {dot ? <span className={styles.dot ?? ""} aria-hidden="true" /> : null}
+        {IconComponent === undefined && !dot ? (
+          // Sem ícone e sem marcador, a folha ganha um vão do tamanho do
+          // chevron de uma pasta: é o que alinha o rótulo de uma página de
+          // primeiro nível com os rótulos das pastas irmãs, como na maquete.
+          // Alinhamento por estrutura, não por recuo escrito à mão — e
+          // geometria, não rótulo: o vão não carrega texto nenhum.
+          <span className={styles.spacer ?? ""} aria-hidden="true" />
+        ) : null}
         <span>{content}</span>
         {meta !== undefined ? (
           <span className={styles.meta ?? ""}>{meta}</span>

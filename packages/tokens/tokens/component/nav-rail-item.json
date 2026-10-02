@@ -2,7 +2,7 @@
   "nav-rail-item": {
     "$description": "Cores fixas do botão de destino da trilha de navegação.",
     "background": { "$type": "color", "$value": "{color.nav.rail}" },
-    "color": { "$type": "color", "$value": "{color.nav.text-muted}" },
+    "color": { "$type": "color", "$value": "{color.nav.glyph}" },
     "color-hover": {
       "$type": "color",
       "$value": "{color.nav.text-strong}"

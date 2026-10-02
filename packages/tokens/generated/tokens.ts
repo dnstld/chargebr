@@ -371,6 +371,11 @@ export const tokens = {
     light: "#2a2a31",
     dark: "#2a2a31",
   },
+  "color-nav-glyph": {
+    css: "var(--color-nav-glyph)",
+    light: "#73737f",
+    dark: "#73737f",
+  },
   "color-nav-hover": {
     css: "var(--color-nav-hover)",
     light: "#2a2a31",
@@ -393,8 +398,8 @@ export const tokens = {
   },
   "color-nav-text-muted": {
     css: "var(--color-nav-text-muted)",
-    light: "#73737f",
-    dark: "#73737f",
+    light: "#9c9ca8",
+    dark: "#9c9ca8",
   },
   "color-nav-text-strong": {
     css: "var(--color-nav-text-strong)",
