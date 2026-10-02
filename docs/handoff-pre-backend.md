@@ -1,7 +1,7 @@
 # Handoff pré-backend
 
-**Atualizado em:** 2 de outubro de 2026  
-**Base auditada:** `main` no commit `5eba29a` e projeto Supabase principal  
+**Atualizado em:** 2 de outubro de 2026<br>
+**Base auditada:** `main` após os PRs #204 e #206 e projeto Supabase principal<br>
 **Estado:** pronto para análise e planejamento; não autoriza implementação
 
 ## Veredito executivo
@@ -62,7 +62,7 @@ as medições reais do pipeline. Até isso acontecer, permanecem proibidos:
 - navegação lateral e composição completa disponíveis na bancada;
 - `apps/backoffice` existe, mas deliberadamente não possui rota de negócio nem
   busca de dados;
-- sete capacidades OpenSpec vivas, 16 ciclos arquivados e nenhuma mudança
+- sete capacidades OpenSpec vivas, 17 ciclos arquivados e nenhuma mudança
   ativa;
 - um único ponto de interface aberto, com gatilho restrito ao próximo ciclo que
   tocar `interface-charts`.
