@@ -1,8 +1,9 @@
 # Pontos abertos
 
-**Atualizado em:** 1º de outubro de 2026, no arquivamento de `nav-rail-shell`
-**Estado do repositório:** 7 capacidades vivas, 16 ciclos arquivados,
-nenhum change ativo. **1 ponto aberto**
+**Atualizado em:** 2 de outubro de 2026, no arquivamento de `nav-frame-contrast`
+**Estado do repositório:** 7 capacidades vivas, 17 ciclos arquivados,
+nenhum change ativo. **1 ponto aberto** (21, sem alteração: `nav-frame-contrast`
+não toca `interface-charts`)
 
 ## O que este arquivo é
 
