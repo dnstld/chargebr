@@ -89,3 +89,56 @@ aplicação, que é quem sabe como o próprio empacotador produz URL.
 - **WHEN** a moldura é usada sem a propriedade da URL do arquivo de marca
 - **THEN** a verificação de tipos falha, nomeando o uso
 - **Prova:** uso incompleto plantado em arquivo de checagem de tipos da moldura, `verify:types` falhando, plantio revertido
+
+## ADDED Requirements
+
+### Requirement: Contagem de folhas de estilo de cada documento emitido é declarada
+
+Cada documento emitido SHALL declarar quantas folhas de estilo entrega, e a
+verificação SHALL reprovar nomeando o documento, a contagem declarada e a lida.
+
+O conjunto de documentos com contagem declarada SHALL coincidir, nos dois
+sentidos, com o conjunto de documentos que as rotas declaram, e divergência SHALL
+reprovar nomeando o documento.
+
+A contagem SHALL ser declarada, e SHALL NOT ser derivada do documento lido.
+
+**Por quê:** a prova de consumo dos subpaths publicados
+(`workspace-verification`) obriga um arquivo da aplicação a importar todo subpath
+publicado, e esse arquivo custa estilo no documento entregue. **Medido:** sem
+ele, cada documento com moldura entrega uma folha; com ele, duas —
+`app/index.html`, `app/_not-found.html` e `pages/404.html` passam de 1 para 2, e
+`app/_global-error.html` e `pages/500.html` continuam em 0. O custo é aceito, e
+está medido no design do ciclo.
+
+**Registrar não impede crescer.** Sem afirmação, o próximo ciclo que acrescentar
+um subpath à prova sobe a contagem para três e ninguém vê. Declarada, a contagem
+obriga quem a muda a dizer isso na mesma mudança — é a mesma figura da contagem
+declarada do guardião do arquivo de regras: **derivá-la do documento lido tornaria
+a verificação incapaz de reprovar**, porque esperado e lido mudariam juntos.
+
+**Contagem, e não bytes.** Byte varia com minificação, com ordem de regra e com
+versão do empacotador, e viraria ruído que ninguém consegue revisar. Contagem de
+folhas muda quando o grafo de estilo do documento muda, que é o que se quer ver.
+
+Os dois documentos que entregam **zero** folhas entram na declaração com zero, e
+não ficam de fora: é o que faz uma folha nova aparecer neles reprovar em vez de
+passar calada.
+
+#### Scenario: Cada documento emitido entrega a contagem declarada
+
+- **WHEN** os documentos emitidos pela construção são lidos
+- **THEN** cada um entrega exatamente o número de folhas de estilo declarado para ele
+- **Prova:** teste do documento emitido que conta as referências de estilo de cada documento declarado, com as contagens lidas registradas na saída
+
+#### Scenario: Folha de estilo a mais reprova
+
+- **WHEN** um documento emitido passa a entregar mais folhas de estilo do que o declarado
+- **THEN** a verificação falha nomeando o documento, a contagem declarada e a lida
+- **Prova:** importação de estilo a mais plantada no arquivo de consumo dos subpaths publicados, teste do documento emitido falhando com os dois números, plantio revertido
+
+#### Scenario: Documento sem contagem declarada reprova
+
+- **WHEN** um documento declarado por uma rota não tem contagem declarada, ou uma contagem é declarada para documento que nenhuma rota declara
+- **THEN** a verificação falha nomeando o documento
+- **Prova:** contagem removida por plantio da declaração de um documento, teste do documento emitido falhando com o documento nomeado, plantio revertido

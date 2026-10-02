@@ -155,11 +155,48 @@ estão em `src/index.ts` e o terceiro em `src/palette.ts`.
   construção dentro do preparo da verificação reprova nomeando o especificador, e
   que a reprovação derruba o projeto da aplicação em vez de passar calada.
   Transcrever a mensagem, reverter o plantio e confirmar a verificação verde.
-- [ ] 5.8 Registrar o custo medido do arquivo de consumo sobre o documento
-  entregue, para que a revisão o veja: número de folhas de estilo e bytes de CSS
-  entregues, antes e depois. Verificar lendo as referências de estilo do documento
-  emitido e os tamanhos dos artefatos correspondentes — medido na proposta em uma
-  folha e 14.580 bytes antes, duas folhas e 21.619 bytes depois.
+- [ ] 5.8 Registrar no corpo do pull request o custo medido do arquivo de consumo
+  sobre o documento entregue: folhas de estilo e bytes de CSS entregues, antes e
+  depois. Verificar lendo as referências de estilo do documento emitido e os
+  tamanhos dos artefatos correspondentes — medido na proposta em uma folha e 14.580
+  bytes antes, duas folhas e 21.619 bytes depois. A contagem de folhas deixa de ser
+  só registro e passa a ser afirmada em 5.13; os bytes ficam só no registro, de
+  propósito (`design.md`, D10).
+
+- [ ] 5.9 Escrever, no mesmo arquivo de prova, a travessia do grafo publicado: a
+  partir de cada alvo de `exports` que é módulo TypeScript, seguir as importações
+  relativas resolvendo `.js`, `.ts` e extensão ausente para o arquivo que existe, e
+  parar nas folhas que não são módulo. Verificar com a contagem de arquivos
+  alcançáveis impressa na execução e com `logo.tsx`, `app-frame.tsx`,
+  `nav-rail.tsx` e `packages/tokens/src/source.ts` entre eles — e nenhum arquivo de
+  história, de checagem de tipos ou de teste.
+- [ ] 5.10 Acrescentar a asserção da proibição: nenhum arquivo alcançável declara
+  diretiva de referência, e a falha nomeia arquivo e linha. Verificar com a
+  asserção passando sobre a árvore corrente, e com as três ocorrências legítimas do
+  perímetro (`bench/optimize-deps.test.ts`, `tokens/src/theme.test.ts`,
+  `apps/backoffice/next-env.d.ts`) **fora** do conjunto alcançável — conferido pela
+  listagem de 5.9.
+- [ ] 5.11 **Plantio da proibição:** devolver `/// <reference types="vite/client" />`
+  ao arquivo de `Logo` e confirmar que 5.10 reprova nomeando o arquivo e a linha.
+  Transcrever a mensagem, reverter o plantio e confirmar a asserção verde de novo.
+- [ ] 5.12 **Plantio do conjunto alcançável vazio:** apontar por plantio os alvos
+  de `exports` para arquivo inexistente e confirmar que a travessia reprova dizendo
+  que o conjunto ficou vazio, em vez de passar verde sem ter olhado nada.
+  Transcrever a mensagem, reverter o plantio e confirmar verde.
+- [ ] 5.13 Declarar, em `emitted-document.test.ts`, a contagem de folhas de estilo
+  de cada documento emitido, e afirmar a contagem lida contra a declarada, com a
+  falha nomeando o documento, o esperado e o lido. O conjunto de documentos com
+  contagem é comparado nos dois sentidos com o conjunto que as rotas declaram.
+  Verificar com o teste passando e as contagens lidas impressas — medido na
+  proposta: 2 para `app/index.html`, `app/_not-found.html` e `pages/404.html`, e 0
+  para `app/_global-error.html` e `pages/500.html`.
+- [ ] 5.14 **Plantio da contagem:** acrescentar uma importação de estilo ao arquivo
+  de consumo e confirmar que 5.13 reprova nomeando o documento, a contagem
+  declarada e a lida. Transcrever a mensagem, reverter o plantio e confirmar o
+  teste verde de novo.
+- [ ] 5.15 **Plantio da cobertura da contagem:** remover a contagem declarada de um
+  dos documentos e confirmar que 5.13 reprova nomeando o documento sem contagem.
+  Transcrever a mensagem, reverter o plantio e confirmar o teste verde.
 
 ## 6. Portão e perímetro
 
@@ -167,8 +204,10 @@ estão em `src/index.ts` e o terceiro em `src/palette.ts`.
   testes novos entre os coletados. Verificar pela saída do comando, código de
   saída zero, e a contagem de arquivos de teste registrada antes e depois —
   73 antes.
-- [ ] 6.2 Confirmar que nenhum perímetro de guardião mudou. Verificar com
-  `git diff main -- tools/` vazio.
+- [ ] 6.2 Confirmar que nenhum perímetro de guardião mudou, e que as duas
+  asserções novas não criaram lista de perímetro nenhuma. Verificar com
+  `git diff main -- tools/` vazio e por leitura do arquivo de prova: nenhuma lista
+  de diretório escrita à mão, só o conjunto descoberto do `exports`.
 - [ ] 6.3 Confirmar que nada de tema e nada de navegação mudou além do repasse da
   URL da marca. Verificar com `git diff main` sobre
   `packages/ui/src/organisms/nav` mostrando apenas as linhas da URL, e `grep` por
@@ -194,7 +233,10 @@ tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
   `openspec/changes/archive/<data>-package-consumption/` e aplicar os três deltas
   em `openspec/specs/`. Verificar com `npx openspec validate --specs --strict`
   passando nas sete capacidades, os dois requisitos modificados presentes com
-  todos os cenários deles, e os dois requisitos novos presentes.
+  todos os cenários deles — seis em `backoffice-shell`, cinco em
+  `shell-components` —, e os quatro requisitos novos presentes: a contagem de
+  folhas (três cenários), o repasse da URL da marca (dois), a prova de consumo
+  (cinco) e a proibição de diretiva de referência (três).
 - [ ] 7.2 Confirmar que a cláusula afrouxada não sobreviveu na spec viva.
   Verificar com `grep -n "sem prescrever qual delas a implementação escolhe"` em
   `openspec/specs/` voltando vazio.

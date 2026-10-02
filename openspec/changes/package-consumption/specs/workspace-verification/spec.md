@@ -91,3 +91,63 @@ requisito.
 - **WHEN** a verificação é executada sobre a árvore corrente
 - **THEN** o conjunto descoberto coincide com o importado, e a construção da aplicação conclui
 - **Prova:** execução do teste de cobertura e da construção no preparo, com a contagem de subpaths descobertos registrada na saída
+
+### Requirement: Pacote não declara diretiva de referência no grafo publicado
+
+Nenhum arquivo alcançável a partir do mapa de exportações de um pacote sob
+`packages/` SHALL declarar diretiva de referência de tipos, de biblioteca ou de
+caminho. A verificação SHALL reprovar nomeando o arquivo e a linha.
+
+O conjunto de arquivos alcançáveis SHALL ser descoberto a partir do mapa de
+exportações, seguindo as importações relativas, e SHALL NOT ser escrito à mão.
+
+A verificação SHALL reprovar quando o conjunto alcançável for vazio.
+
+**Por quê:** diretiva de referência num arquivo do grafo publicado entra no
+**programa de tipos de todo consumidor**. **Medido:** com
+`/// <reference types="vite/client" />` em
+`packages/ui/src/atoms/logo/logo.tsx`, a listagem dos arquivos do programa de
+tipos de `apps/backoffice` contém `vite/client.d.ts` — e aquele arquivo declara
+`declare module '*.svg' { const src: string; export default src }`. A checagem de
+tipos da aplicação não foi enganada: foi **informada**, pelo pacote, de uma coisa
+falsa sobre o empacotador dela. Foi essa declaração que certificou a atribuição de
+um objeto de imagem a uma referência de imagem, e foi essa certificação que
+entregou a marca quebrada em três documentos emitidos. Consertar o sintoma e
+deixar a declaração de pé manteria a certificação valendo para todo consumidor
+futuro.
+
+**Medido também:** hoje exatamente um arquivo alcançável declara diretiva de
+referência, o de `Logo`. As outras três ocorrências do perímetro —
+`packages/ui/src/bench/optimize-deps.test.ts`,
+`packages/tokens/src/theme.test.ts` e `apps/backoffice/next-env.d.ts` — não são
+alcançáveis a partir de exportação nenhuma: as duas primeiras são arquivos de
+prova da bancada, que **é** um consumidor do empacotador que elas declaram, e a
+terceira é da aplicação. O escopo alcançável é o que separa a afirmação verdadeira
+da afirmação que atravessa.
+
+A proibição é de qualquer diretiva de referência, e não só de tipos de
+empacotador: `lib` e `path` chegam ao programa do consumidor pelo mesmo caminho.
+Pacote que precise de declaração ambiente declara-a para si, em arquivo de
+declaração próprio — como `packages/ui/src/css-modules.d.ts` faz —, nunca por
+diretiva que atravesse para quem consome. **Medido:** removendo a diretiva de
+`Logo`, a checagem de tipos da aplicação reprova em exatamente dois lugares, os
+dois imports de arquivo de marca dentro do próprio `Logo`, e em nenhum import de
+módulo de estilo.
+
+#### Scenario: Diretiva de referência no grafo publicado reprova
+
+- **WHEN** um arquivo alcançável a partir do mapa de exportações declara diretiva de referência
+- **THEN** a verificação falha nomeando o arquivo e a linha
+- **Prova:** a diretiva de tipos do empacotador da bancada devolvida por plantio ao arquivo de `Logo`, a verificação falhando com o arquivo e a linha nomeados, plantio revertido
+
+#### Scenario: Diretiva em arquivo fora do grafo publicado não reprova
+
+- **WHEN** a verificação é executada sobre a árvore corrente, em que arquivos de prova da bancada declaram diretiva de referência
+- **THEN** ela passa, porque nenhum deles é alcançável a partir do mapa de exportações
+- **Prova:** execução sobre a árvore corrente, com a contagem de arquivos alcançáveis registrada e as ocorrências de prova nomeadas como fora do conjunto
+
+#### Scenario: Conjunto alcançável vazio reprova
+
+- **WHEN** a descoberta não alcança nenhum arquivo a partir dos mapas de exportações
+- **THEN** a verificação falha dizendo que o conjunto ficou vazio
+- **Prova:** alvos de exportação apontados por plantio para arquivo inexistente, verificação falhando, plantio revertido

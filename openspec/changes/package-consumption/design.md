@@ -43,10 +43,12 @@ Restrições que moldam o que pode ser escrito:
 
 **Non-Goals:**
 
-- Mecanizar a proibição de um pacote declarar tipos do empacotador de quem o
-  consome. Ver D2, "o que fica sem prova própria".
 - Fazer a aplicação **usar** o que ela importa para provar consumo.
 - Resolver `color-scheme` (D8).
+- Criar perímetro de guardião novo. As duas asserções que esta emenda acrescenta
+  — varredura de diretiva de referência e contagem de folhas de estilo — moram nos
+  arquivos de prova que o ciclo já escreve, sobre listas descobertas, e não
+  sustentam lista de perímetro nenhuma.
 
 ## Decisions
 
@@ -124,15 +126,22 @@ Vite, e ali a afirmação é verdadeira; na aplicação, num arquivo de declara�
 versionado que referencia os tipos de imagem do próprio framework. Cada
 consumidor declara o seu, e nenhum declara pelo outro.
 
-**O que fica sem prova própria, dito por escrito:** a proibição de um pacote
-declarar tipos do empacotador de quem o consome **não** ganha verificação neste
-ciclo. O que ganha prova é a consequência observável — a referência renderizada
-tem de ser a URL recebida (bancada) e a referência do documento tem de apontar
-para um arquivo emitido (documento). As duas juntas reprovam toda forma
-**quebrada**; a forma que funciona mantendo a mentira de tipo (normalizar no
-pacote) não é reprovada por elas, é recusada por esta decisão. Mecanizar isso
-exigiria varrer o grafo publicado procurando diretiva de tipos, e este ciclo não
-cria perímetro de guardião novo.
+**A proibição ganha prova mecânica — e esta é uma decisão revista.** A primeira
+versão deste design dizia que a proibição de um pacote declarar tipos do
+empacotador de quem o consome ficaria sem verificação, porque mecanizá-la exigiria
+varrer o grafo publicado e o ciclo não criaria perímetro de guardião novo. **A
+premissa estava errada:** a varredura não é perímetro — é uma asserção dentro do
+arquivo de prova que este ciclo já escreve, sobre a mesma lista descoberta do
+`exports` e a mesma linha de alcance que D4 estabelece para os especificadores.
+Não há lista a manter, e sem ela a classe de defeito que custou a marca quebrada
+fica livre para voltar por outro arquivo. A forma está em D9.
+
+O que as outras duas provas cobrem continua valendo, e é por isso que elas não
+bastavam: a referência renderizada tem de ser a URL recebida (bancada) e a
+referência do documento tem de apontar para um arquivo emitido (documento) — as
+duas juntas reprovam toda forma **quebrada**, e a forma que **funciona** mantendo
+a declaração de pé (normalizar no pacote) passaria por elas. É exatamente essa
+forma que a varredura recusa.
 
 ### D3. O arquivo de consumo é um manipulador de rota na aplicação, e o custo está medido
 
@@ -158,6 +167,10 @@ novo entra, e o acréscimo é a folha com os módulos de estilo dos componentes 
 a aplicação ainda não renderiza. Três razões para aceitar: o acréscimo é de
 cerca de 1,5 KB comprimido; os subpaths existem para ser consumidos pelo produto,
 e o gráfico é a razão de ser dele; e a alternativa custa mais.
+
+**E o custo aceito é afirmado, não só registrado** — ver D10. Registrar em
+documento de design não impede a contagem de crescer no ciclo seguinte sem
+ninguém ver; a contagem declarada impede.
 
 **Alternativa descartada por escrito — uma segunda aplicação no workspace, só
 para hospedar a prova.** Ela mantém o documento do produto intacto, e é a única
@@ -253,11 +266,11 @@ aí a divergência vira defeito visível e o par precisa entrar junto.
 
 ### D7. O que este ciclo não mecaniza, e por quê
 
-Três obrigações ficam aplicadas por revisão, e estão aqui para não parecerem
-esquecimento:
+Duas obrigações ficam aplicadas por revisão, e estão aqui para não parecerem
+esquecimento. **A proibição de um pacote declarar tipos do empacotador de quem o
+consome saiu desta lista:** ela era a terceira, e passou a ter prova mecânica
+(D2, D9).
 
-- **Pacote não declara tipos do empacotador de quem o consome** — ver D2, "o que
-  fica sem prova própria".
 - **A aplicação não precisa usar o que importa para provar consumo.** Importar é
   o que a construção precisa; usar é decisão de produto. O requisito diz isso
   explicitamente, para que ninguém leia a rota de prova como promessa de produto.
@@ -282,6 +295,91 @@ o alvo visual, o declara.
 nada, e declarar `color-scheme` é mudança na camada de tokens — outra capacidade,
 outro ciclo.
 
+### D9. A varredura de diretiva de referência, e por que ela não é perímetro
+
+**Decisão:** o arquivo de prova deste ciclo, o mesmo que compara o conjunto de
+subpaths descobertos contra os importados, ganha uma asserção a mais: nenhum
+arquivo **alcançável a partir do `exports`** declara diretiva de referência
+(`/// <reference ... />`). A falha nomeia arquivo e linha.
+
+**Por que não é perímetro de guardião:** perímetro é lista de diretórios escrita à
+mão e mantida à mão — é o que `style-literals` e `component-vocabulary` têm, e é o
+que o ponto 21 registra como dívida. Aqui não há lista: o conjunto sai do
+`exports` de cada pacote sob `packages/`, seguindo as importações relativas, e é a
+**mesma linha de alcance** que D4 usa para decidir quais especificadores precisam
+de conserto. Uma lista, duas asserções.
+
+**A forma do alcance:** começa em cada alvo de `exports` que é módulo
+TypeScript, segue as importações relativas resolvendo `.js`, `.ts` e extensão
+ausente para o arquivo que existe, e para nas folhas que não são módulo — estilo,
+imagem, módulo de estilo. Alvo de `exports` que não é módulo (as duas folhas de
+estilo de `@chargebr/tokens`, os dois arquivos de marca) não abre caminho e entra
+no conjunto como folha.
+
+**Escopo medido, e é o que separa afirmação verdadeira de afirmação que
+atravessa:** hoje o perímetro tem quatro diretivas de referência, e **uma** é
+alcançável — a de `logo.tsx`. As outras três são
+`packages/ui/src/bench/optimize-deps.test.ts` (prova da bancada, que **é** um
+consumidor do empacotador que ela declara),
+`packages/tokens/src/theme.test.ts` (`/// <reference lib="dom" />`, prova em Node)
+e `apps/backoffice/next-env.d.ts` (da aplicação, e ignorado pelo versionamento).
+Nenhuma das três é alcançável a partir de `exports`, e nenhuma delas reprova.
+
+**Por que a proibição é de qualquer diretiva, e não só de tipos de empacotador:**
+`lib` e `path` chegam ao programa do consumidor pelo mesmo caminho. O pacote que
+precisar de declaração ambiente declara-a para si, em arquivo de declaração
+próprio — `packages/ui/src/css-modules.d.ts` é o precedente —, que só entra no
+programa de quem o inclui.
+
+**Medido, e é o que mostra que remover a diretiva não quebra outra coisa:** com a
+diretiva de `logo.tsx` removida, a checagem de tipos da aplicação reprova em
+exatamente dois lugares, os dois imports de arquivo de marca dentro do próprio
+`Logo` — e em nenhum import de módulo de estilo. A declaração de módulo de estilo
+não vem dela.
+
+**O que faria mudar de ideia:** um pacote com necessidade legítima de diretiva de
+referência num arquivo publicado. Não conheço nenhuma: o que uma diretiva faz,
+um arquivo de declaração próprio faz sem atravessar.
+
+### D10. A contagem de folhas de estilo é declarada, por documento
+
+**Decisão:** cada documento emitido declara quantas folhas de estilo entrega, e o
+teste do documento emitido reprova nomeando o documento, o esperado e o lido. A
+contagem é declarada, não derivada. É contagem, não bytes.
+
+**Por quê:** o custo que D3 aceita é real e cresce em silêncio. Registrar num
+documento de design não impede o ciclo seguinte de acrescentar um subpath à prova
+e subir a contagem; a contagem declarada obriga a dizer isso na mesma mudança. É a
+mesma figura de `EXPECTED_COUNTS` em `tools/checks/config-rules.test.ts`, e pela
+mesma razão: **derivada do documento lido, a comparação nunca reprovaria**, porque
+esperado e lido mudariam juntos.
+
+**Contagem, e não bytes:** byte varia com minificação, com ordem de regra e com
+versão do empacotador. Afirmar bytes produziria reprovação que ninguém sabe ler, e
+a primeira reação seria afrouxar a asserção — o mesmo movimento que, neste
+requisito, já custou a marca quebrada.
+
+**Por documento, e não só a raiz. Medido:**
+
+| Documento emitido | Sem a rota de prova | Com a rota de prova |
+| --- | --- | --- |
+| `app/index.html` | 1 | **2** |
+| `app/_not-found.html` | 1 | **2** |
+| `pages/404.html` | 1 | **2** |
+| `app/_global-error.html` | 0 | 0 |
+| `pages/500.html` | 0 | 0 |
+
+Os dois documentos de zero entram na declaração com zero de propósito: deixá-los
+de fora faria uma folha nova neles passar calada. E o conjunto de documentos com
+contagem declarada é comparado, nos dois sentidos, com o conjunto que as rotas já
+declaram — é a cobertura da lista, obtida da lista que já existe no mesmo arquivo,
+sem uma segunda lista para manter.
+
+**Consequência registrada para quem vier depois:** o ciclo `theme-choice`, quando
+voltar, acrescenta um controle ao cabeçalho. Se isso mudar a contagem de alguma
+folha, aquele ciclo terá de dizer isso na declaração — e é precisamente o efeito
+desejado.
+
 ## Risks / Trade-offs
 
 - **O documento entregue passa de uma para duas folhas de estilo, por causa da
@@ -299,8 +397,17 @@ outro ciclo.
   rotas; responde texto e não lê dado nenhum.
 - **`packages/tokens/src` fica com dois estilos de especificador relativo** →
   aceito, com a linha de D4 escrita e guardada pela obrigação central.
-- **A mentira de tipo pode voltar sem reprovar, se vier junto com uma forma que
-  funciona** → dito por escrito em D2; o que reprova é toda forma quebrada.
+- **A varredura de diretiva de referência proíbe mais do que o defeito medido**
+  (qualquer diretiva, não só a de tipos de empacotador) → aceito e justificado em
+  D9: as três formas chegam ao programa do consumidor pelo mesmo caminho, e o
+  escopo alcançável mantém fora as três ocorrências legítimas de hoje, medidas.
+- **A contagem declarada vira atrito em todo ciclo que mexer no grafo de estilo**
+  → aceito, e é o objetivo. O custo é uma linha por mudança de contagem, e o que
+  ele compra é o crescimento não passar sem ser visto (D10).
+- **O alcance a partir do `exports` depende de seguir importações relativas à
+  mão** → é a mesma travessia que D4 usa para definir o mínimo, escrita uma vez e
+  usada pelas duas asserções; conjunto alcançável vazio reprova, para que a
+  travessia não passe verde sem ter olhado nada.
 - **O ciclo `theme-choice` fica com design desatualizado** → registrado na
   proposta: o conserto de resolução sai do design dele (D8 de lá) e entra neste, e
   o número muda — três especificadores para cinco. A dependência `lucide-react`

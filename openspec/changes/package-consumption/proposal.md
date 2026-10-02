@@ -80,6 +80,32 @@ consome".
   **correspondência**, que é a construção de verdade — o subpath não só resolve,
   ele compila.
 
+- **A proibição que fecha a classe inteira ganha prova mecânica: nenhum arquivo
+  alcançável a partir de `exports` declara diretiva de referência.** Diretiva de
+  referência num arquivo do grafo publicado entra no programa de tipos de **todo
+  consumidor**. **Medido:** com a diretiva presente, a listagem dos arquivos do
+  programa de tipos de `apps/backoffice` contém `vite/client.d.ts`, que declara
+  `declare module '*.svg' { const src: string; export default src }`. A checagem de
+  tipos da aplicação não foi enganada — foi **informada**, pelo pacote, de uma
+  coisa falsa sobre o empacotador dela, e foi essa certificação que entregou a
+  marca quebrada. A varredura é uma asserção dentro do arquivo de prova que este
+  ciclo já escreve, sobre a mesma lista descoberta e a mesma linha de alcance dos
+  especificadores. **Plantio:** a diretiva devolvida ao arquivo de `Logo`, e a
+  prova reprova nomeando arquivo e linha. **Medido:** hoje exatamente um arquivo
+  alcançável a declara — o de `Logo`; as outras três ocorrências do perímetro são
+  de prova da bancada e da aplicação, e ficam fora do alcance.
+
+- **O custo do documento passa a ser afirmado, não só registrado: a contagem de
+  folhas de estilo de cada documento emitido é declarada.** Registrar não impede
+  crescer — sem afirmação, o próximo ciclo que acrescentar um subpath à prova sobe
+  a contagem e ninguém vê. É a mesma figura da contagem declarada do guardião do
+  arquivo de regras: declarada, obriga quem a muda a dizer isso na mesma mudança;
+  derivada do documento lido, nunca reprovaria. **Contagem, e não bytes** — byte
+  varia com minificação e vira ruído. **Medido, por documento:**
+  `app/index.html`, `app/_not-found.html` e `pages/404.html` passam de 1 para 2
+  folhas; `app/_global-error.html` e `pages/500.html` continuam em 0, e entram na
+  declaração com zero para que uma folha nova neles também reprove.
+
 - **A verificação é contra construção de verdade, e a alternativa está medida e
   descartada.** Resolver não é compilar. Com o defeito presente: resolução pura
   pelo mapa de `exports` devolve **8 de 8 resolvidos, verde**; importação em Node
@@ -116,8 +142,12 @@ consome".
 - **Não amplia perímetro de guardião nenhum.** As listas de `tools/checks/` ficam
   como estão — `style-literals`, `component-vocabulary`, `fixture-origin`,
   `type-suppression`, `change-lifecycle`, `nav-pair-adjacency` e `config-rules`
-  não ganham entrada nem perdem. Em particular, o ponto 21 continua aberto e
-  intocado: este ciclo não toca `interface-charts`.
+  não ganham entrada nem perdem, e `git diff main -- tools/` fica vazio. Em
+  particular, o ponto 21 continua aberto e intocado: este ciclo não toca
+  `interface-charts`. **A varredura de diretiva de referência não é perímetro
+  novo:** é uma asserção dentro do arquivo de prova deste ciclo, em
+  `apps/backoffice/tests/`, sobre a lista descoberta do `exports` — não há lista
+  de perímetro a manter.
 - **Não reescreve o desenho da marca como marcação dentro do componente.**
   Descartado **antes** de medir: `docs/decisao-identidade-visual.md`, D7, escolheu
   asset externo justamente para o componente não declarar cor, e `style-literals`
@@ -151,11 +181,15 @@ Nenhuma.
 - `backoffice-shell`: o requisito das regiões da moldura passa a obrigar que a
   referência do arquivo de marca no documento emitido resolva para um asset
   emitido — a cláusula que o `**Por quê:**` atual afrouxa —, e que a moldura
-  receba a URL da marca por propriedade.
-- `workspace-verification`: requisito novo — todo subpath publicado em `exports`
-  por pacote sob `packages/` é provado sob a construção da aplicação, com a lista
-  de entrada descoberta do próprio `exports` e com as duas provas que lista
-  declarada exige.
+  receba a URL da marca por propriedade. A capacidade recebe também um requisito
+  novo: a contagem de folhas de estilo de cada documento emitido é declarada, e
+  divergência reprova nomeando o documento, o esperado e o lido.
+- `workspace-verification`: dois requisitos novos. O primeiro — todo subpath
+  publicado em `exports` por pacote sob `packages/` é provado sob a construção da
+  aplicação, com a lista de entrada descoberta do próprio `exports` e com as duas
+  provas que lista declarada exige. O segundo — nenhum arquivo alcançável a partir
+  de `exports` declara diretiva de referência, porque diretiva no grafo publicado
+  entra no programa de tipos de todo consumidor.
 
 ## Impact
 
@@ -179,13 +213,19 @@ Nenhuma.
   `apps/backoffice/tsconfig.json`: `allowImportingTsExtensions`.
 - `apps/backoffice/app/prova/subpaths/route.ts`: o arquivo de consumo declarado,
   que importa todo subpath publicado. É manipulador de rota, não página: não emite
-  documento. **Custo medido e aceito:** o documento entregue passa de uma para
-  duas folhas de estilo, de 14.580 para 21.619 bytes crus (cerca de +1,5 KB
-  comprimido). `design.md`, D3, compara com as alternativas.
-- `apps/backoffice/tests/`: a afirmação da marca no documento emitido, e o teste
-  de cobertura dos subpaths publicados. A lista declarada de rotas ganha
-  `/prova/subpaths` — **medido:** sem a linha, a trava de rotas reprova com `rota
-  produzida e não declarada: ['/prova/subpaths']`, e os outros 14 testes passam.
+  documento. **Custo medido, aceito e afirmado:** o documento entregue
+  passa de uma para duas folhas de estilo, de 14.580 para 21.619 bytes crus (cerca
+  de +1,5 KB comprimido). `design.md`, D3, compara com as alternativas, e a
+  contagem de folhas passa a ser declarada e afirmada por documento — crescer de
+  novo exige dizer isso na mesma mudança.
+- `apps/backoffice/tests/`: a afirmação da marca no documento emitido, a
+  afirmação da contagem de folhas de estilo por documento, e o teste de cobertura
+  dos subpaths publicados — que é também onde mora a asserção da varredura de
+  diretiva de referência, sobre os arquivos alcançáveis a partir do `exports`. A
+  lista declarada de rotas ganha `/prova/subpaths` — **medido:** sem a linha, a
+  trava de rotas reprova com `rota produzida e não declarada:
+  ['/prova/subpaths']`, e os outros 14 testes passam. A declaração de documentos
+  ganha a contagem de folhas de cada um.
 - `docs/pontos-abertos.md`: no arquivamento, o ponto novo de `color-scheme` com o
   gatilho, e o cabeçalho que todo ciclo atualiza.
 - Nada fora de `apps/`, `packages/`, `openspec/` e `docs/`. Nenhum script da raiz
