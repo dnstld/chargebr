@@ -23,12 +23,26 @@
 - [x] 4.1 Executar `pnpm verify` e confirmar os quatro estágios verdes. Verificar pela saída do comando, código de saída zero.
 - [x] 4.2 Conferir que nenhum arquivo sob `apps/` mudou. Verificar com `git diff --stat main -- apps` vazio.
 
-## 5. Arquivamento
+## 5. Correções da revisão do PR 2
+
+Revisão do dono em #205: `color.nav.edge` estava declarado como superfície e é
+borda nos cinco usos — par declarado contra adjacência que não existe na tela.
+Passou porque `edge` e `hover` são o mesmo cinza, e o par que de fato limita a
+moldura ficou sem declaração.
+
+- [x] 5.1 Tirar `edge` das listas de fundo e pôr `hover` onde a adjacência é real; acrescentar `glyph × hover` e `text × hover`. Verificar com a matriz afirmando `glyph × hover = 3.045` e o pior par passando a ser esse, com margem de 0,045.
+- [x] 5.2 Declarar o papel de `edge` — divisor decorativo, isento do piso, motivo escrito com a medição (1,242:1 contra o painel, 1,333:1 contra a trilha) e a citação de WCAG 1.4.11. Verificar com a cobertura passando por isenção declarada, e não por o token estar estacionado numa lista.
+- [x] 5.3 Acrescentar o guardião de adjacência (`tools/checks/nav-pair-adjacency.test.ts`): fundo de par declarado precisa ser pintado como `background` por algum componente, seguindo a cadeia de repasse de custom property; token isento precisa ser borda em algum lugar e fundo em nenhum. Verificar plantando `edge` de volta como superfície e conferindo a reprovação nomeando as cinco bordas, com plantio revertido.
+- [x] 5.4 Registrar na `$description` de `color.nav.text-muted` que ele ficou sem consumidor — reserva do primeiro texto apagado da moldura —, e na de `edge` o papel de divisor isento. Verificar lendo as duas descrições na fonte gerada.
+- [x] 5.5 Remover o comentário duplicado de `app-frame.module.css`. Verificar com `biome format` passando e o bloco aparecendo uma vez só.
+- [x] 5.6 Acrescentar ao delta a regra checável — par declarado aponta para adjacência que existe no código — com os dois cenários de prova. Verificar com `openspec validate nav-frame-contrast --strict` passando.
+
+## 6. Arquivamento
 
 As tarefas deste grupo rodam no terceiro PR do ciclo:
 `tools/checks/change-lifecycle.test.ts` reprova uma mudança ativa com todas as
 tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
 
-- [ ] 5.1 Arquivar a mudança com sincronização da spec viva: mover `openspec/changes/nav-frame-contrast/` para `openspec/changes/archive/<data>-nav-frame-contrast/` e aplicar o delta de `design-tokens` em `openspec/specs/`. Verificar com `openspec validate --strict` passando sobre a spec viva e o requisito modificado contendo as duas obrigações novas.
-- [ ] 5.2 Atualizar o cabeçalho de `docs/pontos-abertos.md` — data, estado do repositório e contagem de ciclos arquivados — no mesmo commit do movimento para `archive/`. Verificar com `tools/checks/change-lifecycle.test.ts` passando.
-- [ ] 5.3 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro estágios verdes. Verificar pela saída do comando, código de saída zero.
+- [ ] 6.1 Arquivar a mudança com sincronização da spec viva: mover `openspec/changes/nav-frame-contrast/` para `openspec/changes/archive/<data>-nav-frame-contrast/` e aplicar o delta de `design-tokens` em `openspec/specs/`. Verificar com `openspec validate --strict` passando sobre a spec viva e o requisito modificado contendo as duas obrigações novas.
+- [ ] 6.2 Atualizar o cabeçalho de `docs/pontos-abertos.md` — data, estado do repositório e contagem de ciclos arquivados — no mesmo commit do movimento para `archive/`. Verificar com `tools/checks/change-lifecycle.test.ts` passando.
+- [ ] 6.3 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro estágios verdes. Verificar pela saída do comando, código de saída zero.

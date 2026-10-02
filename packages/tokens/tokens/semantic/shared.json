@@ -11,7 +11,7 @@
         "$value": "{color.gray.900}"
       },
       "edge": {
-        "$description": "Borda e divisor do conjunto fixo de navegação.",
+        "$description": "Divisor do conjunto fixo: borda da trilha, do painel, do rodapé e do fio que liga os filhos de uma pasta. É borda nos cinco usos e fundo em nenhum — nada é pintado por cima dele, e por isso ele não é superfície de par de contraste. Como divisor decorativo está isento do piso de 3:1 (WCAG 1.4.11 exige contraste de conteúdo não textual só quando ele é necessário para entender o conteúdo, e a hierarquia é legível sem as linhas); a isenção está declarada com motivo em src/nav-pairs.ts, nunca obtida por omissão. Medido: 1,242:1 contra o painel e 1,333:1 contra a trilha.",
         "$value": "{color.gray.800}"
       },
       "hover": {
@@ -27,7 +27,7 @@
         "$value": "{color.gray.100}"
       },
       "text-muted": {
-        "$description": "Texto apagado e rótulos secundários no conjunto fixo. Um degrau mais claro que o tom da maquete, por medição: gray.500 dá 3,780:1 contra o painel, abaixo do piso de 4,5:1 que vale para texto; gray.400 dá 6,515:1. O tom da maquete continua em color.nav.glyph, onde o piso é o de objeto gráfico.",
+        "$description": "Texto apagado e rótulos secundários no conjunto fixo. **Sem consumidor hoje:** quando o tom apagado se dividiu em dois, os três usos que existiam — chevron, marcador e ícone — eram objeto gráfico e foram para color.nav.glyph. Este fica como reserva do primeiro texto apagado da moldura (o rótulo de seção, a contagem e a linha da organização, na maquete), com o piso já garantido para quando ele chegar; procurar consumidor dele no código não acha nenhum, e isso é o esperado. Um degrau mais claro que o tom da maquete, por medição: gray.500 dá 3,780:1 contra o painel, abaixo do piso de 4,5:1 que vale para texto; gray.400 dá 6,515:1.",
         "$value": "{color.gray.400}"
       },
       "glyph": {

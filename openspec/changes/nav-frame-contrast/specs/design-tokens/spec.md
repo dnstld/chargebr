@@ -17,12 +17,19 @@ A checagem própria SHALL aplicar os mesmos pisos já declarados — 4,5:1 para
 par de texto, 3:1 para objeto gráfico — e SHALL reprovar nomeando o par, a
 razão medida e o piso, no mesmo formato que a checagem por tema já usa.
 
-Todo token do grupo SHALL aparecer em ao menos um par medido, e a checagem
-SHALL reprovar nomeando o token que não aparecer em nenhum.
+Todo token do grupo SHALL aparecer em ao menos um par medido ou ter isenção
+declarada com o motivo, e a checagem SHALL reprovar nomeando o token que não
+tiver nenhum dos dois.
 
 O piso aplicado a cada par SHALL ser o do papel que o token cumpre: 4,5:1 para
 o token que pinta texto, 3:1 para o que pinta objeto gráfico. Um token SHALL
 NOT ser medido por um piso mais baixo que o do papel que o seu nome anuncia.
+
+Todo par declarado SHALL corresponder a uma adjacência que existe no código: o
+token usado como **fundo** de um par SHALL ser consumido como `background` por
+algum componente, e um token consumido apenas como borda SHALL NOT ser fundo de
+par nenhum. A verificação SHALL reprovar nomeando o token e onde ele é
+consumido.
 
 **Por quê:** a trilha, o painel e a barra de conteúdo da navegação são a
 primeira superfície do sistema que não segue o tema do leitor — decisão do
@@ -53,6 +60,20 @@ como objeto gráfico e reprova 4,5:1 como texto é seguro enquanto só ícone o
 usar — e deixa de ser no primeiro texto que o adotar. O nome do token é o que
 anuncia esse papel a quem compõe.
 
+A adjacência precisa existir no código porque medir um par que não acontece na
+tela é prova que coincide com a verdade em vez de estabelecê-la, e isso foi
+medido dentro deste ciclo: `color.nav.edge` entrou na primeira lista como
+superfície, e os cinco usos dele são borda — nada é pintado por cima de uma
+borda. O erro passou despercebido porque `edge` e `color.nav.hover` são o mesmo
+cinza: todo número que deveria vir do fundo de interação era produzido pela
+borda e saía igual, a matriz ficava numericamente certa e estruturalmente
+errada, e o par que de fato limita o conjunto — o objeto gráfico apagado sobre
+o fundo de interação, com 0,045 de margem — não estava declarado. No dia em que
+os dois tons se separassem, a checagem seguiria verde medindo a borda enquanto
+a adjacência real deixava de ser medida. Exigir que o fundo de um par seja
+pintado como fundo em algum componente é o que fecha isso por verificação, e
+não por atenção de quem revisa.
+
 #### Scenario: Par do conjunto fixo abaixo do piso reprova
 
 - **WHEN** um par de texto ou de destaque do conjunto fixo fica abaixo do piso correspondente contra sua própria superfície
@@ -61,9 +82,21 @@ anuncia esse papel a quem compõe.
 
 #### Scenario: Token do conjunto sem par declarado reprova
 
-- **WHEN** um token é acrescentado ao conjunto fixo e nenhum par da checagem o mede
+- **WHEN** um token é acrescentado ao conjunto fixo e nenhum par da checagem o mede, e ele não tem isenção declarada
 - **THEN** a checagem própria falha, nomeando o token sem par
 - **Prova:** token plantado na fonte do conjunto fixo, checagem própria falhando com o nome dele, plantio revertido
+
+#### Scenario: Fundo de par que nunca é pintado como fundo reprova
+
+- **WHEN** um token consumido apenas como borda é declarado como fundo de um par
+- **THEN** a verificação falha, nomeando o token e os lugares em que ele é consumido
+- **Prova:** token de borda plantado na lista de fundos declarados, guardião de adjacência falhando com o nome dele e a lista das bordas, plantio revertido
+
+#### Scenario: Isenção de divisor vale com motivo e sem uso como fundo
+
+- **WHEN** um token do conjunto é declarado isento por ser divisor decorativo
+- **THEN** a verificação confere que ele é borda em algum componente e fundo em nenhum, e falha quando alguma das duas deixa de valer
+- **Prova:** execução do guardião de adjacência sobre a árvore corrente, com a isenção declarada e o motivo citando WCAG 1.4.11
 
 #### Scenario: Conjunto fixo aprovado registra o pior par
 

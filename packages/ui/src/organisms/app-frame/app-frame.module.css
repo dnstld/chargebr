@@ -113,10 +113,6 @@
 }
 
 /* A marca na barra do conteúdo é assinatura, não cartaz: sem altura declarada
-   ela entra no tamanho intrínseco do arquivo e domina a barra. A regra vale só
-   nesta forma — a moldura sem trilha nem navegação, que é a de
-   `apps/backoffice` hoje, continua exatamente como era. */
-/* A marca na barra do conteúdo é assinatura, não cartaz: sem altura declarada
    ela entra no tamanho intrínseco do arquivo (303px de alto) e domina a barra.
    A regra vale só nesta forma — a moldura sem trilha nem navegação, que é a de
    `apps/backoffice` hoje, continua exatamente como era. */

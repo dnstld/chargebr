@@ -2,6 +2,12 @@ import { wcagContrast } from "culori";
 import { expect, test } from "vitest";
 import { tokens } from "../generated/tokens.js";
 import { CONTRAST_THRESHOLDS, contrastInput } from "./contrast.js";
+import {
+  NAV_EXEMPT,
+  NAV_GRAPHIC_PAIRS,
+  NAV_SURFACES,
+  NAV_TEXT_PAIRS,
+} from "./nav-pairs.js";
 import { loadSource, THEMES, type Theme } from "./source.js";
 
 // A checagem do conjunto que não varia por tema — a moldura de navegação,
@@ -37,41 +43,6 @@ function path(key: string): string {
   return key.replaceAll("-", ".");
 }
 
-// Superfícies da moldura: tudo que recebe primeiro plano por cima.
-const SURFACES = [
-  "color-nav-rail",
-  "color-nav-panel",
-  "color-nav-edge",
-  "color-nav-hover",
-  "color-nav-current",
-] as const;
-
-const PANEL_SURFACES = [
-  "color-nav-rail",
-  "color-nav-panel",
-  "color-nav-edge",
-] as const;
-
-// Primeiro plano de texto, ao piso de 4,5:1, com as superfícies sobre as quais
-// cada um de fato aparece.
-const TEXT_PAIRS: readonly (readonly [string, readonly string[]])[] = [
-  ["color-nav-text", PANEL_SURFACES],
-  // O texto forte é também o do estado sobre o ponteiro, e `color.nav.hover` é
-  // a superfície que ele recebe nesse estado.
-  ["color-nav-text-strong", [...PANEL_SURFACES, "color-nav-hover"]],
-  ["color-nav-text-muted", PANEL_SURFACES],
-  // O texto da entrada corrente — rótulo e contagem — só existe sobre a pílula.
-  ["color-nav-current-text", ["color-nav-current"]],
-];
-
-// Primeiro plano de objeto gráfico, ao piso de 3:1: chevron de pasta, marcador
-// de folha e ícone da trilha (`glyph`), barra de acento e anel de foco
-// (`accent`).
-const GRAPHIC_PAIRS: readonly (readonly [string, readonly string[]])[] = [
-  ["color-nav-glyph", PANEL_SURFACES],
-  ["color-nav-accent", PANEL_SURFACES],
-];
-
 interface Measured {
   foreground: string;
   background: string;
@@ -95,8 +66,8 @@ function measure(
 
 function allPairs(read: (key: string) => string = rawValue): Measured[] {
   return [
-    ...measure(TEXT_PAIRS, CONTRAST_THRESHOLDS.textFloor, read),
-    ...measure(GRAPHIC_PAIRS, CONTRAST_THRESHOLDS.graphicObjectFloor, read),
+    ...measure(NAV_TEXT_PAIRS, CONTRAST_THRESHOLDS.textFloor, read),
+    ...measure(NAV_GRAPHIC_PAIRS, CONTRAST_THRESHOLDS.graphicObjectFloor, read),
   ];
 }
 
@@ -111,13 +82,15 @@ function violationsOf(measured: readonly Measured[]): string[] {
     );
 }
 
-// Todo token do conjunto precisa aparecer em algum par — como primeiro plano ou
-// como superfície. É esta lista que a prova de cobertura compara com a fonte.
+// Token coberto é o que aparece em algum par — como fundo ou como primeiro
+// plano — ou o que tem isenção declarada com motivo. É esta lista que a prova
+// de cobertura compara com a fonte.
 function measuredTokens(): Set<string> {
   return new Set<string>([
-    ...SURFACES,
-    ...TEXT_PAIRS.map(([foreground]) => foreground),
-    ...GRAPHIC_PAIRS.map(([foreground]) => foreground),
+    ...NAV_SURFACES,
+    ...NAV_TEXT_PAIRS.map(([foreground]) => foreground),
+    ...NAV_GRAPHIC_PAIRS.map(([foreground]) => foreground),
+    ...Object.keys(NAV_EXEMPT),
   ]);
 }
 
@@ -160,23 +133,45 @@ test("token acrescentado sem par reprova, nomeando o token", () => {
 
 test("a execução aprovada registra o pior par e a margem", () => {
   const worst = allPairs().reduce((a, b) => (b.margin < a.margin ? b : a));
-  // O pior par é o objeto gráfico apagado contra a borda: 3,045:1 sobre o piso
-  // de 3:1. É o par que limita a moldura, e esta asserção é o primeiro aviso se
-  // ele mudar.
+  // O par que limita a moldura: o objeto gráfico apagado sobre o fundo de
+  // interação, 3,045:1 sobre o piso de 3:1 — 0,045 de margem. Acontece porque
+  // nem o marcador da folha, nem o chevron da pasta, nem o ícone da trilha têm
+  // variante de hover, e os três controles trocam o fundo nesse estado.
   expect(worst.foreground).toBe("color-nav-glyph");
-  expect(worst.background).toBe("color-nav-edge");
+  expect(worst.background).toBe("color-nav-hover");
   expect(worst.ratio).toBeCloseTo(3.045, 3);
-  expect(worst.margin).toBeGreaterThan(0);
+  expect(worst.margin).toBeCloseTo(0.045, 3);
+});
+
+test("a isenção do divisor é relatada com motivo, nunca silenciosa", () => {
+  // `color.nav.edge` não é fundo nem primeiro plano: é borda nos cinco usos
+  // dele. Como divisor decorativo, WCAG 1.4.11 o isenta do piso de 3:1 — e a
+  // isenção vale por estar declarada com motivo, não por o token ter ficado
+  // estacionado numa lista de superfícies, que é como ele escapava antes.
+  expect(Object.keys(NAV_EXEMPT)).toEqual(["color-nav-edge"]);
+  expect(NAV_EXEMPT["color-nav-edge"]).toContain("1.4.11");
+  const asBackground = allPairs().filter(
+    (pair) => pair.background === "color-nav-edge",
+  );
+  expect(asBackground, "divisor declarado como fundo de par").toEqual([]);
 });
 
 // A matriz medida, valor a valor: é o que este ciclo entrega, e é por isso que
 // ela é afirmada e não só comparada a um piso.
 const MATRIX: readonly (readonly [string, string, number])[] = [
   ["color-nav-text", "color-nav-panel", 10.419],
-  ["color-nav-text-strong", "color-nav-panel", 15.275],
+  ["color-nav-text", "color-nav-hover", 8.392],
+  ["color-nav-text-strong", "color-nav-hover", 12.304],
+  ["color-nav-text-strong", "color-nav-rail", 16.404],
+  // Reserva sem consumidor hoje: o número diz o que valerá quando o primeiro
+  // texto apagado da moldura existir, não o que já está pintado na tela.
   ["color-nav-text-muted", "color-nav-panel", 6.515],
   ["color-nav-current-text", "color-nav-current", 12.21],
+  // O par que limita a moldura vem primeiro entre os gráficos: é por ele que a
+  // margem inteira do conjunto é 0,045.
+  ["color-nav-glyph", "color-nav-hover", 3.045],
   ["color-nav-glyph", "color-nav-panel", 3.78],
+  ["color-nav-accent", "color-nav-current", 4.06],
   ["color-nav-accent", "color-nav-panel", 5.882],
 ];
 
