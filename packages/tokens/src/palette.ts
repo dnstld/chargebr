@@ -8,11 +8,11 @@ import {
   parse,
   wcagContrast,
 } from "culori";
-import type { Theme } from "./source.js";
+import type { Theme } from "./source.ts";
 
 // Os temas entram aqui para que quem executa a checagem — este pacote ou quem
 // declara formas de gráfico — não precise redeclarar a lista.
-export { THEMES, type Theme } from "./source.js";
+export { THEMES, type Theme } from "./source.ts";
 
 // As seis checagens da paleta categórica de gráfico. Este arquivo é o critério:
 // o modelo de simulação e os limiares de corte declarados aqui fazem parte da

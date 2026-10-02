@@ -151,7 +151,7 @@ passar calada.
 
 - **WHEN** um documento emitido passa a entregar mais folhas de estilo do que o declarado
 - **THEN** a verificação falha nomeando o documento, a contagem declarada e a lida
-- **Prova:** importação de estilo a mais plantada no arquivo de consumo dos subpaths publicados, teste do documento emitido falhando com os dois números, plantio revertido
+- **Prova:** importação de estilo plantada na rota raiz, teste do documento emitido falhando com o documento e os dois números, plantio revertido; e, para um documento que entrega zero folhas, contagem declarada divergente plantada, com a mesma reprovação. **Medido na aplicação:** a mesma importação feita dentro do arquivo de consumo **não** cria folha nova — o empacotador a funde no pedaço que já existe —, e por isso o plantio que reproduz a condição é na rota, não nele
 
 #### Scenario: Documento sem contagem declarada reprova
 

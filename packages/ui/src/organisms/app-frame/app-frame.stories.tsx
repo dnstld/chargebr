@@ -10,6 +10,10 @@ import {
 import { useState } from "react";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { Theme } from "../../../.storybook/theme";
+import {
+  BRAND_HORIZONTAL_URL,
+  BRAND_MARK_URL,
+} from "../../atoms/logo/brand-assets";
 import { Button } from "../../atoms/button/button";
 import { resolveColor } from "../../bench/computed";
 import { NavPanel } from "../nav/panel/nav-panel";
@@ -24,6 +28,7 @@ const meta = {
   component: AppFrame,
   args: {
     productName: "ChargeBR",
+    brandSrc: BRAND_HORIZONTAL_URL,
     skipLabel: "Ir para o conteúdo",
     children: <p>Conteúdo da rota</p>,
   },
@@ -193,6 +198,7 @@ function AppFrameComGatilhoDeNavegacao() {
   return (
     <AppFrame
       productName="ChargeBR"
+      brandSrc={BRAND_HORIZONTAL_URL}
       skipLabel="Ir para o conteúdo"
       nav={
         <NavPanel
@@ -248,6 +254,7 @@ const RAIL_DESTINATIONS = [
 
 const rail = (
   <NavRail
+    brandSrc={BRAND_MARK_URL}
     label="Áreas do produto"
     brandLabel="ChargeBR"
     destinations={RAIL_DESTINATIONS}
@@ -273,6 +280,7 @@ function CompleteShell() {
   return (
     <AppFrame
       productName="ChargeBR"
+      brandSrc={BRAND_HORIZONTAL_URL}
       skipLabel="Ir para o conteúdo"
       rail={rail}
       nav={
@@ -347,6 +355,7 @@ function ShellComRodape() {
   return (
     <AppFrame
       productName="ChargeBR"
+      brandSrc={BRAND_HORIZONTAL_URL}
       skipLabel="Ir para o conteúdo"
       rail={rail}
       nav={

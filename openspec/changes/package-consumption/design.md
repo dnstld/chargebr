@@ -212,15 +212,18 @@ passam.
 media só o barril de átomos. `@chargebr/tokens/palette` é subpath publicado
 também, e alcança `./source.js` — a terceira reprovação da construção.
 
-**Por que os outros dezesseis especificadores relativos de `packages/tokens/src`
-ficam como estão:** nenhum é alcançável por subpath publicado — são o
+**Por que os outros trinta e nove especificadores relativos de
+`packages/tokens/src` ficam como estão** — 17 em arquivo que não é de teste e 22 em
+arquivo de teste; **a contagem foi corrigida na aplicação, de dezesseis para trinta
+e nove**, porque o número do planejamento vinha de uma contagem de linhas que
+excluía os arquivos de teste, e a linha de princípio não muda com ele: nenhum é alcançável por subpath publicado — são o
 construtor de tokens, a validação e os relatórios, que rodam sob Node. Mudá-los
 seria mexer no que medição nenhuma deste ciclo toca. **E a inconsistência deixa de
 ser risco silencioso por causa da obrigação central:** se alguém tornar um deles
 alcançável, a construção reprova nomeando o especificador. A linha não depende de
 ninguém lembrar dela.
 
-**Alternativa descartada:** uniformizar os vinte e um. Descartada pelo mesmo
+**Alternativa descartada:** uniformizar os quarenta e quatro. Descartada pelo mesmo
 argumento, invertido — alteração sem defeito medido, num pacote cuja geração é
 garantida determinística por `design-tokens`.
 

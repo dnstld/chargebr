@@ -43,6 +43,8 @@ export type AppFrameProps = AppFrameNavSlot & {
   productName: string;
   /** Texto do link de salto. Decisão da aplicação. */
   skipLabel: string;
+  /** URL do arquivo da marca do cabeçalho. Decisão da aplicação: quem compõe sabe como o próprio empacotador produz URL. */
+  brandSrc: string;
   /** O conteúdo da rota, dentro da região de conteúdo principal. */
   children: ReactNode;
   /** Trilha lateral independente do painel de navegação. */
@@ -65,7 +67,7 @@ export type AppFrameProps = AppFrameNavSlot & {
 // `useState` aqui dentro. Em `apps/backoffice`, que nunca passa `nav`, nada
 // do slot de navegação é renderizado, e o documento emitido não muda.
 export function AppFrame(props: AppFrameProps) {
-  const { productName, skipLabel, children } = props;
+  const { productName, skipLabel, brandSrc, children } = props;
   const hasShell = props.rail !== undefined || props.nav !== undefined;
   return (
     <div
@@ -80,7 +82,7 @@ export function AppFrame(props: AppFrameProps) {
         <div className={styles.rail ?? ""}>{props.rail}</div>
       ) : null}
       <header className={styles.header ?? ""}>
-        <Logo label={productName} />
+        <Logo label={productName} src={brandSrc} />
         {props.nav ? (
           // `Button` não aceita `className` — o invólucro é quem some acima
           // do breakpoint (app-frame.module.css, `.hamburger`).
