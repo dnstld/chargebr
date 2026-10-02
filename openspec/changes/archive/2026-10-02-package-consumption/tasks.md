@@ -291,11 +291,25 @@ Vai ao dono como achado, para ele decidir se vira ponto aberto ou ciclo próprio
 
 ## 7. Arquivamento
 
+**Divergência de contagem, resolvida pela leitura dos próprios artefatos.** A
+instrução da revisão pedia o cabeçalho de `docs/pontos-abertos.md` com **2 pontos
+abertos**, "o 21 e o novo". São **3**: o ciclo abre **dois** pontos, não um — o do
+`color-scheme` já estava comprometido desde a proposta (`design.md`, D8, e a tarefa
+7.3) e o do `palette` nasceu na aplicação (tarefa 7.4). O cabeçalho foi escrito com
+3, que é o que as três fontes do ciclo obrigam.
+
+**Correção de fato, sobre o mesmo cabeçalho.** A instrução dizia que seria a
+primeira vez que o registro sobe em vez de descer. Medido no histórico do arquivo:
+ele já subiu antes — 5 → 7 → 8 em agosto e setembro, e 0 → 1 depois de
+`close-open-points` zerá-lo. O que é novo não é a subida, é a **razão** de uma
+delas, e é essa que foi escrita: o ponto 23 existe porque uma prova nova revelou o
+que ninguém via.
+
 As tarefas deste grupo rodam no terceiro PR do ciclo:
 `tools/checks/change-lifecycle.test.ts` reprova mudança ativa com todas as
 tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
 
-- [ ] 7.1 Arquivar a mudança **com sincronização das specs vivas**: mover
+- [x] 7.1 Arquivar a mudança **com sincronização das specs vivas**: mover
   `openspec/changes/package-consumption/` para
   `openspec/changes/archive/<data>-package-consumption/` e aplicar os três deltas
   em `openspec/specs/`. Verificar com `npx openspec validate --specs --strict`
@@ -304,15 +318,22 @@ tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
   `shell-components` —, e os quatro requisitos novos presentes: a contagem de
   folhas (três cenários), o repasse da URL da marca (dois), a prova de consumo
   (cinco) e a proibição de diretiva de referência (três).
-- [ ] 7.2 Confirmar que a cláusula afrouxada não sobreviveu na spec viva.
-  Verificar com `grep -n "sem prescrever qual delas a implementação escolhe"` em
-  `openspec/specs/` voltando vazio.
-- [ ] 7.3 Registrar em `docs/pontos-abertos.md`, **no mesmo commit** do movimento
+- [x] 7.2 Confirmar que a cláusula afrouxada não sobreviveu **como texto
+  operativo** na spec viva. **Critério emendado na execução, pela medição:** o
+  `grep` por `sem prescrever qual delas a implementação escolhe` em
+  `openspec/specs/` devolve **uma** ocorrência, e tem de devolver — ela está dentro
+  da citação que registra a revogação ("A redação anterior deste bloco dizia
+  que…"), que é o que torna a inversão legível na capacidade. O critério escrito
+  como "voltando vazio" não poderia passar sem apagar esse registro. Verificar que
+  a ocorrência é exatamente uma, que ela está dentro daquele parágrafo, e que a
+  obrigação nova sobre a referência do arquivo de marca está presente no corpo do
+  requisito.
+- [x] 7.3 Registrar em `docs/pontos-abertos.md`, **no mesmo commit** do movimento
   para `archive/`, o ponto aberto novo de `design.md`, D8 — `color-scheme` não
   declarado na camada de tokens —, com o gatilho, e atualizar o cabeçalho do
   arquivo: data, estado do repositório e contagem de ciclos arquivados, de 18 para
   19. Verificar com `tools/checks/change-lifecycle.test.ts` passando.
-- [ ] 7.4 Registrar em `docs/pontos-abertos.md`, no mesmo commit, o ponto aberto
+- [x] 7.4 Registrar em `docs/pontos-abertos.md`, no mesmo commit, o ponto aberto
   do subpath `@chargebr/tokens/palette`, que arrasta o leitor de disco da fonte dos
   tokens para o pacote da aplicação. **Causa medida:** a reexportação de valor em
   `packages/tokens/src/palette.ts:15` (`export { THEMES, type Theme } from
@@ -327,12 +348,12 @@ tarefas marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
   gatilho vago é ponto que apodrece. Verificar com
   `tools/checks/change-lifecycle.test.ts` passando e o ponto listado com o gatilho
   datado.
-- [ ] 7.5 Acrescentar a `CLAUDE.md`, na seção do que nunca fazer, uma linha sobre a
+- [x] 7.5 Acrescentar a `CLAUDE.md`, na seção do que nunca fazer, uma linha sobre a
   disciplina do plantio: plantio é reversão destrutiva, então a árvore é commitada
   antes de plantar — `git checkout --` restaura do commit e apaga edição não
   commitada junto com o plantio. **Custou trabalho real na aplicação deste ciclo:**
   dois arquivos de checagem de tipos foram apagados e tiveram de ser reconstruídos.
   Verificar por leitura da seção e por `git diff CLAUDE.md` mostrando só a linha
   nova.
-- [ ] 7.6 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
+- [x] 7.6 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
   estágios verdes. Verificar pela saída do comando, código de saída zero.

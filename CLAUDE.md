@@ -145,6 +145,11 @@ fora de `@chargebr/tokens`. Só token.
 
 **Nunca afirme acessibilidade sem execução registrada do axe.**
 
+**Nunca plante sem a árvore commitada.** Plantio se reverte por `git checkout --`,
+que restaura do commit e apaga junto toda edição não commitada do arquivo. Commite
+antes de plantar. Custou, na aplicação de `package-consumption`, dois arquivos de
+checagem de tipos apagados e reconstruídos à mão.
+
 ## Perímetros
 
 `packages/**` não importa `next`, `next/**` nem `apps/**`. A aplicação importa
