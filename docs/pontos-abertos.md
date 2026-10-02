@@ -1,9 +1,19 @@
 # Pontos abertos
 
-**Atualizado em:** 2 de outubro de 2026, no arquivamento de `proof-falsifiability`
-**Estado do repositório:** 7 capacidades vivas, 18 ciclos arquivados,
-nenhum change ativo. **1 ponto aberto** (21, sem alteração: `proof-falsifiability`
-não toca `interface-charts`). Este ciclo não fecha nem abre ponto nenhum.
+**Atualizado em:** 2 de outubro de 2026, no arquivamento de `package-consumption`
+**Estado do repositório:** 7 capacidades vivas, 19 ciclos arquivados, **um change
+ativo** (`theme-choice`, parado no estágio de proposta, sem código).
+**3 pontos abertos** (21, sem alteração — `package-consumption` não toca
+`interface-charts`; e os dois que este ciclo abre, 22 e 23). Este ciclo não fecha
+nenhum ponto.
+
+**O registro sobe, e isso é informação, não regressão.** O ponto 23 existe porque
+uma prova nova revelou o que ninguém via: a prova de consumo dos subpaths
+publicados pôs `@chargebr/tokens/palette` sob a construção da aplicação pela
+primeira vez, e o aviso apareceu na primeira execução. Registro que sobe depois de
+uma prova nova é a prova funcionando — o que seria regressão é o defeito continuar
+lá sem ninguém poder vê-lo. O ponto 22 é de outra natureza: foi achado por leitura
+da camada de tokens durante a proposta, e é anterior a este ciclo.
 
 ## O que este arquivo é
 
@@ -41,6 +51,33 @@ precisam estar no mesmo commit — nunca um antes do outro.
   uma capacidade que ele não toca. **Gatilho:** o próximo ciclo que tocar
   `interface-charts` inclui esse perímetro no guardião e trata as ocorrências
   que a ampliação revelar.
+
+- **22. `color-scheme` não é declarado em lugar nenhum da camada de tokens** —
+  varrido em `packages/tokens/generated/tokens.css`,
+  `packages/tokens/src/build.ts` e `apps/backoffice/app/global.css`: nenhuma
+  declaração. A consequência — barra de rolagem e controle nativo pintados pelo
+  padrão do navegador, contra o tema — **já existe hoje** no tema escuro resolvido
+  pela preferência do sistema, e não foi criada por `package-consumption`.
+  `docs/maquete-navegacao.html`, que é o alvo visual, declara. Não bloqueia nada.
+  **Gatilho:** o próximo ciclo da camada de tokens decide se declara
+  `color-scheme` e, se declarar, prova o efeito sobre controle nativo nos dois
+  temas.
+
+- **23. `@chargebr/tokens/palette` arrasta o leitor de disco da fonte dos tokens
+  para o pacote da aplicação** — revelado pela prova de consumo deste ciclo, na
+  primeira construção que importou o subpath. **Causa medida:** a reexportação de
+  **valor** em `packages/tokens/src/palette.ts:15`
+  (`export { THEMES, type Theme } from "./source.ts"`); a linha 11, que importa só
+  o tipo, é apagada na compilação e é inofensiva. `source.ts` importa `node:fs` na
+  linha 1, chama `readdirSync` na 64 e `readFileSync` na 93, e monta caminhos com
+  `join` sobre base dinâmica — a construção passa, mas avisa que isso leva "all
+  source files (including the public folder) to be deployed as part of the server
+  code" e pode falhar por limite de tamanho. **Cura medida:** `THEMES` e `Theme`
+  são as linhas 20 e 21 de `source.ts` e não têm dependência nenhuma; tirá-las
+  para um módulo próprio e reexportar dos dois lados é da ordem de dez linhas.
+  **Gatilho:** é o ciclo seguinte a `package-consumption` — compromisso, não
+  condição. O ponto 21 é a evidência de por que: gatilho que depende de alguém
+  tocar numa área é ponto que apodrece.
 
 ---
 
