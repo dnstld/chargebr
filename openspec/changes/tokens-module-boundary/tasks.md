@@ -3,7 +3,9 @@
 **Ordem obrigatória.** O grupo 1 vem antes do 2: a asserção do grupo 2 reprova o
 estado atual da árvore, e escrevê-la antes do conserto deixaria o portão vermelho
 entre dois commits. O grupo 3 vem depois dos dois, porque os plantios precisam da
-asserção escrita e da árvore verde para serem vistos reprovando.
+asserção escrita e da árvore verde para serem vistos reprovando. O grupo 4 — o
+conserto da checagem do ciclo de vida — é independente dos três e pode rodar a
+qualquer momento antes do portão.
 
 **O que conta como verificação aqui.** Toda tarefa é conferida por execução, e toda
 tarefa cujo teste existe para **recusar** algo traz o plantio registrado: o que foi
@@ -87,53 +89,88 @@ commitada antes de qualquer plantio, porque a reversão é destrutiva.
   pacote descartável sob `packages/` com alvo de exportação inexistente, a
   reprovação nomeando o pacote, e a remoção do plantio.
 
-## 4. Portão e perímetro
+## 4. O conserto da checagem do ciclo de vida
 
-- [ ] 4.1 Executar `pnpm verify` e confirmar os quatro estágios verdes, com a
+**Entra por autorização do dono depois da proposta** (`design.md`, D7): a checagem
+que deveria verificar o fechamento do ponto 23 que este ciclo declara está morta, e
+entregável sem verificação não é escopo alheio. **Duas obrigações, não uma** — o
+padrão corrente e a contagem declarada (D8).
+
+- [ ] 4.1 Fazer a leitura dos pontos abertos de `docs/pontos-abertos.md`, em
+  `tools/checks/change-lifecycle.test.ts`, casar o formato corrente da **seção de
+  pontos abertos**, e só dela. Verificar com a leitura devolvendo exatamente
+  `[21, 22, 23]` — e **não** 4 números: a seção de reclassificados usa o mesmo
+  formato de item e tem um item numerado, que não é ponto aberto.
+- [ ] 4.2 Declarar na própria checagem a contagem de pontos abertos esperada — **3**
+  nesta árvore —, e afirmar a contagem lida contra ela, com a falha nomeando a
+  declarada e a lida. A contagem é declarada na checagem e **não** extraída do
+  cabeçalho do arquivo (D8). Verificar com a checagem passando e a contagem lida
+  impressa na execução.
+- [ ] 4.3 **Plantio do formato:** alterar o formato de um item da seção de abertos e
+  confirmar que a checagem reprova nomeando a contagem declarada e a lida — a
+  reprovação que a versão original nunca teve. Transcrever a mensagem, reverter o
+  plantio e confirmar verde.
+- [ ] 4.4 **Plantio da comparação original:** plantar uma mudança arquivada que
+  declare fechar um ponto que o registro ainda lista como aberto, e confirmar que a
+  checagem reprova nomeando o ponto e a mudança — a comparação que estava morta e
+  volta a funcionar. Transcrever a mensagem, reverter os dois plantios e confirmar
+  verde.
+- [ ] 4.5 Confirmar que nenhum perímetro mudou e que nenhum guardião novo nasceu.
+  Verificar com `ls tools/checks/*.test.ts | wc -l` devolvendo 7, o inventário de
+  `CLAUDE.md` intocado, e `git diff main -- tools/` mostrando só
+  `change-lifecycle.test.ts`.
+
+## 5. Portão e perímetro
+
+- [ ] 5.1 Executar `pnpm verify` e confirmar os quatro estágios verdes, com a
   contagem de arquivos de teste registrada antes e depois — 74 antes. Verificar pela
   saída e pelo código de saída zero.
-- [ ] 4.2 Confirmar que nenhum perímetro de guardião mudou e que `tools/` não foi
-  tocado. Verificar com `git diff --stat main -- tools/` vazio.
-- [ ] 4.3 Confirmar que nada de tema mudou e que `openspec/changes/theme-choice/`
+- [ ] 5.2 Confirmar que nenhum perímetro de guardião mudou e que `tools/` mudou
+  **em um arquivo só**. Verificar com `git diff --name-only main -- tools/`
+  devolvendo apenas `tools/checks/change-lifecycle.test.ts`, nenhuma lista de
+  perímetro alterada dentro dele, e `ls tools/checks/*.test.ts | wc -l` devolvendo 7.
+- [ ] 5.3 Confirmar que nada de tema mudou e que `openspec/changes/theme-choice/`
   está intocado. Verificar com `git diff --stat main -- openspec/changes/theme-choice`
   vazio e `grep` por `data-theme` em `git diff main -- apps packages` voltando vazio.
-- [ ] 4.4 Confirmar que a geração de tokens não mudou. Verificar com
+- [ ] 5.4 Confirmar que a geração de tokens não mudou. Verificar com
   `git diff --stat main -- packages/tokens/generated packages/tokens/tokens` vazio.
-- [ ] 4.5 Confirmar que nenhum script da raiz mudou e que `openspec/config.yaml`
+- [ ] 5.5 Confirmar que nenhum script da raiz mudou e que `openspec/config.yaml`
   está intocado — este ciclo não acrescenta nem remove regra, então a contagem
   declarada em `config-rules` não muda. Verificar com `git diff main -- package.json
   openspec/config.yaml` vazio.
-- [ ] 4.6 Confirmar que nenhum arquivo sob `openspec/specs/` muda neste PR — o delta
+- [ ] 5.6 Confirmar que nenhum arquivo sob `openspec/specs/` muda neste PR — o delta
   só é aplicado no arquivamento. Verificar com `git diff main -- openspec/specs`
   vazio.
 
-## 5. Arquivamento
+## 6. Arquivamento
 
 As tarefas deste grupo rodam no terceiro PR do ciclo:
 `tools/checks/change-lifecycle.test.ts` reprova mudança ativa com todas as tarefas
 marcadas, e é essa reprovação que obriga o arquivamento a acontecer.
 
-- [ ] 5.1 Arquivar a mudança **com sincronização da spec viva**: mover
+- [ ] 6.1 Arquivar a mudança **com sincronização da spec viva**: mover
   `openspec/changes/tokens-module-boundary/` para
   `openspec/changes/archive/<data>-tokens-module-boundary/` e aplicar o delta de
   `workspace-verification` em `openspec/specs/`. Verificar com
   `npx openspec validate --specs --strict` passando nas sete capacidades e o
   requisito novo presente com os quatro cenários.
-- [ ] 5.2 Conferir, um a um contra `git show main:openspec/specs/workspace-verification/spec.md`,
+- [ ] 6.2 Conferir, um a um contra `git show main:openspec/specs/workspace-verification/spec.md`,
   que nenhum dos requisitos anteriores foi reescrito — o delta é só ADDED, e a
   conferência é o que distingue as duas coisas. Verificar pela comparação de cada
   bloco, aceitando como diferença apenas linha em branco de separação.
-- [ ] 5.3 Mover o **ponto 23** de "Abertos" para "Fechados" em
+- [ ] 6.3 Mover o **ponto 23** de "Abertos" para "Fechados" em
   `docs/pontos-abertos.md`, **no mesmo commit** do movimento para `archive/`, com a
   medição do fechamento: o leitor de disco fora do grafo publicado, zero arquivos
   alcançáveis importando módulo de ambiente, e a asserção que passa a guardar a
   linha. Atualizar o cabeçalho: 20 ciclos arquivados, **2 pontos abertos** (21 e 22),
   e o change ativo que continua (`theme-choice`).
-- [ ] 5.4 **Confirmar à mão que o ponto 23 saiu da seção de abertos, e registrar que
-  a confirmação foi humana.** O guardião do ciclo de vida **não** confere isso hoje:
-  medido na proposta, ele lê os pontos abertos por cabeçalho `## N.` e o registro usa
-  itens `- **N.`, de modo que a comparação é contra conjunto vazio (`design.md`, D7).
-  Verificar lendo as duas seções do arquivo e registrando no PR que a verificação
-  mecânica não existe.
-- [ ] 5.5 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
+- [ ] 6.4 Descer para **2** a contagem declarada de pontos abertos em
+  `tools/checks/change-lifecycle.test.ts`, **no mesmo commit** que fecha o ponto 23.
+  A confirmação do fechamento deixa de ser humana e passa a ser mecânica: se o
+  arquivamento esquecer de tirar o 23 da seção de abertos, a leitura acha 3 contra 2
+  declarados e reprova; e a comparação original — ponto declarado fechado que o
+  registro ainda lista como aberto — volta a funcionar pelo conserto do grupo 4.
+  Verificar com o guardião passando e, por plantio, com o 23 deixado na seção de
+  abertos fazendo as duas afirmações reprovarem.
+- [ ] 6.5 Executar `pnpm verify` sobre a árvore arquivada e confirmar os quatro
   estágios verdes. Verificar pela saída do comando, código de saída zero.

@@ -38,7 +38,9 @@ O que já existe e este ciclo reusa:
 
 - Mover vocabulário de `source.ts` que nenhuma medição pede.
 - Tirar `./palette` do `exports`.
-- Consertar a checagem morta do registro de pontos (D7).
+- Trocar o registro de pontos por fonte estruturada — o conserto de verdade que o
+  design de `close-open-points` já registrou. Este ciclo conserta a leitura e afirma
+  a contagem (D8).
 
 ## Decisions
 
@@ -177,28 +179,67 @@ autorizar um arquivo que não precisa mais dela.
 leem igual na saída, e só um dos dois foi medido. Declarado, a execução imprime
 zero, e zero é afirmação.
 
-### D7. A checagem morta do registro de pontos — levada ao dono, não consertada
+### D7. A checagem morta do registro de pontos entra no escopo
 
-**Medido:** `tools/checks/change-lifecycle.test.ts` lê os pontos ainda abertos por
-`/^## (\d+)\./gm`, e o registro usa itens de lista (`- **23. …**`) desde o
-arquivamento de `close-open-points`. Hoje: **0** cabeçalhos no formato que o
-guardião procura, **19** itens no formato que o arquivo usa. A terceira checagem
-dele compara contra conjunto vazio e **não pode reprovar**. O histórico mostra
-quando morreu: em `7568a6b`, o commit que escreveu o guardião, o arquivo tinha 7
-cabeçalhos; em `0942af1`, o arquivamento do mesmo ciclo, passou a ter 0.
+**Decisão, revista:** o conserto entra neste ciclo. A primeira versão deste design o
+deixava fora, com as duas posições registradas, porque a instrução do ciclo dizia para
+não mexer em guardião. **O dono reverteu a própria instrução depois de ler a
+medição**, e a razão dele é a que vale: a instrução era do tipo cobertor, e a
+dependência é concreta — este ciclo declara que fecha o ponto 23, e a checagem morta é
+quem deveria verificar essa declaração. Entregável sem verificação não é escopo
+alheio, e a tese do ciclo é exatamente essa: aviso não é portão, e checagem incapaz de
+reprovar é a mesma coisa.
 
-**Decisão:** fora do escopo deste ciclo, com as duas posições e o risco registrados
-em `proposal.md`. A posição "dentro de escopo" é defensável — a tese do ciclo é que
-aviso não é portão, e checagem que não pode reprovar não é portão pela mesma razão —,
-mas exige autorização que esta proposta não tem: a instrução do ciclo diz para não
-mexer em guardião.
+**Medido, e é o que sustenta tudo acima:** a leitura procurava pontos abertos por
+cabeçalho de nível 2 (`## 23.`); o registro usa item de lista (`- **23. …**`) desde o
+arquivamento de `close-open-points`. Contagem do dia: **0** cabeçalhos no formato
+procurado, **19** itens no formato usado, distribuídos em três seções. No commit que
+escreveu a checagem o arquivo tinha **7** cabeçalhos e o padrão casava; no
+arquivamento do mesmo ciclo, **0**. A prova nasceu viva, foi vista reprovando, e
+morreu em seguida pela mudança de formato do arquivo que ela lê.
 
-**Consequência operacional, escrita para não virar esquecimento:** o fechamento do
-ponto 23 que este ciclo declara **não será verificado por máquina**. O PR 3 confirma
-à mão a saída do ponto do registro e registra que a confirmação foi humana.
+**Consequência operacional invertida:** a tarefa do arquivamento deixa de pedir
+confirmação humana do fechamento do ponto 23 e passa a ser mecânica.
 
-**O que faria mudar de ideia:** autorização do dono para incluir o conserto, que é
-da ordem de duas linhas no padrão de leitura e não toca perímetro nenhum.
+### D8. A forma do conserto: casar o formato e afirmar a contagem
+
+**Decisão:** duas obrigações. A leitura passa a casar o formato corrente da **seção de
+pontos abertos**, e a contagem de pontos lida passa a ser comparada contra uma
+**contagem declarada na própria checagem**.
+
+**Por que o padrão sozinho não resolve:** a prova morreu porque lê um formato, e
+formato deriva. Trocar o padrão conserta a ocorrência e deixa a classe de pé — a
+próxima deriva mata a prova do mesmo jeito, calada, e o repositório descobre quando
+alguém for ler à mão. A contagem declarada é a **prova da prova**: ela é o que reprova
+quando a leitura passa a achar nada.
+
+**É a figura do guardião do arquivo de regras**, pela mesma razão medida lá: derivada
+do arquivo lido, esperado e lido mudariam juntos e a comparação nunca reprovaria.
+Declarada, ela custa uma linha a quem abre ou fecha um ponto, no mesmo commit que abre
+ou fecha — e esse custo é o ponto.
+
+**Por que a contagem não sai do cabeçalho do arquivo.** O cabeçalho diz hoje "**3
+pontos abertos**", e seria tentador lê-lo em vez de declarar. Descartado: cabeçalho é
+prosa, muda de redação a cada ciclo, e tirar número de prosa troca uma fragilidade de
+formato por outra — pior, porque a segunda não tem nem convenção escrita. O número fica
+na checagem, onde é código.
+
+**Por que a leitura é da seção de abertos, e não do arquivo até a seção de fechados.
+Medido:** a seção de reclassificados usa o **mesmo** formato de item e tem um item
+numerado (o que agrupa os pontos 1, 10 e 18). Lida junto, ela entraria no conjunto de
+abertos e a contagem sairia 4 em vez de 3. Ponto reclassificado não é dívida de
+interface — foi tirado do registro por decisão de ciclo anterior, e contá-lo como
+aberto seria ressuscitá-lo por acidente de parser.
+
+**O estado medido hoje, que o PR 2 declara:** 3 pontos abertos — 21, 22 e 23. O PR 3
+fecha o 23 e desce a declaração para 2, no mesmo commit. Se o arquivamento esquecer de
+tirar o 23 da seção de abertos, a leitura acha 3 contra 2 declarados e reprova — é
+assim que a confirmação deixa de ser humana.
+
+**O que faria mudar de ideia:** uma fonte estruturada para o registro, em vez de
+prosa — o campo `closes_points` em `.openspec.yaml` que o design de
+`close-open-points` já registrou como o conserto de verdade. Enquanto o registro for
+um documento para ler, o par formato-corrente mais contagem-declarada é o que há.
 
 ## Risks / Trade-offs
 
@@ -211,8 +252,13 @@ da ordem de duas linhas no padrão de leitura e não toca perímetro nenhum.
 - **`source.ts` continua misturando vocabulário, caminhos e leitor de disco** →
   aceito e registrado em D4: o que a medição pede é cortar a aresta alcançável, não
   reorganizar o arquivo.
-- **O fechamento do ponto 23 não tem verificação mecânica** → D7, com as duas
-  posições e a confirmação manual no PR 3.
+- **A contagem declarada de pontos abertos vira atrito em todo ciclo que abrir ou
+  fechar ponto** → aceito, e é o objetivo: uma linha por ponto, no mesmo commit. É o
+  que faz a mudança ser vista (D8).
+- **O conserto toca um guardião existente, contra a instrução original do ciclo** →
+  autorizado pelo dono depois da medição, registrado em D7, e sem ampliar perímetro
+  nenhum: nenhuma lista ganha entrada, nenhum guardião novo nasce, o inventário
+  continua em sete.
 - **A segunda condição de reconhecimento depende de uma interface do ambiente** →
   conjunto vazio reprova (D3), de modo que a dependência falha alto em vez de
   silenciosamente.

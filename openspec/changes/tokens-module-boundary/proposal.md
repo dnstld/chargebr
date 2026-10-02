@@ -69,18 +69,43 @@ alcançável importa `node:*`, em nenhum dos dois pacotes.
   isenção vazia é o estado correto, e tem de ser vista como zero, não como lista que
   ninguém olhou.
 
+- **O conserto da checagem morta do ciclo de vida entra neste ciclo**, por
+  autorização do dono depois da proposta, e por dependência concreta: este ciclo
+  declara que fecha o ponto 23, e quem deveria verificar essa declaração é
+  exatamente a checagem que está morta. É o entregável deste ciclo sem verificação,
+  não escopo alheio — e é a mesma tese do ciclo: aviso não é portão, e checagem
+  incapaz de reprovar é a mesma coisa.
+
+- **Duas obrigações para esse conserto, não uma.** A leitura passa a casar o formato
+  corrente da seção de pontos abertos, **e** a contagem de pontos lida passa a ser
+  comparada contra uma contagem declarada na própria checagem. Só o padrão não
+  resolve: a prova morreu porque lê um formato, e formato deriva — a contagem
+  declarada é o que reprova na próxima deriva. É a figura do guardião do arquivo de
+  regras, já provada neste repositório. Declarada na checagem, **nunca** extraída do
+  cabeçalho: cabeçalho é prosa, e tirar número de prosa troca uma fragilidade de
+  formato por outra. **Medido:** hoje a seção de abertos tem 3 pontos (21, 22 e 23) e
+  a de reclassificados usa o mesmo formato de item, com um item numerado — ler o
+  arquivo em vez da seção daria 4.
+
 - **As provas, com plantio.** A reexportação de valor devolvida a `palette.ts:15`
   faz a asserção reprovar nomeando `packages/tokens/src/source.ts` e a cadeia
   `@chargebr/tokens/palette → palette.ts → source.ts`. O conjunto alcançável vazio
-  continua reprovando, pela asserção que já existe desde `package-consumption`.
+  continua reprovando, pela asserção que já existe desde `package-consumption`. E o
+  formato de um item do registro alterado por plantio faz a checagem do ciclo de vida
+  reprovar nomeando a contagem declarada e a lida — a reprovação que a versão
+  original dela nunca teve.
 
 ## What This Does Not Do
 
 - **Não toca tema.** Nada sobre `data-theme`, nem sobre escolha de tema, e nada em
   `openspec/changes/theme-choice/`, que segue parado no estágio de proposta.
-- **Não amplia perímetro de guardião nenhum.** As listas de `tools/checks/` ficam
-  como estão, e a asserção nova mora no arquivo de prova que já existe em
-  `apps/backoffice/tests/`, sobre a lista descoberta do `exports`.
+- **Não amplia perímetro de guardião nenhum.** Nenhuma lista de perímetro de
+  `tools/checks/` ganha ou perde entrada, nenhum guardião novo nasce, e o inventário
+  de sete em `CLAUDE.md` fica como está. O ciclo **muda um guardião existente** —
+  `tools/checks/change-lifecycle.test.ts`, na leitura do registro de pontos —, e isso
+  é conserto de prova morta, não ampliação de alcance. A asserção da obrigação
+  central mora no arquivo de prova que já existe em `apps/backoffice/tests/`, sobre a
+  lista descoberta do `exports`.
 - **Não mexe na geração de tokens.** A fonte DTCG, a construção da camada e os
   artefatos gerados ficam idênticos: o que muda é onde duas declarações moram.
   `design-tokens` não recebe delta — nada do que aquela capacidade garante depende
@@ -95,45 +120,35 @@ alcançável importa `node:*`, em nenhum dos dois pacotes.
   arquivo **alcançável a partir do `exports`**. O construtor de tokens, a validação,
   os relatórios e todo arquivo de prova continuam lendo disco à vontade — nenhum
   deles é alcançável, e isso foi medido.
-- **Não conserta a checagem morta do registro de pontos** (ver abaixo). O achado vai
-  ao dono com as duas posições.
 
-## Achado que precisa de decisão do dono, e não entra por suposição
+## O achado que mudou o escopo, e como foi resolvido
 
-A instrução desta proposta diz para declarar o fechamento do ponto 23 "porque o
-guardião do ciclo de vida confere". **Medido: hoje ele não confere.**
+A instrução original desta proposta dizia para declarar o fechamento do ponto 23
+"porque o guardião do ciclo de vida confere". **Medido: ele não conferia.**
 
-`tools/checks/change-lifecycle.test.ts` lê os pontos ainda abertos pelo padrão
+`tools/checks/change-lifecycle.test.ts` lia os pontos abertos pelo padrão
 `/^## (\d+)\./gm` — cabeçalhos de nível 2. O registro usa itens de lista
-(`- **23. …**`) desde o arquivamento de `close-open-points`. Contagem de hoje:
-**0** cabeçalhos no formato que o guardião procura, **19** itens no formato que o
-arquivo usa. A terceira checagem dele — "ponto declarado fechado por mudança
-arquivada não continua aberto no registro" — compara contra um conjunto vazio, e
-**não tem como reprovar**.
+(`- **23. …**`) desde o arquivamento de `close-open-points`. Contagem do dia da
+medição: **0** cabeçalhos no formato procurado, **19** itens no formato usado, em três
+seções. A terceira checagem — "ponto declarado fechado por mudança arquivada não
+continua aberto no registro" — comparava contra conjunto vazio e **não tinha como
+reprovar**.
 
 A medição do histórico mostra quando morreu: em `7568a6b`, o commit que escreveu o
 guardião, o arquivo tinha **7** cabeçalhos e o padrão casava; em `0942af1`, o
-arquivamento do mesmo ciclo, passou a ter **0**. A prova foi vista reprovando na
-época — está registrada nas tarefas daquele arquivamento — e morreu no mesmo ciclo
-que a criou, pela mudança de formato do arquivo que ela lê.
+arquivamento do mesmo ciclo, passou a ter **0**. A prova foi vista reprovando quando
+nasceu — está registrada nas tarefas daquele arquivamento — e morreu em seguida, pela
+mudança de formato do arquivo que ela lê.
 
-**Duas posições, e o que cada uma precisaria:**
+**A primeira versão desta proposta deixou o conserto fora de escopo**, com as duas
+posições registradas, porque a instrução do ciclo dizia para não mexer em guardião.
+**O dono reverteu a própria instrução depois de ler a medição**, e o conserto entra:
+a instrução era do tipo cobertor, e a dependência é concreta — este ciclo declara que
+fecha o ponto 23, e a checagem morta é justamente quem deveria verificar essa
+declaração. Entregável sem verificação não é escopo alheio.
 
-1. **Fora de escopo.** Este ciclo tem um entregável nomeado, e consertar a leitura
-   do registro é outra capacidade de verificação. Precisaria de um ciclo próprio, ou
-   de um ponto aberto novo com gatilho. **Risco:** o fechamento do ponto 23, que
-   este ciclo declara, não será verificado por máquina nenhuma — é o mesmo defeito
-   que a entrada do ponto 5 no registro já documenta ("O registro nunca foi
-   atualizado: nenhum commit do arquivamento daquele ciclo tocou este arquivo").
-2. **Dentro de escopo.** A tese deste ciclo é "aviso não é portão"; uma checagem que
-   não pode reprovar não é portão pela mesma razão. O conserto é o padrão de leitura
-   aceitar o formato que o arquivo usa — ordem de duas linhas em um guardião, sem
-   tocar perímetro nenhum. Precisaria de autorização, porque a instrução deste ciclo
-   diz para não mexer em guardião.
-
-**Esta proposta segue pela posição 1**, porque a 2 exige autorização que não tenho,
-e registra o risco: o PR 3 confirma à mão a saída do ponto 23 do registro, e
-registra na execução que a confirmação foi humana, não mecânica.
+Com o conserto dentro, a confirmação do fechamento do ponto 23 no arquivamento deixa
+de ser humana e passa a ser mecânica.
 
 ## Capabilities
 
@@ -143,10 +158,14 @@ Nenhuma.
 
 ### Modified Capabilities
 
-- `workspace-verification`: requisito novo — nenhum arquivo alcançável a partir de
-  um subpath publicado importa módulo de ambiente de execução, com o conjunto de
-  módulos descoberto do Node e a isenção, se algum dia existir, declarada com a
-  razão.
+- `workspace-verification`: um requisito novo e um modificado.
+  - **Novo:** nenhum arquivo alcançável a partir de um subpath publicado importa
+    módulo de ambiente de execução, com o conjunto de módulos descoberto do Node e a
+    isenção, se algum dia existir, declarada com a razão.
+  - **Modificado:** "Ponto declarado fechado por mudança arquivada não continua
+    aberto no registro" passa a obrigar que a leitura seja da seção de pontos
+    abertos, no formato corrente dela, e que a contagem lida seja comparada contra
+    uma contagem declarada na própria checagem.
 
 Nenhuma outra capacidade recebe delta. `design-tokens` não muda porque a
 movimentação de duas declarações entre módulos não altera o que a camada de tokens
@@ -159,10 +178,13 @@ garante sobre fonte, camadas, acesso tipado ou geração determinística.
 - `apps/backoffice/tests/published-subpaths.test.ts`: a terceira asserção sobre a
   travessia que já existe, e o conjunto de módulos de ambiente descoberto de
   `builtinModules`.
-- `openspec/specs/workspace-verification/spec.md`: um requisito novo, aplicado no
-  arquivamento (PR 3).
+- `tools/checks/change-lifecycle.test.ts`: a leitura do registro de pontos passa a
+  casar o formato corrente e a afirmar a contagem contra a declarada. Nenhum
+  perímetro muda, e nenhum guardião novo nasce — continuam sete.
+- `openspec/specs/workspace-verification/spec.md`: um requisito novo e um modificado,
+  aplicados no arquivamento (PR 3).
 - `docs/pontos-abertos.md`: no arquivamento, o ponto 23 sai de "Abertos" e entra em
   "Fechados" com a medição; o cabeçalho passa a 20 ciclos arquivados e 2 pontos
   abertos.
-- Nada sob `tools/`. Nenhum script da raiz. Nenhum arquivo gerado da camada de
-  tokens.
+- Nenhum script da raiz. Nenhum arquivo gerado da camada de tokens. Nenhuma lista de
+  perímetro de guardião.

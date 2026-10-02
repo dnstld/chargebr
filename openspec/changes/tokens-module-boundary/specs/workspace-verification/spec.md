@@ -81,3 +81,83 @@ zero.
 - **WHEN** uma isenção declara arquivo e especificador que aquele arquivo não importa
 - **THEN** a verificação falha nomeando a isenção sem correspondência
 - **Prova:** isenção plantada para arquivo que não importa o especificado, verificação falhando com a isenção nomeada, plantio revertido
+
+## MODIFIED Requirements
+
+### Requirement: Ponto declarado fechado por mudança arquivada não continua aberto no registro
+
+Se o `proposal.md` de uma mudança sob `openspec/changes/archive/` declarar
+fechar um ponto de `docs/pontos-abertos.md`, nomeado por número, esse
+número SHALL NOT constar entre os pontos abertos do arquivo. Encontrar os
+dois SHALL reprovar a verificação, nomeando o ponto e a mudança arquivada
+que declarou fechá-lo.
+
+O conjunto de pontos abertos SHALL ser lido **da seção de pontos abertos** do
+arquivo, no formato que essa seção usa, e SHALL NOT incluir ponto de nenhuma outra
+seção.
+
+A contagem de pontos abertos lida SHALL ser comparada com uma contagem declarada na
+própria checagem, e divergência SHALL reprovar nomeando a contagem declarada e a
+lida. A contagem SHALL ser declarada na checagem, e SHALL NOT ser extraída do
+cabeçalho do arquivo nem de qualquer prosa dele.
+
+**Por quê:** medido no ciclo `tokens-obligation-form` — ele arquivou declarando
+"Fecha o ponto 5 de `docs/pontos-abertos.md`", e o registro nunca foi atualizado; o
+ponto continuou aberto até uma leitura manual encontrar a divergência. Ao contrário
+do ponto 16 (que depende de saber a intenção de um teste, não mecanizável), esta é
+comparação entre duas listas que já existem por escrito — o número que uma mudança
+arquivada declara fechar, e os números que `docs/pontos-abertos.md` ainda lista como
+abertos —, mecanicamente detectável.
+
+**E a comparação estava morta. Medido nesta mudança:** a leitura procurava os pontos
+abertos por cabeçalho de nível 2 (`## 23.`), e o registro passou a usar item de lista
+(`- **23. …**`). Contagem do dia desta medição: **0** cabeçalhos no formato
+procurado, **19** itens no formato usado, em três seções. A comparação rodava contra
+conjunto vazio e **não tinha como reprovar**. O histórico mostra quando morreu: no
+commit que escreveu a checagem o arquivo tinha 7 cabeçalhos e o padrão casava; no
+arquivamento do **mesmo ciclo**, passou a ter 0. A prova foi vista reprovando quando
+nasceu e morreu em seguida, pela mudança de formato do arquivo que ela lê.
+
+**São duas obrigações, e não uma, porque o padrão sozinho não resolve.** Casar o
+formato corrente conserta a ocorrência; não impede a próxima deriva de formato de
+matar a prova do mesmo jeito, calada. A contagem declarada é a prova da prova: ela é
+o que reprova quando a leitura passa a achar nada. É a figura da contagem declarada
+do guardião do arquivo de regras, pela mesma razão — **derivada do arquivo lido,
+esperado e lido mudariam juntos e a comparação nunca reprovaria**.
+
+A contagem é declarada na checagem e **nunca extraída do cabeçalho** porque o
+cabeçalho é prosa: tirar número de prosa troca uma fragilidade de formato por outra,
+e a segunda é pior, porque a prosa muda de redação a cada ciclo sem avisar ninguém.
+O preço é uma linha por ponto aberto ou fechado, no mesmo commit que abre ou fecha —
+e esse preço é o ponto.
+
+**A leitura é da seção de abertos, e não do arquivo até a seção de fechados, por um
+caso medido:** a seção de reclassificados usa o **mesmo** formato de item, e tem um
+item numerado. Lida junto, ela entraria no conjunto de abertos e a contagem sairia
+uma unidade maior. Ponto reclassificado não é ponto aberto — está fora do registro de
+dívida por decisão de ciclo anterior.
+
+**A classe apareceu duas vezes, e é a segunda que justifica obrigação em vez de
+conserto pontual.** A primeira foi o ponto 5: declaração de fechamento sem o registro
+atualizado, achada por leitura humana. A segunda é esta: a própria checagem que
+nasceu para pegar a primeira morreu sem ninguém ver. Consertar só o padrão seria
+tratar a segunda ocorrência como a primeira foi tratada — pontualmente — e deixar a
+terceira passar.
+
+#### Scenario: Ponto declarado fechado mas ainda aberto reprova
+
+- **WHEN** uma mudança arquivada declara, no `proposal.md`, fechar um ponto, e esse número de ponto ainda consta como aberto em `docs/pontos-abertos.md`
+- **THEN** a verificação falha, nomeando o ponto e a mudança arquivada
+- **Prova:** mudança arquivada plantada com essa declaração, ponto correspondente plantado como aberto em `docs/pontos-abertos.md`, verificação falhando, os dois plantios revertidos
+
+#### Scenario: Formato do registro alterado reprova
+
+- **WHEN** um item da seção de pontos abertos deixa de estar no formato que a leitura reconhece
+- **THEN** a verificação falha nomeando a contagem declarada e a lida
+- **Prova:** formato de um item da seção de abertos alterado por plantio, verificação falhando com os dois números, plantio revertido
+
+#### Scenario: A contagem de pontos abertos é a declarada na árvore corrente
+
+- **WHEN** a verificação é executada sobre a árvore corrente
+- **THEN** a contagem de pontos abertos lida da seção de abertos é igual à declarada na checagem, e nenhum ponto de outra seção entra na contagem
+- **Prova:** execução da checagem com a contagem lida registrada na saída, sobre um registro que tem item numerado também na seção de reclassificados
