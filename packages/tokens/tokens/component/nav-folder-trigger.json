@@ -7,7 +7,7 @@
       "$type": "color",
       "$value": "{color.nav.text-strong}"
     },
-    "muted": { "$type": "color", "$value": "{color.nav.text-muted}" },
+    "muted": { "$type": "color", "$value": "{color.nav.glyph}" },
     "background-hover": {
       "$type": "color",
       "$value": "{color.nav.hover}"

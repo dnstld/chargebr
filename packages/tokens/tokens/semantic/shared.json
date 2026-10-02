@@ -27,7 +27,11 @@
         "$value": "{color.gray.100}"
       },
       "text-muted": {
-        "$description": "Texto apagado e rótulos secundários no conjunto fixo.",
+        "$description": "Texto apagado e rótulos secundários no conjunto fixo. Um degrau mais claro que o tom da maquete, por medição: gray.500 dá 3,780:1 contra o painel, abaixo do piso de 4,5:1 que vale para texto; gray.400 dá 6,515:1. O tom da maquete continua em color.nav.glyph, onde o piso é o de objeto gráfico.",
+        "$value": "{color.gray.400}"
+      },
+      "glyph": {
+        "$description": "Objeto gráfico apagado do conjunto fixo — chevron de pasta, marcador de folha, ícone da trilha. É o tom apagado da maquete, medido ao piso de 3:1 de objeto gráfico, que ele sustenta contra as três superfícies (3,045:1 a 4,059:1). Nunca serve a texto: ali o piso é 4,5:1, e quem o sustenta é color.nav.text-muted.",
         "$value": "{color.gray.500}"
       },
       "current": {

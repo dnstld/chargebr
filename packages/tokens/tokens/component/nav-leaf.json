@@ -12,7 +12,7 @@
       "$value": "{color.nav.hover}"
     },
     "meta": { "$type": "color", "$value": "{color.nav.text}" },
-    "dot": { "$type": "color", "$value": "{color.nav.text-muted}" },
+    "dot": { "$type": "color", "$value": "{color.nav.glyph}" },
     "current": {
       "background": { "$type": "color", "$value": "{color.nav.current}" },
       "color": { "$type": "color", "$value": "{color.nav.current-text}" },

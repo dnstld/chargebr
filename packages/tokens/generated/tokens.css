@@ -77,11 +77,12 @@
   --color-nav-current: var(--color-indigo-700);
   --color-nav-current-text: var(--color-white);
   --color-nav-edge: var(--color-gray-800);
+  --color-nav-glyph: var(--color-gray-500);
   --color-nav-hover: var(--color-gray-800);
   --color-nav-panel: var(--color-gray-900);
   --color-nav-rail: var(--color-gray-950);
   --color-nav-text: var(--color-gray-300);
-  --color-nav-text-muted: var(--color-gray-500);
+  --color-nav-text-muted: var(--color-gray-400);
   --color-nav-text-strong: var(--color-gray-100);
   --color-surface-base: var(--color-gray-50);
   --color-surface-raised: var(--color-white);
@@ -163,7 +164,7 @@
   --nav-folder-trigger-current-background: var(--color-nav-current);
   --nav-folder-trigger-current-color: var(--color-nav-current-text);
   --nav-folder-trigger-focus: var(--color-nav-accent);
-  --nav-folder-trigger-muted: var(--color-nav-text-muted);
+  --nav-folder-trigger-muted: var(--color-nav-glyph);
   --nav-item-current-background: var(--color-action-primary);
   --nav-item-current-color: var(--color-text-on-action);
   --nav-item-current-weight: var(--text-heading-weight);
@@ -178,11 +179,11 @@
   --nav-leaf-current-background: var(--color-nav-current);
   --nav-leaf-current-color: var(--color-nav-current-text);
   --nav-leaf-current-meta: var(--color-nav-current-text);
-  --nav-leaf-dot: var(--color-nav-text-muted);
+  --nav-leaf-dot: var(--color-nav-glyph);
   --nav-leaf-meta: var(--color-nav-text);
   --nav-rail-item-background: var(--color-nav-rail);
   --nav-rail-item-background-hover: var(--color-nav-hover);
-  --nav-rail-item-color: var(--color-nav-text-muted);
+  --nav-rail-item-color: var(--color-nav-glyph);
   --nav-rail-item-color-hover: var(--color-nav-text-strong);
   --nav-rail-item-current-accent: var(--color-nav-accent);
   --nav-rail-item-current-color: var(--color-nav-text-strong);
